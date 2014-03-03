@@ -20,34 +20,6 @@ int             conditionTrial = 0;
 int				studyNum = 42;
 int				calibrate = 1;
 
-class Symbol {
-
-public:
-	Symbol(IplImage* img, int x, int y, int symbolType);
-	void print();
-	Symbol();
-	Symbol(const Symbol& other);
-	//	bool operator < (Symbol& other);
-	IplImage* img;
-	int x;
-	int y;
-	int symbolType;
-};
-
-Symbol::Symbol(IplImage* img, int x, int y, int symbolType) {
-	this->x = x;
-	this->y = y;
-	this->symbolType = symbolType;
-	this->img = img;
-}
-
-Symbol::Symbol(const Symbol &other){
-	this->x = other.x;
-	this->y = other.y;
-	this->symbolType = other.symbolType;
-	this->img = cvCreateImage(cvGetSize(other.img), other.img->depth, other.img->nChannels);
-	cvCopy(other.img,this->img, NULL);
-}
 void DetectAndDrawQuads(IplImage * img, IplImage * original, int frameNumber, int colorCase)
 {
 	CvSeq * contours;
