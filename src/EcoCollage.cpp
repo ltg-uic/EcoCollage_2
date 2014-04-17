@@ -5,12 +5,18 @@
  *    Author: Brianna
  */
 #include <iostream>
-using namespace std;
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <fstream>
 #include <cv.h>
 #include <highgui.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include "Aruco/cvdrawingutils.h"
+#include "Aruco/aruco.h"
+
+using namespace std;
 
 FILE 			*outputRecord;
 char            *filename = "Results.txt";
@@ -19,6 +25,24 @@ int             conditionTrial = 0;
 //change this number before each study
 int				studyNum = 42;
 int				calibrate = 1;
+
+//also change these if you want to test the markers and if the board is not ready
+bool testMarkers = true;
+bool ready = true;
+
+//change these depending on the size of the board and markers
+const int boardLength = 32;			//this corresponds to the number of squares INCLUDING the markers
+const int boardHeight = 33;
+const int sizeOfMarker = 3;			//this corresponds to the length of the marker relative to the board
+
+//Variables for marker tracking and for image transformation and crop
+//Indices for the markers array
+int iBR = 1;
+int iTR = 3;
+int iBL = 0;
+int iTL = 2;
+
+double ratio = (double) boardHeight / boardLength;
 
 void DetectAndDrawQuads(IplImage * img, IplImage * original, int frameNumber, int colorCase)
 {
@@ -173,9 +197,6 @@ IplImage * GetThresholdedImage(IplImage * img, int colorCase)
 
 int main()
 {
-
-	char key = 'a';
-
 	// Initialize capturing live feed from the camera
 	CvCapture * capture = 0;
 	capture = cvCaptureFromCAM(1);
@@ -186,24 +207,112 @@ int main()
 		printf("Could not initialize capturing...\n");
 		return -1;
 	}
+
 	IplImage * frame = 0;
 	frame = cvQueryFrame(capture);
-	cvNamedWindow("original", CV_WINDOW_NORMAL);
+	//cvNamedWindow("original", CV_WINDOW_NORMAL);
 	//cvResizeWindow("original", frame->width/2, frame->height/2);
-	while (key != 27)
-	{
+
+	//Mats used for marker tracking and transformations
+	cv::Mat betterCrop;
+	cv::Mat cameraMat;
+	cameraMat = frame;
+
+	//aruco marker tracking vars
+	aruco::MarkerDetector marker;
+	aruco::MarkerDetector Mtags;
+	aruco::CameraParameters camPars;
+	aruco::MarkerDetector detector;
+	vector<aruco::Marker> markers;
+
+	char key = 'a';
+	bool gotCroppedImg = false;
+	while (key != 27){
 		int key = cvWaitKey(100);
+
 		frame = cvQueryFrame(capture);
-
-		cvShowImage("original", frame);
-
 		//If we couldn't grab a frame... quit
-		if(!frame)
+		if(!frame){
+			cout << "Yo I couldn't get a frame!";
 			break;
+		}
+		cameraMat = frame;
+		Mtags.detect(cameraMat, markers, camPars);
+		//cvShowImage("original", frame);
 
-		if( key == 32){
+		//MARKERS TESTING
+		if(testMarkers){
+			for (unsigned int i=0;i<markers.size();i++) {
+				markers[i].draw(cameraMat, cv::Scalar(255,0,0), 2, true);
+			    cv::circle(cameraMat, markers[i].getCenter(), markers[i].getPerimeter()/8, cv::Scalar(255,0 ,0), 3);
+
+			  	cout << "marker ID[" << markers[i].id << "] has index [" << i<< "]\n";
+			    cv::circle(cameraMat, markers[i].getCenter(), 5, cv::Scalar(0,0 ,255), 1);
+			}
+		}
+
+		//Get image and crop it if all 4 of the markers are detected
+		if(markers.size() == 4 && ready) {
+			//get the four points
+			//Bottom right
+			cv::Point2f BR = markers[iBR].getCenter();
+			//Top right
+			cv::Point2f TR = markers[iTR].getCenter();
+			//Bottom left
+			cv::Point2f BL = markers[iBL].getCenter();
+			//Top left
+			cv::Point2f TL = markers[iTL].getCenter();
+
+			cv::line(cameraMat, BR, BL, cv::Scalar(0,0,255), 2, 1);
+			cv::line(cameraMat, BL, TL, cv::Scalar(0,0,255), 2, 1);
+			cv::line(cameraMat, TL, TR, cv::Scalar(0,0,255), 2, 1);
+			cv::line(cameraMat, TR, BR, cv::Scalar(0,0,255), 2, 1);
+
+			//////////////transformation stuff///////////////////////////////////////////////////////////////////////////
+			//Code based on a tutorial on http://bikramhanjra.blogspot.com/2013/06/perspective-transformation-opencv.html
+			cv::Point2f inputPoints[4], outputPoints[4];
+			cv::Mat transformedImg;
+			cv::Mat lambda(2, 4, CV_32FC1);
+
+			int cropLength = TR.x - TR.y;
+			lambda = cv::Mat::zeros(cropLength, cropLength*ratio, cameraMat.type());
+
+			//Now using the four points from the markers we can transform the image
+			//points to crop and transform
+			inputPoints[0] = TL;
+			inputPoints[1] = TR;
+			inputPoints[2] = BR;
+			inputPoints[3] = BL;
+
+			//destination of those points
+			outputPoints[0] = cv::Point2f(0,0);
+			outputPoints[1] = cv::Point2f(cropLength - 1, 0);
+			outputPoints[2] = cv::Point2f(cropLength - 1, cropLength*ratio - 1);
+			outputPoints[3] = cv::Point2f(0, cropLength*ratio - 1);
+			lambda = cv::getPerspectiveTransform(inputPoints, outputPoints);
+
+			//Create transformed image with the correct ratios
+
+			cv::warpPerspective(cameraMat, transformedImg, lambda, cv::Size2i(cropLength, cropLength*ratio));
+			cv::imshow("This is the transformed image", transformedImg);
+
+		    //crop extra border of stuff
+		    int offSetH = (double) transformedImg.rows/(boardHeight- sizeOfMarker) * ((double)sizeOfMarker/2);
+		    int offSetL = (double) transformedImg.cols/(boardLength- sizeOfMarker) * ((double)sizeOfMarker/2);
+		    cv::Rect theArea (offSetL, offSetH, transformedImg.cols - offSetL*2, transformedImg.rows - offSetH*2);
+		    betterCrop = transformedImg(theArea);
+			cv::imshow("better Crop?", betterCrop);
+
+			//update bool
+			gotCroppedImg = true;
+		}
+
+		if( key == 32 && gotCroppedImg){
 			printf("spacebar pressed\n");
 			// Will hold a frame captured from the camera
+
+		    IplImage copy = betterCrop;
+		    IplImage *toTresh = &copy;
 
 			outputRecord = fopen(filename, "w+");
 			if (outputRecord == NULL){
@@ -214,13 +323,15 @@ int main()
 			fprintf(outputRecord, "%d %d\n",  studyNum, conditionTrial);
 			//Holds the yellow thresholded image
 			for(int i=0; i < 4; i++){
-				IplImage * imgGreenThresh = GetThresholdedImage(frame, i);
+
+				IplImage * imgGreenThresh = GetThresholdedImage(toTresh, i);
+
 				char *windowName = new char[20];
 				sprintf(windowName, "Threshholded Image for color %d ", i);
 				cvDestroyWindow(windowName);
 				cvNamedWindow(windowName);
 				cvShowImage(windowName, imgGreenThresh);
-				cvResizeWindow(windowName, imgGreenThresh->width/2, imgGreenThresh->height/2);
+				//cvResizeWindow(windowName, imgGreenThresh->width/2, imgGreenThresh->height/2);
 				DetectAndDrawQuads(imgGreenThresh, frame, 0, i);
 			}
 			fprintf(outputRecord, "]\n");
@@ -230,6 +341,7 @@ int main()
 			int keyEscape = 0;
 			while (keyEscape != 32) keyEscape = cvWaitKey(100);
 		}
+		cv::imshow("Original Mat", cameraMat);
 	}
 
 	return 0;
