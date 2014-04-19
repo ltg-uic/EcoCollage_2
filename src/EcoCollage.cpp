@@ -20,14 +20,17 @@ using namespace std;
 
 FILE 			*outputRecord;
 char            *filename = "Results.txt";
-int             conditionTrial = 0;
 
+FILE *trialFile;
+char *trialName = new char [100];
+
+int             conditionTrial = 0;
 //change this number before each study
 int				studyNum = 42;
 int				calibrate = 1;
 
 //also change these if you want to test the markers and if the board is not ready
-bool testMarkers = true;
+bool testMarkers = false;
 bool ready = true;
 
 //change these depending on the size of the board and markers
@@ -75,7 +78,6 @@ void DetectAndDrawQuads(IplImage * img, IplImage * original, int frameNumber, in
 				if(pt[j]->x > maxX) maxX = pt[j]->x;
 				if(pt[j]->y < minY) minY = pt[j]->y;
 				if(pt[j]->y > maxY) maxY = pt[j]->y;
-
 			}
 
 //			int x = 0;
@@ -89,7 +91,7 @@ void DetectAndDrawQuads(IplImage * img, IplImage * original, int frameNumber, in
 
 			int w = abs(maxX-minX);
 			int h = abs(maxY-minY);
-			if( w > 20 & h > 20){
+			if( w > 16 & h > 16){
 			cvResetImageROI(img);
 			char *windowName = new char[20];
 			sprintf(windowName, "Detected Object %d - %d ", colorCase, count);
@@ -98,20 +100,21 @@ void DetectAndDrawQuads(IplImage * img, IplImage * original, int frameNumber, in
 				count++;
 				cvSetImageROI(oriTemp, cvRect(minX, minY, w, h));
 
-				float xVal= (maxX+minX) / 2.0 * 25.0 / 1153;
-				float yVal = (maxY+ minY)/2.0 * 15.0 / 1116;
-				int x = floor( (maxX+minX) / 2.0 * 25.0 / 1153 - 9);
-				int y = floor( (maxY+ minY)/2.0 * 25.0 / 1116 - 15.73);
-				 if( (maxY+ minY)/2.0 * 25.0 / 1116 - 15.69 > 9 && x <= 11 ) y--;
-				if(calibrate == 1 && colorCase == 0){
+				float xVal= ((maxX+minX) / 2.0) * (23.0/temp->width);
+				float yVal = ((maxY+ minY)/ 2.0) * (27.0/temp->height);
+				int x = ceil((maxX+minX) / 2.0) * (23.0/temp->width) + 1;
+				int y = ceil((maxY+ minY)/ 2.0) * (27.0/temp->height) + 1;
+
+				if(calibrate == 1){
 					//cvDestroyWindow(windowName);
 					//cvNamedWindow(windowName);
 					//cvShowImage(windowName, oriTemp);
-					printf("%f %f\n", yVal, xVal);
-					printf("%d %d \n", y, x);
+					printf("%d %f %f\n", colorCase, xVal, yVal);
+					printf("%d %d \n", x, y);
 				}
-				if((x>= 0 && x <= 25) && (y>=0 && y<= 25))
-				fprintf(outputRecord, "%d %d %d\n", colorCase, y, x);
+				if((x>= 0 && x <= 23) && (y>=0 && y<= 27))
+				fprintf(outputRecord, "%d %d %d\n", colorCase, x, y);
+				fprintf(trialFile, "%d %d %d\n", colorCase, x, y);
 			}
 
 		}
@@ -174,7 +177,7 @@ IplImage * GetThresholdedImage(IplImage * img, int colorCase)
 	switch(colorCase){
 	//**	red
 	case 1 :
-		cvInRangeS(imgHSV, cvScalar(0, 100, 60), cvScalar(15, 200, 255), imgThreshed);
+		cvInRangeS(imgHSV, cvScalar(0, 100, 90), cvScalar(20, 200, 255), imgThreshed);
 		break;
 		//**	blue
 	case 3:
@@ -182,7 +185,7 @@ IplImage * GetThresholdedImage(IplImage * img, int colorCase)
 		break;
 		//**	green
 	case 0:
-		cvInRangeS(imgHSV, cvScalar(40, 35, 50), cvScalar(90, 255, 225), imgThreshed);
+		cvInRangeS(imgHSV, cvScalar(40, 35, 40), cvScalar(90, 255, 115), imgThreshed);
 		break;
 		//**	wood
 	case 2:
@@ -227,8 +230,9 @@ int main()
 
 	char key = 'a';
 	bool gotCroppedImg = false;
+	//press esc to escape
 	while (key != 27){
-		int key = cvWaitKey(100);
+		key = cvWaitKey(100);
 
 		frame = cvQueryFrame(capture);
 		//If we couldn't grab a frame... quit
@@ -263,6 +267,7 @@ int main()
 			//Top left
 			cv::Point2f TL = markers[iTL].getCenter();
 
+			//draw lines
 			cv::line(cameraMat, BR, BL, cv::Scalar(0,0,255), 2, 1);
 			cv::line(cameraMat, BL, TL, cv::Scalar(0,0,255), 2, 1);
 			cv::line(cameraMat, TL, TR, cv::Scalar(0,0,255), 2, 1);
@@ -292,16 +297,14 @@ int main()
 			lambda = cv::getPerspectiveTransform(inputPoints, outputPoints);
 
 			//Create transformed image with the correct ratios
-
 			cv::warpPerspective(cameraMat, transformedImg, lambda, cv::Size2i(cropLength, cropLength*ratio));
-			cv::imshow("This is the transformed image", transformedImg);
 
 		    //crop extra border of stuff
 		    int offSetH = (double) transformedImg.rows/(boardHeight- sizeOfMarker) * ((double)sizeOfMarker/2);
 		    int offSetL = (double) transformedImg.cols/(boardLength- sizeOfMarker) * ((double)sizeOfMarker/2);
 		    cv::Rect theArea (offSetL, offSetH, transformedImg.cols - offSetL*2, transformedImg.rows - offSetH*2);
 		    betterCrop = transformedImg(theArea);
-			cv::imshow("better Crop?", betterCrop);
+			cv::imshow("Cropped", betterCrop);
 
 			//update bool
 			gotCroppedImg = true;
@@ -314,13 +317,29 @@ int main()
 		    IplImage copy = betterCrop;
 		    IplImage *toTresh = &copy;
 
+
+		    sprintf(trialName, "e_%d_t_%d.txt", studyNum, conditionTrial);
+		    trialFile = fopen(trialName, "w+");
+		    if (trialFile == NULL){
+		    	printf("Recording file trial open error.");
+	 	        exit(0);
+		    }
+		    time_t stamp;
+		    struct tm *Tm;
+		    stamp = time(NULL);
+		    Tm = localtime(&stamp);
+		    fprintf(trialFile,"\n%d %d %d %d %d %d\n", Tm->tm_year+1900, Tm->tm_mday ,Tm->tm_mon+1, Tm->tm_hour, Tm->tm_min, Tm->tm_sec);
+		    fprintf(trialFile, "experiment %d\ntrial %d\n\n", studyNum, conditionTrial);
+
 			outputRecord = fopen(filename, "w+");
 			if (outputRecord == NULL){
-			        printf("Recording file open error.");
-			        exit(0);
-			    }
+		        printf("Recording file open error.");
+		        exit(0);
+			}
+
 			fprintf(outputRecord, "[\n");
 			fprintf(outputRecord, "%d %d\n",  studyNum, conditionTrial);
+
 			//Holds the yellow thresholded image
 			for(int i=0; i < 4; i++){
 
@@ -334,9 +353,12 @@ int main()
 				//cvResizeWindow(windowName, imgGreenThresh->width/2, imgGreenThresh->height/2);
 				DetectAndDrawQuads(imgGreenThresh, frame, 0, i);
 			}
+
 			fprintf(outputRecord, "]\n");
 			fflush(outputRecord);
 			fclose(outputRecord);
+			fclose(trialFile);
+
 			conditionTrial++;
 			int keyEscape = 0;
 			while (keyEscape != 32) keyEscape = cvWaitKey(100);
