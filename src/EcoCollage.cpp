@@ -223,7 +223,11 @@ IplImage * GetThresholdedImage(IplImage * img, int colorCase)
 	case 2:
 		cvInRangeS(imgHSV, cvScalar(15, 60, 90), cvScalar(40, 200, 200), imgThreshed);
 		break;
-	}
+        //**    black
+    case 4:
+        cvInRangeS(imgHSV, cvScalar(0, 0, 0), cvScalar(255, 255, 40), imgThreshed);
+            break;
+    }
 
 	//Release the temp HSV image and return this thresholded image
 	cvReleaseImage(&imgHSV);
