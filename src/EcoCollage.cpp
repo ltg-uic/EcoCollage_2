@@ -173,7 +173,7 @@ IplImage * GetThresholdedImage(IplImage * img, int colorCase)
 	//**	white on black
 	//		cvInRangeS(imgHSV, cvScalar(0, 0, 200), cvScalar(360, 40, 255), imgThreshed);
 	//**	red
-	//		cvInRangeS(imgHSV, cvScalar(0, 100, 50), cvScalar(15, 200, 150), imgThreshed);
+	//g		ƒcvInRangeS(imgHSV, cvScalar(0, 100, 50), cvScalar(15, 200, 150), imgThreshed);
 	//**	orange
 	//		cvInRangeS(imgHSV, cvScalar(10, 100, 0), cvScalar(30, 250, 175), imgThreshed);
 	//**	green
