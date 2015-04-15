@@ -34,7 +34,7 @@
                                                         <segment title="Corner Markers"/>
                                                     </segments>
                                                     <connections>
-                                                        <action selector="segmentedControl:" destination="lKo-U9-UYs" eventType="valueChanged" id="h3Y-6i-k6x"/>
+                                                        <action selector="segmentedControl:" destination="lKo-U9-UYs" eventType="valueChanged" id="jr2-4i-bvZ"/>
                                                     </connections>
                                                 </segmentedControl>
                                             </subviews>
@@ -133,7 +133,7 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="right" text="255" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="WN0-7X-48l">
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="255" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="WN0-7X-48l">
                                                     <rect key="frame" x="811" y="7" width="42" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="16"/>
@@ -214,6 +214,9 @@
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </view>
                     </navigationItem>
+                    <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="ScX-IJ-Jfj">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </refreshControl>
                     <connections>
                         <outlet property="labelSlider" destination="LaU-9x-AZw" id="M8C-5R-5wH"/>
                         <outlet property="labelSlider2" destination="v2p-E5-f57" id="OwZ-Uy-h7g"/>

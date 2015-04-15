@@ -12,7 +12,9 @@
 
 @interface NMDemoTVC : UITableViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
+
 - (IBAction)segmentedControl:(UISegmentedControl *)sender;
+
 
 @property (weak, nonatomic) IBOutlet NMRangeSlider *labelSlider;
 @property (weak, nonatomic) IBOutlet UILabel *lowerLabel;

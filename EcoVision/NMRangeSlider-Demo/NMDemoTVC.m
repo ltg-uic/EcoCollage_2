@@ -18,6 +18,11 @@
 
 int segmentIndex = 0;
 
+- (void)scrollViewDidScroll: (UIScrollView*)scroll {
+    [self configureLabelSliders];
+    [self updateSliderLabels];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -30,6 +35,7 @@ int segmentIndex = 0;
 {
     [super viewDidUnload];
 }
+
 
 - (void) viewDidAppear:(BOOL)animated
 {
@@ -117,9 +123,6 @@ int segmentIndex = 0;
     upperCenter.y = (self.labelSlider.center.y - 30.0f);
     self.upperLabel.center = upperCenter;
     self.upperLabel.text = [NSString stringWithFormat:@"%d", (int)self.labelSlider.upperValue];
-    
-    
-    NSLog(@"lowerCenter.x: %f, labelSlider.lowerValue: %f", lowerCenter.x, self.labelSlider.lowerValue);
 }
 
 - (void) updateSliderLabel2
@@ -132,6 +135,7 @@ int segmentIndex = 0;
     hsvValues[2 + segmentIndex*6] = (int)self.labelSlider2.lowerValue;
     hsvValues[3 + segmentIndex*6] = (int)self.labelSlider2.upperValue;
     [CVWrapper setHSV_Values:hsvValues];
+    
     
     CGPoint lowerCenter;
     lowerCenter.x = (self.labelSlider2.lowerCenter.x + self.labelSlider2.frame.origin.x);
@@ -191,11 +195,22 @@ int segmentIndex = 0;
 }
 
 - (IBAction)segmentedControl:(UISegmentedControl *)sender {
+    [self performSelector:@selector(labelPositioningHack) withObject:(self) afterDelay:(0.01)]; //hack to get labels into correct position
     segmentIndex = (int)sender.selectedSegmentIndex;
     [CVWrapper setSegmentIndex:segmentIndex];
     [self configureLabelSliders];
     [self updateSliderLabels];
 }
+
+- (IBAction)dostuff:(UIRefreshControl *)sender {
+    [self updateSliderLabels];
+}
+
+- (void) labelPositioningHack {
+    [self configureLabelSliders];
+    [self updateSliderLabels];
+}
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -204,6 +219,5 @@ int segmentIndex = 0;
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
     }
 }
-
 
 @end
