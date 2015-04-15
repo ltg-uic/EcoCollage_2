@@ -20,8 +20,7 @@
 int widthGlobal = 0;
 
 UIImage *userImage = nil;
-UIImage *savedImage;
-UIImage *userImageGlobal;
+UIImage *threshedGlobal = nil;
 UIImage *warpedGlobal;
 bool studyNum;
 NSString *fileContents;
@@ -33,10 +32,6 @@ int studyNumber;
 int trialNumber;
 
 char results[5000];
-
-
-int testBoy = 0;
-int rowGlobal;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -69,25 +64,12 @@ int rowGlobal;
 
     [CVWrapper setCurrentImage:userImage];
     
-    //** following code presents userImage in scrollView
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:userImage];
-    
-    // if there is an image in scrollView it will remove it
-    [self.imageView removeFromSuperview];
-    
     if (userImage == nil) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:@"Test image thresholding failed! Please try taking the picture again" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
-        [alert show];
+        [self throwErrorAlert:@"Test image thresholding failed! Please try taking the picture again"];
         self.scrollView.backgroundColor = [UIColor whiteColor]; // hides scrollView
     }
     else {
-        self.imageView = imageView;
-        [self.scrollView addSubview:imageView];
-        self.scrollView.backgroundColor = [UIColor blackColor];
-        self.scrollView.contentSize = self.imageView.bounds.size;
-        self.scrollView.maximumZoomScale = 4.0;
-        self.scrollView.minimumZoomScale = 0.5;
-        self.scrollView.contentOffset = CGPointMake(-(self.scrollView.bounds.size.width-self.imageView.bounds.size.width)/2, -(self.scrollView.bounds.size.height-self.imageView.bounds.size.height)/2);
+        [self updateScrollView:userImage];
     }
     
     //** end code presenting userImage in scrollView
@@ -129,8 +111,7 @@ int rowGlobal;
     
     
     if (userImage == nil) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:@"No image to threshold! \nTake a photo of the entire board" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
-        [alert show];
+        [self throwErrorAlert:@"No image to threshold! \nTake a photo of the entire board"];
         return 0;
     }
     
@@ -142,70 +123,29 @@ int rowGlobal;
      **             4 = dark green (corner markers)
      */
     
+    threshedGlobal = [CVWrapper thresh:userImage colorCase: 4];
     
-    UIImage* threshed = nil;
-    threshed = [CVWrapper thresh:userImage colorCase: 4];
-    
-    //** following code shows thresholded image in scrollView
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:threshed];
-    
-    // if there is an image in scrollView it will remove it
-    [self.imageView removeFromSuperview];
-    
-    if (userImage == nil) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:@"Image thresholding failed! Please try taking the picture again" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
-        [alert show];
-        self.scrollView.backgroundColor = [UIColor whiteColor]; // hides scrollView
-        return 0;
-    }
-    else {
-        self.imageView = imageView;
-        [self.scrollView addSubview:imageView];
-        self.scrollView.backgroundColor = [UIColor blackColor];
-        self.scrollView.contentSize = self.imageView.bounds.size;
-        self.scrollView.maximumZoomScale = 4.0;
-        self.scrollView.minimumZoomScale = 0.5;
-        self.scrollView.contentOffset = CGPointMake(-(self.scrollView.bounds.size.width-self.imageView.bounds.size.width)/2, -(self.scrollView.bounds.size.height-self.imageView.bounds.size.height)/2);
-        // save userImage image to global copy for detecting contours
-        userImageGlobal = userImage;
-        return 1;
-    }
-    
-    //** end of code showing thresholded image in scrollView5000
-    
+    return (threshedGlobal == nil) ? 0 : 1;
 }
 -(int)contoury{
-    if(userImageGlobal == nil) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:@"Image was not thresholded. Threshold your image!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
-        [alert show];
-        self.scrollView.backgroundColor = [UIColor whiteColor]; // hides scrollView
+    if(threshedGlobal == nil) {
+        [self throwErrorAlert:@"Image was not thresholded. Threshold your image!"];
         return 0;
     }
     
-    int width = [CVWrapper detectContours:userImageGlobal corners:cornersGlobal];
+    int width = [CVWrapper detectContours:threshedGlobal corners:cornersGlobal];
     
     if(width != 0) {
         widthGlobal = abs(width);
     }
-    else widthGlobal = 1;
     
     return 1;
     
 }
 -(int)warpy{
-    /*
-     * get userImage image
-     * find triangle contours on userImage image
-     * get Point2f of those triangle contours
-     * plug those points into warper
-     */
-    
-    
-    
     int height = (widthGlobal * 23) / 25;
-    if (userImage == nil || userImageGlobal == nil || widthGlobal == 0) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:@"Can not warp! \nMake sure you threshold and contour first!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
-        [alert show];
+    if (userImage == nil || threshedGlobal == nil || widthGlobal == 0) {
+        [self throwErrorAlert:@"Can not warp! \nMake sure you threshold and contour first!"];
         return 0;
     }
     
@@ -233,37 +173,15 @@ int rowGlobal;
     // use stitchedImageGlobal because it is the global equivalent to stitchedImage
     UIImage* destination = [CVWrapper warp:userImage destination_image:dst];
     
-    
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:destination];
-    
-    
-    
-    //** following code shows warped image in scrollView
-    
-    // if there is an image in scrollView it will remove it
-    [self.imageView removeFromSuperview];
-    
-    
     if (destination == nil) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:@"Image warping failed! \nPlease take your picture again" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
-        [alert show];
-        self.scrollView.backgroundColor = [UIColor whiteColor]; // hides scrollView
+        [self throwErrorAlert:@"Image warping failed! \nPlease take your picture again"];
         return 0;
     }
     else {
-        [CVWrapper setCurrentImage:destination]; // set image for SecondViewController to use for thresh holding and displaying on "configuration" tab
-        warpedGlobal = destination;
-        self.imageView = imageView;
-        [self.scrollView addSubview:imageView];
-        self.scrollView.backgroundColor = [UIColor blackColor];
-        self.scrollView.contentSize = self.imageView.bounds.size;
-        self.scrollView.maximumZoomScale = 4.0;
-        self.scrollView.minimumZoomScale = 0.5;
-        self.scrollView.contentOffset = CGPointMake(-(self.scrollView.bounds.size.width-self.imageView.bounds.size.width)/2, -(self.scrollView.bounds.size.height-self.imageView.bounds.size.height)/2);
+        [CVWrapper setCurrentImage:destination];
+        [self updateScrollView:destination];
         return 1;
     }
-    
-    //** end of code showing warped image in scrollView
     
 }
 
@@ -274,42 +192,27 @@ int rowGlobal;
 - (IBAction)analyze:(UIButton *)sender {
     
     if(IPAddress == nil) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Enter the server IP address" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
-        [alert show];
+        [self throwErrorAlert:@"Enter the server IP address"];
         return;
     }
     
     if(studyNum == 0) { // checks if bool studyNum is false (means studyNumber text field is empty)
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Enter your study number" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
-        [alert show];
+        [self throwErrorAlert:@"Enter your study number"];
         return;
     }
     
     if(studyNumber < -1) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Enter your trial number" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
-        [alert show];
+        [self throwErrorAlert:@"Enter your trial number"];
         return;
     }
     
     // for testing
     UIImage* testImg = [UIImage imageNamed:@"single31.JPG"];
-    
-    int worked;
-    if(warpedGlobal == nil) {
-        worked = [CVWrapper analysis:testImg studyNumber: studyNumber trialNumber:trialNumber results: results];
+    if(warpedGlobal == nil) { // also for testing
+        [CVWrapper analysis:testImg studyNumber: studyNumber trialNumber:trialNumber results: results];
     }
     else {
-        worked = [CVWrapper analysis:warpedGlobal studyNumber: studyNumber trialNumber:trialNumber results: results];
-    }
-    
-    if(worked) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Success!" message:@"We found your pieces!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
-        [alert show];
-        [self sendData];
-    }
-    else {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Oops!" message:@"We couldn't find your pieces!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
-        [alert show];
+        [CVWrapper analysis:warpedGlobal studyNumber: studyNumber trialNumber:trialNumber results: results];
     }
 }
 
@@ -319,8 +222,7 @@ int rowGlobal;
     
     server = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", IPAddress]];
     
-    
-    // get rid of trailing space in results string
+    // get rid of trailing 'space' character in results string
     int i = 0;
     while(results[i] != '\0') {
         if(results[i+1] == '\0')
@@ -366,6 +268,28 @@ int rowGlobal;
 - (IBAction)incrementTrialNum:(UIButton *)sender {
     trialNumber++;
     self.trialNumber.text = [NSString stringWithFormat:@"%d", trialNumber];
+}
+
+- (void) updateScrollView:(UIImage *) img {
+    //** following code presents userImage in scrollView
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:img];
+    
+    // if there is an image in scrollView it will remove it
+    [self.imageView removeFromSuperview];
+    
+    self.imageView = imageView;
+    [self.scrollView addSubview:imageView];
+    self.scrollView.backgroundColor = [UIColor blackColor];
+    self.scrollView.contentSize = self.imageView.bounds.size;
+    self.scrollView.maximumZoomScale = 4.0;
+    self.scrollView.minimumZoomScale = 0.5;
+    self.scrollView.contentOffset = CGPointMake(-(self.scrollView.bounds.size.width-self.imageView.bounds.size.width)/2, -(self.scrollView.bounds.size.height-self.imageView.bounds.size.height)/2);
+}
+
+- (void) throwErrorAlert:(NSString*) alertString {
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:alertString delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
+    [alert show];
+    self.scrollView.backgroundColor = [UIColor whiteColor]; // hides scrollView
 }
 
 

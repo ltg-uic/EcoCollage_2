@@ -25,12 +25,10 @@
 @property (weak, nonatomic) IBOutlet NMRangeSlider *labelSlider2;
 @property (weak, nonatomic) IBOutlet UILabel *lowerLabel2;
 @property (weak, nonatomic) IBOutlet UILabel *upperLabel2;
-- (IBAction)labelSliderChanged2:(NMRangeSlider*)sender;
 
 
 @property (weak, nonatomic) IBOutlet NMRangeSlider *labelSlider3;
 @property (weak, nonatomic) IBOutlet UILabel *lowerLabel3;
 @property (weak, nonatomic) IBOutlet UILabel *upperLabel3;
-- (IBAction)labelSliderChanged3:(NMRangeSlider*)sender;
 
 @end

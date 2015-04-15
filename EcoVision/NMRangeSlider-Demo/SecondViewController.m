@@ -35,10 +35,10 @@ UIImage* threshedImage = nil;
     [super viewWillAppear:animated];
     
     plainImage = [CVWrapper getCurrentImage];
-    [self configureScrollView:[CVWrapper getCurrentImage]];
+    [self updateScrollView:[CVWrapper getCurrentImage]];
 }
 
-- (void) configureScrollView:(UIImage *) img {
+- (void) updateScrollView:(UIImage *) img {
     //** following code presents userImage in scrollView
     UIImageView *imageView = [[UIImageView alloc] initWithImage:img];
     
@@ -54,19 +54,6 @@ UIImage* threshedImage = nil;
     self.scrollView.contentOffset = CGPointMake(-(self.scrollView.bounds.size.width-self.imageView.bounds.size.width)/2, -(self.scrollView.bounds.size.height-self.imageView.bounds.size.height)/2);
 }
 
-/*
-- (IBAction)printHSV_Values:(UIButton *)sender {
-    int* hsvValues = malloc(sizeof(int) * 30);
-    [CVWrapper getHSV_Values: hsvValues];
-    
-    int i;
-    for(i = 0; i < 30; i++) {
-        printf("%d\n", hsvValues[i]);
-    }
-    
-    free(hsvValues);
-}
- */
 
 - (IBAction)threshold_image:(UIButton *)sender {
     if (plainImage == nil) {
@@ -77,10 +64,10 @@ UIImage* threshedImage = nil;
 
     threshedImage = [CVWrapper thresh:plainImage colorCase: [CVWrapper getSegmentIndex]];
     
-    [self configureScrollView:threshedImage];
+    [self updateScrollView:threshedImage];
 }
 
 - (IBAction)show_plain_image:(UIButton *)sender {
-    [self configureScrollView:plainImage];
+    [self updateScrollView:plainImage];
 }
 @end
