@@ -27,8 +27,9 @@ int segmentIndex = 0;
 {
     [super viewDidLoad];
     [self initLabelSliderConfiguration];
-    [self configureLabelSliders];
-    [self updateSliderLabels];
+    [self performSelector:@selector(configureLabelSliders) withObject:(self) afterDelay:(0.1)];
+    //[self configureLabelSliders];
+    [self performSelector:@selector(updateSliderLabels) withObject:(self) afterDelay:(0.1)];
 }
 
 

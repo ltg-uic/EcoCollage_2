@@ -17,6 +17,7 @@
 
 - (IBAction)threshold_image:(UIButton *)sender;
 - (IBAction)show_plain_image:(UIButton *)sender;
+- (IBAction)saveHSVValues:(UIButton *)sender;
 
 @end
 

@@ -22,6 +22,7 @@ UIImage* threshedImage = nil;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self setHSVValues];
     // Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -69,5 +70,50 @@ UIImage* threshedImage = nil;
 
 - (IBAction)show_plain_image:(UIButton *)sender {
     [self updateScrollView:plainImage];
+}
+
+- (IBAction)saveHSVValues:(UIButton *)sender {
+    int values[30];
+    [CVWrapper getHSV_Values:values];
+    
+    NSString *str = @"";
+    
+    int i;
+    for(i = 0; i < 30; i++) {
+        //if (i == 29) str = [str stringByAppendingFormat:@"%d", values[i]];
+        str = [str stringByAppendingFormat:@"%d ", values[i]];
+    }
+    
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"hsvValues"];
+    fileName = [fileName stringByAppendingPathExtension:@"txt"];
+    
+    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName ];
+    [file writeData:[str dataUsingEncoding:NSUTF8StringEncoding]];
+    [file closeFile];
+    
+}
+
+- (void) setHSVValues {
+    int hsvValues[30];
+    [CVWrapper getHSV_Values:hsvValues];
+    
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"hsvValues"];
+    fileName = [fileName stringByAppendingPathExtension:@"txt"];
+    NSString* content = [NSString stringWithContentsOfFile:fileName
+                                                  encoding:NSUTF8StringEncoding
+                                                     error:NULL];
+    
+    
+    NSArray *arr = [content componentsSeparatedByString:@" "];
+    
+    int i;
+    for(i = 0; i < 30; i++) {
+        hsvValues[i] = [[arr objectAtIndex:i]integerValue];
+    }
+    
+    [CVWrapper setHSV_Values:hsvValues];
+    
 }
 @end

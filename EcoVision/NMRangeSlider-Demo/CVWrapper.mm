@@ -27,6 +27,7 @@ int a[8];
 
 @implementation CVWrapper
 
+
 + (void) setSegmentIndex:(int)index {
     segIndex = index;
 }

@@ -23,8 +23,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="96"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="tgh-z1-cfT">
-                                                    <rect key="frame" x="8" y="34" width="845" height="29"/>
+                                                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="vKz-Lo-aQ9">
+                                                    <rect key="frame" x="14" y="34" width="839" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <segments>
                                                         <segment title="Swales"/>
@@ -34,7 +34,7 @@
                                                         <segment title="Corner Markers"/>
                                                     </segments>
                                                     <connections>
-                                                        <action selector="segmentedControl:" destination="lKo-U9-UYs" eventType="valueChanged" id="jr2-4i-bvZ"/>
+                                                        <action selector="segmentedControl:" destination="lKo-U9-UYs" eventType="valueChanged" id="IzJ-Ku-1ex"/>
                                                     </connections>
                                                 </segmentedControl>
                                             </subviews>
@@ -117,14 +117,6 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="96"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <view contentMode="scaleToFill" id="v2p-E5-f57" customClass="NMRangeSlider">
-                                                    <rect key="frame" x="8" y="30" width="845" height="36"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
-                                                    <connections>
-                                                        <action selector="labelSliderChanged:" destination="lKo-U9-UYs" eventType="valueChanged" id="6Pd-my-14L"/>
-                                                    </connections>
-                                                </view>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="sXl-ys-Lfs">
                                                     <rect key="frame" x="20" y="7" width="42" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -139,6 +131,14 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
+                                                <view contentMode="scaleToFill" id="v2p-E5-f57" customClass="NMRangeSlider">
+                                                    <rect key="frame" x="8" y="30" width="845" height="36"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                                    <connections>
+                                                        <action selector="labelSliderChanged:" destination="lKo-U9-UYs" eventType="valueChanged" id="6Pd-my-14L"/>
+                                                    </connections>
+                                                </view>
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -202,7 +202,7 @@
                     <navigationItem key="navigationItem" id="efd-eN-yNh">
                         <nil key="title"/>
                         <view key="titleView" contentMode="scaleToFill" id="46f-eR-PxI">
-                            <rect key="frame" x="60" y="6" width="200" height="33"/>
+                            <rect key="frame" x="331" y="6" width="200" height="33"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="center" image="navbar-nullmonkey-title.png" id="Ow8-FF-Qns">
@@ -213,9 +213,6 @@
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </view>
                     </navigationItem>
-                    <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="ScX-IJ-Jfj">
-                        <autoresizingMask key="autoresizingMask"/>
-                    </refreshControl>
                     <connections>
                         <outlet property="labelSlider" destination="LaU-9x-AZw" id="M8C-5R-5wH"/>
                         <outlet property="labelSlider2" destination="v2p-E5-f57" id="OwZ-Uy-h7g"/>
@@ -230,7 +227,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="M4v-jO-gTj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1105.5" y="1823.5"/>
+            <point key="canvasLocation" x="1105.5" y="1773.5"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="lKp-pC-1YM">
@@ -264,31 +261,41 @@
                                 <rect key="frame" x="194" y="20" width="637" height="349"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </scrollView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="6BI-UX-pKb">
-                                <rect key="frame" x="82" y="339" width="68" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Threshold">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="threshold_image:" destination="VJA-D1-7UM" eventType="touchUpInside" id="ot1-lI-O3M"/>
-                                </connections>
-                            </button>
                             <containerView opaque="NO" contentMode="scaleToFill" id="l9a-kz-d69">
                                 <rect key="frame" x="82" y="377" width="861" height="331"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <connections>
-                                    <segue destination="lKo-U9-UYs" kind="embed" id="Wi6-uk-Hqe"/>
+                                    <segue destination="lKo-U9-UYs" kind="embed" id="xGf-2R-7OU"/>
                                 </connections>
                             </containerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="UVZ-RS-qDG">
-                                <rect key="frame" x="863" y="339" width="80" height="30"/>
+                                <rect key="frame" x="82" y="339" width="80" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Plain Image">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="show_plain_image:" destination="VJA-D1-7UM" eventType="touchUpInside" id="YQf-Po-TX3"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="EjZ-Fc-mUm">
+                                <rect key="frame" x="860" y="339" width="83" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Save Values">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="saveHSVValues:" destination="VJA-D1-7UM" eventType="touchUpInside" id="CwY-kf-RCp"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="6BI-UX-pKb">
+                                <rect key="frame" x="82" y="301" width="68" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Threshold">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="threshold_image:" destination="VJA-D1-7UM" eventType="touchUpInside" id="ot1-lI-O3M"/>
                                 </connections>
                             </button>
                         </subviews>

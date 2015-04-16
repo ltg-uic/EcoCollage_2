@@ -72,15 +72,16 @@ vector<Mat> imgs;
 string result_name = "result.jpg";
 
 //int h[] = {10, 50, 50, 80, 200, 255, 80, 140, 100, 175, 255, 255, 90, 40, 120, 110, 100, 225, 0, 30, 50, 15, 220, 210, 15, 35, 35, 90, 200, 130};
+// hsv values in different format
+// 10 80 50 200 50 255 80 175 140 255 100 255 90 110 40 100 120 225 0 15 30 220 50 210 15 90 35 200 35 130
 
-int hsv[] = {10, 80, 50, 200, 50, 255, 80, 175, 140, 255, 100, 255, 90, 110, 40, 100, 120, 225, 0, 15, 30, 220, 50, 210, 15, 90, 35, 200, 35, 130};
+int hsv[30];
 
 
 #define TL_MARKER 818
 #define TR_MARKER 839
 #define BL_MARKER 4
 #define BR_MARKER 339
-
 
 
 void getHSV_Values(int input[]) {
