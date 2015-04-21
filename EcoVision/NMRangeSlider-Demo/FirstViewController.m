@@ -65,14 +65,12 @@ char results[5000];
     [CVWrapper setCurrentImage:userImage];
     
     if (userImage == nil) {
-        [self throwErrorAlert:@"Test image thresholding failed! Please try taking the picture again"];
+        [self throwErrorAlert:@"Error taking photo! Please try taking the picture again"];
         self.scrollView.backgroundColor = [UIColor whiteColor]; // hides scrollView
     }
     else {
         [self updateScrollView:userImage];
     }
-    
-    //** end code presenting userImage in scrollView
     
     [picker dismissViewControllerAnimated:YES completion:NULL];
 }
@@ -83,7 +81,6 @@ char results[5000];
 }
 
 - (IBAction)process:(UIButton *)sender {
-    
     [self processMap];
     
 }
@@ -108,8 +105,6 @@ char results[5000];
 }
 
 -(int)threshy{
-    
-    
     if (userImage == nil) {
         [self throwErrorAlert:@"No image to threshold! \nTake a photo of the entire board"];
         return 0;
@@ -272,13 +267,13 @@ char results[5000];
 
 - (void) updateScrollView:(UIImage *) img {
     //** following code presents userImage in scrollView
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:img];
+    UIImageView *newView = [[UIImageView alloc] initWithImage:img];
     
     // if there is an image in scrollView it will remove it
     [self.imageView removeFromSuperview];
     
-    self.imageView = imageView;
-    [self.scrollView addSubview:imageView];
+    self.imageView = newView;
+    [self.scrollView addSubview:newView];
     self.scrollView.backgroundColor = [UIColor blackColor];
     self.scrollView.contentSize = self.imageView.bounds.size;
     self.scrollView.maximumZoomScale = 4.0;

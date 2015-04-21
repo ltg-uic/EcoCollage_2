@@ -162,7 +162,7 @@ int DetectAndDrawQuads(IplImage * img, IplImage * original, int frameNumber, int
     {
         
         result = cvApproxPoly(contours, sizeof(CvContour), storage, CV_POLY_APPROX_DP, cvContourPerimeter(contours) * 0.02, 0);
-        if(result->total>=4 && fabs(cvContourArea(result, CV_WHOLE_SEQ)) > 10)
+        if(result->total>=4 && fabs(cvContourArea(result, CV_WHOLE_SEQ)) > 8)
         {
             
             CvPoint * pt[result->total];

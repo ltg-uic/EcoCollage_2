@@ -41,13 +41,13 @@ UIImage* threshedImage = nil;
 
 - (void) updateScrollView:(UIImage *) img {
     //** following code presents userImage in scrollView
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:img];
+    UIImageView *newView = [[UIImageView alloc] initWithImage:img];
     
     // if there is an image in scrollView it will remove it
     [self.imageView removeFromSuperview];
 
-    self.imageView = imageView;
-    [self.scrollView addSubview:imageView];
+    self.imageView = newView;
+    [self.scrollView addSubview:newView];
     self.scrollView.backgroundColor = [UIColor blackColor];
     self.scrollView.contentSize = self.imageView.bounds.size;
     self.scrollView.maximumZoomScale = 4.0;
@@ -70,6 +70,41 @@ UIImage* threshedImage = nil;
 
 - (IBAction)show_plain_image:(UIButton *)sender {
     [self updateScrollView:plainImage];
+    
+    if(plainImage == nil) {
+        [self takePhoto];
+    }
+}
+
+- (void)takePhoto {
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = NO;
+    picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    plainImage = info[UIImagePickerControllerOriginalImage];
+    
+    [CVWrapper setCurrentImage:plainImage];
+    
+    if (plainImage == nil) {
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:@"Error taking photo!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
+        [alert show];
+        self.scrollView.backgroundColor = [UIColor whiteColor]; // hides scrollView
+
+    }
+    else {
+        [self updateScrollView:plainImage];
+    }
+    
+    [picker dismissViewControllerAnimated:YES completion:NULL];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    
+    [picker dismissViewControllerAnimated:YES completion:NULL];
 }
 
 - (IBAction)saveHSVValues:(UIButton *)sender {
@@ -80,7 +115,6 @@ UIImage* threshedImage = nil;
     
     int i;
     for(i = 0; i < 30; i++) {
-        //if (i == 29) str = [str stringByAppendingFormat:@"%d", values[i]];
         str = [str stringByAppendingFormat:@"%d ", values[i]];
     }
     
@@ -88,7 +122,7 @@ UIImage* threshedImage = nil;
     NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"hsvValues"];
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
     
-    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName ];
+    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
     [file writeData:[str dataUsingEncoding:NSUTF8StringEncoding]];
     [file closeFile];
     
@@ -101,10 +135,10 @@ UIImage* threshedImage = nil;
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"hsvValues"];
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
+    
     NSString* content = [NSString stringWithContentsOfFile:fileName
                                                   encoding:NSUTF8StringEncoding
                                                      error:NULL];
-    
     
     NSArray *arr = [content componentsSeparatedByString:@" "];
     
