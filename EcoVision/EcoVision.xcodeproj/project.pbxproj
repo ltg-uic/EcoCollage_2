@@ -488,6 +488,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NMRangeSlider-Demo/EcoVision-Prefix.pch";
 				INFOPLIST_FILE = "NMRangeSlider-Demo/EcoVision-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -511,6 +512,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NMRangeSlider-Demo/EcoVision-Prefix.pch";
 				INFOPLIST_FILE = "NMRangeSlider-Demo/EcoVision-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",

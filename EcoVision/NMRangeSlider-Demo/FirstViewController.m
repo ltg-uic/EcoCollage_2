@@ -25,7 +25,8 @@ UIImage *warpedGlobal;
 bool studyNum;
 NSString *fileContents;
 NSURL *server;
-NSString *IPAddress = @"131.193.79.217";
+NSString *IPAddress = @"";
+//@"131.193.79.217";
 
 int cornersGlobal[8];
 int studyNumber;
@@ -36,6 +37,8 @@ char results[5000];
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    [self setHSVValues];
     
     self.IPAddress.text = IPAddress;
     
@@ -173,6 +176,7 @@ char results[5000];
         return 0;
     }
     else {
+        warpedGlobal = destination;
         [CVWrapper setCurrentImage:destination];
         [self updateScrollView:destination];
         return 1;
@@ -202,12 +206,21 @@ char results[5000];
     }
     
     // for testing
+    int worked;
     UIImage* testImg = [UIImage imageNamed:@"single31.JPG"];
     if(warpedGlobal == nil) { // also for testing
-        [CVWrapper analysis:testImg studyNumber: studyNumber trialNumber:trialNumber results: results];
+        worked = [CVWrapper analysis:testImg studyNumber: studyNumber trialNumber:trialNumber results: results];
     }
     else {
-        [CVWrapper analysis:warpedGlobal studyNumber: studyNumber trialNumber:trialNumber results: results];
+        worked = [CVWrapper analysis:warpedGlobal studyNumber: studyNumber trialNumber:trialNumber results: results];
+    }
+    if(worked) {
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Success!" message:@"We found your pieces!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
+        [alert show];
+        [self sendData];
+    }
+    else {
+        [self throwErrorAlert:@"No markers were found!"];
     }
 }
 
@@ -285,6 +298,29 @@ char results[5000];
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:alertString delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
     [alert show];
     self.scrollView.backgroundColor = [UIColor whiteColor]; // hides scrollView
+}
+
+- (void) setHSVValues {
+    int hsvValues[30];
+    [CVWrapper getHSV_Values:hsvValues];
+    
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"hsvValues"];
+    fileName = [fileName stringByAppendingPathExtension:@"txt"];
+    
+    NSString* content = [NSString stringWithContentsOfFile:fileName
+                                                  encoding:NSUTF8StringEncoding
+                                                     error:NULL];
+    
+    NSArray *arr = [content componentsSeparatedByString:@" "];
+    
+    int i;
+    for(i = 0; i < 30; i++) {
+        hsvValues[i] = [[arr objectAtIndex:i]integerValue];
+    }
+    
+    [CVWrapper setHSV_Values:hsvValues];
+    
 }
 
 
