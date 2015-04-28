@@ -135,7 +135,7 @@ void warp (cv::Mat src, cv::Mat dst, CvPoint corners[4]) {
 
 }
 
-COORDS coords[200];
+COORDS coords[MAX_POINTS];
 int coordCount = 0;
 int resultCount = 0;
 static int stringCount = 0;
@@ -235,7 +235,7 @@ int DetectAndDrawQuads(IplImage * img, IplImage * original, int frameNumber, int
                     
                     
                     char str[] = "%d %d %d ";
-                    char temp[2000];
+                    char temp[10000];
                     sprintf(temp, str, colorCase, x, 24-y);
                     
                     
@@ -399,6 +399,8 @@ int getCorners(IplImage * img, IplImage * original, CvPoint pts[], int frameNumb
                 tempPoint.y = pt[i]->y;
                 pts[ptsIndex] = tempPoint;
                 ptsIndex++;
+                // if it is about to go over the max size of CvPoints, return it right away
+                if(ptsIndex >= MAX_POINTS) return ptsIndex;
             }
         }
         contours = contours -> h_next;

@@ -14,7 +14,7 @@
 #ifndef CVOpenTemplate_Header_h
 #define CVOpenTemplate_Header_h
 
-
+#define MAX_POINTS 50000
 
 void warp (cv::Mat src, cv::Mat dst, CvPoint corners[4]);
 

@@ -102,14 +102,18 @@ int a[8];
     
     IplImage* ipl_dst = ipl_src;
 
-    //ERROR
-    CvPoint pts[500];
+    // potential error for memory / seg fault
+    CvPoint pts[MAX_POINTS];
     
     
     
     int ptsNumber = getCorners(ipl_src, ipl_dst, pts, 5, 4, 0);
     
+    printf("Number of CvPoints detected: %d\n", ptsNumber);
+    printf("Size of CvPoint: %lu\n", sizeof(CvPoint));
+    
     int i = 0;
+    /*
     //ERRORS OCCURRING
     //pts WITHOUT X OR Y VALUES FROM getCorners
     //EVEN THOUGH EACH PT SHOULD HAVE BEEN POPULATED WITHIN THE FUNCTION
@@ -119,7 +123,7 @@ int a[8];
         printf("x: %d y: %d\n", x, y);
         i++;
     }
-    
+    */
     
     int src_width = src.size.width - 1;
     int src_height = src.size.height - 1;

@@ -109,8 +109,10 @@ char results[5000];
 
 -(int)threshy{
     if (userImage == nil) {
-        [self throwErrorAlert:@"No image to threshold! \nTake a photo of the entire board"];
-        return 0;
+        UIImage* testImg = [UIImage imageNamed:@"crash_test.JPG"];
+        userImage = testImg;
+        //[self throwErrorAlert:@"No image to threshold! \nTake a photo of the entire board"];
+        //return 0;
     }
     
     /* thresholds image
