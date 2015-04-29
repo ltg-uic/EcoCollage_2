@@ -36,7 +36,8 @@ UIImage* threshedImage = nil;
     [super viewWillAppear:animated];
     
     plainImage = [CVWrapper getCurrentImage];
-    [self updateScrollView:[CVWrapper getCurrentImage]];
+    if(plainImage != nil)
+        [self updateScrollView:[CVWrapper getCurrentImage]];
 }
 
 - (void) updateScrollView:(UIImage *) img {
@@ -48,7 +49,7 @@ UIImage* threshedImage = nil;
 
     self.imageView = newView;
     [self.scrollView addSubview:newView];
-    self.scrollView.backgroundColor = [UIColor blackColor];
+    self.scrollView.backgroundColor = [UIColor whiteColor];
     self.scrollView.contentSize = self.imageView.bounds.size;
     self.scrollView.maximumZoomScale = 4.0;
     self.scrollView.minimumZoomScale = 0.5;

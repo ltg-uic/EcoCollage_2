@@ -289,7 +289,7 @@ char results[5000];
     
     self.imageView = newView;
     [self.scrollView addSubview:newView];
-    self.scrollView.backgroundColor = [UIColor blackColor];
+    self.scrollView.backgroundColor = [UIColor whiteColor];
     self.scrollView.contentSize = self.imageView.bounds.size;
     self.scrollView.maximumZoomScale = 4.0;
     self.scrollView.minimumZoomScale = 0.5;
