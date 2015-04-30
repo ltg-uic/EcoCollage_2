@@ -249,7 +249,7 @@
             </objects>
             <point key="canvasLocation" x="271" y="126"/>
         </scene>
-        <!--Configure-->
+        <!--Settings-->
         <scene sceneID="gxi-Fi-fRk">
             <objects>
                 <viewController id="VJA-D1-7UM" customClass="SecondViewController" sceneMemberID="viewController">
@@ -301,7 +301,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Configure" image="second" id="9JW-57-Yp8"/>
+                    <tabBarItem key="tabBarItem" title="Settings" image="settings-1x.png" id="9JW-57-Yp8"/>
                     <value key="contentSizeForViewInPopover" type="size" width="1024" height="768"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="iPad"/>
@@ -313,7 +313,7 @@
             </objects>
             <point key="canvasLocation" x="1105" y="1079"/>
         </scene>
-        <!--EcoCollage-->
+        <!--Marker Identification-->
         <scene sceneID="PJz-Qb-z3T">
             <objects>
                 <viewController id="7ZY-V1-6bE" customClass="FirstViewController" sceneMemberID="viewController">
@@ -407,7 +407,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="EcoCollage" image="first" id="7d6-qb-8vT"/>
+                    <tabBarItem key="tabBarItem" title="Marker Identification" image="camera-1x.png" id="7d6-qb-8vT"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="iPad"/>
                     <connections>
@@ -423,9 +423,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="first" width="30" height="30"/>
+        <image name="camera-1x.png" width="31" height="25"/>
         <image name="navbar-nullmonkey-title.png" width="154" height="25"/>
-        <image name="second" width="30" height="30"/>
+        <image name="settings-1x.png" width="31" height="31"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
