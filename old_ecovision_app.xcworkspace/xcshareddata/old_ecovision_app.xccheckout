@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>3F06E1F4-1646-4277-9727-E6FF743B6345</string>
+	<key>IDESourceControlProjectName</key>
+	<string>old_ecovision_app</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>3013647EA56EF95AC77FBA19ADBC848B578B1E51</key>
+		<string>https://github.com/ltg-uic/EcoCollage_2.git</string>
+		<key>5302EE7960E6FF31B320D499AA06D4531B328B77</key>
+		<string>https://github.com/foundry/OpenCVStitch.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>old_ecovision_app.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3013647EA56EF95AC77FBA19ADBC848B578B1E51</key>
+		<string>..</string>
+		<key>5302EE7960E6FF31B320D499AA06D4531B328B77</key>
+		<string>..Old%20EcoVision%20App</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/ltg-uic/EcoCollage_2.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>3013647EA56EF95AC77FBA19ADBC848B578B1E51</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3013647EA56EF95AC77FBA19ADBC848B578B1E51</string>
+			<key>IDESourceControlWCCName</key>
+			<string>EcoCollage_2</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>5302EE7960E6FF31B320D499AA06D4531B328B77</string>
+			<key>IDESourceControlWCCName</key>
+			<string>EcoCollage_2Old%20EcoVision%20App</string>
+		</dict>
+	</array>
+</dict>
+</plist>
