@@ -248,7 +248,7 @@ int DetectAndDrawQuads(IplImage * img, IplImage * original, int frameNumber, int
                     // printf("%d\n", stringCount);
                     
                     // print output to console
-                    // printf("%d %d %d\n", colorCase, x, 24-y);
+                    printf("%d %d %d\n", colorCase, x, 24-y);
                 }
                 
                //printf("%d %d\n", coords[coordCount-1].x, coords[coordCount-1].y);

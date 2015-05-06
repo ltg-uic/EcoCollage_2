@@ -109,7 +109,7 @@ char results[5000];
 
 -(int)threshy{
     if (userImage == nil) {
-        UIImage* testImg = [UIImage imageNamed:@"crash_test.JPG"];
+        UIImage* testImg = [UIImage imageNamed:@"IMG_0463.JPG"];
         userImage = testImg;
         //[self throwErrorAlert:@"No image to threshold! \nTake a photo of the entire board"];
         //return 0;
@@ -219,7 +219,7 @@ char results[5000];
     if(worked) {
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Success!" message:@"We found your pieces!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
         [alert show];
-        [self sendData];
+        //[self sendData];
     }
     else {
         [self throwErrorAlert:@"No markers were found!"];

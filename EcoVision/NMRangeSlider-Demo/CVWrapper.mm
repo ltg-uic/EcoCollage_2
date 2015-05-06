@@ -113,6 +113,7 @@ int a[8];
     printf("Size of CvPoint: %lu\n", sizeof(CvPoint));
     
     int i = 0;
+    
     /*
     //ERRORS OCCURRING
     //pts WITHOUT X OR Y VALUES FROM getCorners
