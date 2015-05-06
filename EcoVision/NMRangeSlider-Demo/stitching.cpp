@@ -157,6 +157,7 @@ int DetectAndDrawQuads(IplImage * img, IplImage * original, int frameNumber, int
     if(colorCase == 0) {
         resetResults(results);
     }
+
     cvFindContours(temp, storage, &contours, sizeof(CvContour), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE, cvPoint(0,0));
     while(contours)
     {
@@ -248,7 +249,7 @@ int DetectAndDrawQuads(IplImage * img, IplImage * original, int frameNumber, int
                     // printf("%d\n", stringCount);
                     
                     // print output to console
-                    printf("%d %d %d\n", colorCase, x, 24-y);
+                    printf("%d, %d, %d\n", colorCase, x, 24-y);
                 }
                 
                //printf("%d %d\n", coords[coordCount-1].x, coords[coordCount-1].y);

@@ -303,7 +303,8 @@ int a[8];
     IplImage copy = mat_src;
     IplImage *ipl_src = &copy;
     
-
+    printf("---- PRINTING THE MARKER LOCATIONS ----\n");
+    printf("---- FORMAT: colorCase, x, y ----\n"); // actual printing takes place in stitching.cpp -> DetectAndDrawQuads
     
     for(int i=0; i < 4; i++){
         

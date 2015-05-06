@@ -101,10 +101,12 @@ char results[5000];
         w = [self warpy];
     }
 
+    /*
     if(w){
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Does this look like your map?" message:@"If so, click analyze. If not, retake the image and reprocess" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
         [alert show];
     }
+    */
 }
 
 -(int)threshy{
@@ -219,7 +221,7 @@ char results[5000];
     if(worked) {
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Success!" message:@"We found your pieces!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
         [alert show];
-        //[self sendData];
+        [self sendData];
     }
     else {
         [self throwErrorAlert:@"No markers were found!"];
