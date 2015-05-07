@@ -20,9 +20,11 @@
 UIImage* plainImage = nil;
 UIImage* threshedImage = nil;
 
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setHSVValues];
+    
     // Do any additional setup after loading the view, typically from a nib.
 }
 
