@@ -132,7 +132,7 @@
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
                                                 <view contentMode="scaleToFill" id="v2p-E5-f57" customClass="NMRangeSlider">
-                                                    <rect key="frame" x="8" y="30" width="845" height="36"/>
+                                                    <rect key="frame" x="8" y="31" width="845" height="36"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                                     <connections>
@@ -313,7 +313,7 @@
             </objects>
             <point key="canvasLocation" x="1105" y="1079"/>
         </scene>
-        <!--Marker Identification-->
+        <!--Marker Analysis-->
         <scene sceneID="PJz-Qb-z3T">
             <objects>
                 <viewController id="7ZY-V1-6bE" customClass="FirstViewController" sceneMemberID="viewController">
@@ -407,7 +407,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Marker Identification" image="camera-1x.png" id="7d6-qb-8vT"/>
+                    <tabBarItem key="tabBarItem" title="Marker Analysis" image="camera-1x.png" id="7d6-qb-8vT"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="iPad"/>
                     <connections>
