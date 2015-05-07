@@ -107,7 +107,6 @@ UIImage* threshedImage = nil;
     
     [picker dismissViewControllerAnimated:YES completion:NULL];
 }
-
 - (IBAction)saveHSVValues:(UIButton *)sender {
     int values[30];
     [CVWrapper getHSV_Values:values];
@@ -124,6 +123,7 @@ UIImage* threshedImage = nil;
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
     
     NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
+    
     [file writeData:[str dataUsingEncoding:NSUTF8StringEncoding]];
     [file closeFile];
     
@@ -133,13 +133,22 @@ UIImage* threshedImage = nil;
     int hsvValues[30];
     [CVWrapper getHSV_Values:hsvValues];
     
+    NSError *error;
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"hsvValues"];
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
     
     NSString* content = [NSString stringWithContentsOfFile:fileName
                                                   encoding:NSUTF8StringEncoding
-                                                     error:NULL];
+                                                     error:&error];
+    
+    // if file reading creates an error, set values to default
+    if(error) {
+        NSLog(@"File reading error: default hsv values loaded");
+        int hsvDefault[] = {10, 80, 50, 200, 50, 255, 80, 175, 140, 255, 100, 255, 90, 110, 40, 100, 120, 225, 0, 15, 30, 220, 50, 210, 15, 90, 35, 200, 35, 130};
+        [CVWrapper setHSV_Values:hsvDefault];
+        return;
+    }
     
     NSArray *arr = [content componentsSeparatedByString:@" "];
     
@@ -149,6 +158,5 @@ UIImage* threshedImage = nil;
     }
     
     [CVWrapper setHSV_Values:hsvValues];
-    
 }
 @end
