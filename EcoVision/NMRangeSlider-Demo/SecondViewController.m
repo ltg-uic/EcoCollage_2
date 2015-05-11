@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 EcoCollage. All rights reserved.
 //
 
-#import "SecondViewController.h"
+#import "SecondViewController.h" 
 #import "CVWrapper.h"
 #import <math.h>
 #import <stdlib.h>

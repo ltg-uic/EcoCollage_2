@@ -110,7 +110,6 @@ int a[8];
     int ptsNumber = getCorners(ipl_src, ipl_dst, pts, 5, 4, 0);
     
     printf("Number of CvPoints detected: %d\n", ptsNumber);
-    printf("Size of CvPoint: %lu\n", sizeof(CvPoint));
     
     int i = 0;
     
