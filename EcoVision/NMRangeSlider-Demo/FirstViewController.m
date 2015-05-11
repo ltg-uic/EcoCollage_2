@@ -22,6 +22,7 @@ int widthGlobal = 0;
 UIImage *userImage = nil;
 UIImage *threshedGlobal = nil;
 UIImage *warpedGlobal;
+UIImage* mean_image = nil;
 bool studyNum;
 NSString *fileContents;
 NSURL *server;
@@ -65,13 +66,18 @@ char results[5000];
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     userImage = info[UIImagePickerControllerOriginalImage];
 
-    [CVWrapper setCurrentImage:userImage];
+    //[CVWrapper setCurrentImage:userImage];
     
     if (userImage == nil) {
         [self throwErrorAlert:@"Error taking photo! Please try taking the picture again"];
         self.scrollView.backgroundColor = [UIColor whiteColor]; // hides scrollView
     }
     else {
+        
+        mean_image = [CVWrapper ApplyMedianFilter:userImage];
+        //userImage = [UIImage imageWithCGImage:mean_image.CGImage];
+        
+        [CVWrapper setCurrentImage:mean_image];
         [self updateScrollView:userImage];
     }
     
@@ -189,8 +195,6 @@ char results[5000];
 }
 
 
-
-
 // run analysis to find marker pieces on map
 - (IBAction)analyze:(UIButton *)sender {
     
@@ -221,7 +225,7 @@ char results[5000];
     if(worked) {
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Success!" message:@"We found your pieces!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
         [alert show];
-        [self sendData];
+        //[self sendData];
     }
     else {
         [self throwErrorAlert:@"No markers were found!"];

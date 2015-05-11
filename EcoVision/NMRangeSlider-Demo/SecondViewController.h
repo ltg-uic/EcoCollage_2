@@ -10,14 +10,18 @@
 
 #import "NMRangeSlider.h"
 
-@interface SecondViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@interface SecondViewController : UIViewController <UIScrollViewDelegate,UIGestureRecognizerDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
 @property (nonatomic, weak) IBOutlet UIImageView* imageView;
 @property (nonatomic, weak) IBOutlet UIScrollView* scrollView;
 
 - (IBAction)threshold_image:(UIButton *)sender;
-- (IBAction)show_plain_image:(UIButton *)sender;
 - (IBAction)saveHSVValues:(UIButton *)sender;
+
+@property (weak, nonatomic) IBOutlet UIImageView *InspectedColour;
+- (IBAction)UndoTap:(UIButton *)sender;
+- (IBAction)ClearSamples:(UIButton *)sender;
+- (IBAction)SendHSVVals:(UIButton *)sender;
 
 @end
 

@@ -28,6 +28,7 @@ int a[8];
 @implementation CVWrapper
 
 
+
 + (void) setSegmentIndex:(int)index {
     segIndex = index;
 }
@@ -60,6 +61,36 @@ int a[8];
     setHSV_Values(input);
 }
 
+//Returns image with a Gaussian Blur Filter applied to it
++ (UIImage *) ApplyMedianFilter: (UIImage *) img
+{
+    //apply a gaussian blur filter to the image
+    Mat m = [img CVMat3];
+    Mat m_blur;
+    m.copyTo(m_blur);
+    
+    medianBlur ( m, m_blur, 15 );
+    
+    UIImage* retImg = [UIImage imageWithCVMat:m_blur];
+    
+    return retImg;
+}
+
++ (void) getHSVValuesfromRed:(double)r Green:(double)g Blue:(double)b H:(int*)H S:(int*)S V:(int*)V
+{
+    // UIImage to cv::Mat
+    Mat matted(8,8,CV_8UC3,cv::Scalar(r,g,b));
+    
+    //Change colorspace to HSV
+    Mat HSVMat;
+    cvtColor(matted, HSVMat, CV_BGR2HSV);
+    
+    //Obtain the HSV value of first row and column
+    Vec3b pixel = HSVMat.at<Vec3b>(1,1);
+    *H = pixel[0];
+    *S = pixel[1];
+    *V = pixel[2];
+}
 
 + (int) detectContours:(UIImage *)src corners:(int[]) cornersGlobal
 {

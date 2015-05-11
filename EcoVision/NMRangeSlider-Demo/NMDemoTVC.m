@@ -53,7 +53,7 @@ int segmentIndex = 0;
 }
 
 - (void) initLabelSliderConfiguration {
-    int minimumRangeBetweenSliders = 10; // make sure to change same variable in configureLabelSliders function
+    int minimumRangeBetweenSliders = 0; // make sure to change same variable in configureLabelSliders function
     
     self.labelSlider.minimumValue = 0;
     self.labelSlider.maximumValue = 255;
@@ -68,7 +68,7 @@ int segmentIndex = 0;
 
 - (void) configureLabelSliders
 {
-    int minimumRangeBetweenSliders = 10; // make sure to change same variable in initLabelSliderConfiguration function
+    int minimumRangeBetweenSliders = 0; // make sure to change same variable in initLabelSliderConfiguration function
 
     int hsvValues[30];
     [CVWrapper getHSV_Values:hsvValues];
