@@ -225,7 +225,7 @@ char results[5000];
     if(worked) {
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Success!" message:@"We found your pieces!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
         [alert show];
-        //[self sendData];
+        [self sendData];
     }
     else {
         [self throwErrorAlert:@"No markers were found!"];
