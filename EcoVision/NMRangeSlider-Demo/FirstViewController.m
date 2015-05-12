@@ -74,10 +74,10 @@ char results[5000];
     }
     else {
         
-        mean_image = [CVWrapper ApplyMedianFilter:userImage];
+        //mean_image = [CVWrapper ApplyMedianFilter:userImage];
         //userImage = [UIImage imageWithCGImage:mean_image.CGImage];
         
-        [CVWrapper setCurrentImage:mean_image];
+        [CVWrapper setCurrentImage:userImage];
         [self updateScrollView:userImage];
     }
     
