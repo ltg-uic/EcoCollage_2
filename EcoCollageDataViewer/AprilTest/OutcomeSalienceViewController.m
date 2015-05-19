@@ -33,8 +33,23 @@
 @synthesize loadingIndicator = _loadingIndicator;
 @synthesize scenarioNames = _scenarioNames;
 
-NSMutableArray * trialRuns;
-NSMutableArray * trialRunsNormalized;
+//structs that will keep track of the highest and lowest costs of Installation and maintenance (for convenience)
+typedef struct InstallationCost
+{
+    int highestCost;
+    int lowestCost;
+}InstallationCost;
+
+typedef struct MaintenanceCost
+{
+    int highestCost;
+    int lowestCost;
+}MaintenanceCost;
+
+InstallationCost *installationCost = NULL;
+MaintenanceCost  *maintenanceCost = NULL;
+NSMutableArray * trialRuns;             //contains list of simulation data from trials pulled
+NSMutableArray * trialRunsNormalized;   //contains list of simulation data from trials pulled in normalized form
 NSMutableArray * waterDisplays;
 NSMutableArray * maxWaterDisplays;
 NSMutableArray * efficiency;
@@ -169,9 +184,62 @@ UITextField *edittingTX;
     [self loadNextSimulationRun];
 }
 
+//will normalize the cost of installation and maintenance
+- (void)normalizeCost
+{
+    if (installationCost == NULL){ installationCost = (InstallationCost*)malloc(sizeof(InstallationCost)); }
+    if (maintenanceCost == NULL) { maintenanceCost = (MaintenanceCost*)malloc(sizeof(MaintenanceCost));    }
+    
+    int i;
+    for (i = 0; i < trialRuns.count; i++)
+    {
+        AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
+        
+        printf("Trial %d\n\n", i+1);
+        printf("Installation Cost: %d\n", someTrial.publicInstallCost);
+        printf("Maintenance  Cost: %d\n\n",  someTrial.publicMaintenanceCost);
+        
+        //right now, working on getting the best and worst results of Installation and Maintenance cost dynamically
+        if (i == 0)
+        {
+            //set the initial trial as the best and worst for both Installation and maintenance
+            installationCost->highestCost =  someTrial.publicInstallCost;
+            installationCost->lowestCost  =  someTrial.publicInstallCost;
+            
+            maintenanceCost->highestCost  =  someTrial.publicMaintenanceCost;
+            maintenanceCost->lowestCost   =  someTrial.publicMaintenanceCost;
+            
+            
+        }
+        //update the highest/lowest maintenance cost among the trials
+        if (someTrial.publicMaintenanceCost <= maintenanceCost->lowestCost) { maintenanceCost->lowestCost = someTrial.publicMaintenanceCost; }
+        if (someTrial.publicMaintenanceCost >= maintenanceCost->highestCost){ maintenanceCost->highestCost = someTrial.publicMaintenanceCost; }
+            
+        //update the highest/lowest installation cost among the trials
+        if (someTrial.publicInstallCost <= installationCost->lowestCost){ installationCost->lowestCost = someTrial.publicInstallCost; }
+        if (someTrial.publicInstallCost >= installationCost->highestCost) { installationCost->highestCost = someTrial.publicInstallCost; }
+        
+    }
+    
+    printf("Highest Maintenance Cost: %d\n", maintenanceCost->highestCost);
+    printf("Highest Installation Cost: %d\n", installationCost->highestCost);
+    
+    for (i = 0; i < trialRuns.count; i++)
+    {
+        AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
+        AprilTestNormalizedVariable  *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
+        someTrialNorm.publicInstallCost     = 1 - ((float)someTrial.publicInstallCost/(float)(installationCost->highestCost + .01));
+        someTrialNorm.publicMaintenanceCost = 1 - ((float)someTrial.publicMaintenanceCost/(float)(maintenanceCost->highestCost + .01));
+        
+        printf("Normalized Trial %d:  Install Cost %d  Normalized Number %f\n",i+1,someTrial.publicInstallCost,someTrialNorm.publicInstallCost);
+        
+    }
+    
+}
+    
 - (void)loadNextSimulationRun{
-
-    NSLog(@"url%@ study num %d", _url, _studyNum);
+    
+    //pull content from the server that is said to be from le trial with real vals
     NSString * urlPlusFile = [NSString stringWithFormat:@"%@/%@", _url, @"simOutput.php"];
     NSString *myRequestString = [[NSString alloc] initWithFormat:@"trialID=%d&studyID=%d", trialNum, _studyNum ];
     NSData *myRequestData = [ NSData dataWithBytes: [ myRequestString UTF8String ] length: [ myRequestString length ] ];
@@ -179,7 +247,7 @@ UITextField *edittingTX;
     [ request setHTTPMethod: @"POST" ];
     [ request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
     [ request setHTTPBody: myRequestData ];
-    //NSLog(@"%@", request);
+    
     NSString *content;
     while( !content){
         NSURLResponse *response;
@@ -190,6 +258,8 @@ UITextField *edittingTX;
         if( [returnData bytes]) content = [NSString stringWithUTF8String:[returnData bytes]];
         //NSLog(@"responseData: %@", content);
     }
+    
+    //pull content from the server that is said to be from le trial that is said to be normalized vals (ranging from 0 to 1)
     NSString *urlPlusFileN = [NSString stringWithFormat:@"%@/%@", _url, @"simOutputN.php"];
     NSString *myRequestStringN = [[NSString alloc] initWithFormat:@"trialID=%d&studyID=%d", trialNum, _studyNum ];
     NSData *myRequestDataN = [ NSData dataWithBytes: [ myRequestStringN UTF8String ] length: [ myRequestStringN length ] ];
@@ -197,7 +267,7 @@ UITextField *edittingTX;
     [ requestN setHTTPMethod: @"POST" ];
     [ requestN setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
     [ requestN setHTTPBody: myRequestDataN ];
-    //NSLog(@"%@", request);
+
     NSString *contentN;
     while( !contentN){
         NSURLResponse *responseN;
@@ -209,20 +279,24 @@ UITextField *edittingTX;
        //NSLog(@"responseData: %@", contentN);
     }
     
+    
     if(content != NULL && content.length > 100 && contentN != NULL){
         AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:content withTrialNum:trialNum];
         AprilTestNormalizedVariable *simRunNormal = [[AprilTestNormalizedVariable alloc] init: contentN withTrialNum:trialNum];
         [trialRunsNormalized addObject:simRunNormal];
         [trialRuns addObject: simRun];
+        [self normalizeCost];
+        
         [self drawTrial: trialNum];
         trialNum++;
     }
+    
     [_loadingIndicator stopAnimating];
     
 }
 
 -(void) drawTrial: (int) trial{
-    //NSLog (@"Drawing trial number: %d", trial);
+
     AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
     AprilTestNormalizedVariable *simRunNormal = [trialRunsNormalized objectAtIndex:trial];
     FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
@@ -236,7 +310,7 @@ UITextField *edittingTX;
     float scoreTotal = 0;
     
     for(int i = 0; i < _currentConcernRanking.count; i++){
-        //NSLog(@"%@", [_currentConcernRanking objectAtIndex:i] );
+
         priorityTotal += [(AprilTestVariable *)[_currentConcernRanking objectAtIndex:i] currentConcernRanking];
     }
     UITextField *tx;

@@ -31,7 +31,11 @@
     // Dispose of any resources that can be recreated.
 }
 - (IBAction)switchUI:(id)sender {
-    _url = _server.text;
+    
+    //grew tired of having to append http:// so i already had it appended, is that cool?? Now all you need is the IP adress 
+    NSString* finalString = [NSString stringWithFormat: @"%@%@", @"http://", _server.text];
+    
+    _url =  finalString;
     _studyNum = [_studyNumber.text intValue];
 
     [self performSegueWithIdentifier:@"switchFromLogin" sender:self];
