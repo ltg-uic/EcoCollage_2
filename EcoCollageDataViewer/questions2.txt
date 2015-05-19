@@ -1,0 +1,8 @@
+Investment	publicCost
+Damage Reduction	privateCost
+Efficiency of Intervention ($/Gallon)	efficiencyOfIntervention
+Capacity Used	capacity
+Water Depth Over Time	puddleTime
+Maximum Flooded Area	puddleMax
+Groundwater Infiltration	groundwaterInfiltration
+Impact on my Neighbors	impactingMyNeighbors

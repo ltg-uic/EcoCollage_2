@@ -1,0 +1,6 @@
+Flooding levels such that your property (lawn, basement) was damaged	Private_Property_Damaged
+Inconvenient puddles remained on the city streets days after rain stopped	Inconvenient_Puddles
+Had to take a different route than normal due to damage caused by rain	Take_New_Route
+Seen public infrastructure (roads, sidewalks, parks) closed due to flooding	Public_Facilities_Closed
+Witnessed stormwater entering your property from your neighbors' property	Neighbor_Water
+Used collected rainwater to do household chores (wash cars, water the lawn)	Used_Rainwater

@@ -1,0 +1,681 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		841C0A1F1A16744500ED7A2E /* PeprViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 841C0A1C1A16744500ED7A2E /* PeprViewController.m */; };
+		841C0A201A16744500ED7A2E /* questions1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 841C0A1D1A16744500ED7A2E /* questions1.txt */; };
+		841C0A211A16744500ED7A2E /* questions2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 841C0A1E1A16744500ED7A2E /* questions2.txt */; };
+		841C0A231A16749000ED7A2E /* descriptions.txt in Resources */ = {isa = PBXBuildFile; fileRef = 841C0A221A16749000ED7A2E /* descriptions.txt */; };
+		841C0A271A1674A000ED7A2E /* XYPieChart.m in Sources */ = {isa = PBXBuildFile; fileRef = 841C0A261A1674A000ED7A2E /* XYPieChart.m */; };
+		8423FC931AC9C4C600BC16E8 /* AprilTestCostDisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = 8423FC921AC9C4C600BC16E8 /* AprilTestCostDisplay.m */; };
+		842D4CC41B0271A7002B351B /* DuPage_May.png in Resources */ = {isa = PBXBuildFile; fileRef = 842D4CC31B0271A7002B351B /* DuPage_May.png */; };
+		843B9CDB1AE6B70000FF2C8B /* AprilTestIntroViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 843B9CDA1AE6B70000FF2C8B /* AprilTestIntroViewController.m */; };
+		8453FA5318F2FC8F0010D12F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8453FA5218F2FC8F0010D12F /* Foundation.framework */; };
+		8453FA5518F2FC8F0010D12F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8453FA5418F2FC8F0010D12F /* CoreGraphics.framework */; };
+		8453FA5718F2FC8F0010D12F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8453FA5618F2FC8F0010D12F /* UIKit.framework */; };
+		8453FA5D18F2FC8F0010D12F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8453FA5B18F2FC8F0010D12F /* InfoPlist.strings */; };
+		8453FA5F18F2FC8F0010D12F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8453FA5E18F2FC8F0010D12F /* main.m */; };
+		8453FA6318F2FC8F0010D12F /* AprilTestAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8453FA6218F2FC8F0010D12F /* AprilTestAppDelegate.m */; };
+		8453FA6618F2FC8F0010D12F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8453FA6418F2FC8F0010D12F /* Main.storyboard */; };
+		8453FA6918F2FC8F0010D12F /* AprilTestFirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8453FA6818F2FC8F0010D12F /* AprilTestFirstViewController.m */; };
+		8453FA6C18F2FC8F0010D12F /* OutcomeSalienceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8453FA6B18F2FC8F0010D12F /* OutcomeSalienceViewController.m */; };
+		8453FA6E18F2FC8F0010D12F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8453FA6D18F2FC8F0010D12F /* Images.xcassets */; };
+		8453FA7518F2FC8F0010D12F /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8453FA7418F2FC8F0010D12F /* XCTest.framework */; };
+		8453FA7618F2FC8F0010D12F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8453FA5218F2FC8F0010D12F /* Foundation.framework */; };
+		8453FA7718F2FC8F0010D12F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8453FA5618F2FC8F0010D12F /* UIKit.framework */; };
+		8453FA7F18F2FC8F0010D12F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8453FA7D18F2FC8F0010D12F /* InfoPlist.strings */; };
+		8453FA8118F2FC8F0010D12F /* AprilTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8453FA8018F2FC8F0010D12F /* AprilTestTests.m */; };
+		8453FA8D18F2FECC0010D12F /* builder-1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8453FA8B18F2FECC0010D12F /* builder-1x.png */; };
+		8453FA8E18F2FECC0010D12F /* builder-2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8453FA8C18F2FECC0010D12F /* builder-2x.png */; };
+		846B971618FC26920008BD59 /* AprilTestSimRun.m in Sources */ = {isa = PBXBuildFile; fileRef = 846B971518FC26920008BD59 /* AprilTestSimRun.m */; };
+		846B972118FE0B1F0008BD59 /* FebTestIntervention.m in Sources */ = {isa = PBXBuildFile; fileRef = 846B971918FE0B1F0008BD59 /* FebTestIntervention.m */; };
+		846B972218FE0B1F0008BD59 /* FebTestWaterDisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = 846B971B18FE0B1F0008BD59 /* FebTestWaterDisplay.m */; };
+		846B972318FE0B1F0008BD59 /* greenalley.png in Resources */ = {isa = PBXBuildFile; fileRef = 846B971C18FE0B1F0008BD59 /* greenalley.png */; };
+		846B972418FE0B1F0008BD59 /* greenroof.png in Resources */ = {isa = PBXBuildFile; fileRef = 846B971D18FE0B1F0008BD59 /* greenroof.png */; };
+		846B972518FE0B1F0008BD59 /* rainbarrel.png in Resources */ = {isa = PBXBuildFile; fileRef = 846B971E18FE0B1F0008BD59 /* rainbarrel.png */; };
+		846B972618FE0B1F0008BD59 /* sewer.png in Resources */ = {isa = PBXBuildFile; fileRef = 846B971F18FE0B1F0008BD59 /* sewer.png */; };
+		846B972718FE0B1F0008BD59 /* swale.png in Resources */ = {isa = PBXBuildFile; fileRef = 846B972018FE0B1F0008BD59 /* swale.png */; };
+		846B972A18FF04B50008BD59 /* AprilTestEfficiencyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 846B972918FF04B50008BD59 /* AprilTestEfficiencyView.m */; };
+		846B972D1904ABC20008BD59 /* AprilTestNormalizedVariable.m in Sources */ = {isa = PBXBuildFile; fileRef = 846B972C1904ABC20008BD59 /* AprilTestNormalizedVariable.m */; };
+		848479C018F3208300BAD981 /* survey-1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 848479BE18F3208300BAD981 /* survey-1x.png */; };
+		848479C118F3208300BAD981 /* survey-2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 848479BF18F3208300BAD981 /* survey-2x.png */; };
+		848479C418F3289400BAD981 /* offCheckbox.png in Resources */ = {isa = PBXBuildFile; fileRef = 848479C218F3289400BAD981 /* offCheckbox.png */; };
+		848479C518F3289400BAD981 /* onCheckbox.png in Resources */ = {isa = PBXBuildFile; fileRef = 848479C318F3289400BAD981 /* onCheckbox.png */; };
+		848479CB18F32AAA00BAD981 /* AprilTestCPBViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 848479CA18F32AAA00BAD981 /* AprilTestCPBViewController.m */; };
+		848479CE18F59F3E00BAD981 /* sim-1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 848479CC18F59F3E00BAD981 /* sim-1x.png */; };
+		848479CF18F59F3E00BAD981 /* sim-2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 848479CD18F59F3E00BAD981 /* sim-2x.png */; };
+		848479D218F71ACE00BAD981 /* AprilTestVariable.m in Sources */ = {isa = PBXBuildFile; fileRef = 848479D118F71ACE00BAD981 /* AprilTestVariable.m */; };
+		848479D818F71D7600BAD981 /* AprilTestTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 848479D718F71D7600BAD981 /* AprilTestTabBarController.m */; };
+		84BCFDB51A3B6BC200D37103 /* pquestions.txt in Resources */ = {isa = PBXBuildFile; fileRef = 84BCFDB41A3B6BC200D37103 /* pquestions.txt */; };
+		84BCFDB71A3B6C4200D37103 /* pdescriptions.txt in Resources */ = {isa = PBXBuildFile; fileRef = 84BCFDB61A3B6C4100D37103 /* pdescriptions.txt */; };
+		84D44885191D240400BF0589 /* gradientScale.png in Resources */ = {isa = PBXBuildFile; fileRef = 84D44884191D240400BF0589 /* gradientScale.png */; };
+		84DE92E61993CA79006525F4 /* BlueIsland_AugStudy.png in Resources */ = {isa = PBXBuildFile; fileRef = 84DE92E51993CA79006525F4 /* BlueIsland_AugStudy.png */; };
+		84DE92E81993CD62006525F4 /* landcover.png in Resources */ = {isa = PBXBuildFile; fileRef = 84DE92E71993CD62006525F4 /* landcover.png */; };
+		84DE92EB1993D0B4006525F4 /* AprilTestGuidebookViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DE92EA1993D0B4006525F4 /* AprilTestGuidebookViewController.m */; };
+		84DE92ED1993D110006525F4 /* baseElevation.txt in Resources */ = {isa = PBXBuildFile; fileRef = 84DE92EC1993D110006525F4 /* baseElevation.txt */; };
+		84DE92F01993E2D7006525F4 /* guidebook-1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84DE92EE1993E2D7006525F4 /* guidebook-1x.png */; };
+		84DE92F11993E2D7006525F4 /* guidebook-2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84DE92EF1993E2D7006525F4 /* guidebook-2x.png */; };
+		84DE92F31993EC3D006525F4 /* blueIslandOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 84DE92F21993EC3D006525F4 /* blueIslandOverlay.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8453FA7818F2FC8F0010D12F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8453FA4718F2FC8F0010D12F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8453FA4E18F2FC8F0010D12F;
+			remoteInfo = AprilTest;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		841C0A1B1A16744500ED7A2E /* PeprViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PeprViewController.h; path = ../PeprViewController.h; sourceTree = "<group>"; };
+		841C0A1C1A16744500ED7A2E /* PeprViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PeprViewController.m; path = ../PeprViewController.m; sourceTree = "<group>"; };
+		841C0A1D1A16744500ED7A2E /* questions1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = questions1.txt; path = ../questions1.txt; sourceTree = "<group>"; };
+		841C0A1E1A16744500ED7A2E /* questions2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = questions2.txt; path = ../questions2.txt; sourceTree = "<group>"; };
+		841C0A221A16749000ED7A2E /* descriptions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = descriptions.txt; path = ../descriptions.txt; sourceTree = "<group>"; };
+		841C0A251A1674A000ED7A2E /* XYPieChart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYPieChart.h; sourceTree = "<group>"; };
+		841C0A261A1674A000ED7A2E /* XYPieChart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XYPieChart.m; sourceTree = "<group>"; };
+		8423FC921AC9C4C600BC16E8 /* AprilTestCostDisplay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestCostDisplay.m; sourceTree = "<group>"; };
+		8423FC941AC9C4E200BC16E8 /* AprilTestCostDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AprilTestCostDisplay.h; sourceTree = "<group>"; };
+		842D4CC31B0271A7002B351B /* DuPage_May.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DuPage_May.png; sourceTree = "<group>"; };
+		843B9CD91AE6B70000FF2C8B /* AprilTestIntroViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AprilTestIntroViewController.h; sourceTree = "<group>"; };
+		843B9CDA1AE6B70000FF2C8B /* AprilTestIntroViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestIntroViewController.m; sourceTree = "<group>"; };
+		8453FA4F18F2FC8F0010D12F /* AprilTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AprilTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8453FA5218F2FC8F0010D12F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		8453FA5418F2FC8F0010D12F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		8453FA5618F2FC8F0010D12F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		8453FA5A18F2FC8F0010D12F /* AprilTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AprilTest-Info.plist"; sourceTree = "<group>"; };
+		8453FA5C18F2FC8F0010D12F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8453FA5E18F2FC8F0010D12F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8453FA6018F2FC8F0010D12F /* AprilTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AprilTest-Prefix.pch"; sourceTree = "<group>"; };
+		8453FA6118F2FC8F0010D12F /* AprilTestAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AprilTestAppDelegate.h; sourceTree = "<group>"; };
+		8453FA6218F2FC8F0010D12F /* AprilTestAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AprilTestAppDelegate.m; sourceTree = "<group>"; };
+		8453FA6518F2FC8F0010D12F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8453FA6718F2FC8F0010D12F /* AprilTestFirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AprilTestFirstViewController.h; sourceTree = "<group>"; };
+		8453FA6818F2FC8F0010D12F /* AprilTestFirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AprilTestFirstViewController.m; sourceTree = "<group>"; };
+		8453FA6A18F2FC8F0010D12F /* OutcomeSalienceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutcomeSalienceViewController.h; sourceTree = "<group>"; };
+		8453FA6B18F2FC8F0010D12F /* OutcomeSalienceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OutcomeSalienceViewController.m; sourceTree = "<group>"; };
+		8453FA6D18F2FC8F0010D12F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		8453FA7318F2FC8F0010D12F /* AprilTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AprilTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8453FA7418F2FC8F0010D12F /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		8453FA7C18F2FC8F0010D12F /* AprilTestTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AprilTestTests-Info.plist"; sourceTree = "<group>"; };
+		8453FA7E18F2FC8F0010D12F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8453FA8018F2FC8F0010D12F /* AprilTestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AprilTestTests.m; sourceTree = "<group>"; };
+		8453FA8B18F2FECC0010D12F /* builder-1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "builder-1x.png"; sourceTree = "<group>"; };
+		8453FA8C18F2FECC0010D12F /* builder-2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "builder-2x.png"; sourceTree = "<group>"; };
+		846B971418FC26920008BD59 /* AprilTestSimRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AprilTestSimRun.h; sourceTree = "<group>"; };
+		846B971518FC26920008BD59 /* AprilTestSimRun.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestSimRun.m; sourceTree = "<group>"; };
+		846B971818FE0B1F0008BD59 /* FebTestIntervention.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FebTestIntervention.h; sourceTree = "<group>"; };
+		846B971918FE0B1F0008BD59 /* FebTestIntervention.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FebTestIntervention.m; sourceTree = "<group>"; };
+		846B971A18FE0B1F0008BD59 /* FebTestWaterDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FebTestWaterDisplay.h; sourceTree = "<group>"; };
+		846B971B18FE0B1F0008BD59 /* FebTestWaterDisplay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FebTestWaterDisplay.m; sourceTree = "<group>"; };
+		846B971C18FE0B1F0008BD59 /* greenalley.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = greenalley.png; sourceTree = "<group>"; };
+		846B971D18FE0B1F0008BD59 /* greenroof.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = greenroof.png; sourceTree = "<group>"; };
+		846B971E18FE0B1F0008BD59 /* rainbarrel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rainbarrel.png; sourceTree = "<group>"; };
+		846B971F18FE0B1F0008BD59 /* sewer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sewer.png; sourceTree = "<group>"; };
+		846B972018FE0B1F0008BD59 /* swale.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = swale.png; sourceTree = "<group>"; };
+		846B972818FF04B50008BD59 /* AprilTestEfficiencyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AprilTestEfficiencyView.h; sourceTree = "<group>"; };
+		846B972918FF04B50008BD59 /* AprilTestEfficiencyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestEfficiencyView.m; sourceTree = "<group>"; };
+		846B972B1904ABC20008BD59 /* AprilTestNormalizedVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AprilTestNormalizedVariable.h; sourceTree = "<group>"; };
+		846B972C1904ABC20008BD59 /* AprilTestNormalizedVariable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestNormalizedVariable.m; sourceTree = "<group>"; };
+		848479BE18F3208300BAD981 /* survey-1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "survey-1x.png"; sourceTree = "<group>"; };
+		848479BF18F3208300BAD981 /* survey-2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "survey-2x.png"; sourceTree = "<group>"; };
+		848479C218F3289400BAD981 /* offCheckbox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = offCheckbox.png; sourceTree = "<group>"; };
+		848479C318F3289400BAD981 /* onCheckbox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = onCheckbox.png; sourceTree = "<group>"; };
+		848479C918F32AAA00BAD981 /* AprilTestCPBViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AprilTestCPBViewController.h; sourceTree = "<group>"; };
+		848479CA18F32AAA00BAD981 /* AprilTestCPBViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestCPBViewController.m; sourceTree = "<group>"; };
+		848479CC18F59F3E00BAD981 /* sim-1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sim-1x.png"; sourceTree = "<group>"; };
+		848479CD18F59F3E00BAD981 /* sim-2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sim-2x.png"; sourceTree = "<group>"; };
+		848479D018F71ACE00BAD981 /* AprilTestVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AprilTestVariable.h; sourceTree = "<group>"; };
+		848479D118F71ACE00BAD981 /* AprilTestVariable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestVariable.m; sourceTree = "<group>"; };
+		848479D618F71D7600BAD981 /* AprilTestTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AprilTestTabBarController.h; sourceTree = "<group>"; };
+		848479D718F71D7600BAD981 /* AprilTestTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestTabBarController.m; sourceTree = "<group>"; };
+		84BCFDB41A3B6BC200D37103 /* pquestions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pquestions.txt; sourceTree = "<group>"; };
+		84BCFDB61A3B6C4100D37103 /* pdescriptions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pdescriptions.txt; sourceTree = "<group>"; };
+		84D44884191D240400BF0589 /* gradientScale.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gradientScale.png; sourceTree = "<group>"; };
+		84DE92E51993CA79006525F4 /* BlueIsland_AugStudy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlueIsland_AugStudy.png; sourceTree = "<group>"; };
+		84DE92E71993CD62006525F4 /* landcover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = landcover.png; sourceTree = "<group>"; };
+		84DE92E91993D0B4006525F4 /* AprilTestGuidebookViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AprilTestGuidebookViewController.h; sourceTree = "<group>"; };
+		84DE92EA1993D0B4006525F4 /* AprilTestGuidebookViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestGuidebookViewController.m; sourceTree = "<group>"; };
+		84DE92EC1993D110006525F4 /* baseElevation.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = baseElevation.txt; sourceTree = "<group>"; };
+		84DE92EE1993E2D7006525F4 /* guidebook-1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "guidebook-1x.png"; sourceTree = "<group>"; };
+		84DE92EF1993E2D7006525F4 /* guidebook-2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "guidebook-2x.png"; sourceTree = "<group>"; };
+		84DE92F21993EC3D006525F4 /* blueIslandOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blueIslandOverlay.png; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8453FA4C18F2FC8F0010D12F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8453FA5518F2FC8F0010D12F /* CoreGraphics.framework in Frameworks */,
+				8453FA5718F2FC8F0010D12F /* UIKit.framework in Frameworks */,
+				8453FA5318F2FC8F0010D12F /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8453FA7018F2FC8F0010D12F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8453FA7518F2FC8F0010D12F /* XCTest.framework in Frameworks */,
+				8453FA7718F2FC8F0010D12F /* UIKit.framework in Frameworks */,
+				8453FA7618F2FC8F0010D12F /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		841C0A241A1674A000ED7A2E /* XYPieChart */ = {
+			isa = PBXGroup;
+			children = (
+				841C0A251A1674A000ED7A2E /* XYPieChart.h */,
+				841C0A261A1674A000ED7A2E /* XYPieChart.m */,
+			);
+			path = XYPieChart;
+			sourceTree = "<group>";
+		};
+		8453FA4618F2FC8F0010D12F = {
+			isa = PBXGroup;
+			children = (
+				841C0A241A1674A000ED7A2E /* XYPieChart */,
+				8453FA5818F2FC8F0010D12F /* AprilTest */,
+				8453FA7A18F2FC8F0010D12F /* AprilTestTests */,
+				8453FA5118F2FC8F0010D12F /* Frameworks */,
+				8453FA5018F2FC8F0010D12F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8453FA5018F2FC8F0010D12F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8453FA4F18F2FC8F0010D12F /* AprilTest.app */,
+				8453FA7318F2FC8F0010D12F /* AprilTestTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8453FA5118F2FC8F0010D12F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8453FA5218F2FC8F0010D12F /* Foundation.framework */,
+				8453FA5418F2FC8F0010D12F /* CoreGraphics.framework */,
+				8453FA5618F2FC8F0010D12F /* UIKit.framework */,
+				8453FA7418F2FC8F0010D12F /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8453FA5818F2FC8F0010D12F /* AprilTest */ = {
+			isa = PBXGroup;
+			children = (
+				8453FA6118F2FC8F0010D12F /* AprilTestAppDelegate.h */,
+				8453FA6218F2FC8F0010D12F /* AprilTestAppDelegate.m */,
+				8423FC921AC9C4C600BC16E8 /* AprilTestCostDisplay.m */,
+				8423FC941AC9C4E200BC16E8 /* AprilTestCostDisplay.h */,
+				848479C918F32AAA00BAD981 /* AprilTestCPBViewController.h */,
+				848479CA18F32AAA00BAD981 /* AprilTestCPBViewController.m */,
+				846B972818FF04B50008BD59 /* AprilTestEfficiencyView.h */,
+				846B972918FF04B50008BD59 /* AprilTestEfficiencyView.m */,
+				8453FA6718F2FC8F0010D12F /* AprilTestFirstViewController.h */,
+				8453FA6818F2FC8F0010D12F /* AprilTestFirstViewController.m */,
+				84DE92E91993D0B4006525F4 /* AprilTestGuidebookViewController.h */,
+				84DE92EA1993D0B4006525F4 /* AprilTestGuidebookViewController.m */,
+				846B972B1904ABC20008BD59 /* AprilTestNormalizedVariable.h */,
+				846B972C1904ABC20008BD59 /* AprilTestNormalizedVariable.m */,
+				846B971418FC26920008BD59 /* AprilTestSimRun.h */,
+				846B971518FC26920008BD59 /* AprilTestSimRun.m */,
+				848479D618F71D7600BAD981 /* AprilTestTabBarController.h */,
+				848479D718F71D7600BAD981 /* AprilTestTabBarController.m */,
+				848479D018F71ACE00BAD981 /* AprilTestVariable.h */,
+				848479D118F71ACE00BAD981 /* AprilTestVariable.m */,
+				84DE92EC1993D110006525F4 /* baseElevation.txt */,
+				84DE92E51993CA79006525F4 /* BlueIsland_AugStudy.png */,
+				842D4CC31B0271A7002B351B /* DuPage_May.png */,
+				84DE92F21993EC3D006525F4 /* blueIslandOverlay.png */,
+				841C0A221A16749000ED7A2E /* descriptions.txt */,
+				846B971818FE0B1F0008BD59 /* FebTestIntervention.h */,
+				846B971918FE0B1F0008BD59 /* FebTestIntervention.m */,
+				846B971A18FE0B1F0008BD59 /* FebTestWaterDisplay.h */,
+				846B971B18FE0B1F0008BD59 /* FebTestWaterDisplay.m */,
+				84D44884191D240400BF0589 /* gradientScale.png */,
+				846B971C18FE0B1F0008BD59 /* greenalley.png */,
+				846B971D18FE0B1F0008BD59 /* greenroof.png */,
+				8453FA6D18F2FC8F0010D12F /* Images.xcassets */,
+				84DE92E71993CD62006525F4 /* landcover.png */,
+				8453FA6418F2FC8F0010D12F /* Main.storyboard */,
+				843B9CD91AE6B70000FF2C8B /* AprilTestIntroViewController.h */,
+				843B9CDA1AE6B70000FF2C8B /* AprilTestIntroViewController.m */,
+				8453FA6A18F2FC8F0010D12F /* OutcomeSalienceViewController.h */,
+				8453FA6B18F2FC8F0010D12F /* OutcomeSalienceViewController.m */,
+				84BCFDB61A3B6C4100D37103 /* pdescriptions.txt */,
+				841C0A1B1A16744500ED7A2E /* PeprViewController.h */,
+				841C0A1C1A16744500ED7A2E /* PeprViewController.m */,
+				84BCFDB41A3B6BC200D37103 /* pquestions.txt */,
+				841C0A1D1A16744500ED7A2E /* questions1.txt */,
+				846B971E18FE0B1F0008BD59 /* rainbarrel.png */,
+				841C0A1E1A16744500ED7A2E /* questions2.txt */,
+				846B971F18FE0B1F0008BD59 /* sewer.png */,
+				8453FA5918F2FC8F0010D12F /* Supporting Files */,
+				846B972018FE0B1F0008BD59 /* swale.png */,
+			);
+			path = AprilTest;
+			sourceTree = "<group>";
+		};
+		8453FA5918F2FC8F0010D12F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				848479CC18F59F3E00BAD981 /* sim-1x.png */,
+				848479CD18F59F3E00BAD981 /* sim-2x.png */,
+				84DE92EE1993E2D7006525F4 /* guidebook-1x.png */,
+				84DE92EF1993E2D7006525F4 /* guidebook-2x.png */,
+				848479C218F3289400BAD981 /* offCheckbox.png */,
+				848479C318F3289400BAD981 /* onCheckbox.png */,
+				848479BE18F3208300BAD981 /* survey-1x.png */,
+				848479BF18F3208300BAD981 /* survey-2x.png */,
+				8453FA8B18F2FECC0010D12F /* builder-1x.png */,
+				8453FA8C18F2FECC0010D12F /* builder-2x.png */,
+				8453FA5A18F2FC8F0010D12F /* AprilTest-Info.plist */,
+				8453FA5B18F2FC8F0010D12F /* InfoPlist.strings */,
+				8453FA5E18F2FC8F0010D12F /* main.m */,
+				8453FA6018F2FC8F0010D12F /* AprilTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8453FA7A18F2FC8F0010D12F /* AprilTestTests */ = {
+			isa = PBXGroup;
+			children = (
+				8453FA8018F2FC8F0010D12F /* AprilTestTests.m */,
+				8453FA7B18F2FC8F0010D12F /* Supporting Files */,
+			);
+			path = AprilTestTests;
+			sourceTree = "<group>";
+		};
+		8453FA7B18F2FC8F0010D12F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8453FA7C18F2FC8F0010D12F /* AprilTestTests-Info.plist */,
+				8453FA7D18F2FC8F0010D12F /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8453FA4E18F2FC8F0010D12F /* AprilTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8453FA8418F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "AprilTest" */;
+			buildPhases = (
+				8453FA4B18F2FC8F0010D12F /* Sources */,
+				8453FA4C18F2FC8F0010D12F /* Frameworks */,
+				8453FA4D18F2FC8F0010D12F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AprilTest;
+			productName = AprilTest;
+			productReference = 8453FA4F18F2FC8F0010D12F /* AprilTest.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8453FA7218F2FC8F0010D12F /* AprilTestTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8453FA8718F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "AprilTestTests" */;
+			buildPhases = (
+				8453FA6F18F2FC8F0010D12F /* Sources */,
+				8453FA7018F2FC8F0010D12F /* Frameworks */,
+				8453FA7118F2FC8F0010D12F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8453FA7918F2FC8F0010D12F /* PBXTargetDependency */,
+			);
+			name = AprilTestTests;
+			productName = AprilTestTests;
+			productReference = 8453FA7318F2FC8F0010D12F /* AprilTestTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8453FA4718F2FC8F0010D12F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = AprilTest;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = Tia;
+				TargetAttributes = {
+					8453FA4E18F2FC8F0010D12F = {
+						DevelopmentTeam = F554V774C5;
+					};
+					8453FA7218F2FC8F0010D12F = {
+						TestTargetID = 8453FA4E18F2FC8F0010D12F;
+					};
+				};
+			};
+			buildConfigurationList = 8453FA4A18F2FC8F0010D12F /* Build configuration list for PBXProject "AprilTest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8453FA4618F2FC8F0010D12F;
+			productRefGroup = 8453FA5018F2FC8F0010D12F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8453FA4E18F2FC8F0010D12F /* AprilTest */,
+				8453FA7218F2FC8F0010D12F /* AprilTestTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8453FA4D18F2FC8F0010D12F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				848479C018F3208300BAD981 /* survey-1x.png in Resources */,
+				84DE92ED1993D110006525F4 /* baseElevation.txt in Resources */,
+				846B972618FE0B1F0008BD59 /* sewer.png in Resources */,
+				842D4CC41B0271A7002B351B /* DuPage_May.png in Resources */,
+				84BCFDB51A3B6BC200D37103 /* pquestions.txt in Resources */,
+				84DE92F11993E2D7006525F4 /* guidebook-2x.png in Resources */,
+				8453FA6E18F2FC8F0010D12F /* Images.xcassets in Resources */,
+				8453FA5D18F2FC8F0010D12F /* InfoPlist.strings in Resources */,
+				8453FA8D18F2FECC0010D12F /* builder-1x.png in Resources */,
+				848479C518F3289400BAD981 /* onCheckbox.png in Resources */,
+				84DE92E61993CA79006525F4 /* BlueIsland_AugStudy.png in Resources */,
+				848479C418F3289400BAD981 /* offCheckbox.png in Resources */,
+				846B972418FE0B1F0008BD59 /* greenroof.png in Resources */,
+				846B972718FE0B1F0008BD59 /* swale.png in Resources */,
+				841C0A201A16744500ED7A2E /* questions1.txt in Resources */,
+				841C0A231A16749000ED7A2E /* descriptions.txt in Resources */,
+				84DE92E81993CD62006525F4 /* landcover.png in Resources */,
+				841C0A211A16744500ED7A2E /* questions2.txt in Resources */,
+				848479C118F3208300BAD981 /* survey-2x.png in Resources */,
+				84D44885191D240400BF0589 /* gradientScale.png in Resources */,
+				8453FA6618F2FC8F0010D12F /* Main.storyboard in Resources */,
+				848479CE18F59F3E00BAD981 /* sim-1x.png in Resources */,
+				846B972318FE0B1F0008BD59 /* greenalley.png in Resources */,
+				84BCFDB71A3B6C4200D37103 /* pdescriptions.txt in Resources */,
+				84DE92F01993E2D7006525F4 /* guidebook-1x.png in Resources */,
+				8453FA8E18F2FECC0010D12F /* builder-2x.png in Resources */,
+				84DE92F31993EC3D006525F4 /* blueIslandOverlay.png in Resources */,
+				848479CF18F59F3E00BAD981 /* sim-2x.png in Resources */,
+				846B972518FE0B1F0008BD59 /* rainbarrel.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8453FA7118F2FC8F0010D12F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8453FA7F18F2FC8F0010D12F /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8453FA4B18F2FC8F0010D12F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				843B9CDB1AE6B70000FF2C8B /* AprilTestIntroViewController.m in Sources */,
+				848479CB18F32AAA00BAD981 /* AprilTestCPBViewController.m in Sources */,
+				8453FA6918F2FC8F0010D12F /* AprilTestFirstViewController.m in Sources */,
+				841C0A1F1A16744500ED7A2E /* PeprViewController.m in Sources */,
+				841C0A271A1674A000ED7A2E /* XYPieChart.m in Sources */,
+				846B971618FC26920008BD59 /* AprilTestSimRun.m in Sources */,
+				8453FA6C18F2FC8F0010D12F /* OutcomeSalienceViewController.m in Sources */,
+				8453FA5F18F2FC8F0010D12F /* main.m in Sources */,
+				84DE92EB1993D0B4006525F4 /* AprilTestGuidebookViewController.m in Sources */,
+				8423FC931AC9C4C600BC16E8 /* AprilTestCostDisplay.m in Sources */,
+				848479D818F71D7600BAD981 /* AprilTestTabBarController.m in Sources */,
+				8453FA6318F2FC8F0010D12F /* AprilTestAppDelegate.m in Sources */,
+				846B972D1904ABC20008BD59 /* AprilTestNormalizedVariable.m in Sources */,
+				848479D218F71ACE00BAD981 /* AprilTestVariable.m in Sources */,
+				846B972218FE0B1F0008BD59 /* FebTestWaterDisplay.m in Sources */,
+				846B972118FE0B1F0008BD59 /* FebTestIntervention.m in Sources */,
+				846B972A18FF04B50008BD59 /* AprilTestEfficiencyView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8453FA6F18F2FC8F0010D12F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8453FA8118F2FC8F0010D12F /* AprilTestTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8453FA7918F2FC8F0010D12F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8453FA4E18F2FC8F0010D12F /* AprilTest */;
+			targetProxy = 8453FA7818F2FC8F0010D12F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		8453FA5B18F2FC8F0010D12F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8453FA5C18F2FC8F0010D12F /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		8453FA6418F2FC8F0010D12F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8453FA6518F2FC8F0010D12F /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		8453FA7D18F2FC8F0010D12F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8453FA7E18F2FC8F0010D12F /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		8453FA8218F2FC8F0010D12F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		8453FA8318F2FC8F0010D12F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8453FA8518F2FC8F0010D12F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AprilTest/AprilTest-Prefix.pch";
+				INFOPLIST_FILE = "AprilTest/AprilTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		8453FA8618F2FC8F0010D12F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AprilTest/AprilTest-Prefix.pch";
+				INFOPLIST_FILE = "AprilTest/AprilTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		8453FA8818F2FC8F0010D12F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/AprilTest.app/AprilTest";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AprilTest/AprilTest-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "AprilTestTests/AprilTestTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		8453FA8918F2FC8F0010D12F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/AprilTest.app/AprilTest";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AprilTest/AprilTest-Prefix.pch";
+				INFOPLIST_FILE = "AprilTestTests/AprilTestTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8453FA4A18F2FC8F0010D12F /* Build configuration list for PBXProject "AprilTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8453FA8218F2FC8F0010D12F /* Debug */,
+				8453FA8318F2FC8F0010D12F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8453FA8418F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "AprilTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8453FA8518F2FC8F0010D12F /* Debug */,
+				8453FA8618F2FC8F0010D12F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8453FA8718F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "AprilTestTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8453FA8818F2FC8F0010D12F /* Debug */,
+				8453FA8918F2FC8F0010D12F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8453FA4718F2FC8F0010D12F /* Project object */;
+}
