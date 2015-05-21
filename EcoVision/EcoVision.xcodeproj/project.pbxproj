@@ -317,6 +317,11 @@
 				CLASSPREFIX = LTG;
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = EcoCollage;
+				TargetAttributes = {
+					EC36F93115CD0B96009A1A04 = {
+						DevelopmentTeam = F554V774C5;
+					};
+				};
 			};
 			buildConfigurationList = EC36F92C15CD0B96009A1A04 /* Build configuration list for PBXProject "EcoVision" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -492,6 +497,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -506,6 +513,7 @@
 					"$(PROJECT_DIR)",
 				);
 				PRODUCT_NAME = EcoVision;
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
 			};
@@ -516,6 +524,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -530,6 +540,7 @@
 					"$(PROJECT_DIR)",
 				);
 				PRODUCT_NAME = EcoVision;
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
 			};

@@ -187,8 +187,16 @@ UITextField *edittingTX;
 //will normalize the cost of installation and maintenance
 - (void)normalizeCost
 {
-    if (installationCost == NULL){ installationCost = (InstallationCost*)malloc(sizeof(InstallationCost)); }
-    if (maintenanceCost == NULL) { maintenanceCost = (MaintenanceCost*)malloc(sizeof(MaintenanceCost));    }
+    if (installationCost == NULL){
+        installationCost = (InstallationCost*)malloc(sizeof(InstallationCost));
+        installationCost->highestCost = 0;
+        installationCost->lowestCost  = 0;
+    }
+    if (maintenanceCost == NULL) {
+        maintenanceCost = (MaintenanceCost*) malloc(sizeof(MaintenanceCost));
+        maintenanceCost->highestCost = 0;
+        maintenanceCost->lowestCost  = 0;
+    }
     
     int i;
     for (i = 0; i < trialRuns.count; i++)
@@ -220,10 +228,10 @@ UITextField *edittingTX;
         if (someTrial.publicInstallCost >= installationCost->highestCost) { installationCost->highestCost = someTrial.publicInstallCost; }
         
     }
-    
-    printf("Highest Maintenance Cost: %d\n", maintenanceCost->highestCost);
-    printf("Highest Installation Cost: %d\n", installationCost->highestCost);
-    
+    if (trialRuns.count == 0){
+        printf("Highest Maintenance Cost: %d\n", maintenanceCost->highestCost);
+        printf("Highest Installation Cost: %d\n", installationCost->highestCost);
+    }
     for (i = 0; i < trialRuns.count; i++)
     {
         AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
@@ -231,7 +239,7 @@ UITextField *edittingTX;
         someTrialNorm.publicInstallCost     = 1 - ((float)someTrial.publicInstallCost/(float)(installationCost->highestCost + .01));
         someTrialNorm.publicMaintenanceCost = 1 - ((float)someTrial.publicMaintenanceCost/(float)(maintenanceCost->highestCost + .01));
         
-        printf("Normalized Trial %d:  Install Cost %d  Normalized Number %f\n",i+1,someTrial.publicInstallCost,someTrialNorm.publicInstallCost);
+        printf("Normalized Trial %d:  %f\n",i+1,someTrialNorm.publicInstallCost);
         
     }
     
@@ -504,7 +512,7 @@ UITextField *edittingTX;
         width+= currentVar.widthOfVisualization;
         if (currentVar.widthOfVisualization > 0) visibleIndex++;
     }
-    
+    //border around component score
     UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (simRun.trialNum)*175 + 88,  114, 26)];
     fullValueBorder.backgroundColor = [UIColor grayColor];
     UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (simRun.trialNum)*175 + 90,  110, 22)];
@@ -514,6 +522,8 @@ UITextField *edittingTX;
     //NSLog(@" %@", scoreVisVals);
     float maxX = 150;
     float totalScore = 0;
+    
+    //computing and drawing the component score
     for(int i =  0; i < scoreVisVals.count; i++){
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
         if (scoreWidth < 0) scoreWidth = 0.0;
