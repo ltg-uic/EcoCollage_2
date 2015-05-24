@@ -440,6 +440,7 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
     
     int i;
     for(i = 0; i < 30; i++) {
+        // loss of precision is fine since all numbers stored in arr will have only zeroes after the decimal
         hsvValues[i] = [[arr objectAtIndex:i]integerValue];
     }
     
