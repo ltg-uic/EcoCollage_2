@@ -14,4 +14,5 @@
 @property (strong, nonatomic) IBOutlet UITextField *studyNumber;
 @property NSString * url;
 @property int studyNum;
+@property int appType;
 @end

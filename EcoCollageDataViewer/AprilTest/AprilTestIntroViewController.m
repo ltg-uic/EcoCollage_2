@@ -7,6 +7,7 @@
 //
 
 #import "AprilTestIntroViewController.h"
+#import "MommaBirdViewController.h"
 #import "AprilTestTabBarController.h"
 
 @interface AprilTestIntroViewController ()
@@ -14,11 +15,15 @@
 @end
 
 
+#define BABY_BIRD 0
+#define MOMMA_BIRD 1
+
 @implementation AprilTestIntroViewController
 @synthesize server = _server;
 @synthesize studyNumber = _studyNumber;
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
+@synthesize appType = _appType;
 
 
 - (void)viewDidLoad {
@@ -30,6 +35,7 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 - (IBAction)switchUI:(id)sender {
     
     //grew tired of having to append http:// so i already had it appended, is that cool?? Now all you need is the IP adress 
@@ -37,9 +43,17 @@
     
     _url =  finalString;
     _studyNum = [_studyNumber.text intValue];
-
-    [self performSegueWithIdentifier:@"switchFromLogin" sender:self];
     
+    
+    if(_appType == BABY_BIRD)
+        [self performSegueWithIdentifier:@"switchToBabyBird" sender:self];
+    else
+        [self performSegueWithIdentifier:@"switchToMommaBird" sender:self];
+}
+
+// Momma Bird or Baby Bird
+- (IBAction)applicationType:(UISegmentedControl *)sender {
+    _appType = (int)sender.selectedSegmentIndex;
 }
 
 
@@ -48,10 +62,16 @@
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
    
-    AprilTestTabBarController *tab = [segue destinationViewController];
-    tab.url = _url;
-    tab.studyNum = _studyNum;
+    
+    if(_appType == BABY_BIRD) {
+        AprilTestTabBarController *tab = [segue destinationViewController];
+        tab.url = _url;
+        tab.studyNum = _studyNum;
+    }
+    else {
+        MommaBirdViewController *momma_data = [segue destinationViewController];
+        momma_data.url = _url;
+        momma_data.studyNum = _studyNum;
+    }
 }
-
-
 @end
