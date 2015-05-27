@@ -26,6 +26,7 @@
     for(int i = 0; i < numVar; i++){
         [_baseRatings insertObject:[NSNumber numberWithInt:0] atIndex:i];
     }
+
     return self;
 }
 

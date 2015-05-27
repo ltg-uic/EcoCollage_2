@@ -22,6 +22,11 @@
 
 typedef struct UserProfiles {
     int userNumber;
+    
+    // each of the following ints will store a unique integer 0-7 (inclusive)
+    // with regards to importance in concern ranking
+    // e.g. 0 - most important
+    //      7 - least important
     int investment;
     int damageReduction;
     int efficiencyOfIntervention;
