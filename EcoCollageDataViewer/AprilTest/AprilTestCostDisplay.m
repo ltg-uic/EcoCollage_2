@@ -51,28 +51,4 @@
     return self;
 }
 
-- (id) updateCDWithScore: (float) normScore andFrame: (CGRect) frame
-{
-    UILabel *budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width *.75, 20)];
-    budget.backgroundColor = [UIColor lightGrayColor];
-    [self addSubview:budget];
-    float widthBudgetUsed;
-    if(normScore < 1)
-        widthBudgetUsed = normScore;
-    else
-        widthBudgetUsed = 1;
-    UILabel *budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, widthBudgetUsed*frame.size.width *.75, 20)];
-    budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
-    [self addSubview:budgetUsed];
-    
-    if(normScore > 1){
-        UILabel *budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width*.75, 20, (normScore - 1) * frame.size.width *.75, 20)];
-        budgetOver.backgroundColor = [UIColor redColor];
-        [self addSubview:budgetOver];
-    }
-    
-    return self;
-}
-
-
 @end
