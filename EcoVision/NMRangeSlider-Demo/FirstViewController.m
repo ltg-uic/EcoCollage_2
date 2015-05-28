@@ -293,6 +293,7 @@ char results[5000];
     // if there is an image in scrollView it will remove it
     [self.imageView removeFromSuperview];
     
+    
     self.imageView = newView;
     [self.scrollView addSubview:newView];
     self.scrollView.backgroundColor = [UIColor whiteColor];
