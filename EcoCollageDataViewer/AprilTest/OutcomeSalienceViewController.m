@@ -68,12 +68,15 @@ float originalOffset = 0.0;
 UITextField *edittingTX;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 float currInvest = 0;
 =======
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
 =======
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
+=======
+>>>>>>> parent of 3978cb6... Commit
 
 @synthesize currentConcernRanking = _currentConcernRanking;
 
@@ -99,11 +102,14 @@ float currInvest = 0;
     bgCols = [[NSMutableArray alloc] init];
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     /*
 =======
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
 =======
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
+=======
+>>>>>>> parent of 3978cb6... Commit
     float translateThreshValue = _thresholdValue.value/_thresholdValue.maximumValue * _thresholdValue.frame.size.width;
     redThreshold = [[UILabel alloc] initWithFrame: CGRectMake(_thresholdValue.frame.origin.x + translateThreshValue + 2, _thresholdValue.frame.origin.y + _thresholdValue.frame.size.height/2, _thresholdValue.frame.size.width - 4 - translateThreshValue , _thresholdValue.frame.size.height/2)];
     [redThreshold setBackgroundColor:[UIColor redColor]];
@@ -121,6 +127,7 @@ float currInvest = 0;
     valueLabel.textColor = [UIColor blackColor];
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     [self.view addSubview:valueLabel];*/
 =======
     [self.view addSubview:valueLabel];
@@ -128,6 +135,9 @@ float currInvest = 0;
 =======
     [self.view addSubview:valueLabel];
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
+=======
+    [self.view addSubview:valueLabel];
+>>>>>>> parent of 3978cb6... Commit
     
     _loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _loadingIndicator.center = CGPointMake(512, 300);
@@ -210,6 +220,7 @@ float currInvest = 0;
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 //Max Investment Slider updater
 - (IBAction)investmentChanged:(UISlider *)sender {
@@ -259,6 +270,8 @@ float currInvest = 0;
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
 =======
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
+=======
+>>>>>>> parent of 3978cb6... Commit
 //will normalize the cost of installation and maintenance
 - (void)normalize
 {
@@ -334,6 +347,7 @@ float currInvest = 0;
     }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     
     
     //re-normalize the values from the trials
@@ -342,10 +356,13 @@ float currInvest = 0;
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
 =======
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
+=======
+>>>>>>> parent of 3978cb6... Commit
     for (i = 0; i < trialRuns.count; i++)
     {
         AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
         AprilTestNormalizedVariable  *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         
@@ -370,6 +387,10 @@ float currInvest = 0;
         someTrialNorm.publicInstallCost     = 1 - ((float)someTrial.publicInstallCost/(float)(installationCost->highestCost + .01));
         someTrialNorm.publicMaintenanceCost = 1 - ((float)someTrial.publicMaintenanceCost/(float)(maintenanceCost->highestCost + .01));
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
+=======
+        someTrialNorm.publicInstallCost     = 1 - ((float)someTrial.publicInstallCost/(float)(installationCost->highestCost + .01));
+        someTrialNorm.publicMaintenanceCost = 1 - ((float)someTrial.publicMaintenanceCost/(float)(maintenanceCost->highestCost + .01));
+>>>>>>> parent of 3978cb6... Commit
         
         //public cost and maintenance
         someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(installationCost->highestCost));
@@ -384,6 +405,7 @@ float currInvest = 0;
     }
     
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 
@@ -448,6 +470,8 @@ float currInvest = 0;
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
 =======
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
+=======
+>>>>>>> parent of 3978cb6... Commit
     
 - (void)loadNextSimulationRun{
     
@@ -505,6 +529,7 @@ float currInvest = 0;
     
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
     if (trialNum > 3)
@@ -518,6 +543,8 @@ float currInvest = 0;
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
 =======
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
+=======
+>>>>>>> parent of 3978cb6... Commit
     [_loadingIndicator stopAnimating];
     
 }

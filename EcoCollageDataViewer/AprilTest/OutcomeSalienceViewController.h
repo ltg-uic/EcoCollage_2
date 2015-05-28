@@ -26,10 +26,13 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 @property (strong, nonatomic) IBOutlet UILabel *currentMaxInvestment;
 =======
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
 =======
 >>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
+=======
+>>>>>>> parent of 3978cb6... Commit
 @end
