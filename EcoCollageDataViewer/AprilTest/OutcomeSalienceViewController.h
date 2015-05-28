@@ -18,10 +18,15 @@
 @property NSString * url;
 @property (strong, nonatomic) IBOutlet UISlider *hoursAfterStorm;
 @property (strong, nonatomic) IBOutlet UILabel *hoursAfterStormLabel;
-@property (strong, nonatomic) IBOutlet UISlider *thresholdValue;
-@property (strong, nonatomic) IBOutlet UILabel *thresholdValueLabel;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (strong, nonatomic) IBOutlet UIPickerView *sortingPicker;
 @property (strong, nonatomic) NSMutableArray *scenarioNames;
+
+
+@property (weak, nonatomic) IBOutlet UISwitch *StaticNormalization;
+
+
+- (IBAction)investmentChanged:(UISlider *)sender;
+@property (strong, nonatomic) IBOutlet UITextView *currentMaxInvestment;
 
 @end
