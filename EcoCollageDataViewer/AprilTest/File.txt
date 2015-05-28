@@ -1,3 +1,0 @@
-Sharing concern ranking between viewControllers:
-    a 'concernRanking' object is create by making a variable of type AprilTestTabBarController which comes with
-    the default concernRanking order

@@ -11,7 +11,6 @@
 @property float cost;
 @property float normScore;
 - (id) initWithCost: (float) cost andScore: (float) normScore andFrame: (CGRect) frame;
-- (id) updateCDWithScore: (float) normScore andFrame: (CGRect) frame;
 
 
 @end

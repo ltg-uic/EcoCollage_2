@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		574737081B14E52C00D5EED8 /* MommaBirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 574737071B14E52C00D5EED8 /* MommaBirdViewController.m */; };
-		5747370A1B165A2600D5EED8 /* File.txt in Resources */ = {isa = PBXBuildFile; fileRef = 574737091B165A2600D5EED8 /* File.txt */; };
 		841C0A1F1A16744500ED7A2E /* PeprViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 841C0A1C1A16744500ED7A2E /* PeprViewController.m */; };
 		841C0A201A16744500ED7A2E /* questions1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 841C0A1D1A16744500ED7A2E /* questions1.txt */; };
 		841C0A211A16744500ED7A2E /* questions2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 841C0A1E1A16744500ED7A2E /* questions2.txt */; };
@@ -78,7 +77,6 @@
 /* Begin PBXFileReference section */
 		574737061B14E52C00D5EED8 /* MommaBirdViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MommaBirdViewController.h; path = ../MommaBirdViewController.h; sourceTree = "<group>"; };
 		574737071B14E52C00D5EED8 /* MommaBirdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MommaBirdViewController.m; path = ../MommaBirdViewController.m; sourceTree = "<group>"; };
-		574737091B165A2600D5EED8 /* File.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = File.txt; sourceTree = "<group>"; };
 		841C0A1B1A16744500ED7A2E /* PeprViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PeprViewController.h; path = ../PeprViewController.h; sourceTree = "<group>"; };
 		841C0A1C1A16744500ED7A2E /* PeprViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PeprViewController.m; path = ../PeprViewController.m; sourceTree = "<group>"; };
 		841C0A1D1A16744500ED7A2E /* questions1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = questions1.txt; path = ../questions1.txt; sourceTree = "<group>"; };
@@ -265,7 +263,6 @@
 				84BCFDB61A3B6C4100D37103 /* pdescriptions.txt */,
 				841C0A1B1A16744500ED7A2E /* PeprViewController.h */,
 				841C0A1C1A16744500ED7A2E /* PeprViewController.m */,
-				574737091B165A2600D5EED8 /* File.txt */,
 				84BCFDB41A3B6BC200D37103 /* pquestions.txt */,
 				841C0A1D1A16744500ED7A2E /* questions1.txt */,
 				846B971E18FE0B1F0008BD59 /* rainbarrel.png */,
@@ -416,7 +413,6 @@
 				841C0A211A16744500ED7A2E /* questions2.txt in Resources */,
 				848479C118F3208300BAD981 /* survey-2x.png in Resources */,
 				84D44885191D240400BF0589 /* gradientScale.png in Resources */,
-				5747370A1B165A2600D5EED8 /* File.txt in Resources */,
 				8453FA6618F2FC8F0010D12F /* Main.storyboard in Resources */,
 				848479CE18F59F3E00BAD981 /* sim-1x.png in Resources */,
 				846B972318FE0B1F0008BD59 /* greenalley.png in Resources */,
