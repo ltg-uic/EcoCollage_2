@@ -22,7 +22,6 @@ int widthGlobal = 0;
 UIImage *userImage = nil;
 UIImage *threshedGlobal = nil;
 UIImage *warpedGlobal;
-UIImage* mean_image = nil;
 bool studyNum;
 NSString *fileContents;
 NSURL *server;
@@ -117,10 +116,11 @@ char results[5000];
 
 -(int)threshy{
     if (userImage == nil) {
-        UIImage* testImg = [UIImage imageNamed:@"IMG_0463.JPG"];
-        userImage = testImg;
-        //[self throwErrorAlert:@"No image to threshold! \nTake a photo of the entire board"];
-        //return 0;
+        // following 2 lines are for testing purposesß
+        //UIImage* testImg = [UIImage imageNamed:@"IMG_0463.JPG"];
+        //userImage = testImg;
+        [self throwErrorAlert:@"No image to threshold! \nTake a photo of the entire board"];
+        return 0;
     }
     
     /* thresholds image
@@ -223,7 +223,7 @@ char results[5000];
         worked = [CVWrapper analysis:warpedGlobal studyNumber: studyNumber trialNumber:trialNumber results: results];
     }
     if(worked) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Success!" message:@"We found your pieces!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Success!" message:@"Data has been sent to server!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
         [alert show];
         [self sendData];
     }
@@ -316,6 +316,11 @@ char results[5000];
     NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"hsvValues"];
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
     
+    
+    //create file if it doesn't exist
+    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
+        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
+    
     NSString* content = [NSString stringWithContentsOfFile:fileName
                                                   encoding:NSUTF8StringEncoding
                                                      error:NULL];
@@ -323,7 +328,7 @@ char results[5000];
     NSArray *arr = [content componentsSeparatedByString:@" "];
     
     int i;
-    for(i = 0; i < 30; i++) {
+    for(i = 0; i < 30 && i < arr.count; i++) {
         hsvValues[i] = [[arr objectAtIndex:i]integerValue];
     }
     
