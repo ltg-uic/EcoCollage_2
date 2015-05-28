@@ -26,7 +26,9 @@
 @synthesize dataWindow = _dataWindow;
 @synthesize mapWindow = _mapWindow;
 @synthesize titleWindow = _titleWindow;
+@synthesize thresholdValue = _thresholdValue;
 @synthesize hoursAfterStorm = _hoursAfterStorm;
+@synthesize thresholdValueLabel = _thresholdValueLabel;
 @synthesize hoursAfterStormLabel = _hoursAfterStormLabel;
 @synthesize loadingIndicator = _loadingIndicator;
 @synthesize scenarioNames = _scenarioNames;
@@ -64,8 +66,11 @@ float kOFFSET_FOR_KEYBOARD = 425.0;
 float offsetForMoving = 0.0;
 float originalOffset = 0.0;
 UITextField *edittingTX;
+<<<<<<< HEAD
 
 float currInvest = 0;
+=======
+>>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
 
 @synthesize currentConcernRanking = _currentConcernRanking;
 
@@ -89,7 +94,10 @@ float currInvest = 0;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
     bgCols = [[NSMutableArray alloc] init];
+<<<<<<< HEAD
     /*
+=======
+>>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
     float translateThreshValue = _thresholdValue.value/_thresholdValue.maximumValue * _thresholdValue.frame.size.width;
     redThreshold = [[UILabel alloc] initWithFrame: CGRectMake(_thresholdValue.frame.origin.x + translateThreshValue + 2, _thresholdValue.frame.origin.y + _thresholdValue.frame.size.height/2, _thresholdValue.frame.size.width - 4 - translateThreshValue , _thresholdValue.frame.size.height/2)];
     [redThreshold setBackgroundColor:[UIColor redColor]];
@@ -105,7 +113,11 @@ float currInvest = 0;
     valueLabel.font = [UIFont boldSystemFontOfSize:16.0];
     [valueLabel sizeToFit ];
     valueLabel.textColor = [UIColor blackColor];
+<<<<<<< HEAD
     [self.view addSubview:valueLabel];*/
+=======
+    [self.view addSubview:valueLabel];
+>>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
     
     _loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _loadingIndicator.center = CGPointMake(512, 300);
@@ -186,6 +198,7 @@ float currInvest = 0;
     [self loadNextSimulationRun];
 }
 
+<<<<<<< HEAD
 
 //Max Investment Slider updater
 - (IBAction)investmentChanged:(UISlider *)sender {
@@ -231,6 +244,8 @@ float currInvest = 0;
 }
 
 
+=======
+>>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
 //will normalize the cost of installation and maintenance
 - (void)normalize
 {
@@ -304,14 +319,18 @@ float currInvest = 0;
             if ((someTrial.impactNeighbors) >= impactNeighbors->highestCost){ impactNeighbors->highestCost = someTrial.impactNeighbors; }
         }
     }
+<<<<<<< HEAD
     
     
     //re-normalize the values from the trials
 
+=======
+>>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
     for (i = 0; i < trialRuns.count; i++)
     {
         AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
         AprilTestNormalizedVariable  *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
+<<<<<<< HEAD
         
         //adjust the highest cost if it happens to be a 0, to avoid division by 0
         if (maintenanceCost->highestCost == 0 || installationCost->highestCost == 0){
@@ -326,6 +345,10 @@ float currInvest = 0;
             impactNeighbors->highestCost = 0.01;
         }
 
+=======
+        someTrialNorm.publicInstallCost     = 1 - ((float)someTrial.publicInstallCost/(float)(installationCost->highestCost + .01));
+        someTrialNorm.publicMaintenanceCost = 1 - ((float)someTrial.publicMaintenanceCost/(float)(maintenanceCost->highestCost + .01));
+>>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
         
         //public cost and maintenance
         someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(installationCost->highestCost));
@@ -340,6 +363,7 @@ float currInvest = 0;
     }
     
 }
+<<<<<<< HEAD
 
 
 - (void) updateLabels: (int) trial
@@ -398,6 +422,8 @@ float currInvest = 0;
         priorityTotal += [(AprilTestVariable *)[_currentConcernRanking objectAtIndex:i] currentConcernRanking];
     }
 
+=======
+>>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
     
 - (void)loadNextSimulationRun{
     
@@ -453,6 +479,7 @@ float currInvest = 0;
         trialNum++;
     }
     
+<<<<<<< HEAD
 
     //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
     if (trialNum > 3)
@@ -462,6 +489,8 @@ float currInvest = 0;
     }
     
 
+=======
+>>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
     [_loadingIndicator stopAnimating];
     
 }
