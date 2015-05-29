@@ -32,20 +32,19 @@
 @synthesize scenarioNames = _scenarioNames;
 
 //structs that will keep track of the highest and lowest costs of Installation and maintenance (for convenience)
-typedef struct InstallationCost
+typedef struct Values
 {
     int highestCost;
     int lowestCost;
-}InstallationCost;
+}Value;
 
-typedef struct MaintenanceCost
-{
-    int highestCost;
-    int lowestCost;
-}MaintenanceCost;
 
-InstallationCost *installationCost = NULL;
-MaintenanceCost  *maintenanceCost = NULL;
+Value  *installationCost  = NULL;
+Value  *maintenanceCost   = NULL;
+Value  *privateDamages    = NULL;
+Value  *impactNeighbors   = NULL;
+Value  *neighborsImpactMe = NULL;
+
 NSMutableArray * trialRuns;             //contains list of simulation data from trials pulled
 NSMutableArray * trialRunsNormalized;   //contains list of simulation data from trials pulled in normalized form
 NSMutableArray * waterDisplays;
@@ -53,7 +52,7 @@ NSMutableArray * maxWaterDisplays;
 NSMutableArray * efficiency;
 NSMutableArray *lastKnownConcernProfile;
 NSMutableArray *bgCols;
-NSMutableArray *privateCostDisplays;
+NSMutableArray *privateDamagesLabels;
 NSMutableArray *publicCostDisplays;
 UILabel *redThreshold;
 NSArray *arrStatus;
@@ -94,7 +93,7 @@ float frame_height = 31;
     efficiency = [[NSMutableArray alloc] init];
     _scenarioNames = [[NSMutableArray alloc] init];
     publicCostDisplays = [[NSMutableArray alloc] init];
-    privateCostDisplays = [[NSMutableArray alloc] init];
+    privateDamagesLabels = [[NSMutableArray alloc] init];
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
@@ -189,14 +188,14 @@ float frame_height = 31;
     currInvest = newVal;
 }
 
-
 -(void) normalizeAllandUpdateDynamically
 {
     //normalize right after adding the newest trial
-    [self normalizeCost];
+    [self normalize];
     
     //updates the normalization of the previous trials in respect to the newest trial
     [self updatePublicCostDisplays: trialNum];
+    [self updateLabels: trialNum];
     
     //updates the component scores
     for (int i = 0; i < trialNum; i++)
@@ -208,35 +207,48 @@ float frame_height = 31;
     AprilTestSimRun *someTrial = [trialRuns objectAtIndex:trial];
     AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:trial];
     
-    someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(currInvest + .01));
-    someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(currInvest + .01));
+    if (currInvest == 0){ currInvest += .01; }
+    
+    someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(currInvest));
+    someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(currInvest));
     
 }
 
 //will normalize the cost of installation and maintenance
-- (void)normalizeCost
+- (void)normalize
 {
     if (installationCost == NULL){
-        installationCost = (InstallationCost*)malloc(sizeof(InstallationCost));
+        installationCost = (Value*)malloc(sizeof(Value));
         installationCost->highestCost = 0;
         installationCost->lowestCost  = 0;
     }
     if (maintenanceCost == NULL) {
-        maintenanceCost = (MaintenanceCost*) malloc(sizeof(MaintenanceCost));
+        maintenanceCost = (Value*) malloc(sizeof(Value));
         maintenanceCost->highestCost = 0;
         maintenanceCost->lowestCost  = 0;
     }
+    if (privateDamages == NULL){
+        privateDamages = (Value*)malloc(sizeof(Value));
+        privateDamages->highestCost = 0;
+        privateDamages->lowestCost = 0;
+    }
+    if (neighborsImpactMe == NULL){
+        neighborsImpactMe = (Value*)malloc(sizeof(Value));
+        neighborsImpactMe->highestCost = 0;
+        neighborsImpactMe->lowestCost  = 0;
+    }
+    if(impactNeighbors == NULL){
+        impactNeighbors = (Value*)malloc(sizeof(Value));
+        impactNeighbors->highestCost = 0;
+        impactNeighbors->lowestCost  = 0;
+    }
+    
     
     int i;
     for (i = 0; i < trialRuns.count; i++)
     {
         AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
         
-        printf("Trial %d\n\n", i+1);
-        printf("Installation Cost: %d\n", someTrial.publicInstallCost);
-        printf("Maintenance  Cost: %d\n\n",  someTrial.publicMaintenanceCost);
-        
-        //right now, working on getting the best and worst results of Installation and Maintenance cost dynamically
         if (i == 0)
         {
             //set the initial trial as the best and worst for both Installation and maintenance
@@ -246,21 +258,25 @@ float frame_height = 31;
             maintenanceCost->highestCost  =  someTrial.publicMaintenanceCost;
             maintenanceCost->lowestCost   =  someTrial.publicMaintenanceCost;
             
+            privateDamages->highestCost   = someTrial.privateDamages;
+            privateDamages->lowestCost    = someTrial.privateDamages;
+            
             
         }
-        //update the highest/lowest maintenance cost among the trials
+        //public cost
         if (someTrial.publicMaintenanceCost <= maintenanceCost->lowestCost) { maintenanceCost->lowestCost = someTrial.publicMaintenanceCost; }
         if (someTrial.publicMaintenanceCost >= maintenanceCost->highestCost){ maintenanceCost->highestCost = someTrial.publicMaintenanceCost; }
             
-        //update the highest/lowest installation cost among the trials
+       
         if (someTrial.publicInstallCost <= installationCost->lowestCost){ installationCost->lowestCost = someTrial.publicInstallCost; }
         if (someTrial.publicInstallCost >= installationCost->highestCost) { installationCost->highestCost = someTrial.publicInstallCost; }
         
+        //private cost
+        if (someTrial.privateDamages <= privateDamages->lowestCost){  privateDamages->lowestCost = someTrial.privateDamages; }
+        if (someTrial.privateDamages >= privateDamages->highestCost){ privateDamages->highestCost = someTrial.privateDamages; }
+        
     }
-    if (trialRuns.count == 0){
-        printf("Highest Maintenance Cost: %d\n", maintenanceCost->highestCost);
-        printf("Highest Installation Cost: %d\n", installationCost->highestCost);
-    }
+
     
     for (i = 0; i < trialRuns.count; i++)
     {
@@ -269,15 +285,19 @@ float frame_height = 31;
         
         if (maintenanceCost->highestCost == 0 || installationCost->highestCost == 0)
         {
-            someTrialNorm.publicInstallCost = 0;
-            someTrialNorm.publicMaintenanceCost = 0;
-        }
-        else{
-            someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(float)(installationCost->highestCost + .01));
-            someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(float)(maintenanceCost->highestCost + .01));
+            maintenanceCost->highestCost = 0.01;
+            installationCost->highestCost = 0.01;
         }
         
-        printf("Normalized Trial %d:  %f\n",i+1,someTrialNorm.publicInstallCost);
+        if (privateDamages->highestCost == 0)
+        {
+            privateDamages->highestCost = 0.01;
+        }
+        
+        someTrialNorm.publicInstallCost     = (float)someTrial.publicInstallCost/installationCost->highestCost;
+        someTrialNorm.publicMaintenanceCost = (float)someTrial.publicMaintenanceCost/maintenanceCost->highestCost;
+        
+        someTrialNorm.privateDamages        = (float)someTrial.privateDamages/privateDamages->highestCost;
         
     }
     
@@ -292,6 +312,23 @@ float frame_height = 31;
         AprilTestNormalizedVariable *normVar = [trialRunsNormalized objectAtIndex:i];
         
         [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, 130, 30)];
+    }
+}
+
+- (void) updateLabels: (int) trial
+{
+    UILabel *trialDamagesLabel;
+    
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    for (int i = 0; i < trial; i++)
+    {
+        trialDamagesLabel = [privateDamagesLabels objectAtIndex:i];
+        AprilTestNormalizedVariable *simRunNormal = [trialRunsNormalized objectAtIndex:i];
+        
+        [trialDamagesLabel setText:[NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]]];
+        
     }
 }
 
@@ -621,9 +658,18 @@ float frame_height = 31;
             //just damages now
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
-            
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +40];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70];
+
+            if (!_StaticNormalization.isOn) {
+                UILabel *damagesReduced = [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70];
+                
+                [privateDamagesLabels addObject:damagesReduced];
+            }
+            else{
+                [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70];
+            }
+            
+            
             [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue: (simRun.trialNum ) * 175 + 100];
             
 
@@ -863,7 +909,7 @@ float frame_height = 31;
     [UIView commitAnimations];
 }
 
--(void) drawTextBasedVar: (NSString *) outputValue withConcernPosition: (int) concernPos andyValue: (int) yValue{
+-(UILabel*) drawTextBasedVar: (NSString *) outputValue withConcernPosition: (int) concernPos andyValue: (int) yValue{
     UILabel *valueLabel = [[UILabel alloc] init];
     valueLabel.text = outputValue;
     valueLabel.frame =CGRectMake(concernPos, yValue, 0, 0);
@@ -872,6 +918,7 @@ float frame_height = 31;
     valueLabel.textColor = [UIColor blackColor];
     [[self dataWindow] addSubview:valueLabel];
     
+    return valueLabel;
 }
 
 -(void) drawTitles{
