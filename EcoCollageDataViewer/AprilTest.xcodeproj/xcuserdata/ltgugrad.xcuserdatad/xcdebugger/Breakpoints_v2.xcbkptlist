@@ -10,28 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/OutcomeSalienceViewController.m"
-            timestampString = "454615216.228862"
+            timestampString = "454621373.496043"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "363"
-            endingLineNumber = "363"
-            landmarkName = "-updateComponentScore:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AprilTest/OutcomeSalienceViewController.m"
-            timestampString = "454615263.902154"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "601"
-            endingLineNumber = "601"
-            landmarkName = "-drawTrial:"
+            startingLineNumber = "576"
+            endingLineNumber = "576"
+            landmarkName = "-loadNextSimulationRun"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

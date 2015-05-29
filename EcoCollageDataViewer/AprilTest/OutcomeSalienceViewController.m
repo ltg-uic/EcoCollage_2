@@ -53,6 +53,8 @@ NSMutableArray * efficiency;
 NSMutableArray *lastKnownConcernProfile;
 NSMutableArray *bgCols;
 NSMutableArray *privateDamagesLabels;
+NSMutableArray *ImpactNeighborsLabels;
+NSMutableArray *NeighborsImpactMeLabels;
 NSMutableArray *publicCostDisplays;
 UILabel *redThreshold;
 NSArray *arrStatus;
@@ -94,6 +96,7 @@ float frame_height = 31;
     _scenarioNames = [[NSMutableArray alloc] init];
     publicCostDisplays = [[NSMutableArray alloc] init];
     privateDamagesLabels = [[NSMutableArray alloc] init];
+    ImpactNeighborsLabels = [[NSMutableArray alloc] init];
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
@@ -209,9 +212,17 @@ float frame_height = 31;
     
     if (currInvest == 0){ currInvest += .01; }
     
+    //public cost
     someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(currInvest));
     someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(currInvest));
     
+    //private cost
+    if (currInvest <= someTrial.privateDamages) {
+        printf("Way over budget!!\n");
+        someTrialNorm.privateDamages        =  1;
+    } else{
+        someTrialNorm.privateDamages        = (float)someTrial.privateDamages/(currInvest);
+    }
 }
 
 //will normalize the cost of installation and maintenance
@@ -252,28 +263,38 @@ float frame_height = 31;
         if (i == 0)
         {
             //set the initial trial as the best and worst for both Installation and maintenance
-            installationCost->highestCost =  someTrial.publicInstallCost;
-            installationCost->lowestCost  =  someTrial.publicInstallCost;
+            installationCost->highestCost  =  someTrial.publicInstallCost;
+            installationCost->lowestCost   =  someTrial.publicInstallCost;
             
-            maintenanceCost->highestCost  =  someTrial.publicMaintenanceCost;
-            maintenanceCost->lowestCost   =  someTrial.publicMaintenanceCost;
+            maintenanceCost->highestCost   =  someTrial.publicMaintenanceCost;
+            maintenanceCost->lowestCost    =  someTrial.publicMaintenanceCost;
             
-            privateDamages->highestCost   = someTrial.privateDamages;
-            privateDamages->lowestCost    = someTrial.privateDamages;
+            privateDamages->highestCost    = someTrial.privateDamages;
+            privateDamages->lowestCost     = someTrial.privateDamages;
             
+            impactNeighbors->highestCost   = someTrial.impactNeighbors;
+            impactNeighbors->lowestCost    = someTrial.impactNeighbors;
             
+            neighborsImpactMe->highestCost = someTrial.neighborsImpactMe;
+            neighborsImpactMe->lowestCost  = someTrial.neighborsImpactMe;
         }
         //public cost
         if (someTrial.publicMaintenanceCost <= maintenanceCost->lowestCost) { maintenanceCost->lowestCost = someTrial.publicMaintenanceCost; }
         if (someTrial.publicMaintenanceCost >= maintenanceCost->highestCost){ maintenanceCost->highestCost = someTrial.publicMaintenanceCost; }
-            
-       
+        
         if (someTrial.publicInstallCost <= installationCost->lowestCost){ installationCost->lowestCost = someTrial.publicInstallCost; }
         if (someTrial.publicInstallCost >= installationCost->highestCost) { installationCost->highestCost = someTrial.publicInstallCost; }
         
         //private cost
         if (someTrial.privateDamages <= privateDamages->lowestCost){  privateDamages->lowestCost = someTrial.privateDamages; }
         if (someTrial.privateDamages >= privateDamages->highestCost){ privateDamages->highestCost = someTrial.privateDamages; }
+        
+        //neighbors
+        if (someTrial.impactNeighbors <= impactNeighbors->lowestCost){  impactNeighbors->lowestCost = someTrial.impactNeighbors; }
+        if (someTrial.impactNeighbors >= impactNeighbors->highestCost){ impactNeighbors->highestCost = someTrial.impactNeighbors; }
+        
+        if (someTrial.neighborsImpactMe <= neighborsImpactMe->lowestCost){ neighborsImpactMe->lowestCost = someTrial.neighborsImpactMe; }
+        if (someTrial.neighborsImpactMe >= neighborsImpactMe->highestCost){neighborsImpactMe->highestCost = someTrial.neighborsImpactMe; }
         
     }
 
@@ -283,15 +304,21 @@ float frame_height = 31;
         AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
         AprilTestNormalizedVariable  *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
         
-        if (maintenanceCost->highestCost == 0 || installationCost->highestCost == 0)
-        {
+        if (maintenanceCost->highestCost == 0 || installationCost->highestCost == 0){
             maintenanceCost->highestCost = 0.01;
             installationCost->highestCost = 0.01;
         }
         
-        if (privateDamages->highestCost == 0)
-        {
+        if (privateDamages->highestCost == 0){
             privateDamages->highestCost = 0.01;
+        }
+        
+        if (impactNeighbors->highestCost == 0) {
+            impactNeighbors->highestCost = 0.01;
+        }
+        
+        if (neighborsImpactMe->highestCost == 0) {
+            neighborsImpactMe->highestCost = 0.01;
         }
         
         someTrialNorm.publicInstallCost     = (float)someTrial.publicInstallCost/installationCost->highestCost;
@@ -299,6 +326,8 @@ float frame_height = 31;
         
         someTrialNorm.privateDamages        = (float)someTrial.privateDamages/privateDamages->highestCost;
         
+        someTrialNorm.impactNeighbors       = (someTrial.impactNeighbors * 100)/(impactNeighbors->highestCost *100);
+        someTrialNorm.neighborsImpactMe     = (someTrial.neighborsImpactMe * 100)/(neighborsImpactMe->highestCost * 100);
     }
     
 }
@@ -315,19 +344,40 @@ float frame_height = 31;
     }
 }
 
+- (NSMutableAttributedString *)myLabelAttributes:(NSString *)input
+{
+    NSMutableAttributedString *labelAttributes = [[NSMutableAttributedString alloc] initWithString:input];
+    
+    return labelAttributes;
+}
+
 - (void) updateLabels: (int) trial
 {
     UILabel *trialDamagesLabel;
-    
+    UILabel *trialImpactNeighbors;
+    UILabel *trialNeighborsImpact;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     
     for (int i = 0; i < trial; i++)
     {
-        trialDamagesLabel = [privateDamagesLabels objectAtIndex:i];
         AprilTestNormalizedVariable *simRunNormal = [trialRunsNormalized objectAtIndex:i];
         
-        [trialDamagesLabel setText:[NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]]];
+        if (i < privateDamagesLabels.count){
+            trialDamagesLabel = [privateDamagesLabels objectAtIndex:i];
+            
+            [trialDamagesLabel setAttributedText:[self myLabelAttributes: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]]]];
+        }
+        if (i < ImpactNeighborsLabels.count) {
+            trialImpactNeighbors = [ImpactNeighborsLabels objectAtIndex:i];
+            
+            [trialImpactNeighbors setAttributedText:[self myLabelAttributes: [NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.impactNeighbors]]];
+        }
+        if (i < NeighborsImpactMeLabels.count){
+            trialNeighborsImpact = [NeighborsImpactMeLabels objectAtIndex:i];
+            
+            [trialImpactNeighbors setAttributedText:[self myLabelAttributes: [NSString stringWithFormat:@"poopy%.2f%%", 100*simRunNormal.neighborsImpactMe]]];
+        }
         
     }
 }
@@ -599,6 +649,7 @@ float frame_height = 31;
     int visibleIndex = 0;
     
     for(int i = 0 ; i <_currentConcernRanking.count ; i++){
+        UILabel *savedLabel;
         
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
         if(simRun.trialNum ==0 && visibleIndex %2 == 0 && currentVar.widthOfVisualization > 0){
@@ -660,10 +711,11 @@ float frame_height = 31;
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +40];
 
+            //store the UILabel in a mutable array if dynamically normalizing
             if (!_StaticNormalization.isOn) {
-                UILabel *damagesReduced = [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70];
+                savedLabel = [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70];
                 
-                [privateDamagesLabels addObject:damagesReduced];
+                [privateDamagesLabels addObject:savedLabel];
             }
             else{
                 [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70];
@@ -683,12 +735,27 @@ float frame_height = 31;
             [scoreVisNames addObject: @"privateCostD"];
             
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.impactNeighbors] withConcernPosition:width +50 andyValue: (simRun.trialNum ) * 175 + 40];
+            if (!_StaticNormalization.isOn){
+                savedLabel =[self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.impactNeighbors] withConcernPosition:width +50 andyValue: (simRun.trialNum ) * 175 + 40];
+                
+                [ImpactNeighborsLabels addObject:savedLabel];
+            }
+            else{
+                [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.impactNeighbors] withConcernPosition:width +50 andyValue: (simRun.trialNum ) * 175 + 40];
+            }
+            
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
             [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (simRun.trialNum)*175 + 40];
+            if (!_StaticNormalization.isOn){
+                savedLabel = [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (simRun.trialNum)*175 + 40];
+                [NeighborsImpactMeLabels addObject:savedLabel];
+            }
+            else{
+                [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (simRun.trialNum)*175 + 40];
+            }
+            
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe)]];
             [scoreVisNames addObject: currentVar.name];
