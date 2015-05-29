@@ -32,10 +32,10 @@
 @synthesize scenarioNames = _scenarioNames;
 
 //structs that will keep track of the highest and lowest costs of Installation and maintenance (for convenience)
-typedef struct Values
+typedef struct Value
 {
-    int highestCost;
-    int lowestCost;
+    float highestCost;
+    float lowestCost;
 }Value;
 
 
