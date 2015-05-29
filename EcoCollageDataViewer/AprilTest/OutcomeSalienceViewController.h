@@ -18,21 +18,15 @@
 @property NSString * url;
 @property (strong, nonatomic) IBOutlet UISlider *hoursAfterStorm;
 @property (strong, nonatomic) IBOutlet UILabel *hoursAfterStormLabel;
-@property (strong, nonatomic) IBOutlet UISlider *thresholdValue;
-@property (strong, nonatomic) IBOutlet UILabel *thresholdValueLabel;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (strong, nonatomic) IBOutlet UIPickerView *sortingPicker;
 @property (strong, nonatomic) NSMutableArray *scenarioNames;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-@property (strong, nonatomic) IBOutlet UILabel *currentMaxInvestment;
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of 3978cb6... Commit
+@property (weak, nonatomic) IBOutlet UISwitch *StaticNormalization;
+
+
+- (IBAction)investmentChanged:(UISlider *)sender;
+@property (strong, nonatomic) IBOutlet UITextView *currentMaxInvestment;
+
 @end

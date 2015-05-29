@@ -26,26 +26,26 @@
 @synthesize dataWindow = _dataWindow;
 @synthesize mapWindow = _mapWindow;
 @synthesize titleWindow = _titleWindow;
-@synthesize thresholdValue = _thresholdValue;
 @synthesize hoursAfterStorm = _hoursAfterStorm;
-@synthesize thresholdValueLabel = _thresholdValueLabel;
 @synthesize hoursAfterStormLabel = _hoursAfterStormLabel;
 @synthesize loadingIndicator = _loadingIndicator;
 @synthesize scenarioNames = _scenarioNames;
 
 //structs that will keep track of the highest and lowest costs of Installation and maintenance (for convenience)
-typedef struct Value
+typedef struct InstallationCost
 {
-    float highestCost;
-    float lowestCost;
-}Value;
+    int highestCost;
+    int lowestCost;
+}InstallationCost;
 
-Value *installationCost  = NULL;
-Value *maintenanceCost   = NULL;
-Value *privateDamages    = NULL;
-Value *neighborsImpactMe = NULL;
-Value *impactNeighbors   = NULL;
+typedef struct MaintenanceCost
+{
+    int highestCost;
+    int lowestCost;
+}MaintenanceCost;
 
+InstallationCost *installationCost = NULL;
+MaintenanceCost  *maintenanceCost = NULL;
 NSMutableArray * trialRuns;             //contains list of simulation data from trials pulled
 NSMutableArray * trialRunsNormalized;   //contains list of simulation data from trials pulled in normalized form
 NSMutableArray * waterDisplays;
@@ -53,9 +53,8 @@ NSMutableArray * maxWaterDisplays;
 NSMutableArray * efficiency;
 NSMutableArray *lastKnownConcernProfile;
 NSMutableArray *bgCols;
+NSMutableArray *privateCostDisplays;
 NSMutableArray *publicCostDisplays;
-NSMutableArray *privateCostLabels;
-NSMutableArray *ImpactNeighborsLabels;
 UILabel *redThreshold;
 NSArray *arrStatus;
 NSMutableDictionary *scoreColors;
@@ -66,17 +65,18 @@ float kOFFSET_FOR_KEYBOARD = 425.0;
 float offsetForMoving = 0.0;
 float originalOffset = 0.0;
 UITextField *edittingTX;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
+NSTimer *scrollingTimer = nil;
+
+//hardcoded values that will represent the flooding depth slider
+float thresh = 65; //used for the max flooded area
 
 float currInvest = 0;
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of 3978cb6... Commit
+float minInvest = 0;
+float maxInvest = 5000000;
+float frame_x = 137;
+float frame_y = 642;
+float frame_width = 214;
+float frame_height = 31;
 
 @synthesize currentConcernRanking = _currentConcernRanking;
 
@@ -94,50 +94,12 @@ float currInvest = 0;
     efficiency = [[NSMutableArray alloc] init];
     _scenarioNames = [[NSMutableArray alloc] init];
     publicCostDisplays = [[NSMutableArray alloc] init];
-    privateCostLabels = [[NSMutableArray alloc] init];
-    ImpactNeighborsLabels = [[NSMutableArray alloc] init];
+    privateCostDisplays = [[NSMutableArray alloc] init];
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
     bgCols = [[NSMutableArray alloc] init];
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    /*
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of 3978cb6... Commit
-    float translateThreshValue = _thresholdValue.value/_thresholdValue.maximumValue * _thresholdValue.frame.size.width;
-    redThreshold = [[UILabel alloc] initWithFrame: CGRectMake(_thresholdValue.frame.origin.x + translateThreshValue + 2, _thresholdValue.frame.origin.y + _thresholdValue.frame.size.height/2, _thresholdValue.frame.size.width - 4 - translateThreshValue , _thresholdValue.frame.size.height/2)];
-    [redThreshold setBackgroundColor:[UIColor redColor]];
-    [self.view addSubview:redThreshold];
-    [self.view sendSubviewToBack:redThreshold];
-    UIImageView *gradient = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"gradientScale.png"]];
-    [gradient setFrame: CGRectMake(_thresholdValue.frame.origin.x + 2, _thresholdValue.frame.origin.y + _thresholdValue.frame.size.height/2, _thresholdValue.frame.size.width - 4, _thresholdValue.frame.size.height/2)];
-    [self.view addSubview: gradient];
-    [self.view sendSubviewToBack:gradient];
-    UILabel *valueLabel = [[UILabel alloc] init];
-    valueLabel.text = @"Map and Score";
-    valueLabel.frame =CGRectMake(20, 55, 0, 0);
-    valueLabel.font = [UIFont boldSystemFontOfSize:16.0];
-    [valueLabel sizeToFit ];
-    valueLabel.textColor = [UIColor blackColor];
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    [self.view addSubview:valueLabel];*/
-=======
-    [self.view addSubview:valueLabel];
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
-    [self.view addSubview:valueLabel];
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
-    [self.view addSubview:valueLabel];
->>>>>>> parent of 3978cb6... Commit
+    
     
     _loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _loadingIndicator.center = CGPointMake(512, 300);
@@ -180,11 +142,10 @@ float currInvest = 0;
     }
 //    int prevTrialNum = trialNum;
 //    trialNum = 0;
-    /*
     for (int i =0; i < trialNum; i++){
         [self drawTrial:i];
     }
-    [self drawTitles];*/
+    [self drawTitles];
     [_dataWindow setContentOffset:CGPointMake(0, 0)];
     [_mapWindow setContentOffset:CGPointMake(0,0 )];
     [_dataWindow flashScrollIndicators];
@@ -218,15 +179,9 @@ float currInvest = 0;
     [self loadNextSimulationRun];
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-
 //Max Investment Slider updater
 - (IBAction)investmentChanged:(UISlider *)sender {
     int newVal = sender.value;
-    newVal = 500 * floor((newVal/500)+0.5);
-    
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     
@@ -238,11 +193,10 @@ float currInvest = 0;
 -(void) normalizeAllandUpdateDynamically
 {
     //normalize right after adding the newest trial
-    [self normalize];
+    [self normalizeCost];
     
     //updates the normalization of the previous trials in respect to the newest trial
     [self updatePublicCostDisplays: trialNum];
-    [self updateLabels:trialNum];
     
     //updates the component scores
     for (int i = 0; i < trialNum; i++)
@@ -254,191 +208,79 @@ float currInvest = 0;
     AprilTestSimRun *someTrial = [trialRuns objectAtIndex:trial];
     AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:trial];
     
-    if (currInvest == 0) { currInvest += 0.01; };
-    
-    //public cost
-    someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/currInvest);
-    someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/currInvest);
-    
-    //private damages
-    someTrialNorm.privateDamages = (float)someTrial.privateDamages/currInvest;
+    someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(currInvest + .01));
+    someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(currInvest + .01));
     
 }
 
-
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of 3978cb6... Commit
 //will normalize the cost of installation and maintenance
-- (void)normalize
+- (void)normalizeCost
 {
-    //initializa any variables that werent initialized yet
     if (installationCost == NULL){
-        installationCost = (Value*)malloc(sizeof(Value));
+        installationCost = (InstallationCost*)malloc(sizeof(InstallationCost));
         installationCost->highestCost = 0;
         installationCost->lowestCost  = 0;
     }
     if (maintenanceCost == NULL) {
-        maintenanceCost = (Value*) malloc(sizeof(Value));
+        maintenanceCost = (MaintenanceCost*) malloc(sizeof(MaintenanceCost));
         maintenanceCost->highestCost = 0;
         maintenanceCost->lowestCost  = 0;
     }
-    if (privateDamages == NULL) {
-        privateDamages = (Value*) malloc(sizeof(Value));
-        privateDamages->highestCost = 0;
-        privateDamages->lowestCost  = 0;
-    }
-    if (neighborsImpactMe == NULL){
-        neighborsImpactMe = (Value*) malloc(sizeof(Value));
-        neighborsImpactMe->highestCost = 0;
-        neighborsImpactMe->lowestCost  = 0;
-    }
-    if (impactNeighbors == NULL) {
-        impactNeighbors = (Value*) malloc(sizeof(Value));
-        impactNeighbors->highestCost = 0;
-        impactNeighbors->lowestCost  = 0;
-    }
     
-    //find the min/max for each variable in the current existing trials
     int i;
     for (i = 0; i < trialRuns.count; i++)
     {
         AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
         
+        printf("Trial %d\n\n", i+1);
+        printf("Installation Cost: %d\n", someTrial.publicInstallCost);
+        printf("Maintenance  Cost: %d\n\n",  someTrial.publicMaintenanceCost);
+        
+        //right now, working on getting the best and worst results of Installation and Maintenance cost dynamically
         if (i == 0)
         {
-            installationCost->highestCost  =  someTrial.publicInstallCost;
-            installationCost->lowestCost   =  someTrial.publicInstallCost;
+            //set the initial trial as the best and worst for both Installation and maintenance
+            installationCost->highestCost =  someTrial.publicInstallCost;
+            installationCost->lowestCost  =  someTrial.publicInstallCost;
             
-            maintenanceCost->highestCost   =  someTrial.publicMaintenanceCost;
-            maintenanceCost->lowestCost    =  someTrial.publicMaintenanceCost;
+            maintenanceCost->highestCost  =  someTrial.publicMaintenanceCost;
+            maintenanceCost->lowestCost   =  someTrial.publicMaintenanceCost;
             
-            privateDamages->highestCost    =  someTrial.privateDamages;
-            privateDamages->lowestCost     =  someTrial.privateDamages;
             
-            neighborsImpactMe->highestCost =  someTrial.neighborsImpactMe;
-            neighborsImpactMe->lowestCost  =  someTrial.neighborsImpactMe;
-            
-            impactNeighbors->highestCost   = someTrial.impactNeighbors;
-            impactNeighbors->lowestCost    = someTrial.impactNeighbors;
         }
-        else
-        {
+        //update the highest/lowest maintenance cost among the trials
+        if (someTrial.publicMaintenanceCost <= maintenanceCost->lowestCost) { maintenanceCost->lowestCost = someTrial.publicMaintenanceCost; }
+        if (someTrial.publicMaintenanceCost >= maintenanceCost->highestCost){ maintenanceCost->highestCost = someTrial.publicMaintenanceCost; }
             
-            if (someTrial.publicMaintenanceCost <= maintenanceCost->lowestCost) { maintenanceCost->lowestCost = someTrial.publicMaintenanceCost; }
-            if (someTrial.publicMaintenanceCost >= maintenanceCost->highestCost){ maintenanceCost->highestCost = someTrial.publicMaintenanceCost; }
-            
-            
-            if (someTrial.publicInstallCost <= installationCost->lowestCost){ installationCost->lowestCost = someTrial.publicInstallCost; }
-            if (someTrial.publicInstallCost >= installationCost->highestCost) { installationCost->highestCost = someTrial.publicInstallCost; }
-            
-            if (someTrial.privateDamages <= privateDamages->lowestCost ){ privateDamages->lowestCost = someTrial.privateDamages; }
-            if (someTrial.privateDamages >= privateDamages->highestCost ){ privateDamages->highestCost = someTrial.privateDamages; }
-            
-            if ((someTrial.neighborsImpactMe) <= neighborsImpactMe->lowestCost){ neighborsImpactMe->lowestCost = someTrial.neighborsImpactMe; }
-            if ((someTrial.neighborsImpactMe) >= neighborsImpactMe->highestCost){ neighborsImpactMe->highestCost = someTrial.neighborsImpactMe; }
-            
-            if ((someTrial.impactNeighbors) <= impactNeighbors->lowestCost){ impactNeighbors->lowestCost = someTrial.impactNeighbors; }
-            if ((someTrial.impactNeighbors) >= impactNeighbors->highestCost){ impactNeighbors->highestCost = someTrial.impactNeighbors; }
-        }
+        //update the highest/lowest installation cost among the trials
+        if (someTrial.publicInstallCost <= installationCost->lowestCost){ installationCost->lowestCost = someTrial.publicInstallCost; }
+        if (someTrial.publicInstallCost >= installationCost->highestCost) { installationCost->highestCost = someTrial.publicInstallCost; }
+        
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
+    if (trialRuns.count == 0){
+        printf("Highest Maintenance Cost: %d\n", maintenanceCost->highestCost);
+        printf("Highest Installation Cost: %d\n", installationCost->highestCost);
+    }
     
-    
-    //re-normalize the values from the trials
-
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of 3978cb6... Commit
     for (i = 0; i < trialRuns.count; i++)
     {
         AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
         AprilTestNormalizedVariable  *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
         
-        //adjust the highest cost if it happens to be a 0, to avoid division by 0
-        if (maintenanceCost->highestCost == 0 || installationCost->highestCost == 0){
-            maintenanceCost->highestCost = 0.01;
-            installationCost->highestCost = 0.01;
+        if (maintenanceCost->highestCost == 0 || installationCost->highestCost == 0)
+        {
+            someTrialNorm.publicInstallCost = 0;
+            someTrialNorm.publicMaintenanceCost = 0;
         }
-        if (privateDamages->highestCost == 0 || neighborsImpactMe->highestCost == 0){
-            privateDamages->highestCost = 0.01;
-            neighborsImpactMe->highestCost = 0.01;
+        else{
+            someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(float)(installationCost->highestCost + .01));
+            someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(float)(maintenanceCost->highestCost + .01));
         }
-        if (impactNeighbors->highestCost == 0){
-            impactNeighbors->highestCost = 0.01;
-        }
-
-=======
-        someTrialNorm.publicInstallCost     = 1 - ((float)someTrial.publicInstallCost/(float)(installationCost->highestCost + .01));
-        someTrialNorm.publicMaintenanceCost = 1 - ((float)someTrial.publicMaintenanceCost/(float)(maintenanceCost->highestCost + .01));
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
-        someTrialNorm.publicInstallCost     = 1 - ((float)someTrial.publicInstallCost/(float)(installationCost->highestCost + .01));
-        someTrialNorm.publicMaintenanceCost = 1 - ((float)someTrial.publicMaintenanceCost/(float)(maintenanceCost->highestCost + .01));
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
-        someTrialNorm.publicInstallCost     = 1 - ((float)someTrial.publicInstallCost/(float)(installationCost->highestCost + .01));
-        someTrialNorm.publicMaintenanceCost = 1 - ((float)someTrial.publicMaintenanceCost/(float)(maintenanceCost->highestCost + .01));
->>>>>>> parent of 3978cb6... Commit
         
-        //public cost and maintenance
-        someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(installationCost->highestCost));
-        someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(maintenanceCost->highestCost));
+        printf("Normalized Trial %d:  %f\n",i+1,someTrialNorm.publicInstallCost);
         
-        //private damages
-        someTrialNorm.privateDamages = (float)someTrial.privateDamages/(privateDamages->highestCost);
-        someTrialNorm.neighborsImpactMe = (someTrialNorm.neighborsImpactMe * 100)/(neighborsImpactMe->highestCost * 100);
-       
-        //impact Neighbors
-        someTrialNorm.impactNeighbors = (someTrial.impactNeighbors * 100)/(impactNeighbors->highestCost*100);
     }
     
-}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-
-- (void) updateLabels: (int) trial
-{
-    AprilTestNormalizedVariable *simRunNormal;
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    
-    UILabel *privateDamagesLabel;
-    UILabel *impactNeighborsLabel;
-    
-    for (int i = 0; i < trial; i++)
-    {
-        simRunNormal = [trialRunsNormalized objectAtIndex:i];
-        privateDamagesLabel = [privateCostLabels objectAtIndex:i];
-        impactNeighborsLabel = [ImpactNeighborsLabels objectAtIndex:i];
-        
-        [privateDamagesLabel setAttributedText:[self myLabelAttributes:[NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]]]];
-        
-        [impactNeighborsLabel setAttributedText:[self myLabelAttributes:[NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.impactNeighbors]]];
-        
-    }
-   
-}
-
-//changes the attributes of a label (used to update UIlabels in certain locations )
-- (NSMutableAttributedString *)myLabelAttributes:(NSString *)input
-{
-    NSMutableAttributedString *labelAttributes = [[NSMutableAttributedString alloc] initWithString:input];
-    
-    return labelAttributes;
 }
 
 //updates the score of the public install costs to reflect new trial
@@ -465,14 +307,122 @@ float currInvest = 0;
         
         priorityTotal += [(AprilTestVariable *)[_currentConcernRanking objectAtIndex:i] currentConcernRanking];
     }
-
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of 3978cb6... Commit
     
+    int width = 0;
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+        if(first > second) return NSOrderedAscending;
+        else return NSOrderedDescending;
+    }];
+    NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
+    NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
+    
+    int visibleIndex = 0;
+    
+    for(int i = 0 ; i <_currentConcernRanking.count ; i++){
+        AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
+        
+        if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
+            float investmentInstallN = simRunNormal.publicInstallCost;
+            float investmentMaintainN = simRunNormal.publicMaintenanceCost;
+            
+            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
+            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
+            
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN))]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
+            
+            [scoreVisNames addObject: @"publicCostI"];
+            [scoreVisNames addObject: @"publicCostM"];
+        }
+        else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
+            
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
+            
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2]];
+            
+            [scoreVisNames addObject: @"privateCostD"];
+            
+        }
+        else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
+            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
+            [scoreVisNames addObject: currentVar.name];
+        }
+        else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (simRunNormal.neighborsImpactMe);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe)]];
+            [scoreVisNames addObject: currentVar.name];
+        }
+        else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
+           
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
+            [scoreVisNames addObject: currentVar.name];
+        }
+        else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
+            [scoreVisNames addObject: currentVar.name];
+            
+        }
+        else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
+            [scoreVisNames addObject: currentVar.name];
+            
+        }
+        else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
+        
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
+            [scoreVisNames addObject: currentVar.name];
+        
+            
+        }
+        else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * 0]];
+            [scoreVisNames addObject:currentVar.name];
+        }
+        
+        width+= currentVar.widthOfVisualization;
+        if (currentVar.widthOfVisualization > 0) visibleIndex++;
+    }
+
+    //border around component score
+    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (simRun.trialNum)*175 + 88,  114, 26)];
+    fullValueBorder.backgroundColor = [UIColor grayColor];
+    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (simRun.trialNum)*175 + 90,  110, 22)];
+    fullValue.backgroundColor = [UIColor whiteColor];
+    [_mapWindow addSubview:fullValueBorder];
+    [_mapWindow addSubview:fullValue];
+    //NSLog(@" %@", scoreVisVals);
+    float maxX = 150;
+    float totalScore = 0;
+    
+    //computing and drawing the final component score
+    for(int i =  0; i < scoreVisVals.count; i++){
+        float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
+        if (scoreWidth < 0) scoreWidth = 0.0;
+        totalScore += scoreWidth;
+        UILabel * componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (simRun.trialNum)*175 + 90, floor(scoreWidth), 22)];
+        componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
+        [_mapWindow addSubview:componentScore];
+        maxX+=floor(scoreWidth);
+    }
+    
+}
+
 - (void)loadNextSimulationRun{
     
     //pull content from the server that is said to be from le trial with real vals
@@ -517,36 +467,45 @@ float currInvest = 0;
     
     
     if(content != NULL && content.length > 100 && contentN != NULL){
+        
+        //Adds a new trial to a list of trials (normalized and real)
         AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:content withTrialNum:trialNum];
         AprilTestNormalizedVariable *simRunNormal = [[AprilTestNormalizedVariable alloc] init: contentN withTrialNum:trialNum];
         [trialRunsNormalized addObject:simRunNormal];
         [trialRuns addObject: simRun];
-        [self normalizeCost];
         
+        if (!_StaticNormalization.isOn) {
+            //NSLog(@"I am implementing a Dynamic Normalization approach\n");
+            [self normalizeAllandUpdateDynamically];
+            
+        }
+        else{
+            //NSLog(@"I am implementing a Static Normalization approach\n");
+            [self normalizeStatically:trialNum]; //can be done trial at a time (since max Investment is already given)
+        }
+        
+        //draws the newest trial
         [self drawTrial: trialNum];
+        
         trialNum++;
     }
     
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-
     //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
     if (trialNum > 3)
     {
-        scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.20)
+        scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
                                                                   target:self selector:@selector(autoscrollTimerFired) userInfo:nil repeats:NO];
     }
     
-
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of f0f7c42... Merge remote-tracking branch 'origin/master'
-=======
->>>>>>> parent of 3978cb6... Commit
     [_loadingIndicator stopAnimating];
     
+}
+
+//autoscroll to the bottom of the mapwindow (trial and component score) scrollview
+- (void) autoscrollTimerFired
+{
+    CGPoint bottomOffset = CGPointMake(0, _mapWindow.contentSize.height - _mapWindow.bounds.size.height);
+    [_mapWindow setContentOffset:bottomOffset animated:YES];
 }
 
 -(void) drawTrial: (int) trial{
@@ -601,6 +560,7 @@ float currInvest = 0;
     NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
     NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
     int visibleIndex = 0;
+    
     for(int i = 0 ; i <_currentConcernRanking.count ; i++){
         
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
@@ -661,15 +621,12 @@ float currInvest = 0;
             //just damages now
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
+            
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +40];
-            
-            UILabel* DamageReduced = [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70];
-            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue: (simRun.trialNum ) * 175 + 100];
             
-            [privateCostLabels addObject:DamageReduced];  //keep track of the damage reduced from each trial
-            
-            
+
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
 
             //add values for the score visualization
@@ -680,10 +637,7 @@ float currInvest = 0;
             [scoreVisNames addObject: @"privateCostD"];
             
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
-            UILabel *impactNeighbors = [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.impactNeighbors] withConcernPosition:width +50 andyValue: (simRun.trialNum ) * 175 + 40];
-            
-            [ImpactNeighborsLabels addObject:impactNeighbors];
-            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.impactNeighbors] withConcernPosition:width +50 andyValue: (simRun.trialNum ) * 175 + 40];
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
             [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
             [scoreVisNames addObject: currentVar.name];
@@ -709,7 +663,7 @@ float currInvest = 0;
                 wd = [waterDisplays objectAtIndex:trial];
                 wd.frame = CGRectMake(width + 10, (simRun.trialNum)*175 + 40, 115, 125);
             }
-            wd.thresholdValue = _thresholdValue.value;
+            wd.thresholdValue = thresh;
             [wd fastUpdateView: _hoursAfterStorm.value];
             
             
@@ -728,7 +682,7 @@ float currInvest = 0;
                 mwd = [maxWaterDisplays objectAtIndex:trial];
                 mwd.frame = CGRectMake(width + 10, (simRun.trialNum)*175 + 40, 115, 125);
             }
-            mwd.thresholdValue = _thresholdValue.value;
+            mwd.thresholdValue = thresh;
             [mwd updateView:48];
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
@@ -775,7 +729,7 @@ float currInvest = 0;
     float maxX = 150;
     float totalScore = 0;
     
-    //computing and drawing the component score
+    //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
         if (scoreWidth < 0) scoreWidth = 0.0;
@@ -909,7 +863,7 @@ float currInvest = 0;
     [UIView commitAnimations];
 }
 
--(UILabel*) drawTextBasedVar: (NSString *) outputValue withConcernPosition: (int) concernPos andyValue: (int) yValue{
+-(void) drawTextBasedVar: (NSString *) outputValue withConcernPosition: (int) concernPos andyValue: (int) yValue{
     UILabel *valueLabel = [[UILabel alloc] init];
     valueLabel.text = outputValue;
     valueLabel.frame =CGRectMake(concernPos, yValue, 0, 0);
@@ -917,7 +871,7 @@ float currInvest = 0;
     valueLabel.font = [UIFont systemFontOfSize:14.0];
     valueLabel.textColor = [UIColor blackColor];
     [[self dataWindow] addSubview:valueLabel];
-    return valueLabel;
+    
 }
 
 -(void) drawTitles{
@@ -1027,26 +981,12 @@ float currInvest = 0;
         passFirstThree = FALSE;
     }
 }
+
+//updted so that it only updates the slider for hours after storm
 - (IBAction)sliderChanged:(id)sender {
-    NSMutableString * content = [NSMutableString alloc];
-    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
-    float threshVal = _thresholdValue.value * 0.0393701;
-    [_thresholdValue setEnabled:FALSE];
-    [_hoursAfterStorm setEnabled:FALSE];
-    [_mapWindow setScrollEnabled:FALSE];
-    [_dataWindow setScrollEnabled:FALSE];
-    [_titleWindow setScrollEnabled:FALSE];
-    _thresholdValueLabel.text = [NSString stringWithFormat:@"%.1F\"", threshVal ];
-    float translateThreshValue = _thresholdValue.value/_thresholdValue.maximumValue * _thresholdValue.frame.size.width;
-    [redThreshold setFrame: CGRectMake(_thresholdValue.frame.origin.x + translateThreshValue + 2, _thresholdValue.frame.origin.y + _thresholdValue.frame.size.height/2, _thresholdValue.frame.size.width - 4 - translateThreshValue , _thresholdValue.frame.size.height/2)];
-    [_thresholdValueLabel sizeToFit];
-    for(int i = 0; i < waterDisplays.count; i++){
-        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
-        temp.thresholdValue = _thresholdValue.value;
-        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxWaterDisplays objectAtIndex: i];
-        tempHeights.thresholdValue = _thresholdValue.value;
-    }
     
+    NSMutableString * content = [NSMutableString alloc];
+   
     int hoursAfterStorm = floorf(_hoursAfterStorm.value);
     if (hoursAfterStorm % 2 != 0) hoursAfterStorm--;
     _hoursAfterStorm.value = hoursAfterStorm;
@@ -1061,7 +1001,7 @@ float currInvest = 0;
         [temp fastUpdateView:hoursAfterStorm];
         [tempHeights updateView:48];
     }
-    [_thresholdValue setEnabled:TRUE];
+
     [_hoursAfterStorm setEnabled:TRUE];
     [_mapWindow setScrollEnabled:TRUE];
     [_dataWindow setScrollEnabled:TRUE];
@@ -1072,13 +1012,10 @@ float currInvest = 0;
     [dateFormat setDateFormat:@"HH:mm:ss"];
     NSString *prettyVersion = [dateFormat stringFromDate:myDate];
     
-    if(sender == _thresholdValue){
-        content = [content initWithFormat:@"%@\tThreshold value set to:%f",prettyVersion, threshVal];
-    } else {
+    if(sender == _hoursAfterStorm){
         content = [content initWithFormat:@"%@\tHours after storm set to: %d",prettyVersion, hoursAfterStorm];
-    }
-    
-//    NSLog(content);
+        
+        //    NSLog(content);
         [content appendString:@"\n\n"];
         NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
         NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
@@ -1090,6 +1027,8 @@ float currInvest = 0;
         NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
         [file seekToEndOfFile];
         [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];;
+    }
+
 }
 
 
@@ -1143,5 +1082,6 @@ float currInvest = 0;
     int rowHeight = 20;
     return rowHeight;
 }
+
 
 @end
