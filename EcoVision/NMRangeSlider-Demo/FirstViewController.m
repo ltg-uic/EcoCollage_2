@@ -316,6 +316,27 @@ char results[5000];
     NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"hsvValues"];
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
     
+    //create file if it doesn't exist and fill with default values
+    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
+        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
+        
+        int hsvDefault[] = {10, 80, 50, 200, 50, 255, 80, 175, 140, 255, 100, 255, 90, 110, 40, 100, 120, 225, 0, 15, 30, 220, 50, 210, 15, 90, 35, 200, 35, 130};
+        [CVWrapper setHSV_Values:hsvDefault];
+        
+        
+        NSString *str = @"";
+        
+        int i;
+        for(i = 0; i < 30; i++) {
+            str = [str stringByAppendingFormat:@"%d ", hsvDefault[i]];
+        }
+        
+        NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
+        
+        [file writeData:[str dataUsingEncoding:NSUTF8StringEncoding]];
+        [file closeFile];
+    }
+    
     NSString* content = [NSString stringWithContentsOfFile:fileName
                                                   encoding:NSUTF8StringEncoding
                                                      error:NULL];
@@ -323,7 +344,8 @@ char results[5000];
     NSArray *arr = [content componentsSeparatedByString:@" "];
     
     int i;
-    for(i = 0; i < 30; i++) {
+    for(i = 0; i < 30 && i < arr.count; i++) {
+        NSLog(@"hsvValue %d: %d\n", i, [[arr objectAtIndex:i]integerValue]);
         hsvValues[i] = [[arr objectAtIndex:i]integerValue];
     }
     
