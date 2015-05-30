@@ -12,5 +12,7 @@
 @property NSMutableArray * currentConcernRanking;
 @property NSString * url;
 @property int studyNum;
+@property (strong, nonatomic) IBOutlet UITextView *profileTextView;
+
 
 @end
