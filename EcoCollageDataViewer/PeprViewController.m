@@ -28,10 +28,14 @@
 @synthesize slices = _slices;
 @synthesize sliceColors = _sliceColors;
 @synthesize currentConcernRanking = _currentConcernRanking;
+@synthesize username = _username;
 
 #define TRANSFER_SERVICE_UUID           @"E20A39F4-73F5-4BC4-A12F-17D1AD07A961"
 #define TRANSFER_CHARACTERISTIC_UUID    @"08590F7E-DB05-467E-8757-72F6FAEB13D4"
 #define NOTIFY_MTU      20
+
+int transferProfile = 0;
+int transferUserName = 0;
 
 
 NSMutableDictionary * segConToVar;
@@ -158,14 +162,26 @@ NSArray * importQuestions;
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didSubscribeToCharacteristic:(CBCharacteristic *)characteristic
 {
     NSLog(@"Central subscribed to characteristic");
+    
+    NSData *data;
+    
+    // 0 - profile
+    // 1 - username
 
+    if(transferProfile ) {
+        NSString *package = [NSString stringWithFormat:@"%d|%@|%@|%@|%@|%@|%@|%@|%@", 0,[[surveyItems objectAtIndex:0]text], [[surveyItems objectAtIndex:1]text], [[surveyItems objectAtIndex:2]text], [[surveyItems objectAtIndex:3]text], [[surveyItems objectAtIndex:4]text], [[surveyItems objectAtIndex:5]text], [[surveyItems objectAtIndex:6]text], [[surveyItems objectAtIndex:7]text]];
+        data = [package dataUsingEncoding:NSASCIIStringEncoding];
+        assert(data); // this is critical don't remove!
+        
+        NSLog(@"Package:\n%@", package);
+    }
     
-    NSString *package = [NSString stringWithFormat:@"%@|%@|%@|%@|%@|%@|%@|%@", [[surveyItems objectAtIndex:0]text], [[surveyItems objectAtIndex:1]text], [[surveyItems objectAtIndex:2]text], [[surveyItems objectAtIndex:3]text], [[surveyItems objectAtIndex:4]text], [[surveyItems objectAtIndex:5]text], [[surveyItems objectAtIndex:6]text], [[surveyItems objectAtIndex:7]text]];
-    NSData *data = [package dataUsingEncoding:NSASCIIStringEncoding];
-    assert(data); // this is critical don't remove!
+    else if(transferUserName) {
+        data = [[NSString stringWithFormat:@"%d|%@", 1, [_username text]] dataUsingEncoding:NSASCIIStringEncoding];
+    }
     
-    NSLog(@"Package:\n%@", package);
-    
+    transferProfile = 0;
+    transferUserName = 0;
     
     // Get the data
     //self.dataToSend = [self.textView.text dataUsingEncoding:NSUTF8StringEncoding];
@@ -621,9 +637,11 @@ NSArray * importQuestions;
         }
         */
         
-        // All we advertise is our service's UUID
-        [self.peripheralManager startAdvertising:@{ CBAdvertisementDataServiceUUIDsKey : @[[CBUUID UUIDWithString:TRANSFER_SERVICE_UUID]] }];
         [_pie reloadData];
+        // All we advertise is our service's UUID
+        transferProfile = 1;
+        transferUserName = 0;
+        [self.peripheralManager startAdvertising:@{ CBAdvertisementDataServiceUUIDsKey : @[[CBUUID UUIDWithString:TRANSFER_SERVICE_UUID]] }];
     }
     
 }
@@ -649,4 +667,11 @@ NSArray * importQuestions;
     return [self.sliceColors objectAtIndex:(index % self.sliceColors.count)];
 }
 
+- (IBAction)saveUsername:(UIButton *)sender {
+    // All we advertise is our service's UUID
+    [_username resignFirstResponder];
+    transferProfile = 0;
+    transferUserName = 1;
+    [self.peripheralManager startAdvertising:@{ CBAdvertisementDataServiceUUIDsKey : @[[CBUUID UUIDWithString:TRANSFER_SERVICE_UUID]] }];
+}
 @end

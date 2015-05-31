@@ -28,8 +28,6 @@
 
 
 
-
-
 typedef struct UserProfiles {
     int userNumber;
     int investment;
@@ -302,10 +300,20 @@ typedef struct SimNormalizedResults {
         
         NSArray *dataArray = [[[NSString alloc] initWithData:self.data encoding:NSASCIIStringEncoding] componentsSeparatedByString:@"|"];
         
+        // profile was transferred
+        if([[dataArray objectAtIndex:0]integerValue] == 0) {
+            
+        }
+        
+        // profile name was transferred 
+        else if([[dataArray objectAtIndex:0]integerValue] == 1) {
+            
+        }
+        
         
         NSMutableString *stringToDisplay = [[NSMutableString alloc] init];
         
-        for(int i = 0; i < dataArray.count; i++) {
+        for(int i = 1; i < dataArray.count; i++) {
             [stringToDisplay appendString:[dataArray objectAtIndex:i]];
             [stringToDisplay appendString:@"\n"];
         }
