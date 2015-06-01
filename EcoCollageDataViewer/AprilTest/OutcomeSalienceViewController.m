@@ -561,6 +561,7 @@ float frame_height = 31;
         [trialRunsNormalized addObject:simRunNormal];
         [trialRuns addObject: simRun];
         
+        //chooses between static/dynamic normalization of trial data
         if (!_StaticNormalization.isOn) {
             //NSLog(@"I am implementing a Dynamic Normalization approach\n");
             [self normalizeAllandUpdateDynamically];
