@@ -45,6 +45,10 @@ Value  *privateDamages    = NULL;
 Value  *impactNeighbors   = NULL;
 Value  *neighborsImpactMe = NULL;
 Value  *gw_infiltration   = NULL;
+Value  *floodedStreets    = NULL;
+Value  *standingWater     = NULL;
+Value  *efficiency_val    = NULL;
+
 
 NSMutableArray * trialRuns;             //contains list of simulation data from trials pulled
 NSMutableArray * trialRunsNormalized;   //contains list of simulation data from trials pulled in normalized form
@@ -190,6 +194,8 @@ float frame_height = 31;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     
+    newVal = 1000.0 * floor((newVal/1000.0)+0.5);
+    
     _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:newVal]]];
     currInvest = newVal;
 }
@@ -219,6 +225,7 @@ float frame_height = 31;
     someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(currInvest));
     someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(currInvest));
     
+    
     //private cost
     if (currInvest <= someTrial.privateDamages) {
         printf("Way over budget!!\n");
@@ -226,6 +233,12 @@ float frame_height = 31;
     } else{
         someTrialNorm.privateDamages        = (float)someTrial.privateDamages/(currInvest);
     }
+    
+    /*
+    someTrialNorm.impactNeighbors       = (someTrial.impactNeighbors * 100);
+    someTrialNorm.neighborsImpactMe     = (someTrial.neighborsImpactMe * 100);
+    
+    someTrialNorm.infiltration          = (someTrial.infiltration * 100);*/
 }
 
 //will normalize the cost of installation and maintenance
@@ -261,13 +274,29 @@ float frame_height = 31;
         gw_infiltration->highestCost = 0;
         gw_infiltration->lowestCost  = 0;
     }
+    if (floodedStreets == NULL){
+        floodedStreets = (Value*) malloc(sizeof(Value));
+        floodedStreets->highestCost = 0;
+        floodedStreets->lowestCost  = 0;
+    }
+    if (standingWater == NULL){
+        standingWater = (Value*) malloc(sizeof(Value));
+        standingWater->highestCost = 0;
+        standingWater->lowestCost  = 0;
+    }
+    if (efficiency_val == NULL){
+        efficiency_val = (Value*) malloc(sizeof(Value));
+        efficiency_val->highestCost = 0;
+        efficiency_val->lowestCost  = 0;
+    }
     
     int i;
     for (i = 0; i < trialRuns.count; i++)
     {
         AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
+        AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
         
-        printf("Trial %d: %f\n",i+1, someTrial.dollarsGallons);
+        //printf("Trial %d: %f\n",i+1, someTrial.dollarsGallons);
         
         if (i == 0)
         {
@@ -288,7 +317,17 @@ float frame_height = 31;
             
             gw_infiltration->highestCost   = someTrial.infiltration;
             gw_infiltration->lowestCost    = someTrial.infiltration;
+            
+            floodedStreets->highestCost    = someTrialNorm.floodedStreets;
+            floodedStreets->lowestCost     = someTrialNorm.floodedStreets;
+            
+            standingWater->highestCost     = someTrialNorm.standingWater;
+            standingWater->lowestCost      = someTrialNorm.standingWater;
+            
+            efficiency_val->highestCost    = someTrialNorm.efficiency;
+            efficiency_val->lowestCost     = someTrialNorm.efficiency;
         }
+        
         //public cost
         if (someTrial.publicMaintenanceCost <= maintenanceCost->lowestCost) { maintenanceCost->lowestCost = someTrial.publicMaintenanceCost; }
         if (someTrial.publicMaintenanceCost >= maintenanceCost->highestCost){ maintenanceCost->highestCost = someTrial.publicMaintenanceCost; }
@@ -310,33 +349,56 @@ float frame_height = 31;
         //infiltration
         if (someTrial.infiltration <= gw_infiltration->lowestCost){ gw_infiltration->lowestCost = someTrial.infiltration; }
         if (someTrial.infiltration >= gw_infiltration->highestCost){ gw_infiltration->highestCost = someTrial.infiltration; }
+        
+        //flooded streets
+        if (someTrialNorm.floodedStreets <= floodedStreets->lowestCost){ floodedStreets->lowestCost = someTrialNorm.efficiency; }
+        if (someTrialNorm.floodedStreets >= floodedStreets->highestCost){ floodedStreets->highestCost = someTrialNorm.efficiency; }
+        
+        //standing water
+        if (someTrialNorm.standingWater <= standingWater->lowestCost) { standingWater->lowestCost = someTrialNorm.standingWater; }
+        if (someTrialNorm.standingWater >= standingWater->highestCost){ standingWater->highestCost = someTrialNorm.standingWater;}
+        
+        //efficiency
+        if (someTrialNorm.efficiency <= efficiency_val->lowestCost){ efficiency_val->lowestCost = someTrialNorm.efficiency; }
+        if (someTrialNorm.efficiency >= efficiency_val->highestCost){ efficiency_val->highestCost = someTrialNorm.efficiency; }
+        
+        
     }
 
     printf("\n");
+    
+    //avoid division by 0
+    if (maintenanceCost->highestCost == 0 || installationCost->highestCost == 0){
+        maintenanceCost->highestCost = 0.01;
+        installationCost->highestCost = 0.01;
+    }
+    if (privateDamages->highestCost == 0){
+        privateDamages->highestCost = 0.01;
+    }
+    
+    if (impactNeighbors->highestCost == 0) {
+        impactNeighbors->highestCost = 0.01;
+    }
+    if (neighborsImpactMe->highestCost == 0) {
+        neighborsImpactMe->highestCost = 0.01;
+    }
+    if (gw_infiltration->highestCost == 0){
+        gw_infiltration->highestCost = 0.01;
+    }
+    if (floodedStreets->highestCost == 0){
+        floodedStreets->highestCost = 0.01;
+    }
+    if (standingWater->highestCost == 0){
+        standingWater->highestCost = 0.01;
+    }
+    if (efficiency_val->highestCost == 0){
+        efficiency_val->highestCost = 0.01;
+    }
+    
     for (i = 0; i < trialRuns.count; i++)
     {
         AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
         AprilTestNormalizedVariable  *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
-        
-        if (maintenanceCost->highestCost == 0 || installationCost->highestCost == 0){
-            maintenanceCost->highestCost = 0.01;
-            installationCost->highestCost = 0.01;
-        }
-        
-        if (privateDamages->highestCost == 0){
-            privateDamages->highestCost = 0.01;
-        }
-        
-        if (impactNeighbors->highestCost == 0) {
-            impactNeighbors->highestCost = 0.01;
-        }
-        
-        if (neighborsImpactMe->highestCost == 0) {
-            neighborsImpactMe->highestCost = 0.01;
-        }
-        if (gw_infiltration->highestCost == 0){
-            gw_infiltration->highestCost = 0.01;
-        }
         
         someTrialNorm.publicInstallCost     = (float)someTrial.publicInstallCost/installationCost->highestCost;
         someTrialNorm.publicMaintenanceCost = (float)someTrial.publicMaintenanceCost/maintenanceCost->highestCost;
@@ -347,6 +409,10 @@ float frame_height = 31;
         someTrialNorm.neighborsImpactMe     = (someTrial.neighborsImpactMe * 100)/(neighborsImpactMe->highestCost * 100);
         
         someTrialNorm.infiltration          = (someTrial.infiltration * 100)/(gw_infiltration->highestCost * 100);
+        
+        someTrialNorm.floodedStreets        = (someTrialNorm.floodedStreets * 100)/(floodedStreets->highestCost * 100);
+        someTrialNorm.standingWater         = (someTrialNorm.standingWater  * 100)/(standingWater->highestCost  * 100);
+        someTrialNorm.efficiency            = (someTrialNorm.efficiency      *100)/(efficiency_val->highestCost * 100);
         
         //printf("Trial %d: %f\n",i+1, someTrialNorm.infiltration);
     }
@@ -743,7 +809,6 @@ float frame_height = 31;
             savedLabel = [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70];
                 
             [privateDamagesLabels addObject:savedLabel];
-            
             
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue: (simRun.trialNum ) * 175 + 100];
