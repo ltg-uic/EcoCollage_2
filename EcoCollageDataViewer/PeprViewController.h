@@ -19,6 +19,4 @@
 @property(nonatomic, strong) NSArray        *sliceColors;
 @property(nonatomic, strong) NSMutableArray *currentConcernRanking;
 @property (strong, nonatomic) IBOutlet UITextView *descriptionView;
-@property (strong, nonatomic) IBOutlet UITextField *username;
-- (IBAction)saveUsername:(UIButton *)sender;
 @end
