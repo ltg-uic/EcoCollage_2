@@ -24,6 +24,7 @@
 @synthesize slices = _slices;
 @synthesize sliceColors = _sliceColors;
 @synthesize currentConcernRanking = _currentConcernRanking;
+@synthesize currentSession;
 
 int transferProfile = 0;
 int transferUserName = 0;
@@ -40,6 +41,9 @@ UILabel *pointer;
 UILabel *title;
 NSString * variableDescriptions;
 NSArray * importQuestions;
+
+GKPeerPickerController *picker;
+
 
 - (void)viewDidLoad
 {
@@ -106,9 +110,67 @@ NSArray * importQuestions;
     [self displayExplicitSurvey];
     [_pie reloadData];
 
-
+    [self connect];
 }
 
+-(void) connect {
+    picker = [[GKPeerPickerController alloc] init];
+    picker.delegate = self;
+    picker.connectionTypesMask = GKPeerPickerConnectionTypeNearby;
+    [picker show];
+}
+
+-(void) disconnect {
+    [self.currentSession disconnectFromAllPeers];
+    //[self.currentSession release];
+    currentSession = nil;
+}
+
+- (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *) session {
+    self.currentSession = session;
+    session.delegate = self;
+    [session setDataReceiveHandler:self withContext:nil];
+    picker.delegate = nil;
+    [picker dismiss];
+    //[picker autorelease];
+}
+
+- (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker {
+    picker.delegate = nil;
+    //[picker autorelease];
+}
+
+
+- (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state {
+    switch (state)
+    {
+        case GKPeerStateConnected:
+            NSLog(@"connected");
+            break;
+        case GKPeerStateDisconnected:
+            NSLog(@"disconnected");
+            //[self.currentSession release];
+            currentSession = nil;
+            break;
+    }
+}
+- (void) mySendDataToPeers:(NSData *) data {
+    if (currentSession)
+    {
+        [self.currentSession
+         sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+    }
+}
+
+
+- (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---convert the NSData to NSString---
+    NSString* str;
+    str = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data received" message:str delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+    //[alert release];
+    
+}
 
 #pragma mark - Switch Methods
 
@@ -185,6 +247,7 @@ NSArray * importQuestions;
         }
     }
     [_pie reloadData];
+    [self disconnect];
 }
 
 

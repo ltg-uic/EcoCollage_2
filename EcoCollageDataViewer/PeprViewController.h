@@ -8,8 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "XYPieChart.h"
+#import <GameKit/GameKit.h>
 
-@interface PeprViewController : UIViewController <XYPieChartDelegate, XYPieChartDataSource>
+@interface PeprViewController : UIViewController <XYPieChartDelegate, XYPieChartDataSource> {
+    GKSession *currentSession;
+}
+
+@property (nonatomic, retain) GKSession *currentSession;
+
 @property (strong, nonatomic) IBOutlet UISwitch *surveyType;
 @property (strong, nonatomic) IBOutlet UISwitch *cpVisible;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *typeCP;
