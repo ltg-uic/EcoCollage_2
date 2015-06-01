@@ -44,6 +44,7 @@ Value  *maintenanceCost   = NULL;
 Value  *privateDamages    = NULL;
 Value  *impactNeighbors   = NULL;
 Value  *neighborsImpactMe = NULL;
+Value  *gw_infiltration   = NULL;
 
 NSMutableArray * trialRuns;             //contains list of simulation data from trials pulled
 NSMutableArray * trialRunsNormalized;   //contains list of simulation data from trials pulled in normalized form
@@ -55,6 +56,7 @@ NSMutableArray *bgCols;
 NSMutableArray *privateDamagesLabels;
 NSMutableArray *ImpactNeighborsLabels;
 NSMutableArray *NeighborsImpactMeLabels;
+NSMutableArray *gw_infiltration_Labels;
 NSMutableArray *publicCostDisplays;
 UILabel *redThreshold;
 NSArray *arrStatus;
@@ -97,6 +99,7 @@ float frame_height = 31;
     publicCostDisplays = [[NSMutableArray alloc] init];
     privateDamagesLabels = [[NSMutableArray alloc] init];
     ImpactNeighborsLabels = [[NSMutableArray alloc] init];
+    gw_infiltration_Labels = [[NSMutableArray alloc] init];
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
@@ -253,16 +256,21 @@ float frame_height = 31;
         impactNeighbors->highestCost = 0;
         impactNeighbors->lowestCost  = 0;
     }
-    
+    if (gw_infiltration == NULL){
+        gw_infiltration = (Value*) malloc(sizeof(Value));
+        gw_infiltration->highestCost = 0;
+        gw_infiltration->lowestCost  = 0;
+    }
     
     int i;
     for (i = 0; i < trialRuns.count; i++)
     {
         AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
         
+        printf("Trial %d: %f\n",i+1, someTrial.dollarsGallons);
+        
         if (i == 0)
         {
-            //set the initial trial as the best and worst for both Installation and maintenance
             installationCost->highestCost  =  someTrial.publicInstallCost;
             installationCost->lowestCost   =  someTrial.publicInstallCost;
             
@@ -277,6 +285,9 @@ float frame_height = 31;
             
             neighborsImpactMe->highestCost = someTrial.neighborsImpactMe;
             neighborsImpactMe->lowestCost  = someTrial.neighborsImpactMe;
+            
+            gw_infiltration->highestCost   = someTrial.infiltration;
+            gw_infiltration->lowestCost    = someTrial.infiltration;
         }
         //public cost
         if (someTrial.publicMaintenanceCost <= maintenanceCost->lowestCost) { maintenanceCost->lowestCost = someTrial.publicMaintenanceCost; }
@@ -296,9 +307,12 @@ float frame_height = 31;
         if (someTrial.neighborsImpactMe <= neighborsImpactMe->lowestCost){ neighborsImpactMe->lowestCost = someTrial.neighborsImpactMe; }
         if (someTrial.neighborsImpactMe >= neighborsImpactMe->highestCost){neighborsImpactMe->highestCost = someTrial.neighborsImpactMe; }
         
+        //infiltration
+        if (someTrial.infiltration <= gw_infiltration->lowestCost){ gw_infiltration->lowestCost = someTrial.infiltration; }
+        if (someTrial.infiltration >= gw_infiltration->highestCost){ gw_infiltration->highestCost = someTrial.infiltration; }
     }
 
-    
+    printf("\n");
     for (i = 0; i < trialRuns.count; i++)
     {
         AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
@@ -320,6 +334,9 @@ float frame_height = 31;
         if (neighborsImpactMe->highestCost == 0) {
             neighborsImpactMe->highestCost = 0.01;
         }
+        if (gw_infiltration->highestCost == 0){
+            gw_infiltration->highestCost = 0.01;
+        }
         
         someTrialNorm.publicInstallCost     = (float)someTrial.publicInstallCost/installationCost->highestCost;
         someTrialNorm.publicMaintenanceCost = (float)someTrial.publicMaintenanceCost/maintenanceCost->highestCost;
@@ -328,8 +345,12 @@ float frame_height = 31;
         
         someTrialNorm.impactNeighbors       = (someTrial.impactNeighbors * 100)/(impactNeighbors->highestCost *100);
         someTrialNorm.neighborsImpactMe     = (someTrial.neighborsImpactMe * 100)/(neighborsImpactMe->highestCost * 100);
+        
+        someTrialNorm.infiltration          = (someTrial.infiltration * 100)/(gw_infiltration->highestCost * 100);
+        
+        //printf("Trial %d: %f\n",i+1, someTrialNorm.infiltration);
     }
-    
+    printf("\n");
 }
 
 //updates the score of the public install costs to reflect new trial
@@ -356,6 +377,7 @@ float frame_height = 31;
     UILabel *trialDamagesLabel;
     UILabel *trialImpactNeighbors;
     UILabel *trialNeighborsImpact;
+    UILabel *trialInfiltration;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     
@@ -377,6 +399,11 @@ float frame_height = 31;
             trialNeighborsImpact = [NeighborsImpactMeLabels objectAtIndex:i];
             
             [trialImpactNeighbors setAttributedText:[self myLabelAttributes: [NSString stringWithFormat:@"poopy%.2f%%", 100*simRunNormal.neighborsImpactMe]]];
+        }
+        if (i < gw_infiltration_Labels.count){
+            trialInfiltration = [gw_infiltration_Labels objectAtIndex:i];
+            
+            [trialInfiltration setAttributedText:[self myLabelAttributes:[NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.infiltration]]];
         }
         
     }
@@ -758,7 +785,16 @@ float frame_height = 31;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe)]];
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.infiltration] withConcernPosition:width + 50 andyValue: (simRun.trialNum)* 175 + 40 ];
+            
+            if (!_StaticNormalization.isOn){
+                savedLabel = [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.infiltration] withConcernPosition:width + 50 andyValue: (simRun.trialNum)* 175 + 40 ];
+            }
+            else{
+                savedLabel = [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.infiltration] withConcernPosition:width + 50 andyValue: (simRun.trialNum)* 175 + 40 ];
+            }
+            
+            [gw_infiltration_Labels addObject:savedLabel];
+            
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
             [scoreVisNames addObject: currentVar.name];
@@ -812,6 +848,7 @@ float frame_height = 31;
                 ev = [efficiency objectAtIndex:trial];
                 ev.frame = CGRectMake(width, (simRun.trialNum )*175 + 40, 130, 150);
             }
+            
             scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
             //NSLog(@"%@", NSStringFromCGRect(ev.frame));
