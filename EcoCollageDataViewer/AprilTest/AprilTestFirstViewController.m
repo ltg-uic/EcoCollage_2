@@ -150,6 +150,8 @@ NSMutableDictionary * segConToVar;
     file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
     [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
     [file closeFile];
+    
+    [super viewWillDisappear:animated];
 }
 
 - (void)didReceiveMemoryWarning
