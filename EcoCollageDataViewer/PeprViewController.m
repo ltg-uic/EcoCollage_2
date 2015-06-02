@@ -26,8 +26,6 @@
 @synthesize currentConcernRanking = _currentConcernRanking;
 @synthesize currentSession;
 
-int transferProfile = 0;
-int transferUserName = 0;
 
 
 NSMutableDictionary * segConToVar;
@@ -110,20 +108,22 @@ GKPeerPickerController *picker;
     [self displayExplicitSurvey];
     [_pie reloadData];
 
-    [self connect];
 }
 
--(void) connect {
+- (void)applicationWillTerminate:(UIApplication *)app {
+    
+    [self.currentSession disconnectFromAllPeers];
+    //[self.currentSession release];
+    currentSession = nil;
+}
+
+
+
+-(IBAction) btnConnect:(id) sender {
     picker = [[GKPeerPickerController alloc] init];
     picker.delegate = self;
     picker.connectionTypesMask = GKPeerPickerConnectionTypeNearby;
     [picker show];
-}
-
--(void) disconnect {
-    [self.currentSession disconnectFromAllPeers];
-    //[self.currentSession release];
-    currentSession = nil;
 }
 
 - (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *) session {
@@ -140,6 +140,11 @@ GKPeerPickerController *picker;
     //[picker autorelease];
 }
 
+-(IBAction) btnDisconnect:(id) sender {
+    [self.currentSession disconnectFromAllPeers];
+    //[self.currentSession release];
+    currentSession = nil;
+}
 
 - (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state {
     switch (state)
@@ -163,14 +168,26 @@ GKPeerPickerController *picker;
 }
 
 
+- (void) sendProfile {
+    NSString *dataString = [NSString stringWithFormat:@"%@|%@|%@|%@|%@|%@|%@|%@", [[surveyItems objectAtIndex:0]text], [[surveyItems objectAtIndex:1]text], [[surveyItems objectAtIndex:2]text], [[surveyItems objectAtIndex:3]text], [[surveyItems objectAtIndex:4]text], [[surveyItems objectAtIndex:5]text], [[surveyItems objectAtIndex:6]text], [[surveyItems objectAtIndex:7]text]];
+    
+    NSData *data = [dataString dataUsingEncoding:NSASCIIStringEncoding];
+    
+    
+    [self mySendDataToPeers:data];
+    
+}
+
 - (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---convert the NSData to NSString---
     NSString* str;
     str = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data received" message:str delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [alert show];
     //[alert release];
-    
 }
+
+
+
 
 #pragma mark - Switch Methods
 
@@ -249,7 +266,6 @@ GKPeerPickerController *picker;
         }
     }
     [_pie reloadData];
-    [self disconnect];
 }
 
 
@@ -505,6 +521,12 @@ GKPeerPickerController *picker;
         */
         
         [_pie reloadData];
+        if(currentSession)
+            [self sendProfile];
+        else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error: Not connected to Bluetooth Hub" message:@"Profile changes were not recorded" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }
     }
     
 }
