@@ -25,6 +25,7 @@
 
 
 @property (weak, nonatomic) IBOutlet UISwitch *StaticNormalization;
+- (IBAction)NormTypeSwitched:(UISwitch *)sender;
 
 
 - (IBAction)investmentChanged:(UISlider *)sender;
