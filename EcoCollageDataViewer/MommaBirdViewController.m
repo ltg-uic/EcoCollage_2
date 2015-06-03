@@ -107,16 +107,21 @@ typedef struct SimNormalizedResults {
 
 
 - (void)applicationWillTerminate:(UIApplication *)app {
+    // Nil out delegate
+    _currentSession.delegate = nil;
+    self.currentSession.available = NO;
     
-    //[self.currentSession disconnectFromAllPeers];
-    //[self.currentSession release];
-    //currentSession = nil;
+    [self.currentSession disconnectFromAllPeers];
+    _currentSession = nil;
+
+
 }
 
 
 
 
 - (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *) session {
+    session.available = NO;
     _currentSession = session;
     session.delegate = self;
     [session setDataReceiveHandler:self withContext:nil];
@@ -126,6 +131,7 @@ typedef struct SimNormalizedResults {
 }
 
 - (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker {
+    _currentSession.available = NO;
     picker.delegate = nil;
     //[picker autorelease];
     [connect setHidden:NO];
@@ -150,24 +156,27 @@ typedef struct SimNormalizedResults {
     }
 }
 - (void) mySendDataToPeers:(NSData *) data {
-    if (_currentSession)
-    {
-        [self.currentSession
-         sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
-    }
+    [self.currentSession sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+
 }
 
 - (IBAction)sendText:(UIButton *)sender {
     // close keyboard
     [_textField resignFirstResponder];
     
-    NSData *data;
-    NSString *stringToSend = _textView.text;
-    stringToSend = [stringToSend stringByAppendingString:@"\n"];
-    stringToSend = [stringToSend stringByAppendingString:_textField.text];
-    _textView.text = stringToSend;
-    data = [stringToSend dataUsingEncoding:NSASCIIStringEncoding];
-    [self mySendDataToPeers:data];
+    if(_currentSession) {
+        NSData *data;
+        NSString *stringToSend = _textView.text;
+        stringToSend = [stringToSend stringByAppendingString:@"\n"];
+        stringToSend = [stringToSend stringByAppendingString:_textField.text];
+        _textView.text = stringToSend;
+        data = [stringToSend dataUsingEncoding:NSASCIIStringEncoding];
+        [self mySendDataToPeers:data];
+    }
+    else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data not sent" message:@"Not connected" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
 
@@ -193,6 +202,12 @@ typedef struct SimNormalizedResults {
 }
 
 - (IBAction)disconnectFromGK:(UIButton *)sender {
+    picker.delegate = nil;
+    
+    // Nil out delegate
+    _currentSession.delegate = nil;
+    self.currentSession.available = NO;
+    
     [self.currentSession disconnectFromAllPeers];
     _currentSession = nil;
     [connect setHidden:NO];

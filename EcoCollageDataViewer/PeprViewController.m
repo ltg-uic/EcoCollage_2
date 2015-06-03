@@ -134,16 +134,26 @@ GKPeerPickerController *picker;
 
 }
 
+
+
 - (void)applicationWillTerminate:(UIApplication *)app {
+    // Nil out delegate
+    _currentSession.delegate = nil;
+    self.currentSession.available = NO;
     
-    //[self.currentSession disconnectFromAllPeers];
-    //[self.currentSession release];
-    //currentSession = nil;
+    [self.currentSession disconnectFromAllPeers];
+    _currentSession = nil;
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    tabControl.currentSession = _currentSession;
+    
+    
 }
 
 
 
 - (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *) session {
+    session.available = NO;
     _currentSession = session;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     tabControl.currentSession = _currentSession;
@@ -155,6 +165,9 @@ GKPeerPickerController *picker;
 }
 
 - (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker {
+    _currentSession.available = NO;
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    tabControl.currentSession = _currentSession;
     picker.delegate = nil;
     //[picker autorelease];
     [connect setHidden:NO];
@@ -166,9 +179,10 @@ GKPeerPickerController *picker;
 - (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state {
     switch (state)
     {
-        case GKPeerStateConnected:
+        case GKPeerStateConnected: {
             NSLog(@"connected");
             break;
+        }
         case GKPeerStateDisconnected:
             NSLog(@"disconnected");
             //[self.currentSession release];
@@ -181,19 +195,24 @@ GKPeerPickerController *picker;
     }
 }
 - (void) mySendDataToPeers:(NSData *) data {
-    if (_currentSession)
-    {
-        [self.currentSession
-         sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
-    }
+
+    [self.currentSession sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+
 }
 
 
 - (void)sendProfile {
-    NSData* data;
-    NSString *str = [[NSString alloc] initWithFormat:@"%@|%@|%@|%@|%@|%@|%@|%@", [[surveyItems objectAtIndex:0]text], [[surveyItems objectAtIndex:1]text], [[surveyItems objectAtIndex:2]text], [[surveyItems objectAtIndex:3]text], [[surveyItems objectAtIndex:4]text], [[surveyItems objectAtIndex:5]text], [[surveyItems objectAtIndex:6]text], [[surveyItems objectAtIndex:7]text]];
-    data = [str dataUsingEncoding: NSASCIIStringEncoding];
-    [self mySendDataToPeers:data];
+    
+    if(_currentSession) {
+        NSData* data;
+        NSString *str = [[NSString alloc] initWithFormat:@"%@|%@|%@|%@|%@|%@|%@|%@", [[surveyItems objectAtIndex:0]text], [[surveyItems objectAtIndex:1]text], [[surveyItems objectAtIndex:2]text], [[surveyItems objectAtIndex:3]text], [[surveyItems objectAtIndex:4]text], [[surveyItems objectAtIndex:5]text], [[surveyItems objectAtIndex:6]text], [[surveyItems objectAtIndex:7]text]];
+        data = [str dataUsingEncoding: NSASCIIStringEncoding];
+        [self mySendDataToPeers:data];
+    }
+    else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data not sent" message:@"Not connected" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
 - (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---convert the NSData to NSString---
@@ -214,6 +233,12 @@ GKPeerPickerController *picker;
 }
 
 - (IBAction)disconnectFromGK:(UIButton *)sender {
+    picker.delegate = nil;
+    
+    // Nil out delegate
+    _currentSession.delegate = nil;
+    self.currentSession.available = NO;
+    
     [self.currentSession disconnectFromAllPeers];
     //[self.currentSession release];
     _currentSession = nil;
@@ -558,8 +583,7 @@ GKPeerPickerController *picker;
         */
         
         [_pie reloadData];
-        if(_currentSession)
-            [self sendProfile];
+        [self sendProfile];
     }
     
 }

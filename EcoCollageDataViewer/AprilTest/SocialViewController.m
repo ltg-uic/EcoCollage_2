@@ -56,22 +56,29 @@
     // close keyboard
     [_textField resignFirstResponder];
     
-    NSData *data;
-    NSString *stringToSend = _textView.text;
-    stringToSend = [stringToSend stringByAppendingString:@"\n"];
-    stringToSend = [stringToSend stringByAppendingString:_textField.text];
-    _textView.text = stringToSend;
-    data = [stringToSend dataUsingEncoding:NSASCIIStringEncoding];
-    [self mySendDataToPeers:data];
+    
+    // reload everytime data will be sent to check if session was disconnected
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    _currentSession = tabControl.currentSession;
+    if(_currentSession) {
+        NSData *data;
+        NSString *stringToSend = _textView.text;
+        stringToSend = [stringToSend stringByAppendingString:@"\n"];
+        stringToSend = [stringToSend stringByAppendingString:_textField.text];
+        _textView.text = stringToSend;
+        data = [stringToSend dataUsingEncoding:NSASCIIStringEncoding];
+        [self mySendDataToPeers:data];
+    }
+    else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data not sent" message:@"Not connected" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
 
 - (void) mySendDataToPeers:(NSData *) data {
-    if (_currentSession)
-    {
-        [self.currentSession
-         sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
-    }
+    [self.currentSession sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+
 }
 
 
