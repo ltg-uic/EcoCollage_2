@@ -24,7 +24,10 @@
 @synthesize slices = _slices;
 @synthesize sliceColors = _sliceColors;
 @synthesize currentConcernRanking = _currentConcernRanking;
-@synthesize currentSession;
+@synthesize currentSession = _currentSession;
+@synthesize connect;
+@synthesize disconnect;
+
 
 
 
@@ -40,7 +43,28 @@ UILabel *title;
 NSString * variableDescriptions;
 NSArray * importQuestions;
 
+
 GKPeerPickerController *picker;
+
+
+// called everytime tab is switched to this view
+// necessary in case currentSession changes, i.e. is disconnected and reconnected again
+- (void)viewDidAppear:(BOOL)animated {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    _currentSession = tabControl.currentSession;
+    
+    if(!_currentSession) {
+        [connect setHidden:NO];
+    }
+    else [connect setHidden:YES];
+    
+    [super viewDidAppear:animated];
+    
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+}
 
 
 - (void)viewDidLoad
@@ -112,22 +136,17 @@ GKPeerPickerController *picker;
 
 - (void)applicationWillTerminate:(UIApplication *)app {
     
-    [self.currentSession disconnectFromAllPeers];
+    //[self.currentSession disconnectFromAllPeers];
     //[self.currentSession release];
-    currentSession = nil;
+    //currentSession = nil;
 }
 
 
-
--(IBAction) btnConnect:(id) sender {
-    picker = [[GKPeerPickerController alloc] init];
-    picker.delegate = self;
-    picker.connectionTypesMask = GKPeerPickerConnectionTypeNearby;
-    [picker show];
-}
 
 - (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *) session {
-    self.currentSession = session;
+    _currentSession = session;
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    tabControl.currentSession = _currentSession;
     session.delegate = self;
     [session setDataReceiveHandler:self withContext:nil];
     picker.delegate = nil;
@@ -138,13 +157,11 @@ GKPeerPickerController *picker;
 - (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker {
     picker.delegate = nil;
     //[picker autorelease];
+    [connect setHidden:NO];
+    [disconnect setHidden:YES];
 }
 
--(IBAction) btnDisconnect:(id) sender {
-    [self.currentSession disconnectFromAllPeers];
-    //[self.currentSession release];
-    currentSession = nil;
-}
+
 
 - (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state {
     switch (state)
@@ -155,12 +172,16 @@ GKPeerPickerController *picker;
         case GKPeerStateDisconnected:
             NSLog(@"disconnected");
             //[self.currentSession release];
-            currentSession = nil;
+            _currentSession = nil;
+            AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+            tabControl.currentSession = _currentSession;
+            [connect setHidden:NO];
+            [disconnect setHidden:YES];
             break;
     }
 }
 - (void) mySendDataToPeers:(NSData *) data {
-    if (currentSession)
+    if (_currentSession)
     {
         [self.currentSession
          sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
@@ -168,22 +189,38 @@ GKPeerPickerController *picker;
 }
 
 
-- (void) sendProfile {
-    NSString *dataString = [NSString stringWithFormat:@"%@|%@|%@|%@|%@|%@|%@|%@", [[surveyItems objectAtIndex:0]text], [[surveyItems objectAtIndex:1]text], [[surveyItems objectAtIndex:2]text], [[surveyItems objectAtIndex:3]text], [[surveyItems objectAtIndex:4]text], [[surveyItems objectAtIndex:5]text], [[surveyItems objectAtIndex:6]text], [[surveyItems objectAtIndex:7]text]];
-    
-    NSData *data = [dataString dataUsingEncoding:NSASCIIStringEncoding];
-    
-    
+- (void)sendProfile {
+    NSData* data;
+    NSString *str = [[NSString alloc] initWithFormat:@"%@|%@|%@|%@|%@|%@|%@|%@", [[surveyItems objectAtIndex:0]text], [[surveyItems objectAtIndex:1]text], [[surveyItems objectAtIndex:2]text], [[surveyItems objectAtIndex:3]text], [[surveyItems objectAtIndex:4]text], [[surveyItems objectAtIndex:5]text], [[surveyItems objectAtIndex:6]text], [[surveyItems objectAtIndex:7]text]];
+    data = [str dataUsingEncoding: NSASCIIStringEncoding];
     [self mySendDataToPeers:data];
-    
 }
 
 - (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---convert the NSData to NSString---
-    NSString* str;
-    str = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data received" message:str delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data received" message:@"in PeprViewController" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [alert show];
-    //[alert release];
+
+}
+
+
+- (IBAction)connectToGK:(UIButton *)sender {
+    picker = [[GKPeerPickerController alloc] init];
+    picker.delegate = self;
+    picker.connectionTypesMask = GKPeerPickerConnectionTypeNearby;
+    [connect setHidden:YES];
+    [disconnect setHidden:NO];
+    [picker show];
+}
+
+- (IBAction)disconnectFromGK:(UIButton *)sender {
+    [self.currentSession disconnectFromAllPeers];
+    //[self.currentSession release];
+    _currentSession = nil;
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    tabControl.currentSession = _currentSession;
+    [connect setHidden:NO];
+    [disconnect setHidden:YES];
 }
 
 
@@ -521,12 +558,8 @@ GKPeerPickerController *picker;
         */
         
         [_pie reloadData];
-        if(currentSession)
+        if(_currentSession)
             [self sendProfile];
-        else {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error: Not connected to Bluetooth Hub" message:@"Profile changes were not recorded" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alert show];
-        }
     }
     
 }
@@ -551,5 +584,6 @@ GKPeerPickerController *picker;
 {
     return [self.sliceColors objectAtIndex:(index % self.sliceColors.count)];
 }
+
 
 @end

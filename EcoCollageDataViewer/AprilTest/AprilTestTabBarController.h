@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <GameKit/GameKit.h>
 
 @interface AprilTestTabBarController : UITabBarController
 @property NSMutableArray * currentConcernRanking;
 @property NSString * url;
 @property int studyNum;
+@property GKSession *currentSession;
 @end

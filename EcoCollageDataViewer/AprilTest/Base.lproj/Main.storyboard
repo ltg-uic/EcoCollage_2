@@ -76,7 +76,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="btnConnect:" destination="9pv-A4-QxB" eventType="touchUpInside" id="Ewq-wT-5Lk"/>
+                                    <action selector="connectToGK:" destination="9pv-A4-QxB" eventType="touchUpInside" id="Hup-vz-Iub"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="bOk-go-m82">
@@ -86,7 +86,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="btnDisconnect:" destination="9pv-A4-QxB" eventType="touchUpInside" id="UtC-P2-SF3"/>
+                                    <action selector="disconnectFromGK:" destination="9pv-A4-QxB" eventType="touchUpInside" id="Lno-Ay-SKr"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -98,7 +98,9 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
+                        <outlet property="connect" destination="hjI-AT-AJF" id="Vie-LV-bhc"/>
                         <outlet property="descriptionView" destination="deu-3f-fV3" id="8Fa-gM-mkn"/>
+                        <outlet property="discconect" destination="bOk-go-m82" id="Y9f-5o-BZr"/>
                         <outlet property="pie" destination="bom-ma-b1V" id="JQR-N7-ung"/>
                         <outlet property="surveyView" destination="LuY-eH-avc" id="OEn-pM-cLf"/>
                     </connections>
@@ -426,6 +428,51 @@
             </objects>
             <point key="canvasLocation" x="555" y="1756"/>
         </scene>
+        <!--Social-->
+        <scene sceneID="QVy-G0-IPH">
+            <objects>
+                <viewController title="Social" id="Xor-Qe-PFj" customClass="SocialViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="xsC-Zh-eec">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="YWO-uj-tVg">
+                                <rect key="frame" x="309" y="212" width="406" height="470"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter text to send to Momma" minimumFontSize="17" id="juL-dB-Zzl">
+                                <rect key="frame" x="309" y="75" width="252" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="XWa-Ze-Cyh">
+                                <rect key="frame" x="644" y="74" width="36" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Send">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendText:" destination="Xor-Qe-PFj" eventType="touchUpInside" id="3hr-Of-7Mu"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Social View" image="first" id="hZF-be-X3G"/>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <connections>
+                        <outlet property="textField" destination="juL-dB-Zzl" id="hZt-UN-05c"/>
+                        <outlet property="textView" destination="YWO-uj-tVg" id="ZYZ-3i-iua"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VNS-9k-UPm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="326" y="2614"/>
+        </scene>
         <!--April Test Intro View Controller-->
         <scene sceneID="tyK-Bo-XQe">
             <objects>
@@ -518,7 +565,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="No data from baby birds has been loaded" id="zTP-a5-umh">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="zTP-a5-umh">
                                 <rect key="frame" x="290" y="192" width="445" height="384"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -532,7 +579,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="btnConnect:" destination="L39-Hx-Bzc" eventType="touchUpInside" id="Tj2-xR-qC3"/>
+                                    <action selector="connectToGK:" destination="L39-Hx-Bzc" eventType="touchUpInside" id="pus-wf-8Ty"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8QL-8U-RXq">
@@ -542,7 +589,23 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="btnDisconnect:" destination="L39-Hx-Bzc" eventType="touchUpInside" id="BHQ-GQ-adH"/>
+                                    <action selector="disconnectFromGK:" destination="L39-Hx-Bzc" eventType="touchUpInside" id="oiK-H4-gbQ"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="NVl-s7-o8h">
+                                <rect key="frame" x="290" y="154" width="212" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="lE9-pZ-OH9">
+                                <rect key="frame" x="571" y="154" width="36" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Send">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendText:" destination="L39-Hx-Bzc" eventType="touchUpInside" id="I5R-AJ-0aM"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -551,6 +614,9 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
+                        <outlet property="connect" destination="FQh-LO-GI1" id="3hc-sg-yeo"/>
+                        <outlet property="discconect" destination="8QL-8U-RXq" id="Tsf-QO-ulb"/>
+                        <outlet property="textField" destination="NVl-s7-o8h" id="1kz-zg-MWe"/>
                         <outlet property="textView" destination="zTP-a5-umh" id="Pok-D6-d4W"/>
                     </connections>
                 </viewController>
@@ -574,6 +640,7 @@
                         <segue destination="9pv-A4-QxB" kind="relationship" relationship="viewControllers" id="u7Y-xg-7CH"/>
                         <segue destination="fBo-kW-rsX" kind="relationship" relationship="viewControllers" id="GSu-to-59V"/>
                         <segue destination="8rJ-Kc-sve" kind="relationship" relationship="viewControllers" id="YH0-yS-M6x"/>
+                        <segue destination="Xor-Qe-PFj" kind="relationship" relationship="viewControllers" id="kzC-lR-SfX"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
@@ -945,6 +1012,7 @@
     <resources>
         <image name="DuPage_May.png" width="575" height="625"/>
         <image name="builder-1x.png" width="30" height="30"/>
+        <image name="first" width="30" height="30"/>
         <image name="greenalley.png" width="124" height="124"/>
         <image name="greenroof.png" width="142" height="138"/>
         <image name="guidebook-1x.png" width="25" height="24"/>

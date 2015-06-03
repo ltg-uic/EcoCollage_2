@@ -90,6 +90,18 @@ float frame_width = 214;
 float frame_height = 31;
 
 @synthesize currentConcernRanking = _currentConcernRanking;
+@synthesize currentSession = _currentSession;
+
+
+// called everytime tab is switched to this view
+// necessary in case currentSession changes, i.e. is disconnected and reconnected again
+- (void)viewDidAppear:(BOOL)animated {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    _currentSession = tabControl.currentSession;
+    
+    [super viewDidAppear:animated];
+    
+}
 
 - (void)viewDidLoad
 {

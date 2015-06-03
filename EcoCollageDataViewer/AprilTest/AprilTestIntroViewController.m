@@ -26,8 +26,10 @@
 @synthesize appType = _appType;
 
 
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     // Do any additional setup after loading the view.
 }
 
@@ -57,6 +59,7 @@
 }
 
 
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -67,11 +70,15 @@
         AprilTestTabBarController *tab = [segue destinationViewController];
         tab.url = _url;
         tab.studyNum = _studyNum;
+        // don't need to init tab.currentSession since the GK session will be
+        // set up in the AprilTestTabBarController
     }
     else {
         MommaBirdViewController *momma_data = [segue destinationViewController];
         momma_data.url = _url;
         momma_data.studyNum = _studyNum;
+        // don't need to init momma_data.currentSession since the GK session will be
+        // set up in the MommaBirdViewController
     }
 }
 @end

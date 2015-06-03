@@ -18,13 +18,13 @@
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
 @synthesize textView = _textView;
+@synthesize textField = _textField;
 @synthesize currentSession = _currentSession;
+@synthesize connect;
+@synthesize disconnect;
 
 
-// for picking bluetooth connections
 GKPeerPickerController *picker;
-// for storing connected iPad peerID's
-NSMutableArray *GKPeers;
 
 
 typedef struct UserProfiles {
@@ -95,8 +95,6 @@ typedef struct SimNormalizedResults {
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    GKPeers = [[NSMutableArray alloc] init];
 }
 
 
@@ -108,17 +106,18 @@ typedef struct SimNormalizedResults {
 }
 
 
--(IBAction) btnConnect:(id) sender {
-    picker = [[GKPeerPickerController alloc] init];
-    picker.delegate = self;
-    picker.connectionTypesMask = GKPeerPickerConnectionTypeNearby;
-    [picker show];
+- (void)applicationWillTerminate:(UIApplication *)app {
+    
+    //[self.currentSession disconnectFromAllPeers];
+    //[self.currentSession release];
+    //currentSession = nil;
 }
 
+
+
+
 - (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *) session {
-    NSLog(@"peerID: %@", peerID);
-    [GKPeers addObject:peerID];
-    self.currentSession = session;
+    _currentSession = session;
     session.delegate = self;
     [session setDataReceiveHandler:self withContext:nil];
     picker.delegate = nil;
@@ -129,13 +128,11 @@ typedef struct SimNormalizedResults {
 - (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker {
     picker.delegate = nil;
     //[picker autorelease];
+    [connect setHidden:NO];
+    [disconnect setHidden:YES];
 }
 
--(IBAction) btnDisconnect:(id) sender {
-    [self.currentSession disconnectFromAllPeers];
-    //[self.currentSession release];
-    currentSession = nil;
-}
+
 
 - (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state {
     switch (state)
@@ -146,47 +143,60 @@ typedef struct SimNormalizedResults {
         case GKPeerStateDisconnected:
             NSLog(@"disconnected");
             //[self.currentSession release];
-            currentSession = nil;
+            _currentSession = nil;
+            [connect setHidden:NO];
+            [disconnect setHidden:YES];
             break;
     }
 }
 - (void) mySendDataToPeers:(NSData *) data {
-    if (currentSession)
+    if (_currentSession)
     {
-        [self.currentSession sendData:data toPeers:GKPeers withDataMode:GKSendDataReliable error:nil];
+        [self.currentSession
+         sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
     }
 }
 
--(IBAction) btnSend:(id) sender { //---convert an NSString object to NSData---
-    NSData* data;
-    NSString *str = [NSString stringWithString:_textView.text];
-    data = [str dataUsingEncoding: NSASCIIStringEncoding];
+- (IBAction)sendText:(UIButton *)sender {
+    // close keyboard
+    [_textField resignFirstResponder];
+    
+    NSData *data;
+    NSString *stringToSend = _textView.text;
+    stringToSend = [stringToSend stringByAppendingString:@"\n"];
+    stringToSend = [stringToSend stringByAppendingString:_textField.text];
+    _textView.text = stringToSend;
+    data = [stringToSend dataUsingEncoding:NSASCIIStringEncoding];
     [self mySendDataToPeers:data];
 }
 
+
+
 - (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---convert the NSData to NSString---
-    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-    
-    NSArray *dataArray = [dataString componentsSeparatedByString:@"|"];
-    
-    NSString *stringToDisplay = [dataArray componentsJoinedByString:@"\n"];
+    NSString * stringReceived = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+    NSArray *arrayFromString = [stringReceived componentsSeparatedByString:@"|"];
+    NSString *stringToDisplay = [arrayFromString componentsJoinedByString:@"\n"];
     
     _textView.text = stringToDisplay;
+    //[alert release];
 }
 
 
-
-- (IBAction)connect:(UIButton *)sender {
+- (IBAction)connectToGK:(UIButton *)sender {
     picker = [[GKPeerPickerController alloc] init];
     picker.delegate = self;
     picker.connectionTypesMask = GKPeerPickerConnectionTypeNearby;
+    //don't hide connect for Momma since she wants to connect to all babies
+    //[connect setHidden:YES];
+    [disconnect setHidden:NO];
     [picker show];
 }
 
-- (void)applicationWillTerminate:(UIApplication *)app {
-    
+- (IBAction)disconnectFromGK:(UIButton *)sender {
     [self.currentSession disconnectFromAllPeers];
-    //[self.currentSession release];
-    currentSession = nil;
+    _currentSession = nil;
+    [connect setHidden:NO];
+    [disconnect setHidden:YES];
 }
+
 @end

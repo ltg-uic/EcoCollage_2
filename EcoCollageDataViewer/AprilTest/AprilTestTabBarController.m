@@ -19,6 +19,7 @@
 @synthesize currentConcernRanking = _currentConcernRanking;
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
+@synthesize currentSession = _currentSession;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

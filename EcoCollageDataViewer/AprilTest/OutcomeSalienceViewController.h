@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <GameKit/GameKit.h>
 
 @interface OutcomeSalienceViewController : UIViewController <UIScrollViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate>
 @property NSMutableArray * currentConcernRanking;
@@ -28,5 +29,7 @@
 
 - (IBAction)investmentChanged:(UISlider *)sender;
 @property (strong, nonatomic) IBOutlet UITextView *currentMaxInvestment;
+
+@property GKSession *currentSession;
 
 @end
