@@ -38,11 +38,6 @@ typedef struct Value
     float lowestCost;
 }Value;
 
-typedef struct Node{
-    float val;
-    struct Node* next;
-}Node;
-
 Value  *installationCost  = NULL;
 Value  *maintenanceCost   = NULL;
 Value  *privateDamages    = NULL;
@@ -52,7 +47,6 @@ Value  *gw_infiltration   = NULL;
 Value  *floodedStreets    = NULL;
 Value  *standingWater     = NULL;
 Value  *efficiency_val    = NULL;
-Node   *floodedStreetVals = NULL;
 
 NSMutableArray * trialRuns;             //contains list of simulation data from trials pulled
 NSMutableArray * trialRunsNormalized;   //contains list of simulation data from trials pulled in normalized STATIC  form
@@ -217,18 +211,8 @@ float frame_height = 31;
     if ([sender isOn]){
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
         trialNum = [trialRuns count];
-    
-        [self normalize];
-        
-        [self updatePublicCostDisplays: trialNum];
-        [self updateLabels: trialNum];
-    
-        //updates the component scores
-        for (int i = 0; i < trialNum; i++){
-        
-            [self updateComponentScore:i];
-        }
-    
+
+        [self normalizeAllandUpdateDynamically];
     }
     else{
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Static" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
@@ -258,6 +242,7 @@ float frame_height = 31;
     _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:newVal]]];
     currInvest = newVal;
  
+    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     //only update all labels/bars if Static normalization is switched on
     if (!_StaticNormalization.isOn){
         trialNum = [trialRuns count];
@@ -269,6 +254,7 @@ float frame_height = 31;
             [self normalizeStatically:i];
         }
     }
+    [_loadingIndicator stopAnimating];
 }
 
 
@@ -330,6 +316,7 @@ float frame_height = 31;
                "Flooded Streets :%f\n"
                "Standing Water  :%f\n"
                "Efficiency      :%f\n\n",i+1, someTrial.publicInstallCost, someTrial.publicMaintenanceCost, someTrial.privateDamages, someTrial.neighborsImpactMe, someTrial.impactNeighbors, someTrial.infiltration, currValStreets, someTrialNorm.standingWater, someTrialNorm.efficiency);*/
+        printf("Trial %d\n Me -> Neighbors :%f\n",i+1, someTrial.impactNeighbors );
         
         if (i == 0){
             installationCost->highestCost  =  someTrial.publicInstallCost;
@@ -424,10 +411,10 @@ float frame_height = 31;
         privateDamages->lowestCost = 0.01;
     }
     
-    if (impactNeighbors->highestCost == 0) {
-        impactNeighbors->highestCost = 0.01;
+    if (impactNeighbors->highestCost > 1) {
+        impactNeighbors->highestCost = 1;
     }
-    else if( impactNeighbors->lowestCost == 0){
+    else if( impactNeighbors->lowestCost <= 0){
         impactNeighbors->lowestCost = 0.01;
     }
     
@@ -478,7 +465,7 @@ float frame_height = 31;
         
         someTrialDyn.privateDamages        = (float)someTrial.privateDamages/privateDamages->highestCost;
         
-        someTrialDyn.impactNeighbors       = (someTrial.impactNeighbors )/(impactNeighbors->lowestCost );
+        someTrialDyn.impactNeighbors       = (((someTrial.impactNeighbors )/(impactNeighbors->lowestCost ))-1)/1;
         someTrialDyn.neighborsImpactMe     = (someTrial.neighborsImpactMe )/(neighborsImpactMe->lowestCost );
         
         someTrialDyn.infiltration          = (someTrial.infiltration )/(gw_infiltration->highestCost );
@@ -498,6 +485,10 @@ float frame_height = 31;
                "Flooded Streets :%f\n"
                "Standing Water  :%f\n"
                "Efficiency      :%f\n\n",i+1, someTrialNorm.publicInstallCost, someTrialNorm.publicMaintenanceCost, someTrialNorm.privateDamages, someTrialNorm.neighborsImpactMe, someTrialNorm.impactNeighbors, someTrialNorm.infiltration, someTrialNorm.floodedStreets, someTrialNorm.standingWater, someTrialNorm.efficiency);*/
+        
+        
+        //someTrialDyn.impactNeighbors = 1 - (1 - someTrialDyn.impactNeighbors);
+        printf("Trial %d\n Me -> Neighbors :%f\n",i+1, someTrialDyn.impactNeighbors );
     }
     printf("\n");
 }
@@ -834,7 +825,15 @@ float frame_height = 31;
 -(void) drawTrial: (int) trial{
 
     AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
-    AprilTestNormalizedVariable *simRunNormal = [trialRunsNormalized objectAtIndex:trial];
+    AprilTestNormalizedVariable *simRunNormal;
+    
+    if (_StaticNormalization.isOn){
+        simRunNormal = [trialRunsDynNorm objectAtIndex:trial];
+    }
+    else{
+        simRunNormal = [trialRunsNormalized objectAtIndex:trial];
+    }
+    
     FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
     interventionView.view = _mapWindow;
     [interventionView updateView];
