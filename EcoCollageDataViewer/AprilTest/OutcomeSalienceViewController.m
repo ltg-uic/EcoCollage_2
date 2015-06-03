@@ -307,7 +307,7 @@ float frame_height = 31;
         AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
         
         currValStreets = vals->val;
-        /*
+        
         printf("Trial %d\n"
                "Install     Cost:%d\n"
                "Maintenance Cost:%d\n"
@@ -317,7 +317,7 @@ float frame_height = 31;
                "GW Infiltration :%f\n"
                "Flooded Streets :%f\n"
                "Standing Water  :%f\n"
-               "Efficiency      :%f\n\n",i+1, someTrial.publicInstallCost, someTrial.publicMaintenanceCost, someTrial.privateDamages, someTrial.neighborsImpactMe, someTrial.impactNeighbors, someTrial.infiltration, currValStreets, someTrialNorm.standingWater, someTrialNorm.efficiency);*/
+               "Efficiency      :%f\n\n",i+1, someTrial.publicInstallCost, someTrial.publicMaintenanceCost, someTrial.privateDamages, someTrial.neighborsImpactMe, someTrial.impactNeighbors, someTrial.infiltration, currValStreets, someTrialNorm.standingWater, someTrialNorm.efficiency);
         
         if (i == 0){
             installationCost->highestCost  =  someTrial.publicInstallCost;
@@ -385,7 +385,7 @@ float frame_height = 31;
         vals = vals->next;
     }
 
-    //printf("\n");
+    printf("\n");
     
     //if the max happens to be 0, avoid division by 0
     if (maintenanceCost->highestCost == 0 || installationCost->highestCost == 0){
@@ -437,7 +437,7 @@ float frame_height = 31;
         someTrialNorm.standingWater         = (someTrialNorm.standingWater   *100)/(standingWater->highestCost  *100);
         someTrialNorm.efficiency            = (someTrialNorm.efficiency      *100)/(efficiency_val->highestCost *100);
         
-        /*
+        
         printf("Trial %d\n"
                "Install Cost    :%f\n"
                "Maintenance Cost:%f\n"
@@ -447,11 +447,11 @@ float frame_height = 31;
                "GW Infiltration :%f\n"
                "Flooded Streets :%f\n"
                "Standing Water  :%f\n"
-               "Efficiency      :%f\n\n",i+1, someTrialNorm.publicInstallCost, someTrialNorm.publicMaintenanceCost, someTrialNorm.privateDamages, someTrialNorm.neighborsImpactMe, someTrialNorm.impactNeighbors, someTrialNorm.infiltration, someTrialNorm.floodedStreets, someTrialNorm.standingWater, someTrialNorm.efficiency);*/
+               "Efficiency      :%f\n\n",i+1, someTrialNorm.publicInstallCost, someTrialNorm.publicMaintenanceCost, someTrialNorm.privateDamages, someTrialNorm.neighborsImpactMe, someTrialNorm.impactNeighbors, someTrialNorm.infiltration, someTrialNorm.floodedStreets, someTrialNorm.standingWater, someTrialNorm.efficiency);
         
         vals = vals->next;
     }
-    //printf("\n");
+    printf("\n");
 }
 
 //updates the score of the public install costs to reflect new trial
