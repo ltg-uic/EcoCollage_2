@@ -36,6 +36,10 @@
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _currentSession = tabControl.currentSession;
     
+    // setDataReceiveHandler whenever user switches to a different view which will process the GameKit session
+    [_currentSession setDataReceiveHandler:self withContext:nil];
+    
+
     [super viewDidAppear:animated];
     
 }
