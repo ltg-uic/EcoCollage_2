@@ -107,14 +107,14 @@ typedef struct SimNormalizedResults {
 
 
 - (void)applicationWillTerminate:(UIApplication *)app {
+    picker.delegate = nil;
+    
     // Nil out delegate
     _currentSession.delegate = nil;
     self.currentSession.available = NO;
     
     [self.currentSession disconnectFromAllPeers];
     _currentSession = nil;
-
-
 }
 
 

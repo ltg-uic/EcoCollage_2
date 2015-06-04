@@ -139,6 +139,8 @@ GKPeerPickerController *picker;
 
 
 - (void)applicationWillTerminate:(UIApplication *)app {
+    picker.delegate = nil;
+    
     // Nil out delegate
     _currentSession.delegate = nil;
     self.currentSession.available = NO;
@@ -148,7 +150,6 @@ GKPeerPickerController *picker;
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     tabControl.currentSession = _currentSession;
-    
     
 }
 
