@@ -234,7 +234,7 @@ float frame_height = 31;
     _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:newVal]]];
     currInvest = newVal;
  
-    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+    
     //only update all labels/bars if Static normalization is switched on
     if (!_StaticNormalization.isOn){
         trialNum = [trialRuns count];
@@ -245,13 +245,12 @@ float frame_height = 31;
             [self normalizeStatically:i];
         }
     }
-    [_loadingIndicator stopAnimating];
 }
 
 
 -(void) normalizeAllandUpdateDynamically
 {
-    //normalize right after adding the newest trial
+    //normalize all trials right after adding the newest trial
     [self normalize];
     
     //updates the normalization of the previous trials in respect to the newest trial
@@ -306,7 +305,6 @@ float frame_height = 31;
                "Flooded Streets :%f\n"
                "Standing Water  :%f\n"
                "Efficiency      :%f\n\n",i+1, someTrial.publicInstallCost, someTrial.publicMaintenanceCost, someTrial.privateDamages, someTrial.neighborsImpactMe, someTrial.impactNeighbors, someTrial.infiltration, currValStreets, someTrialNorm.standingWater, someTrialNorm.efficiency);*/
-        printf("Trial %d\n Me -> Neighbors :%f\n",i+1, someTrial.impactNeighbors );
         
         if (i == 0){
             installationCost->highestCost  =  someTrial.publicInstallCost;
@@ -376,7 +374,7 @@ float frame_height = 31;
     printf("\n");
     
     /**
-     * Avoid Division by 0
+     * Avoid Division by 0 or any other issues that may cause errors during normalizations
      *
      */
     
@@ -481,9 +479,6 @@ float frame_height = 31;
         else
             someTrialDyn.efficiency = ((someTrialNorm.efficiency - efficiency_val->lowestCost) / (efficiency_val->highestCost - efficiency_val->lowestCost));
         
-        //someTrialDyn.floodedStreets        =  someTrialNorm.floodedStreets/(floodedStreets->lowestCost); //Thought that it was a decimal value?
-        //someTrialDyn.standingWater         = (someTrialNorm.standingWater  )/(standingWater->lowestCost  );
-        //someTrialDyn.efficiency            = (someTrialNorm.efficiency     )/(efficiency_val->highestCost );
         
         /*
         printf("Trial %d\n"
@@ -498,7 +493,6 @@ float frame_height = 31;
                "Efficiency      :%f\n\n",i+1, someTrialNorm.publicInstallCost, someTrialNorm.publicMaintenanceCost, someTrialNorm.privateDamages, someTrialNorm.neighborsImpactMe, someTrialNorm.impactNeighbors, someTrialNorm.infiltration, someTrialNorm.floodedStreets, someTrialNorm.standingWater, someTrialNorm.efficiency);*/
         
         
-        //someTrialDyn.impactNeighbors = 1 - (1 - someTrialDyn.impactNeighbors);
         //printf("Trial %d\n Me -> Neighbors :%f\n",i+1, someTrialDyn.impactNeighbors );
     }
     printf("\n");
@@ -535,13 +529,6 @@ float frame_height = 31;
     }
     
 }
-
-//Updates the text of a UILabel (used to update labels after new trials are fetched)
-- (NSMutableAttributedString *)myLabelAttributes:(NSString *)input{
-    NSMutableAttributedString *labelAttributes = [[NSMutableAttributedString alloc] initWithString:input];
-    return labelAttributes;
-}
-
 
 - (void) updateComponentScore: (int) trial{
     AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
@@ -722,26 +709,31 @@ float frame_height = 31;
     
     if(content != NULL && content.length > 100 && contentN != NULL){
         
-        //Adds a new trial to a list of trials (normalized and real)
+        //Adds a new trial to a list of trials (normalized, real, dynamic)
         AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:content withTrialNum:trialNum];
         AprilTestNormalizedVariable *simRunNormal = [[AprilTestNormalizedVariable alloc] init: contentN withTrialNum:trialNum];
         AprilTestNormalizedVariable *simRunDyn    = [[AprilTestNormalizedVariable alloc] init: contentN withTrialNum:trialNum];
-        [trialRunsNormalized addObject:simRunNormal];
-        [trialRunsDynNorm addObject:simRunDyn];
-        [trialRuns addObject: simRun];
+        
+        [trialRuns addObject: simRun];                  //contains trials containing real values
+        [trialRunsNormalized addObject:simRunNormal];   //contains trials containing normalized values
+        [trialRunsDynNorm addObject:simRunDyn];         //contains normalized data that will be dynamically altered every time a new trial is fetched
+        
         
         //chooses between static/dynamic normalization of trial data
+        /**
+          * Poor Choice of property name: 
+          *  _StaticNormalization.isOn -> Dynamic Normalization switched on
+          * !_StaticNormalization.isOn -> Static Normalization switched on
+          */
+        
         if (_StaticNormalization.isOn) {
-            //NSLog(@"I am implementing a Dynamic Normalization approach\n");
-            [self normalizeAllandUpdateDynamically];
-            
+            [self normalizeAllandUpdateDynamically]; //updates previous trials's visualizations and renormalizes
         }
         else{
-            //NSLog(@"I am implementing a Static Normalization approach\n");
-            [self normalizeStatically:trialNum]; //can be done trial at a time (since max Investment is already given)
+            [self normalizeStatically:trialNum];     //normalizes a trial one at a time
         }
         
-        //draws the newest trial
+        //draws the newest trial after latest normalization of data (static or dynamic)
         [self drawTrial: trialNum];
         
         trialNum++;
@@ -751,7 +743,6 @@ float frame_height = 31;
     if (trialNum > 3)
         scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
                                                                   target:self selector:@selector(autoscrollTimerFired) userInfo:nil repeats:NO];
-    
     
     [_loadingIndicator stopAnimating];
     
@@ -769,6 +760,7 @@ float frame_height = 31;
     AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
     AprilTestNormalizedVariable *simRunNormal;
     
+    //determines via UIswitch what type of normalization is being drawn
     if (_StaticNormalization.isOn){
         simRunNormal = [trialRunsDynNorm objectAtIndex:trial];
     }
