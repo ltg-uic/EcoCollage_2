@@ -56,10 +56,6 @@ NSMutableArray * maxWaterDisplays;
 NSMutableArray * efficiency;
 NSMutableArray *lastKnownConcernProfile;
 NSMutableArray *bgCols;
-NSMutableArray *privateDamagesLabels;
-NSMutableArray *ImpactNeighborsLabels;
-NSMutableArray *NeighborsImpactMeLabels;
-NSMutableArray *gw_infiltration_Labels;
 NSMutableArray *publicCostDisplays;
 UILabel *redThreshold;
 NSArray *arrStatus;
@@ -113,9 +109,6 @@ float frame_height = 31;
     efficiency = [[NSMutableArray alloc] init];
     _scenarioNames = [[NSMutableArray alloc] init];
     publicCostDisplays = [[NSMutableArray alloc] init];
-    privateDamagesLabels = [[NSMutableArray alloc] init];
-    ImpactNeighborsLabels = [[NSMutableArray alloc] init];
-    gw_infiltration_Labels = [[NSMutableArray alloc] init];
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
@@ -219,7 +212,6 @@ float frame_height = 31;
         trialNum = [trialRuns count];
         
         [self updatePublicCostDisplays: trialNum];
-        [self updateLabels: trialNum];
         
         //updates the component scores
         for (int i = 0; i < trialNum; i++){
@@ -248,7 +240,6 @@ float frame_height = 31;
         trialNum = [trialRuns count];
         
         [self updatePublicCostDisplays: trialNum];
-        [self updateLabels: trialNum];
         
         for (int i = 0; i < trialNum; i++){
             [self normalizeStatically:i];
@@ -478,9 +469,21 @@ float frame_height = 31;
         else
             someTrialDyn.neighborsImpactMe = ((someTrial.neighborsImpactMe - neighborsImpactMe->lowestCost)/ (neighborsImpactMe->highestCost - neighborsImpactMe->lowestCost));
         
-        someTrialDyn.floodedStreets        =  someTrialNorm.floodedStreets/(floodedStreets->lowestCost); //Thought that it was a decimal value?
-        someTrialDyn.standingWater         = (someTrialNorm.standingWater  )/(standingWater->lowestCost  );
-        someTrialDyn.efficiency            = (someTrialNorm.efficiency     )/(efficiency_val->highestCost );
+        if (floodedStreets->highestCost == floodedStreets->lowestCost) { someTrialDyn.floodedStreets = .5; }
+        else
+            someTrialDyn.floodedStreets = ((someTrialNorm.floodedStreets - floodedStreets->lowestCost) / (floodedStreets->highestCost - floodedStreets->lowestCost));
+        
+        if (standingWater->highestCost == standingWater->lowestCost) { someTrialDyn.standingWater = .5; }
+        else
+            someTrialDyn.standingWater = ((someTrialNorm.standingWater - standingWater->lowestCost) / (standingWater->highestCost - standingWater->lowestCost));
+        
+        if (efficiency_val->highestCost == efficiency_val->lowestCost) { someTrialDyn.efficiency = .5; }
+        else
+            someTrialDyn.efficiency = ((someTrialNorm.efficiency - efficiency_val->lowestCost) / (efficiency_val->highestCost - efficiency_val->lowestCost));
+        
+        //someTrialDyn.floodedStreets        =  someTrialNorm.floodedStreets/(floodedStreets->lowestCost); //Thought that it was a decimal value?
+        //someTrialDyn.standingWater         = (someTrialNorm.standingWater  )/(standingWater->lowestCost  );
+        //someTrialDyn.efficiency            = (someTrialNorm.efficiency     )/(efficiency_val->highestCost );
         
         /*
         printf("Trial %d\n"
@@ -539,76 +542,6 @@ float frame_height = 31;
     return labelAttributes;
 }
 
-//takes care of updating all labels that need to be updated after new normalized data comes up
-- (void) updateLabels: (int) trial
-{
-    UILabel *trialDamagesLabel;
-    UILabel *trialImpactNeighbors;
-    UILabel *trialNeighborsImpact;
-    UILabel *trialInfiltration;
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    AprilTestNormalizedVariable *simRunNormal;
-    
-    if (_StaticNormalization.isOn){
-        for (int i = 0; i < trial; i++)
-        {
-            simRunNormal = [trialRunsDynNorm objectAtIndex:i];
-            
-            if (i < privateDamagesLabels.count){
-                trialDamagesLabel = [privateDamagesLabels objectAtIndex:i];
-                
-                [trialDamagesLabel setAttributedText:[self myLabelAttributes: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]]]];
-            }
-            if (i < ImpactNeighborsLabels.count) {
-                trialImpactNeighbors = [ImpactNeighborsLabels objectAtIndex:i];
-                
-                [trialImpactNeighbors setAttributedText:[self myLabelAttributes: [NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.impactNeighbors]]];
-            }
-            if (i < NeighborsImpactMeLabels.count){
-                trialNeighborsImpact = [NeighborsImpactMeLabels objectAtIndex:i];
-                
-                [trialNeighborsImpact setAttributedText:[self myLabelAttributes: [NSString stringWithFormat:@"poopy%.2f%%", 100*simRunNormal.neighborsImpactMe]]];
-            }
-            if (i < gw_infiltration_Labels.count){
-                trialInfiltration = [gw_infiltration_Labels objectAtIndex:i];
-                
-                [trialInfiltration setAttributedText:[self myLabelAttributes:[NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.infiltration]]];
-            }
-            
-        }
-
-    }
-    else{
-        for (int i = 0; i < trial; i++)
-        {
-            simRunNormal = [trialRunsNormalized objectAtIndex:i];
-            
-            if (i < privateDamagesLabels.count){
-                trialDamagesLabel = [privateDamagesLabels objectAtIndex:i];
-                
-                [trialDamagesLabel setAttributedText:[self myLabelAttributes: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]]]];
-            }
-            if (i < ImpactNeighborsLabels.count) {
-                trialImpactNeighbors = [ImpactNeighborsLabels objectAtIndex:i];
-                
-                [trialImpactNeighbors setAttributedText:[self myLabelAttributes: [NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.impactNeighbors]]];
-            }
-            if (i < NeighborsImpactMeLabels.count){
-                trialNeighborsImpact = [NeighborsImpactMeLabels objectAtIndex:i];
-                
-                [trialNeighborsImpact setAttributedText:[self myLabelAttributes: [NSString stringWithFormat:@"poopy%.2f%%", 100*simRunNormal.neighborsImpactMe]]];
-            }
-            if (i < gw_infiltration_Labels.count){
-                trialInfiltration = [gw_infiltration_Labels objectAtIndex:i];
-                
-                [trialInfiltration setAttributedText:[self myLabelAttributes:[NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.infiltration]]];
-            }
-            
-        }
-
-    }
-}
 
 - (void) updateComponentScore: (int) trial{
     AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
