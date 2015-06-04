@@ -20,6 +20,17 @@
 @synthesize currentSession = _currentSession;
 @synthesize studyNum = _studyNum;
 
+
+
+- (BOOL)application:(UIApplication *)application
+didFinishLaunchingWithOptions:(NSDictionary *)launchOptions  {
+    // set this view to be default for receiving data from Momma
+    [_currentSession setDataReceiveHandler:self withContext:nil];
+    
+    return YES;
+}
+
+
 - (void)viewDidLoad {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _studyNum = tabControl.studyNum;

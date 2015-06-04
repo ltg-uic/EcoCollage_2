@@ -56,7 +56,9 @@ GKPeerPickerController *picker;
     if(!_currentSession) {
         [connect setHidden:NO];
     }
-    else [connect setHidden:YES];
+    else {
+        [connect setHidden:YES];
+    }
     
     [super viewDidAppear:animated];
     
@@ -210,8 +212,8 @@ GKPeerPickerController *picker;
         [self mySendDataToPeers:data];
     }
     else {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data not sent" message:@"Not connected" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
+        //UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data not sent" message:@"Not connected" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        //[alert show];
     }
 }
 
