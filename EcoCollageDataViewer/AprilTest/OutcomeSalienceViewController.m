@@ -265,7 +265,6 @@ float frame_height = 31;
     
     //updates the normalization of the previous trials in respect to the newest trial
     [self updatePublicCostDisplays: trialNum];
-    [self updateLabels: trialNum];
     
     //updates the component scores
     for (int i = 0; i < trialNum; i++)
@@ -453,6 +452,7 @@ float frame_height = 31;
         efficiency_val->lowestCost = 0.01;
     }
     
+    
     //normalize all the variables in accordance to the max value of all current trials
     for (i = 0; i < trialRuns.count; i++)
     {
@@ -465,10 +465,18 @@ float frame_height = 31;
         
         someTrialDyn.privateDamages        = (float)someTrial.privateDamages/privateDamages->highestCost;
         
-        someTrialDyn.impactNeighbors       = (((someTrial.impactNeighbors )/(impactNeighbors->lowestCost ))-1)/1;
-        someTrialDyn.neighborsImpactMe     = (someTrial.neighborsImpactMe )/(neighborsImpactMe->lowestCost );
         
-        someTrialDyn.infiltration          = (someTrial.infiltration )/(gw_infiltration->highestCost );
+        if (impactNeighbors->highestCost == impactNeighbors->lowestCost){ someTrialDyn.impactNeighbors = .5; }
+        else
+            someTrialDyn.impactNeighbors = ((someTrial.impactNeighbors - impactNeighbors->lowestCost)/ (impactNeighbors->highestCost - impactNeighbors->lowestCost));
+        
+        if (gw_infiltration->highestCost == gw_infiltration->lowestCost){ someTrialDyn.infiltration = .5; }
+        else
+            someTrialDyn.infiltration = ((someTrial.infiltration - gw_infiltration->lowestCost)/ (gw_infiltration->highestCost - gw_infiltration->lowestCost));
+        
+        if (neighborsImpactMe->highestCost == neighborsImpactMe->lowestCost){ someTrialDyn.neighborsImpactMe = .5; }
+        else
+            someTrialDyn.neighborsImpactMe = ((someTrial.neighborsImpactMe - neighborsImpactMe->lowestCost)/ (neighborsImpactMe->highestCost - neighborsImpactMe->lowestCost));
         
         someTrialDyn.floodedStreets        =  someTrialNorm.floodedStreets/(floodedStreets->lowestCost); //Thought that it was a decimal value?
         someTrialDyn.standingWater         = (someTrialNorm.standingWater  )/(standingWater->lowestCost  );
@@ -488,10 +496,11 @@ float frame_height = 31;
         
         
         //someTrialDyn.impactNeighbors = 1 - (1 - someTrialDyn.impactNeighbors);
-        printf("Trial %d\n Me -> Neighbors :%f\n",i+1, someTrialDyn.impactNeighbors );
+        //printf("Trial %d\n Me -> Neighbors :%f\n",i+1, someTrialDyn.impactNeighbors );
     }
     printf("\n");
 }
+
 
 //updates the score of the public install costs to reflect new trial
 - (void) updatePublicCostDisplays:(int) trial
@@ -884,7 +893,6 @@ float frame_height = 31;
     int visibleIndex = 0;
     
     for(int i = 0 ; i <_currentConcernRanking.count ; i++){
-        UILabel *savedLabel;
         
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
         if(simRun.trialNum ==0 && visibleIndex %2 == 0 && currentVar.widthOfVisualization > 0){
@@ -945,8 +953,7 @@ float frame_height = 31;
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +40];
-            savedLabel = [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70];
-            [privateDamagesLabels addObject:savedLabel];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue: (simRun.trialNum ) * 175 + 100];
             
 
@@ -961,42 +968,24 @@ float frame_height = 31;
             
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             
-            if (_StaticNormalization.isOn){
-                savedLabel =[self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.impactNeighbors] withConcernPosition:width +50 andyValue: (simRun.trialNum ) * 175 + 40];
-            }
-            else{
-                savedLabel = [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.impactNeighbors] withConcernPosition:width +50 andyValue: (simRun.trialNum ) * 175 + 40];
-            }
-            
-            [ImpactNeighborsLabels addObject:savedLabel];
+           
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.impactNeighbors] withConcernPosition:width +50 andyValue: (simRun.trialNum ) * 175 + 40];
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
             [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
             
-            if (_StaticNormalization.isOn){
-                savedLabel = [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (simRun.trialNum)*175 + 40];
-            }
-            else{
-                savedLabel = [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (simRun.trialNum)*175 + 40];
-            }
-    
-            [NeighborsImpactMeLabels addObject:savedLabel];
+        
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (simRun.trialNum)*175 + 40];
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe)]];
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
-            if (_StaticNormalization.isOn){
-                savedLabel = [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRunNormal.infiltration] withConcernPosition:width + 50 andyValue: (simRun.trialNum)* 175 + 40 ];
-            }
-            else{
-                savedLabel = [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.infiltration] withConcernPosition:width + 50 andyValue: (simRun.trialNum)* 175 + 40 ];
-            }
-            
-            [gw_infiltration_Labels addObject:savedLabel];
+        
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.infiltration] withConcernPosition:width + 50 andyValue: (simRun.trialNum)* 175 + 40 ];
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
