@@ -406,6 +406,7 @@
                     <tabBarItem key="tabBarItem" title="Simulation Results" image="sim-1x.png" id="cPa-gy-q4n"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
+                        <outlet property="CurrInvestment" destination="wo8-Ol-8vA" id="upQ-AC-hd8"/>
                         <outlet property="StaticNormalization" destination="5z6-bh-otB" id="hZr-Y6-OQk"/>
                         <outlet property="currentMaxInvestment" destination="taY-Ck-9cp" id="mJy-Wo-IwJ"/>
                         <outlet property="dataWindow" destination="8p1-eo-fnN" id="hJO-jf-96m"/>

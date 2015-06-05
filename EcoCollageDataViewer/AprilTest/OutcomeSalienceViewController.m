@@ -57,6 +57,7 @@ NSMutableArray * efficiency;
 NSMutableArray *lastKnownConcernProfile;
 NSMutableArray *bgCols;
 NSMutableArray *publicCostDisplays;
+NSMutableArray *OverBudgetLabels;
 UILabel *redThreshold;
 NSArray *arrStatus;
 NSMutableDictionary *scoreColors;
@@ -109,6 +110,7 @@ float frame_height = 31;
     efficiency = [[NSMutableArray alloc] init];
     _scenarioNames = [[NSMutableArray alloc] init];
     publicCostDisplays = [[NSMutableArray alloc] init];
+    OverBudgetLabels   = [[NSMutableArray alloc] init];
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
@@ -266,7 +268,7 @@ float frame_height = 31;
     AprilTestSimRun *someTrial = [trialRuns objectAtIndex:trial];
     AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:trial];
     
-    if (currInvest == 0){ currInvest += .01; }
+    if (currInvest == 0){ currInvest = .01; }
     
     //public cost
     someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(currInvest));
@@ -498,12 +500,18 @@ float frame_height = 31;
     printf("\n");
 }
 
+//Updates the text of a UILabel (used to update labels after new trials are fetched)
+- (NSMutableAttributedString *)myLabelAttributes:(NSString *)input{
+    NSMutableAttributedString *labelAttributes = [[NSMutableAttributedString alloc] initWithString:input];
+    return labelAttributes;
+}
 
 //updates the score of the public install costs to reflect new trial
 - (void) updatePublicCostDisplays:(int) trial
 {
     AprilTestCostDisplay *newCD;
     AprilTestNormalizedVariable *normVar;
+    UILabel *valueLabel;
     
     //Dynamic
     if (_StaticNormalization.isOn)
@@ -520,10 +528,22 @@ float frame_height = 31;
     else{
         for (int i = 0; i < trial; i++)
         {
+            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+            [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+            
             newCD = [publicCostDisplays objectAtIndex:i];
             normVar = [trialRunsNormalized objectAtIndex:i];
+            valueLabel = [OverBudgetLabels objectAtIndex:i];
             
             [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, 130, 30)];
+            
+            
+            AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
+            [valueLabel setAttributedText:[self myLabelAttributes:[NSString stringWithFormat:@"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost - _CurrInvestment.value)]]]]];
+            
+            if ((simRun.publicInstallCost > _CurrInvestment.value) && (_StaticNormalization.isOn == NO)){
+                [[self dataWindow] addSubview:valueLabel];
+            }
         }
 
     }
@@ -849,16 +869,26 @@ float frame_height = 31;
                 [_dataWindow addSubview:cd];
             }
             
+            //store update labels for further use (updating over budget when using absolute val)
+            UILabel *valueLabel = [[UILabel alloc] init];
+            valueLabel.frame =CGRectMake(width+25, simRun.trialNum *175 + 80, 0, 0);
+            [valueLabel sizeToFit ];
+            valueLabel.font = [UIFont boldSystemFontOfSize:12.0];
+            valueLabel.textColor = [UIColor redColor];
+            
+            
             //checks if over budget, if so, prints warning message
             if(simRun.publicInstallCost > 800000){
-                UILabel *valueLabel = [[UILabel alloc] init];
                 valueLabel.text = [NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-800000)]] ];
-                valueLabel.frame =CGRectMake(width+25, simRun.trialNum *175 + 80, 0, 0);
-                [valueLabel sizeToFit ];
-                valueLabel.font = [UIFont boldSystemFontOfSize:12.0];
-                valueLabel.textColor = [UIColor redColor];
                 [[self dataWindow] addSubview:valueLabel];
             }
+            else if ((simRun.publicInstallCost > _CurrInvestment.value) && (_StaticNormalization.isOn == NO)){
+                valueLabel.text = [NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-_CurrInvestment.value)]] ];
+                [[self dataWindow] addSubview:valueLabel];
+            }
+            
+            [OverBudgetLabels addObject:valueLabel];
+            
             [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum * 175) +100];
             
             
@@ -894,7 +924,8 @@ float frame_height = 31;
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             
            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.impactNeighbors] withConcernPosition:width +50 andyValue: (simRun.trialNum ) * 175 + 40];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue: (simRun.trialNum ) * 175 + 40];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" run-off to neighbors"] withConcernPosition:width + 30 andyValue: (simRun.trialNum ) * 175 + 55];
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
             [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
@@ -910,7 +941,8 @@ float frame_height = 31;
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
         
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.infiltration] withConcernPosition:width + 50 andyValue: (simRun.trialNum)* 175 + 40 ];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater was", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue: (simRun.trialNum)* 175 + 40 ];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" infiltrated by the swales"] withConcernPosition:width + 30 andyValue: (simRun.trialNum)* 175 + 55 ];
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
