@@ -70,7 +70,7 @@ UITextField *edittingTX;
 NSTimer *scrollingTimer = nil;
 
 //hardcoded values that will represent the flooding depth slider
-float thresh = 65; //used for the max flooded area
+float thresh = 6; //used for the max flooded area
 
 float currInvest = 0;
 float minInvest = 0;
