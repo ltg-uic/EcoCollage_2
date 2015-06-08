@@ -17,6 +17,7 @@
 
 @property (strong, nonatomic) IBOutlet UIScrollView *titleWindow;
 @property (strong, nonatomic) IBOutlet UIScrollView *SliderWindow;
+
 @property NSString * url;
 @property (strong, nonatomic) IBOutlet UISlider *hoursAfterStorm;
 @property (strong, nonatomic) IBOutlet UILabel *hoursAfterStormLabel;

@@ -26,6 +26,7 @@
 @synthesize dataWindow = _dataWindow;
 @synthesize mapWindow = _mapWindow;
 @synthesize titleWindow = _titleWindow;
+@synthesize SliderWindow = _SliderWindow;
 @synthesize hoursAfterStorm = _hoursAfterStorm;
 @synthesize hoursAfterStormLabel = _hoursAfterStormLabel;
 @synthesize loadingIndicator = _loadingIndicator;
@@ -69,6 +70,7 @@ float offsetForMoving = 0.0;
 float originalOffset = 0.0;
 UITextField *edittingTX;
 NSTimer *scrollingTimer = nil;
+UISlider *BudgetSlider;
 
 //hardcoded values that will represent the flooding depth slider
 float thresh = 6; //used for the max flooded area
@@ -110,8 +112,10 @@ float frame_height = 31;
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
+    _SliderWindow.delegate = self;
     bgCols = [[NSMutableArray alloc] init];
     currInvest = _CurrInvestment.value;
+    
     
     _loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _loadingIndicator.center = CGPointMake(512, 300);
@@ -150,6 +154,9 @@ float frame_height = 31;
         [view removeFromSuperview];
     }
     for (UIView *view in [_mapWindow subviews]){
+        [view removeFromSuperview];
+    }
+    for (UIView *view in [_SliderWindow subviews]){
         [view removeFromSuperview];
     }
 //    int prevTrialNum = trialNum;
@@ -261,17 +268,21 @@ float frame_height = 31;
     }
 }
 
-//Max Investment Slider updater
-- (IBAction)investmentChanged:(UISlider *)sender {
-    int newVal = sender.value;
+//selector method that handles a change in value when budget changes (slider under titles)
+-(void)BudgetChanged:(id)sender
+{
+    UISlider *slider = (UISlider*)sender;
+    int value = slider.value;
+    //-- Do further actions
+    
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     
-    newVal = 1000.0 * floor((newVal/1000.0)+0.5);
+    value = 1000.0 * floor((value/1000.0)+0.5);
     
-    _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:newVal]]];
-    currInvest = newVal;
- 
+    _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
+    currInvest = value;
+    printf("You received this value: %d\n", value);
     
     //only update all labels/bars if Static normalization is switched on
     if (!_StaticNormalization.isOn){
@@ -1258,31 +1269,49 @@ float frame_height = 31;
     }];
     
     int visibleIndex = 0;
+    
     for(int i = 0 ; i <_currentConcernRanking.count ; i++){
         
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
         UILabel * currentVarLabel = [[UILabel alloc] init];
         currentVarLabel.backgroundColor = [scoreColors objectForKey:currentVar.name];
-        currentVarLabel.frame = CGRectMake(width, 4, currentVar.widthOfVisualization, 40);
+        currentVarLabel.frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
         currentVarLabel.font = [UIFont boldSystemFontOfSize:15.3];
+        
+        
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            currentVarLabel.text = @"  Poop";
-        } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
-            currentVarLabel.text =@"  Mommy";
+            
+            CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
+            BudgetSlider = [[UISlider alloc] initWithFrame:frame];
+            [BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
+            [BudgetSlider setBackgroundColor:[UIColor clearColor]];
+            BudgetSlider.minimumValue = 0.0;
+            BudgetSlider.maximumValue = 5000000;
+            BudgetSlider.continuous = YES;
+            BudgetSlider.value = 5000;
+            [_SliderWindow addSubview:BudgetSlider];
+            
+        }
+        else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+        
+        }
+        else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
+        
+        }
+        
+        else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
+            
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
-            currentVarLabel.text =@"  neighbors suck";
+            
         } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
-            currentVarLabel.text=@"  k";
+            
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-            currentVarLabel.text =@"  totes";
-        } else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
-            currentVarLabel.text = @"  sup";
+            
         } else if( [currentVar.name compare:@"groundwaterInfiltration"] == NSOrderedSame){
-            currentVarLabel.text = @"  gatta go fast";
+            
         } else if( [currentVar.name compare:@"puddleMax"] == NSOrderedSame){
-            currentVarLabel.text = @"  pudding";
-        } else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
-            currentVarLabel.text = @" electricity";
+            
+        
         }
         else {
             currentVarLabel = NULL;
@@ -1295,7 +1324,6 @@ float frame_height = 31;
         width+= currentVar.widthOfVisualization;
     }
     
-    [_SliderWindow setContentSize: CGSizeMake(width + 10, _dataWindow.contentSize.height)];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -1306,6 +1334,7 @@ float frame_height = 31;
         CGPoint titleOffset = _titleWindow.contentOffset;
         titleOffset.x = _dataWindow.contentOffset.x;
         [_titleWindow setContentOffset:titleOffset];
+        [_SliderWindow setContentOffset:titleOffset];
         [_mapWindow setContentOffset:offset];
     } else {
         CGPoint offset = _dataWindow.contentOffset;
@@ -1379,6 +1408,7 @@ float frame_height = 31;
     [_mapWindow setScrollEnabled:TRUE];
     [_dataWindow setScrollEnabled:TRUE];
     [_titleWindow setScrollEnabled:TRUE];
+    //[_SliderWindow setScrollEnabled:TRUE];
     [_loadingIndicator stopAnimating];
     NSDate *myDate = [[NSDate alloc] init];
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
