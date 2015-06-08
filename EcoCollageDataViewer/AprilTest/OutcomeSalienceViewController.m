@@ -158,6 +158,7 @@ float frame_height = 31;
         [self drawTrial:i];
     }
     [self drawTitles];
+    [self drawSliders];
     [_dataWindow setContentOffset:CGPointMake(0, 0)];
     [_mapWindow setContentOffset:CGPointMake(0,0 )];
     [_dataWindow flashScrollIndicators];
@@ -286,7 +287,9 @@ float frame_height = 31;
     [self updatePublicCostDisplays: trialNum];
     [self updateBudgetLabels:trialNum];
     
-    
+    //updates the component scores
+    for (int i = 0; i < trialNum; i++)
+        [self updateComponentScore:i];
 }
 
 -(void) normalizeAllandUpdateDynamically
@@ -1241,6 +1244,58 @@ float frame_height = 31;
     }
     
     [_dataWindow setContentSize: CGSizeMake(width + 10, _dataWindow.contentSize.height)];
+}
+
+//will draw sliders on a scrollview right below the titles of concern rankings
+-(void) drawSliders{
+    int width = 0;
+    
+    NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+        if(first > second) return NSOrderedAscending;
+        else return NSOrderedDescending;
+    }];
+    
+    int visibleIndex = 0;
+    for(int i = 0 ; i <_currentConcernRanking.count ; i++){
+        
+        AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
+        UILabel * currentVarLabel = [[UILabel alloc] init];
+        currentVarLabel.backgroundColor = [scoreColors objectForKey:currentVar.name];
+        currentVarLabel.frame = CGRectMake(width, 4, currentVar.widthOfVisualization, 40);
+        currentVarLabel.font = [UIFont boldSystemFontOfSize:15.3];
+        if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
+            currentVarLabel.text = @"  Poop";
+        } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
+            currentVarLabel.text =@"  Mommy";
+        } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
+            currentVarLabel.text =@"  neighbors suck";
+        } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
+            currentVarLabel.text=@"  k";
+        } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
+            currentVarLabel.text =@"  totes";
+        } else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+            currentVarLabel.text = @"  sup";
+        } else if( [currentVar.name compare:@"groundwaterInfiltration"] == NSOrderedSame){
+            currentVarLabel.text = @"  gatta go fast";
+        } else if( [currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+            currentVarLabel.text = @"  pudding";
+        } else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
+            currentVarLabel.text = @" electricity";
+        }
+        else {
+            currentVarLabel = NULL;
+        }
+        if(currentVar.widthOfVisualization != 0) visibleIndex++;
+        
+        if(currentVarLabel != NULL){
+            [_SliderWindow addSubview:currentVarLabel];
+        }
+        width+= currentVar.widthOfVisualization;
+    }
+    
+    [_SliderWindow setContentSize: CGSizeMake(width + 10, _dataWindow.contentSize.height)];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
