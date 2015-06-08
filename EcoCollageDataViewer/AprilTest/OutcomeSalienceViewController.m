@@ -286,9 +286,7 @@ float frame_height = 31;
     [self updatePublicCostDisplays: trialNum];
     [self updateBudgetLabels:trialNum];
     
-    //updates the component scores
-    for (int i = 0; i < trialNum; i++)
-        [self updateComponentScore:i];
+    
 }
 
 -(void) normalizeAllandUpdateDynamically
