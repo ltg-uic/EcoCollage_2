@@ -111,7 +111,7 @@ float frame_height = 31;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
     bgCols = [[NSMutableArray alloc] init];
-    
+    currInvest = _CurrInvestment.value;
     
     _loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _loadingIndicator.center = CGPointMake(512, 300);
@@ -201,24 +201,63 @@ float frame_height = 31;
     
     if ([sender isOn]){
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        trialNum = [trialRuns count];
-
+        
+        [self removeBudgetLabels];
         [self normalizeAllandUpdateDynamically];
     }
     else{
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Static" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        trialNum = [trialRuns count];
         
-        [self updatePublicCostDisplays: trialNum];
-        
-        //updates the component scores
-        for (int i = 0; i < trialNum; i++){
-            [self normalizeStatically:i];
-            [self updateComponentScore:i];
-        }
+        [self normalizaAllandUpdateStatically];
         
     }
   
+}
+
+-(void) removeBudgetLabels{
+    for (int i = 0; i < OverBudgetLabels.count; i++){
+        UILabel *label = [OverBudgetLabels objectAtIndex:i];
+        [label removeFromSuperview];
+    }
+    [OverBudgetLabels removeAllObjects];
+}
+
+- (void) updateBudgetLabels:(int) trial{
+
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    //remove all old labels
+    [self removeBudgetLabels];
+    
+    //get width of visualization to find out where public install is
+    NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+        if(first > second) return NSOrderedAscending;
+        else return NSOrderedDescending;
+    }];
+    
+    int width = 0;
+
+    for (int i = 0; i < _currentConcernRanking.count; i++){
+        AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
+        if ([currentVar.name compare: @"publicCost"] == NSOrderedSame)
+            break;
+        else
+            width += currentVar.widthOfVisualization;
+    }
+    
+    //create a new label for any trials that are over the budget
+    for (int i = 0; i < trialRuns.count; i++){
+        AprilTestSimRun *simRun = [trialRuns objectAtIndex:i];
+        
+        if (simRun.publicInstallCost > currInvest){
+            UILabel *valueLabel = [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-currInvest)]] ] withConcernPosition:width+25 andyValue:simRun.trialNum *175 + 80 andColor:[UIColor redColor]];
+            
+            [OverBudgetLabels addObject:valueLabel];
+        }
+    }
 }
 
 //Max Investment Slider updater
@@ -235,21 +274,27 @@ float frame_height = 31;
     
     //only update all labels/bars if Static normalization is switched on
     if (!_StaticNormalization.isOn){
-        trialNum = [trialRuns count];
-        
-        [self updatePublicCostDisplays: trialNum];
-        
-        for (int i = 0; i < trialNum; i++){
-            [self normalizeStatically:i];
-        }
+        [self normalizaAllandUpdateStatically];
     }
 }
 
 
+-(void) normalizaAllandUpdateStatically{
+    trialNum = [trialRuns count];
+    
+    [self normalizeStatically:trialNum];
+    [self updatePublicCostDisplays: trialNum];
+    [self updateBudgetLabels:trialNum];
+    
+    //updates the component scores
+    for (int i = 0; i < trialNum; i++)
+        [self updateComponentScore:i];
+}
+
 -(void) normalizeAllandUpdateDynamically
 {
     //normalize all trials right after adding the newest trial
-    [self normalize];
+    [self normalizeDynamically];
     
     //updates the normalization of the previous trials in respect to the newest trial
     [self updatePublicCostDisplays: trialNum];
@@ -261,19 +306,23 @@ float frame_height = 31;
 
 -(void) normalizeStatically: (int) trial
 {
-    AprilTestSimRun *someTrial = [trialRuns objectAtIndex:trial];
-    AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:trial];
+    for (int i = 0; i < trialRuns.count; i++)
+    {
+        AprilTestSimRun *someTrial = [trialRuns objectAtIndex:i];
+        AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
+        
+        if (currInvest == 0){ currInvest = .01; }
+        
+        //public cost
+        someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(currInvest));
+        someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(currInvest));
+    }
     
-    if (currInvest == 0){ currInvest = .01; }
-    
-    //public cost
-    someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(currInvest));
-    someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(currInvest));
     
 }
 
 //will normalize the cost of installation and maintenance
-- (void)normalize
+- (void)normalizeDynamically
 {
     if (installationCost == NULL)  { installationCost = (Value*)malloc(sizeof(Value));  }
     if (maintenanceCost == NULL)   { maintenanceCost = (Value*) malloc(sizeof(Value));  }
@@ -507,31 +556,23 @@ float frame_height = 31;
 {
     AprilTestCostDisplay *newCD;
     AprilTestNormalizedVariable *normVar;
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     
     //Dynamic
-    if (_StaticNormalization.isOn)
-    {
-        for (int i = 0; i < trial; i++)
-        {
+    if (_StaticNormalization.isOn){
+        for (int i = 0; i < trial; i++){
             newCD = [publicCostDisplays objectAtIndex:i];
             normVar = [trialRunsDynNorm objectAtIndex:i];
-            
             [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, 130, 30)];
         }
     }
     //Static
     else{
-        
-        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-        [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-        
-        for (int i = 0; i < trial; i++)
-        {
+        for (int i = 0; i < trial; i++){
             newCD = [publicCostDisplays objectAtIndex:i];
             normVar = [trialRunsNormalized objectAtIndex:i];
             [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, 130, 30)];
-            
-           
         }
 
     }
