@@ -20,7 +20,6 @@
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
 @synthesize session = _session;
-@synthesize dataReceived = _dataReceived;
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 
@@ -70,6 +69,11 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
                         object:nil];
 
     [self setupSession];
+    
+    // load all the view controllers so they can setup their notifications
+    for(UIViewController * viewController in  self.viewControllers){
+        viewController.view;
+    }
 }
 
 
@@ -175,9 +179,10 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
     NSString * stringReceived = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
     NSArray *arrayFromString = [stringReceived componentsSeparatedByString:@"|"];
     NSString *stringToDisplay = [arrayFromString componentsJoinedByString:@"\n"];
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data received" message:stringToDisplay delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alert show];
-    _dataReceived = stringToDisplay;
+    
+    NSDictionary *updateChat = [NSDictionary dictionaryWithObject:stringToDisplay
+                                                         forKey:@"chatUpdate"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"chatUpdated" object:self userInfo:updateChat];
 }
 
 

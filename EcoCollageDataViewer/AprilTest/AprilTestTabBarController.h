@@ -13,6 +13,5 @@
 @property NSMutableArray * currentConcernRanking;
 @property NSString * url;
 @property int studyNum;
-@property NSString *dataReceived;
 @property (nonatomic, strong) GKSession *session;
 @end

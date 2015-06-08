@@ -26,20 +26,34 @@
     
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleChatUpdate:)
+                                                 name:@"chatUpdated"
+                                               object:nil];
 }
 
 
 
-// called everytime tab is switched to this view
-// necessary in case currentSession changes, i.e. is disconnected and reconnected again
-- (void)viewDidAppear:(BOOL)animated {
 
-    [super viewDidAppear:animated];
-    
-    // get data received from AprilTestTabBarController through Bluetooth with Momma
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    self.textView.text = tabControl.dataReceived;
-    
+-(void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+
+// release notification is view is unloaded for memory purposes
+- (void) viewDidUnload {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+
+
+
+- (void)handleChatUpdate:(NSNotification *)note {
+    NSDictionary *dictData = [note userInfo];
+
+    NSString *received = [dictData objectForKey:@"chatUpdate"];
+    _textView.text = received;
 }
 
 
@@ -75,7 +89,6 @@
 - (void) mySendDataToPeers:(NSData *) data {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     [tabControl.session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
-    
 }
 
 
