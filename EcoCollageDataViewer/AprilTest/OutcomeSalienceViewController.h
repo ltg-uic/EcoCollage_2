@@ -29,9 +29,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *StaticNormalization;
 - (IBAction)NormTypeSwitched:(UISwitch *)sender;
 
-@property (strong, nonatomic) IBOutlet UISlider *CurrInvestment;
 
-- (IBAction)investmentChanged:(UISlider *)sender;
 @property (strong, nonatomic) IBOutlet UITextView *currentMaxInvestment;
 
 @end

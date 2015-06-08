@@ -71,10 +71,12 @@ float originalOffset = 0.0;
 UITextField *edittingTX;
 NSTimer *scrollingTimer = nil;
 UISlider *BudgetSlider;
+UISlider *StormPlayBack;
+UISlider *StormPlayBack2;
 
 //hardcoded values that will represent the flooding depth slider
 float thresh = 6; //used for the max flooded area
-
+float hours = 0;
 float currInvest = 0;
 float minInvest = 0;
 float maxInvest = 5000000;
@@ -114,7 +116,6 @@ float frame_height = 31;
     _titleWindow.delegate = self;
     _SliderWindow.delegate = self;
     bgCols = [[NSMutableArray alloc] init];
-    currInvest = _CurrInvestment.value;
     
     
     _loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -266,6 +267,58 @@ float frame_height = 31;
             [OverBudgetLabels addObject:valueLabel];
         }
     }
+}
+
+
+-(void)StormHoursChanged:(id)sender{
+    UISlider *slider = (UISlider*)sender;
+    hours= slider.value;
+    //-- Do further actions
+    
+    NSMutableString * content = [NSMutableString alloc];
+    
+    int hoursAfterStorm = floorf(hours);
+    if (hoursAfterStorm % 2 != 0) hoursAfterStorm--;
+    _hoursAfterStorm.value = hoursAfterStorm;
+    _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%d hours", hoursAfterStorm];
+    [_hoursAfterStormLabel sizeToFit];
+    for(int i = 0; i < waterDisplays.count; i++){
+        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
+        AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
+        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxWaterDisplays objectAtIndex: i];
+        [temp2 updateViewForHour:hoursAfterStorm];
+        //[temp updateView:hoursAfterStorm];
+        [temp fastUpdateView:hoursAfterStorm];
+        [tempHeights updateView:48];
+    }
+    
+    [_hoursAfterStorm setEnabled:TRUE];
+    [_mapWindow setScrollEnabled:TRUE];
+    [_dataWindow setScrollEnabled:TRUE];
+    [_titleWindow setScrollEnabled:TRUE];
+    [_loadingIndicator stopAnimating];
+    NSDate *myDate = [[NSDate alloc] init];
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setDateFormat:@"HH:mm:ss"];
+    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+    
+    if(sender == StormPlayBack || sender == StormPlayBack2){
+        content = [content initWithFormat:@"%@\tHours after storm set to: %d",prettyVersion, hoursAfterStorm];
+        
+        //    NSLog(content);
+        [content appendString:@"\n\n"];
+        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
+        
+        //create file if it doesn't exist
+        if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
+            [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
+        
+        NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
+        [file seekToEndOfFile];
+        [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];;
+    }
+
 }
 
 //selector method that handles a change in value when budget changes (slider under titles)
@@ -1289,14 +1342,36 @@ float frame_height = 31;
             BudgetSlider.maximumValue = 5000000;
             BudgetSlider.continuous = YES;
             BudgetSlider.value = 5000;
+            currInvest = 5000;
+            _currentMaxInvestment.text = @"$5000";
             [_SliderWindow addSubview:BudgetSlider];
             
         }
         else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
-        
+            CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
+            StormPlayBack = [[UISlider alloc] initWithFrame:frame];
+            [StormPlayBack addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventValueChanged];
+            [StormPlayBack setBackgroundColor:[UIColor clearColor]];
+            StormPlayBack.minimumValue = 0.0;
+            StormPlayBack.maximumValue = 48;
+            StormPlayBack.continuous = YES;
+            StormPlayBack.value = 0;
+            
+            _hoursAfterStormLabel.text = @"0 hours";
+            [_SliderWindow addSubview:StormPlayBack];
         }
         else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
-        
+            CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
+            StormPlayBack2 = [[UISlider alloc] initWithFrame:frame];
+            [StormPlayBack2 addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventValueChanged];
+            [StormPlayBack2 setBackgroundColor:[UIColor clearColor]];
+            StormPlayBack2.minimumValue = 0.0;
+            StormPlayBack2.maximumValue = 48;
+            StormPlayBack2.continuous = YES;
+            StormPlayBack2.value = 0;
+            
+            _hoursAfterStormLabel.text = @"0 hours";
+            [_SliderWindow addSubview:StormPlayBack2];
         }
         
         else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
@@ -1408,7 +1483,6 @@ float frame_height = 31;
     [_mapWindow setScrollEnabled:TRUE];
     [_dataWindow setScrollEnabled:TRUE];
     [_titleWindow setScrollEnabled:TRUE];
-    //[_SliderWindow setScrollEnabled:TRUE];
     [_loadingIndicator stopAnimating];
     NSDate *myDate = [[NSDate alloc] init];
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
