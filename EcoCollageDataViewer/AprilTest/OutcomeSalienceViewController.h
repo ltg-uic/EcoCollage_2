@@ -32,6 +32,4 @@
 - (IBAction)investmentChanged:(UISlider *)sender;
 @property (strong, nonatomic) IBOutlet UITextView *currentMaxInvestment;
 
-@property GKSession *currentSession;
-
 @end

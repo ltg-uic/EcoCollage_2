@@ -24,9 +24,6 @@
 @synthesize slices = _slices;
 @synthesize sliceColors = _sliceColors;
 @synthesize currentConcernRanking = _currentConcernRanking;
-@synthesize currentSession = _currentSession;
-@synthesize connect;
-@synthesize disconnect;
 
 
 
@@ -44,21 +41,11 @@ NSString * variableDescriptions;
 NSArray * importQuestions;
 
 
-GKPeerPickerController *picker;
 
 
 // called everytime tab is switched to this view
 // necessary in case currentSession changes, i.e. is disconnected and reconnected again
 - (void)viewDidAppear:(BOOL)animated {
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    _currentSession = tabControl.currentSession;
-    
-    if(!_currentSession) {
-        [connect setHidden:NO];
-    }
-    else {
-        [connect setHidden:YES];
-    }
     
     [super viewDidAppear:animated];
     
@@ -139,116 +126,23 @@ GKPeerPickerController *picker;
 
 
 - (void)applicationWillTerminate:(UIApplication *)app {
-    picker.delegate = nil;
-    
-    // Nil out delegate
-    _currentSession.delegate = nil;
-    self.currentSession.available = NO;
-    
-    [self.currentSession disconnectFromAllPeers];
-    _currentSession = nil;
-    
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    tabControl.currentSession = _currentSession;
+
     
 }
 
 
 
-- (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *) session {
-    session.available = NO;
-    _currentSession = session;
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    tabControl.currentSession = _currentSession;
-    session.delegate = self;
-    [session setDataReceiveHandler:self withContext:nil];
-    picker.delegate = nil;
-    [picker dismiss];
-    //[picker autorelease];
-}
-
-- (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker {
-    _currentSession.available = NO;
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    tabControl.currentSession = _currentSession;
-    picker.delegate = nil;
-    //[picker autorelease];
-    [connect setHidden:NO];
-    [disconnect setHidden:YES];
-}
-
-
-
-- (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state {
-    switch (state)
-    {
-        case GKPeerStateConnected: {
-            NSLog(@"connected");
-            break;
-        }
-        case GKPeerStateDisconnected:
-            NSLog(@"disconnected");
-            //[self.currentSession release];
-            _currentSession = nil;
-            AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-            tabControl.currentSession = _currentSession;
-            [connect setHidden:NO];
-            [disconnect setHidden:YES];
-            break;
-    }
-}
-- (void) mySendDataToPeers:(NSData *) data {
-
-    [self.currentSession sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
-
-}
 
 
 - (void)sendProfile {
     
-    if(_currentSession) {
+    //if(_currentSession) {
         NSData* data;
         NSString *str = [[NSString alloc] initWithFormat:@"%@|%@|%@|%@|%@|%@|%@|%@", [[surveyItems objectAtIndex:0]text], [[surveyItems objectAtIndex:1]text], [[surveyItems objectAtIndex:2]text], [[surveyItems objectAtIndex:3]text], [[surveyItems objectAtIndex:4]text], [[surveyItems objectAtIndex:5]text], [[surveyItems objectAtIndex:6]text], [[surveyItems objectAtIndex:7]text]];
         data = [str dataUsingEncoding: NSASCIIStringEncoding];
-        [self mySendDataToPeers:data];
-    }
-    else {
-        //UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data not sent" message:@"Not connected" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        //[alert show];
-    }
-}
+        //[self mySendDataToPeers:data];
+    //}
 
-- (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---convert the NSData to NSString---
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data received" message:@"in PeprViewController" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alert show];
-
-}
-
-
-- (IBAction)connectToGK:(UIButton *)sender {
-    picker = [[GKPeerPickerController alloc] init];
-    picker.delegate = self;
-    picker.connectionTypesMask = GKPeerPickerConnectionTypeNearby;
-    [connect setHidden:YES];
-    [disconnect setHidden:NO];
-    [picker show];
-}
-
-- (IBAction)disconnectFromGK:(UIButton *)sender {
-    picker.delegate = nil;
-    
-    // Nil out delegate
-    _currentSession.delegate = nil;
-    self.currentSession.available = NO;
-    
-    [self.currentSession disconnectFromAllPeers];
-    //[self.currentSession release];
-    _currentSession = nil;
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    tabControl.currentSession = _currentSession;
-    [connect setHidden:NO];
-    [disconnect setHidden:YES];
 }
 
 

@@ -19,7 +19,12 @@
 @synthesize currentConcernRanking = _currentConcernRanking;
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
-@synthesize currentSession = _currentSession;
+@synthesize session = _session;
+@synthesize dataReceived = _dataReceived;
+
+static NSTimeInterval const kConnectionTimeout = 30.0;
+
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -49,7 +54,132 @@
     _currentConcernRanking = [[NSMutableArray alloc] initWithObjects: [[AprilTestVariable alloc] initWith:@"publicCost" withDisplayName:@"Investment" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"privateCost" withDisplayName:@"Damage Reduction" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"efficiencyOfIntervention" withDisplayName:@"Efficiency of Intervention ($/Gallon)" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"capacity" withDisplayName:@"Capacity Used" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleTime" withDisplayName:@"Water Depth Over Time" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleMax" withDisplayName:@"Maximum Flooded Area" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"groundwaterInfiltration" withDisplayName:@"Groundwater Infiltration" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"impactingMyNeighbors" withDisplayName:@"Impact on my Neighbors" withNumVar:1 withWidth:220 withRank:1], nil];
     
     // Do any additional setup after loading the view.
+    
+    
+    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+    
+    // Register for notifications
+    [defaultCenter addObserver:self
+                      selector:@selector(setupSession)
+                          name:UIApplicationWillEnterForegroundNotification
+                        object:nil];
+    
+    [defaultCenter addObserver:self
+                      selector:@selector(teardownSession)
+                          name:UIApplicationDidEnterBackgroundNotification
+                        object:nil];
+
+    [self setupSession];
 }
+
+
+#pragma mark - Memory management
+
+- (void)dealloc
+{
+    // Unregister for notifications on deallocation.
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    // Nil out delegate
+    _session.delegate = nil;
+}
+
+#pragma mark - GKSession setup and teardown
+
+- (void)setupSession
+{
+    // GKSessionModePeer: a peer advertises like a server and searches like a client.
+    _session = [[GKSession alloc] initWithSessionID:@"GKForEcoCollage" displayName:@"Baby" sessionMode:GKSessionModeClient];
+    self.session.delegate = self;
+    self.session.available = YES;
+    [_session setDataReceiveHandler:self withContext:nil];
+    
+}
+
+- (void)teardownSession
+{
+    self.session.available = NO;
+    [self.session disconnectFromAllPeers];
+}
+
+
+#pragma mark - GKSessionDelegate protocol conformance
+
+- (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state
+{
+    NSString *peerName = [session displayNameForPeer:peerID];
+    
+    switch (state)
+    {
+        case GKPeerStateAvailable:
+        {
+            NSLog(@"didChangeState: peer %@ available", peerName);
+            
+            BOOL shouldInvite = ([peerName isEqualToString:@"Momma"]);
+            
+            if (shouldInvite)
+            {
+                NSLog(@"Inviting %@", peerID);
+                [session connectToPeer:peerID withTimeout:kConnectionTimeout];
+            }
+            else
+            {
+                NSLog(@"Not inviting %@", peerID);
+            }
+            
+            break;
+        }
+            
+        case GKPeerStateUnavailable:
+        {
+            NSLog(@"didChangeState: peer %@ unavailable", peerName);
+            break;
+        }
+            
+        case GKPeerStateConnected:
+        {
+            NSLog(@"didChangeState: peer %@ connected", peerName);
+            break;
+        }
+            
+        case GKPeerStateDisconnected:
+        {
+            NSLog(@"didChangeState: peer %@ disconnected", peerName);
+            break;
+        }
+            
+        case GKPeerStateConnecting:
+        {
+            NSLog(@"didChangeState: peer %@ connecting", peerName);
+            break;
+        }
+    }
+}
+
+
+- (void)session:(GKSession *)session connectionWithPeerFailed:(NSString *)peerID withError:(NSError *)error
+{
+    NSLog(@"connectionWithPeerFailed: peer: %@, error: %@", [session displayNameForPeer:peerID], error);
+}
+
+- (void)session:(GKSession *)session didFailWithError:(NSError *)error
+{
+    NSLog(@"didFailWithError: error: %@", error);
+    
+    [session disconnectPeerFromAllPeers:session.peerID];
+}
+
+
+- (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---convert the NSData to NSString---
+
+    NSString * stringReceived = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+    NSArray *arrayFromString = [stringReceived componentsSeparatedByString:@"|"];
+    NSString *stringToDisplay = [arrayFromString componentsJoinedByString:@"\n"];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data received" message:stringToDisplay delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+    _dataReceived = stringToDisplay;
+}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -65,6 +195,8 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    
+    
 }
 
 

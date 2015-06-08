@@ -9,8 +9,8 @@
 #import "MommaBirdViewController.h"
 //#import <CoreBluetooth/CoreBluetooth.h>
 
-@interface MommaBirdViewController ()
-
+@interface MommaBirdViewController () // Class extension
+@property (nonatomic, strong) GKSession *session;
 @end
 
 @implementation MommaBirdViewController
@@ -19,12 +19,9 @@
 @synthesize studyNum = _studyNum;
 @synthesize textView = _textView;
 @synthesize textField = _textField;
-@synthesize currentSession = _currentSession;
-@synthesize connect;
-@synthesize disconnect;
 
 
-GKPeerPickerController *picker;
+static NSTimeInterval const kConnectionTimeout = 30.0;
 
 
 typedef struct UserProfiles {
@@ -94,7 +91,21 @@ typedef struct SimNormalizedResults {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+    
+    // Register for notifications
+    [defaultCenter addObserver:self
+                      selector:@selector(setupSession)
+                          name:UIApplicationWillEnterForegroundNotification
+                        object:nil];
+    
+    [defaultCenter addObserver:self
+                      selector:@selector(teardownSession)
+                          name:UIApplicationDidEnterBackgroundNotification
+                        object:nil];
+    
+    [self setupSession];
 }
 
 
@@ -105,6 +116,132 @@ typedef struct SimNormalizedResults {
     [super viewWillDisappear:animated];
 }
 
+
+
+#pragma mark - Memory management
+
+- (void)dealloc
+{
+    // Unregister for notifications on deallocation.
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    // Nil out delegate
+    _session.delegate = nil;
+}
+
+#pragma mark - GKSession setup and teardown
+
+- (void)setupSession
+{
+    // GKSessionModePeer: a peer advertises like a server and searches like a client.
+    _session = [[GKSession alloc] initWithSessionID:@"GKForEcoCollage" displayName:@"Momma" sessionMode:GKSessionModeServer];
+    self.session.delegate = self;
+    self.session.available = YES;
+    [_session setDataReceiveHandler:self withContext:nil];
+    
+}
+
+- (void)teardownSession
+{
+    self.session.available = NO;
+    [self.session disconnectFromAllPeers];
+}
+
+
+
+#pragma mark - GKSessionDelegate protocol conformance
+
+- (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state
+{
+    NSString *peerName = [session displayNameForPeer:peerID];
+    
+    switch (state)
+    {
+        case GKPeerStateAvailable:
+        {
+            NSLog(@"didChangeState: peer %@ available", peerName);
+            
+            /* Momma never invites, only accepts invites from babies
+            
+            BOOL shouldInvite = ([self.session.displayName compare:peerName] == NSOrderedDescending);
+            
+            if (shouldInvite)
+            {
+                NSLog(@"Inviting %@", peerID);
+                [session connectToPeer:peerID withTimeout:kConnectionTimeout];
+            }
+             
+            */
+            NSLog(@"Not inviting %@", peerID);
+            
+            break;
+        }
+            
+        case GKPeerStateUnavailable:
+        {
+            NSLog(@"didChangeState: peer %@ unavailable", peerName);
+            break;
+        }
+            
+        case GKPeerStateConnected:
+        {
+            NSLog(@"didChangeState: peer %@ connected", peerName);
+            NSData *data;
+            NSString *stringToSend = _textView.text;
+            data = [stringToSend dataUsingEncoding:NSASCIIStringEncoding];
+            [self mySendDataToPeers:data];
+            break;
+        }
+            
+        case GKPeerStateDisconnected:
+        {
+            NSLog(@"didChangeState: peer %@ disconnected", peerName);
+            break;
+        }
+            
+        case GKPeerStateConnecting:
+        {
+            NSLog(@"didChangeState: peer %@ connecting", peerName);
+            break;
+        }
+    }
+}
+
+
+- (void)session:(GKSession *)session didReceiveConnectionRequestFromPeer:(NSString *)peerID
+{
+    NSLog(@"didReceiveConnectionRequestFromPeer: %@", [session displayNameForPeer:peerID]);
+    
+    NSError *error;
+    
+    BOOL connectionEstablished = FALSE;
+    NSString *peerName = [session displayNameForPeer:peerID];
+    
+    if([peerName isEqualToString:@"Baby"])
+        connectionEstablished = [session acceptConnectionFromPeer:peerID error:&error];
+    
+    if (!connectionEstablished)
+    {
+        NSLog(@"error = %@", error);
+    }
+}
+
+
+- (void)session:(GKSession *)session connectionWithPeerFailed:(NSString *)peerID withError:(NSError *)error
+{
+    NSLog(@"connectionWithPeerFailed: peer: %@, error: %@", [session displayNameForPeer:peerID], error);
+}
+
+- (void)session:(GKSession *)session didFailWithError:(NSError *)error
+{
+    NSLog(@"didFailWithError: error: %@", error);
+    
+    [session disconnectPeerFromAllPeers:session.peerID];
+}
+
+
+
+/*
 
 - (void)applicationWillTerminate:(UIApplication *)app {
     picker.delegate = nil;
@@ -155,16 +292,22 @@ typedef struct SimNormalizedResults {
             break;
     }
 }
+ 
+ */
+
+
 - (void) mySendDataToPeers:(NSData *) data {
-    [self.currentSession sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+    [self.session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
 
 }
+ 
+
 
 - (IBAction)sendText:(UIButton *)sender {
     // close keyboard
     [_textField resignFirstResponder];
     
-    if(_currentSession) {
+    if(_session) {
         NSData *data;
         NSString *stringToSend = _textView.text;
         stringToSend = [stringToSend stringByAppendingString:@"\n"];
@@ -191,6 +334,8 @@ typedef struct SimNormalizedResults {
 }
 
 
+/*
+
 - (IBAction)connectToGK:(UIButton *)sender {
     picker = [[GKPeerPickerController alloc] init];
     picker.delegate = self;
@@ -213,5 +358,7 @@ typedef struct SimNormalizedResults {
     [connect setHidden:NO];
     [disconnect setHidden:YES];
 }
+ 
+ */
 
 @end

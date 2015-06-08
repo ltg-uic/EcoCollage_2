@@ -12,8 +12,7 @@
 @interface SocialViewController : UIViewController
 @property (strong, nonatomic) IBOutlet UITextField *textField;
 - (IBAction)sendText:(UIButton *)sender;
-@property (strong, nonatomic) IBOutlet UITextView *textView;
-@property GKSession *currentSession;
 @property int studyNum;
+@property (strong, nonatomic) IBOutlet UITextView *textView;
 
 @end

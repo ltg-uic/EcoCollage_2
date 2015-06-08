@@ -10,10 +10,7 @@
 #import "XYPieChart.h"
 #import <GameKit/GameKit.h>
 
-@interface PeprViewController : UIViewController <XYPieChartDelegate, XYPieChartDataSource> {
-    IBOutlet UIButton *connect;
-    IBOutlet UIButton *discconect;
-}
+@interface PeprViewController : UIViewController <XYPieChartDelegate, XYPieChartDataSource>
 
 @property (strong, nonatomic) IBOutlet UISwitch *surveyType;
 @property (strong, nonatomic) IBOutlet UISwitch *cpVisible;
@@ -25,11 +22,4 @@
 @property(nonatomic, strong) NSMutableArray *currentConcernRanking;
 @property (strong, nonatomic) IBOutlet UITextView *descriptionView;
 
-@property GKSession *currentSession;
-
-@property (nonatomic, retain) UIButton *connect;
-@property (nonatomic, retain) UIButton *disconnect;
-
-- (IBAction)connectToGK:(UIButton *)sender;
-- (IBAction)disconnectFromGK:(UIButton *)sender;
 @end

@@ -9,9 +9,10 @@
 #import <UIKit/UIKit.h>
 #import <GameKit/GameKit.h>
 
-@interface AprilTestTabBarController : UITabBarController
+@interface AprilTestTabBarController : UITabBarController <GKSessionDelegate>
 @property NSMutableArray * currentConcernRanking;
 @property NSString * url;
 @property int studyNum;
-@property GKSession *currentSession;
+@property NSString *dataReceived;
+@property (nonatomic, strong) GKSession *session;
 @end
