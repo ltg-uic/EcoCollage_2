@@ -77,7 +77,7 @@ UISlider *StormPlayBack2;
 //hardcoded values that will represent the flooding depth slider
 float thresh = 6; //used for the max flooded area
 float hours = 0;
-float currInvest = 0;
+float currInvest = 50000;
 float minInvest = 0;
 float maxInvest = 5000000;
 float frame_x = 137;
@@ -273,15 +273,20 @@ float frame_height = 31;
 -(void)StormHoursChanged:(id)sender{
     UISlider *slider = (UISlider*)sender;
     hours= slider.value;
+    StormPlayBack.value = hours;
+    StormPlayBack2.value = hours;
     //-- Do further actions
     
     NSMutableString * content = [NSMutableString alloc];
     
-    int hoursAfterStorm = floorf(hours);
+    int hoursAfterStorm = floorf(hours
+                                 
+                                 );
     if (hoursAfterStorm % 2 != 0) hoursAfterStorm--;
     _hoursAfterStorm.value = hoursAfterStorm;
     _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%d hours", hoursAfterStorm];
     [_hoursAfterStormLabel sizeToFit];
+    
     for(int i = 0; i < waterDisplays.count; i++){
         FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
         AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
@@ -297,6 +302,8 @@ float frame_height = 31;
     [_dataWindow setScrollEnabled:TRUE];
     [_titleWindow setScrollEnabled:TRUE];
     [_loadingIndicator stopAnimating];
+    
+    
     NSDate *myDate = [[NSDate alloc] init];
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"HH:mm:ss"];
@@ -1312,6 +1319,9 @@ float frame_height = 31;
 
 //will draw sliders on a scrollview right below the titles of concern rankings
 -(void) drawSliders{
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    
     int width = 0;
     
     NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
@@ -1341,9 +1351,8 @@ float frame_height = 31;
             BudgetSlider.minimumValue = 0.0;
             BudgetSlider.maximumValue = 5000000;
             BudgetSlider.continuous = YES;
-            BudgetSlider.value = 5000;
-            currInvest = 5000;
-            _currentMaxInvestment.text = @"$5000";
+            [BudgetSlider setValue:currInvest animated:YES];
+            _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:currInvest]]];
             [_SliderWindow addSubview:BudgetSlider];
             
         }
@@ -1355,9 +1364,8 @@ float frame_height = 31;
             StormPlayBack.minimumValue = 0.0;
             StormPlayBack.maximumValue = 48;
             StormPlayBack.continuous = YES;
-            StormPlayBack.value = 0;
-            
-            _hoursAfterStormLabel.text = @"0 hours";
+            StormPlayBack.value = hours;
+            _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%@ hours", [NSNumber numberWithInt:hours]];
             [_SliderWindow addSubview:StormPlayBack];
         }
         else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
@@ -1368,9 +1376,9 @@ float frame_height = 31;
             StormPlayBack2.minimumValue = 0.0;
             StormPlayBack2.maximumValue = 48;
             StormPlayBack2.continuous = YES;
-            StormPlayBack2.value = 0;
+            StormPlayBack2.value = hours;
             
-            _hoursAfterStormLabel.text = @"0 hours";
+            _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%@ hours", [NSNumber numberWithInt:hours]];
             [_SliderWindow addSubview:StormPlayBack2];
         }
         
@@ -1458,57 +1466,6 @@ float frame_height = 31;
         passFirstThree = FALSE;
     }
 }
-
-//updted so that it only updates the slider for hours after storm
-- (IBAction)sliderChanged:(id)sender {
-    
-    NSMutableString * content = [NSMutableString alloc];
-   
-    int hoursAfterStorm = floorf(_hoursAfterStorm.value);
-    if (hoursAfterStorm % 2 != 0) hoursAfterStorm--;
-    _hoursAfterStorm.value = hoursAfterStorm;
-    _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%d hours", hoursAfterStorm];
-    [_hoursAfterStormLabel sizeToFit];
-    for(int i = 0; i < waterDisplays.count; i++){
-        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
-        AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
-        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxWaterDisplays objectAtIndex: i];
-        [temp2 updateViewForHour:hoursAfterStorm];
-        //[temp updateView:hoursAfterStorm];
-        [temp fastUpdateView:hoursAfterStorm];
-        [tempHeights updateView:48];
-    }
-
-    [_hoursAfterStorm setEnabled:TRUE];
-    [_mapWindow setScrollEnabled:TRUE];
-    [_dataWindow setScrollEnabled:TRUE];
-    [_titleWindow setScrollEnabled:TRUE];
-    [_loadingIndicator stopAnimating];
-    NSDate *myDate = [[NSDate alloc] init];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"HH:mm:ss"];
-    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
-    
-    if(sender == _hoursAfterStorm){
-        content = [content initWithFormat:@"%@\tHours after storm set to: %d",prettyVersion, hoursAfterStorm];
-        
-        //    NSLog(content);
-        [content appendString:@"\n\n"];
-        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-        NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-        
-        //create file if it doesn't exist
-        if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-            [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-        
-        NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-        [file seekToEndOfFile];
-        [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];;
-    }
-
-}
-
-
 
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
