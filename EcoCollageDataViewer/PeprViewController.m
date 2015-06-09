@@ -120,6 +120,7 @@ NSArray * importQuestions;
     
     [self displayExplicitSurvey];
     [_pie reloadData];
+
 }
 
 
@@ -131,7 +132,7 @@ NSArray * importQuestions;
 
 
 
-/*
+
 
 - (void)sendProfile {
     
@@ -142,28 +143,6 @@ NSArray * importQuestions;
         //[self mySendDataToPeers:data];
     //}
 
-}
- 
- */
-
-- (void)sendProfile {
-    
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    if(tabControl.session) {
-        NSMutableArray *profile = [[NSMutableArray alloc]init];
-        // add type of data
-        [profile addObject:@"profileToMomma"];
-        // add devices name
-        [profile addObject:[[UIDevice currentDevice]name]];
-        for (int i = 0; i < 8; i++) {
-            // add each surveyItem and remove /t
-            [profile addObject:[[[surveyItems objectAtIndex:i]text] stringByReplacingOccurrencesOfString:@"\t" withString:@""]];
-        }
-        NSDictionary *profileToSendToMomma = [NSDictionary dictionaryWithObject:profile
-                                                               forKey:@"dataForMomma"];
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profileToSendToMomma];
-        [tabControl.session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
-    }
 }
 
 
@@ -526,7 +505,6 @@ NSArray * importQuestions;
 {
     return [self.sliceColors objectAtIndex:(index % self.sliceColors.count)];
 }
-
 
 
 @end

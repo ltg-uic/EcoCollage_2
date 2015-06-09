@@ -7,7 +7,6 @@
 //
 
 #import "MommaBirdViewController.h"
-#import <Foundation/Foundation.h>
 //#import <CoreBluetooth/CoreBluetooth.h>
 
 @interface MommaBirdViewController () // Class extension
@@ -23,8 +22,7 @@
 
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
-NSMutableArray *profiles;
-NSMutableArray *trials;
+
 
 typedef struct UserProfiles {
     int userNumber;
@@ -87,6 +85,8 @@ typedef struct SimNormalizedResults {
 
 
 
+
+
 #pragma mark - View Lifecycle
 
 - (void)viewDidLoad {
@@ -106,9 +106,6 @@ typedef struct SimNormalizedResults {
                         object:nil];
     
     [self setupSession];
-    
-    profiles = [[NSMutableArray alloc]init];
-    trials = [[NSMutableArray alloc]init];
 }
 
 
@@ -327,53 +324,13 @@ typedef struct SimNormalizedResults {
 
 
 
-- (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---
-    // convert NSData to NSDictionary
-    NSDictionary *dataDictionary = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+- (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---convert the NSData to NSString---
+    NSString * stringReceived = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+    NSArray *arrayFromString = [stringReceived componentsSeparatedByString:@"|"];
+    NSString *stringToDisplay = [arrayFromString componentsJoinedByString:@"\n"];
     
-    // convert NSDictionary to NSArray
-    NSArray *dataArray = [dataDictionary objectForKey:@"dataForMomma"];
-    
-    if([dataArray[0] isEqualToString:@"profileToMomma"]) {
-        [self handleProfileUpdates:dataArray];
-    }
-    else if([dataArray[0] isEqualToString:@"usernameToMomma"]) {
-        
-    }
-    else if([dataArray[0] isEqualToString:@"babyTerminating"]) {
-        
-    }
-}
-
-
-- (void) handleProfileUpdates:(NSArray *)data {
-    BOOL oldProfile = 0;
-    
-    // check if profile sent from baby is an update on an already existing one, and if so update it
-    for (int i = 0; i < profiles.count; i++) {
-        if([profiles[i][1] isEqualToString:data[1]]) {
-            profiles[i] = data;
-            oldProfile = 1;
-        }
-    }
-    // otherwise, the profile is new and should be added to the mutableArray 'profiles'
-    if (!oldProfile) {
-        [profiles addObject:data];
-    }
-    
-    
-    NSMutableString* allProfiles = [[NSMutableString alloc]initWithString:@""];
-    
-    // update text view
-    // loop through all the user profiles stored in mutableArray 'profiles'
-    for (NSArray *profile in profiles) {
-        NSString *profileString = [profile componentsJoinedByString:@"\n"];
-        
-        [allProfiles appendString:profileString];
-        [allProfiles appendString:@"\n\n"];
-    }
-    _textView.text = allProfiles;
-    
+    _textView.text = stringToDisplay;
+    //[alert release];
 }
 
 
