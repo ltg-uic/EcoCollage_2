@@ -1417,7 +1417,7 @@ float frame_height = 31;
             CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
             StormPlayBack2 = [[UISlider alloc] initWithFrame:frame];
             [StormPlayBack2 addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventValueChanged];
-            [StormPlayBack addTarget:self
+            [StormPlayBack2 addTarget:self
                               action:@selector(StormHoursChosen:)
                     forControlEvents:(UIControlEventTouchUpInside | UIControlEventTouchUpOutside)];
             [StormPlayBack2 setBackgroundColor:[UIColor clearColor]];
