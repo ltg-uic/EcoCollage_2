@@ -20,6 +20,8 @@
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
 @synthesize session = _session;
+@synthesize trials = _trials;
+@synthesize profiles = _profiles;
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 
@@ -74,6 +76,9 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
     for(UIViewController * viewController in  self.viewControllers){
         viewController.view;
     }
+    
+    _trials = [[NSMutableArray alloc]init];
+    _profiles = [[NSMutableArray alloc]init];
 }
 
 

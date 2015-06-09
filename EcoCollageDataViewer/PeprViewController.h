@@ -22,4 +22,5 @@
 @property(nonatomic, strong) NSMutableArray *currentConcernRanking;
 @property (strong, nonatomic) IBOutlet UITextView *descriptionView;
 
+
 @end
