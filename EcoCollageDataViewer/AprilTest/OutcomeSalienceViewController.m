@@ -282,6 +282,11 @@ float frame_height = 31;
     _hoursAfterStorm.value = hoursAfterStorm;
     _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%d hours", hoursAfterStorm];
     [_hoursAfterStormLabel sizeToFit];
+<<<<<<< HEAD
+=======
+    /*
+    NSMutableString * content = [NSMutableString alloc];
+>>>>>>> parent of 2922b99... more minor changes
     for(int i = 0; i < waterDisplays.count; i++){
         FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
         AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
