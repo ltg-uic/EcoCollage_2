@@ -7,6 +7,7 @@
 //
 
 #import "MommaBirdViewController.h"
+#import <Foundation/Foundation.h>
 //#import <CoreBluetooth/CoreBluetooth.h>
 
 @interface MommaBirdViewController () // Class extension
@@ -22,7 +23,8 @@
 
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
-
+NSMutableArray *profiles;
+NSMutableArray *trials;
 
 typedef struct UserProfiles {
     int userNumber;
@@ -85,8 +87,6 @@ typedef struct SimNormalizedResults {
 
 
 
-
-
 #pragma mark - View Lifecycle
 
 - (void)viewDidLoad {
@@ -106,13 +106,16 @@ typedef struct SimNormalizedResults {
                         object:nil];
     
     [self setupSession];
+    
+    profiles = [[NSMutableArray alloc]init];
+    trials = [[NSMutableArray alloc]init];
 }
 
 
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-
+    
     [super viewWillDisappear:animated];
 }
 
@@ -162,16 +165,16 @@ typedef struct SimNormalizedResults {
             NSLog(@"didChangeState: peer %@ available", peerName);
             
             /* Momma never invites, only accepts invites from babies
-            
-            BOOL shouldInvite = ([self.session.displayName compare:peerName] == NSOrderedDescending);
-            
-            if (shouldInvite)
-            {
-                NSLog(@"Inviting %@", peerID);
-                [session connectToPeer:peerID withTimeout:kConnectionTimeout];
-            }
              
-            */
+             BOOL shouldInvite = ([self.session.displayName compare:peerName] == NSOrderedDescending);
+             
+             if (shouldInvite)
+             {
+             NSLog(@"Inviting %@", peerID);
+             [session connectToPeer:peerID withTimeout:kConnectionTimeout];
+             }
+             
+             */
             NSLog(@"Not inviting %@", peerID);
             
             break;
@@ -242,65 +245,65 @@ typedef struct SimNormalizedResults {
 
 
 /*
-
-- (void)applicationWillTerminate:(UIApplication *)app {
-    picker.delegate = nil;
-    
-    // Nil out delegate
-    _currentSession.delegate = nil;
-    self.currentSession.available = NO;
-    
-    [self.currentSession disconnectFromAllPeers];
-    _currentSession = nil;
-}
-
-
-
-
-- (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *) session {
-    session.available = NO;
-    _currentSession = session;
-    session.delegate = self;
-    [session setDataReceiveHandler:self withContext:nil];
-    picker.delegate = nil;
-    [picker dismiss];
-    //[picker autorelease];
-}
-
-- (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker {
-    _currentSession.available = NO;
-    picker.delegate = nil;
-    //[picker autorelease];
-    [connect setHidden:NO];
-    [disconnect setHidden:YES];
-}
-
-
-
-- (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state {
-    switch (state)
-    {
-        case GKPeerStateConnected:
-            NSLog(@"connected");
-            break;
-        case GKPeerStateDisconnected:
-            NSLog(@"disconnected");
-            //[self.currentSession release];
-            _currentSession = nil;
-            [connect setHidden:NO];
-            [disconnect setHidden:YES];
-            break;
-    }
-}
+ 
+ - (void)applicationWillTerminate:(UIApplication *)app {
+ picker.delegate = nil;
+ 
+ // Nil out delegate
+ _currentSession.delegate = nil;
+ self.currentSession.available = NO;
+ 
+ [self.currentSession disconnectFromAllPeers];
+ _currentSession = nil;
+ }
+ 
+ 
+ 
+ 
+ - (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *) session {
+ session.available = NO;
+ _currentSession = session;
+ session.delegate = self;
+ [session setDataReceiveHandler:self withContext:nil];
+ picker.delegate = nil;
+ [picker dismiss];
+ //[picker autorelease];
+ }
+ 
+ - (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker {
+ _currentSession.available = NO;
+ picker.delegate = nil;
+ //[picker autorelease];
+ [connect setHidden:NO];
+ [disconnect setHidden:YES];
+ }
+ 
+ 
+ 
+ - (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state {
+ switch (state)
+ {
+ case GKPeerStateConnected:
+ NSLog(@"connected");
+ break;
+ case GKPeerStateDisconnected:
+ NSLog(@"disconnected");
+ //[self.currentSession release];
+ _currentSession = nil;
+ [connect setHidden:NO];
+ [disconnect setHidden:YES];
+ break;
+ }
+ }
  
  */
 
 
 - (void) mySendDataToPeers:(NSData *) data {
     [self.session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
-
+    
 }
- 
+
 
 
 - (IBAction)sendText:(UIButton *)sender {
@@ -324,40 +327,80 @@ typedef struct SimNormalizedResults {
 
 
 
-- (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---convert the NSData to NSString---
-    NSString * stringReceived = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-    NSArray *arrayFromString = [stringReceived componentsSeparatedByString:@"|"];
-    NSString *stringToDisplay = [arrayFromString componentsJoinedByString:@"\n"];
+- (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---
+    // convert NSData to NSDictionary
+    NSDictionary *dataDictionary = [NSKeyedUnarchiver unarchiveObjectWithData:data];
     
-    _textView.text = stringToDisplay;
-    //[alert release];
+    // convert NSDictionary to NSArray
+    NSArray *dataArray = [dataDictionary objectForKey:@"dataForMomma"];
+    
+    if([dataArray[0] isEqualToString:@"profileToMomma"]) {
+        [self handleProfileUpdates:dataArray];
+    }
+    else if([dataArray[0] isEqualToString:@"usernameToMomma"]) {
+        
+    }
+    else if([dataArray[0] isEqualToString:@"babyTerminating"]) {
+        
+    }
+}
+
+
+- (void) handleProfileUpdates:(NSArray *)data {
+    BOOL oldProfile = 0;
+    
+    // check if profile sent from baby is an update on an already existing one, and if so update it
+    for (int i = 0; i < profiles.count; i++) {
+        if([profiles[i][1] isEqualToString:data[1]]) {
+            profiles[i] = data;
+            oldProfile = 1;
+        }
+    }
+    // otherwise, the profile is new and should be added to the mutableArray 'profiles'
+    if (!oldProfile) {
+        [profiles addObject:data];
+    }
+    
+    
+    NSMutableString* allProfiles = [[NSMutableString alloc]initWithString:@""];
+    
+    // update text view
+    // loop through all the user profiles stored in mutableArray 'profiles'
+    for (NSArray *profile in profiles) {
+        NSString *profileString = [profile componentsJoinedByString:@"\n"];
+        
+        [allProfiles appendString:profileString];
+        [allProfiles appendString:@"\n\n"];
+    }
+    _textView.text = allProfiles;
+    
 }
 
 
 /*
-
-- (IBAction)connectToGK:(UIButton *)sender {
-    picker = [[GKPeerPickerController alloc] init];
-    picker.delegate = self;
-    picker.connectionTypesMask = GKPeerPickerConnectionTypeNearby;
-    //don't hide connect for Momma since she wants to connect to all babies
-    //[connect setHidden:YES];
-    [disconnect setHidden:NO];
-    [picker show];
-}
-
-- (IBAction)disconnectFromGK:(UIButton *)sender {
-    picker.delegate = nil;
-    
-    // Nil out delegate
-    _currentSession.delegate = nil;
-    self.currentSession.available = NO;
-    
-    [self.currentSession disconnectFromAllPeers];
-    _currentSession = nil;
-    [connect setHidden:NO];
-    [disconnect setHidden:YES];
-}
+ 
+ - (IBAction)connectToGK:(UIButton *)sender {
+ picker = [[GKPeerPickerController alloc] init];
+ picker.delegate = self;
+ picker.connectionTypesMask = GKPeerPickerConnectionTypeNearby;
+ //don't hide connect for Momma since she wants to connect to all babies
+ //[connect setHidden:YES];
+ [disconnect setHidden:NO];
+ [picker show];
+ }
+ 
+ - (IBAction)disconnectFromGK:(UIButton *)sender {
+ picker.delegate = nil;
+ 
+ // Nil out delegate
+ _currentSession.delegate = nil;
+ self.currentSession.available = NO;
+ 
+ [self.currentSession disconnectFromAllPeers];
+ _currentSession = nil;
+ [connect setHidden:NO];
+ [disconnect setHidden:YES];
+ }
  
  */
 

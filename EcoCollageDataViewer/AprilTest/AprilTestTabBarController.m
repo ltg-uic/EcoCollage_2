@@ -20,6 +20,8 @@
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
 @synthesize session = _session;
+@synthesize trials = _trials;
+@synthesize profiles = _profiles;
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 
@@ -39,16 +41,16 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
     [super viewDidLoad];
     
     //manually derived list of variables that are going to be implemented in this test. Eventually, should be replaced with a access to database, such that width, etc, are all documented as such.
-
+    
     //_currentConcernRanking = [[NSMutableArray alloc] initWithObjects: [[AprilTestVariable alloc] initWith: @"publicCost" withDisplayName:@"Public Costs" withNumVar: 1 withWidth: 220 withRank:3], [[AprilTestVariable alloc] initWith: @"privateCost" withDisplayName:@"Private Costs" withNumVar: 3 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith: @"efficiencyOfIntervention" withDisplayName:@"Efficiency of Intervention ($/Gallon)" withNumVar: 1 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleTime" withDisplayName:@"Water Depth over Storm" withNumVar: 1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"impactingMyNeighbors" withDisplayName:@"Impact on my Neighbors" withNumVar: 1 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith:@"groundwaterInfiltration" withDisplayName:@"Groundwater Infiltration" withNumVar: 1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleMax" withDisplayName:@"Maximum Water Extent" withNumVar: 1 withWidth:220 withRank:1], nil];
     
-//    Public Costs	publicCost
-//    Private Costs	privateCost
-//    Efficiency of Intervention ($/Gallon)	efficiencyOfIntervention
-//    Water Depth over Storm	puddleTime
-//    Maximum Water Extent	puddleMax
-//    Groundwater Infiltration	groundwaterInfiltration
-//    Impact on my Neighbors	impactingMyNeighbors
+    //    Public Costs	publicCost
+    //    Private Costs	privateCost
+    //    Efficiency of Intervention ($/Gallon)	efficiencyOfIntervention
+    //    Water Depth over Storm	puddleTime
+    //    Maximum Water Extent	puddleMax
+    //    Groundwater Infiltration	groundwaterInfiltration
+    //    Impact on my Neighbors	impactingMyNeighbors
     
     _currentConcernRanking = [[NSMutableArray alloc] initWithObjects: [[AprilTestVariable alloc] initWith:@"publicCost" withDisplayName:@"Investment" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"privateCost" withDisplayName:@"Damage Reduction" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"efficiencyOfIntervention" withDisplayName:@"Efficiency of Intervention ($/Gallon)" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"capacity" withDisplayName:@"Capacity Used" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleTime" withDisplayName:@"Water Depth Over Time" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleMax" withDisplayName:@"Maximum Flooded Area" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"groundwaterInfiltration" withDisplayName:@"Groundwater Infiltration" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"impactingMyNeighbors" withDisplayName:@"Impact on my Neighbors" withNumVar:1 withWidth:220 withRank:1], nil];
     
@@ -67,13 +69,16 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
                       selector:@selector(teardownSession)
                           name:UIApplicationDidEnterBackgroundNotification
                         object:nil];
-
+    
     [self setupSession];
     
     // load all the view controllers so they can setup their notifications
     for(UIViewController * viewController in  self.viewControllers){
         viewController.view;
     }
+    
+    _trials = [[NSMutableArray alloc]init];
+    _profiles = [[NSMutableArray alloc]init];
 }
 
 
@@ -175,13 +180,13 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
 
 
 - (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---convert the NSData to NSString---
-
+    
     NSString * stringReceived = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
     NSArray *arrayFromString = [stringReceived componentsSeparatedByString:@"|"];
     NSString *stringToDisplay = [arrayFromString componentsJoinedByString:@"\n"];
     
     NSDictionary *updateChat = [NSDictionary dictionaryWithObject:stringToDisplay
-                                                         forKey:@"chatUpdate"];
+                                                           forKey:@"chatUpdate"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"chatUpdated" object:self userInfo:updateChat];
 }
 
@@ -206,3 +211,4 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
 
 
 @end
+

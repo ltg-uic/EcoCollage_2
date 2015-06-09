@@ -12,7 +12,7 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 
 
-@interface PeprViewController () 
+@interface PeprViewController ()
 
 @end
 
@@ -64,7 +64,7 @@ NSArray * importQuestions;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _currentConcernRanking = tabControl.currentConcernRanking;
     
-   
+    
     // enable touch delivery
     drag = [[UIPanGestureRecognizer alloc] initWithTarget:self action: @selector(handleDrag:)];
     
@@ -120,29 +120,50 @@ NSArray * importQuestions;
     
     [self displayExplicitSurvey];
     [_pie reloadData];
-
 }
 
 
 
 - (void)applicationWillTerminate:(UIApplication *)app {
-
+    
     
 }
 
 
 
-
+/*
+ 
+ - (void)sendProfile {
+ 
+ //if(_currentSession) {
+ NSData* data;
+ NSString *str = [[NSString alloc] initWithFormat:@"%@|%@|%@|%@|%@|%@|%@|%@", [[surveyItems objectAtIndex:0]text], [[surveyItems objectAtIndex:1]text], [[surveyItems objectAtIndex:2]text], [[surveyItems objectAtIndex:3]text], [[surveyItems objectAtIndex:4]text], [[surveyItems objectAtIndex:5]text], [[surveyItems objectAtIndex:6]text], [[surveyItems objectAtIndex:7]text]];
+ data = [str dataUsingEncoding: NSASCIIStringEncoding];
+ //[self mySendDataToPeers:data];
+ //}
+ 
+ }
+ 
+ */
 
 - (void)sendProfile {
     
-    //if(_currentSession) {
-        NSData* data;
-        NSString *str = [[NSString alloc] initWithFormat:@"%@|%@|%@|%@|%@|%@|%@|%@", [[surveyItems objectAtIndex:0]text], [[surveyItems objectAtIndex:1]text], [[surveyItems objectAtIndex:2]text], [[surveyItems objectAtIndex:3]text], [[surveyItems objectAtIndex:4]text], [[surveyItems objectAtIndex:5]text], [[surveyItems objectAtIndex:6]text], [[surveyItems objectAtIndex:7]text]];
-        data = [str dataUsingEncoding: NSASCIIStringEncoding];
-        //[self mySendDataToPeers:data];
-    //}
-
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    if(tabControl.session) {
+        NSMutableArray *profile = [[NSMutableArray alloc]init];
+        // add type of data
+        [profile addObject:@"profileToMomma"];
+        // add devices name
+        [profile addObject:[[UIDevice currentDevice]name]];
+        for (int i = 0; i < 8; i++) {
+            // add each surveyItem and remove /t
+            [profile addObject:[[[surveyItems objectAtIndex:i]text] stringByReplacingOccurrencesOfString:@"\t" withString:@""]];
+        }
+        NSDictionary *profileToSendToMomma = [NSDictionary dictionaryWithObject:profile
+                                                                         forKey:@"dataForMomma"];
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profileToSendToMomma];
+        [tabControl.session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+    }
 }
 
 
@@ -339,25 +360,25 @@ NSArray * importQuestions;
 - (IBAction)surveyTypeChanged:(id)sender {
     
     if(_cpVisible.on){
-    for( UILabel *item in surveyItems){
-        [item removeFromSuperview];
-    }
-    [surveyItems removeAllObjects];
-    [_slices removeAllObjects];
-    if(_surveyType.on){
-        [self displayExplicitSurvey];
-    } else {
-        [likerts removeAllObjects];
-        [self displayImplicitSurvey];
-        
-    }
+        for( UILabel *item in surveyItems){
+            [item removeFromSuperview];
+        }
+        [surveyItems removeAllObjects];
+        [_slices removeAllObjects];
+        if(_surveyType.on){
+            [self displayExplicitSurvey];
+        } else {
+            [likerts removeAllObjects];
+            [self displayImplicitSurvey];
+            
+        }
     }
     [title setNeedsDisplay];
     
 }
 
 -(IBAction) changeCPDisplay: (id) sender{
-
+    
     if(_cpVisible.on){
         if(_typeCP.selectedSegmentIndex == 0) {
             //update pie chart visualization
@@ -387,7 +408,7 @@ NSArray * importQuestions;
             [self displayImplicitSurvey];
             
         }
-
+        
     } else {
         [self displayKey];
     }
@@ -434,7 +455,7 @@ NSArray * importQuestions;
         //for(UILabel *label in surveyItems){
         for(int i =0; i < surveyItems.count; i++){
             UILabel *label = [surveyItems objectAtIndex:i];
-
+            
             //if the currently moving tag is situated
             if(label.center.y < activeTag.center.y && CGRectIntersectsRect(label.frame, activeFrame)){
                 if(!activeTagPlaced){
@@ -469,15 +490,15 @@ NSArray * importQuestions;
                     [var updateCurrentRanking:7-i];
                     break;
                 }
-            
+                
             }
         }
         
         /*
-        for(int i = 0; i < surveyItems.count; i++) {
-            NSLog(@"%@", [[surveyItems objectAtIndex:i] text]);
-        }
-        */
+         for(int i = 0; i < surveyItems.count; i++) {
+         NSLog(@"%@", [[surveyItems objectAtIndex:i] text]);
+         }
+         */
         
         [_pie reloadData];
         [self sendProfile];
@@ -505,6 +526,7 @@ NSArray * importQuestions;
 {
     return [self.sliceColors objectAtIndex:(index % self.sliceColors.count)];
 }
+
 
 
 @end
