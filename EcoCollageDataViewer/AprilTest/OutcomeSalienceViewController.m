@@ -27,7 +27,6 @@
 @synthesize mapWindow = _mapWindow;
 @synthesize titleWindow = _titleWindow;
 @synthesize SliderWindow = _SliderWindow;
-@synthesize hoursAfterStorm = _hoursAfterStorm;
 @synthesize hoursAfterStormLabel = _hoursAfterStormLabel;
 @synthesize loadingIndicator = _loadingIndicator;
 @synthesize scenarioNames = _scenarioNames;
@@ -77,6 +76,7 @@ UISlider *StormPlayBack2;
 //hardcoded values that will represent the flooding depth slider
 float thresh = 6; //used for the max flooded area
 float hours = 0;
+int hoursAfterStorm;
 float currInvest = 50000;
 float minInvest = 0;
 float maxInvest = 5000000;
@@ -277,16 +277,14 @@ float frame_height = 31;
     StormPlayBack2.value = hours;
     //-- Do further actions
     
-    NSMutableString * content = [NSMutableString alloc];
     
-    int hoursAfterStorm = floorf(hours
-                                 
-                                 );
+    hoursAfterStorm = floorf(hours);
+    
     if (hoursAfterStorm % 2 != 0) hoursAfterStorm--;
-    _hoursAfterStorm.value = hoursAfterStorm;
     _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%d hours", hoursAfterStorm];
     [_hoursAfterStormLabel sizeToFit];
-    
+    /*
+    NSMutableString * content = [NSMutableString alloc];
     for(int i = 0; i < waterDisplays.count; i++){
         FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
         AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
@@ -297,7 +295,6 @@ float frame_height = 31;
         [tempHeights updateView:48];
     }
     
-    [_hoursAfterStorm setEnabled:TRUE];
     [_mapWindow setScrollEnabled:TRUE];
     [_dataWindow setScrollEnabled:TRUE];
     [_titleWindow setScrollEnabled:TRUE];
@@ -324,8 +321,52 @@ float frame_height = 31;
         NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
         [file seekToEndOfFile];
         [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];;
-    }
+    }*/
 
+}
+
+- (void)StormHoursChosen:(NSNotification *)notification {
+
+    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+    
+    NSMutableString * content = [NSMutableString alloc];
+    for(int i = 0; i < waterDisplays.count; i++){
+        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
+        AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
+        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxWaterDisplays objectAtIndex: i];
+        [temp2 updateViewForHour:hoursAfterStorm];
+        //[temp updateView:hoursAfterStorm];
+        [temp fastUpdateView:hoursAfterStorm];
+        [tempHeights updateView:48];
+    }
+    
+    [_mapWindow setScrollEnabled:TRUE];
+    [_dataWindow setScrollEnabled:TRUE];
+    [_titleWindow setScrollEnabled:TRUE];
+    [_loadingIndicator stopAnimating];
+    
+    
+    NSDate *myDate = [[NSDate alloc] init];
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setDateFormat:@"HH:mm:ss"];
+    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+    
+    //if(notification == UIControlEventTouchUpInside || notification == UIControlEventTouchUpOutside){
+        content = [content initWithFormat:@"%@\tHours after storm set to: %d",prettyVersion, hoursAfterStorm];
+        
+        //    NSLog(content);
+        [content appendString:@"\n\n"];
+        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
+        
+        //create file if it doesn't exist
+        if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
+            [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
+        
+        NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
+        [file seekToEndOfFile];
+        [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];;
+    //}
 }
 
 //selector method that handles a change in value when budget changes (slider under titles)
@@ -352,7 +393,7 @@ float frame_height = 31;
 
 
 -(void) normalizaAllandUpdateStatically{
-    trialNum = [trialRuns count];
+    trialNum = (int)[trialRuns count];
     
     [self normalizeStatically:trialNum];
     [self updatePublicCostDisplays: trialNum];
@@ -1053,7 +1094,7 @@ float frame_height = 31;
                 wd.frame = CGRectMake(width + 10, (simRun.trialNum)*175 + 40, 115, 125);
             }
             wd.thresholdValue = thresh;
-            [wd fastUpdateView: _hoursAfterStorm.value];
+            [wd fastUpdateView: StormPlayBack.value];
             
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
@@ -1096,7 +1137,7 @@ float frame_height = 31;
             //NSLog(@"%@", NSStringFromCGRect(ev.frame));
             [scoreVisNames addObject: currentVar.name];
             
-            [ev updateViewForHour: _hoursAfterStorm.value];
+            [ev updateViewForHour: StormPlayBack.value];
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (simRun.trialNum * 175) + 40 andColor: [UIColor blackColor]];
@@ -1360,6 +1401,10 @@ float frame_height = 31;
             CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
             StormPlayBack = [[UISlider alloc] initWithFrame:frame];
             [StormPlayBack addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventValueChanged];
+            [StormPlayBack addTarget:self
+                          action:@selector(StormHoursChosen:)
+                forControlEvents:(UIControlEventTouchUpInside | UIControlEventTouchUpOutside)];
+            
             [StormPlayBack setBackgroundColor:[UIColor clearColor]];
             StormPlayBack.minimumValue = 0.0;
             StormPlayBack.maximumValue = 48;
@@ -1372,6 +1417,9 @@ float frame_height = 31;
             CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
             StormPlayBack2 = [[UISlider alloc] initWithFrame:frame];
             [StormPlayBack2 addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventValueChanged];
+            [StormPlayBack addTarget:self
+                              action:@selector(StormHoursChosen:)
+                    forControlEvents:(UIControlEventTouchUpInside | UIControlEventTouchUpOutside)];
             [StormPlayBack2 setBackgroundColor:[UIColor clearColor]];
             StormPlayBack2.minimumValue = 0.0;
             StormPlayBack2.maximumValue = 48;
