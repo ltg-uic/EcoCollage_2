@@ -284,6 +284,7 @@ float frame_height = 31;
     _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%d hours", hoursAfterStorm];
     [_hoursAfterStormLabel sizeToFit];
     /*
+    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     NSMutableString * content = [NSMutableString alloc];
     for(int i = 0; i < waterDisplays.count; i++){
         FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
@@ -1384,7 +1385,6 @@ float frame_height = 31;
         
         
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            
             CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
             BudgetSlider = [[UISlider alloc] initWithFrame:frame];
             [BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
