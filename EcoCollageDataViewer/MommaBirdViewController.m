@@ -19,8 +19,6 @@
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
 @synthesize textView = _textView;
-@synthesize textField = _textField;
-
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *profiles;
@@ -94,11 +92,14 @@ typedef struct SimNormalizedResults {
     
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     
+    
+    
     // Register for notifications
     [defaultCenter addObserver:self
                       selector:@selector(setupSession)
                           name:UIApplicationWillEnterForegroundNotification
                         object:nil];
+    
     
     [defaultCenter addObserver:self
                       selector:@selector(teardownSession)
@@ -163,18 +164,7 @@ typedef struct SimNormalizedResults {
         case GKPeerStateAvailable:
         {
             NSLog(@"didChangeState: peer %@ available", peerName);
-            
-            /* Momma never invites, only accepts invites from babies
-             
-             BOOL shouldInvite = ([self.session.displayName compare:peerName] == NSOrderedDescending);
-             
-             if (shouldInvite)
-             {
-             NSLog(@"Inviting %@", peerID);
-             [session connectToPeer:peerID withTimeout:kConnectionTimeout];
-             }
-             
-             */
+
             NSLog(@"Not inviting %@", peerID);
             
             break;
@@ -242,34 +232,6 @@ typedef struct SimNormalizedResults {
 
 
 
-- (void) mySendDataToPeers:(NSData *) data {
-    [self.session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
-    
-}
-
-
-
-- (IBAction)sendText:(UIButton *)sender {
-    // close keyboard
-    [_textField resignFirstResponder];
-    
-    if(_session) {
-        NSData *data;
-        NSString *stringToSend = _textView.text;
-        stringToSend = [stringToSend stringByAppendingString:@"\n"];
-        stringToSend = [stringToSend stringByAppendingString:_textField.text];
-        _textView.text = stringToSend;
-        data = [stringToSend dataUsingEncoding:NSASCIIStringEncoding];
-        [self mySendDataToPeers:data];
-    }
-    else {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Data not sent" message:@"Not connected" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
-    }
-}
-
-
-
 - (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---
     // convert NSData to NSDictionary
     NSDictionary *dataDictionary = [NSKeyedUnarchiver unarchiveObjectWithData:data];
@@ -280,12 +242,22 @@ typedef struct SimNormalizedResults {
     if([dataArray[0] isEqualToString:@"profileToMomma"]) {
         [self handleProfileUpdates:dataArray];
     }
-    else if([dataArray[0] isEqualToString:@"usernameToMomma"]) {
-        
+    else if([dataArray[0] isEqualToString:@"usernameUpdate"]) {
+        [self handleUsernameUpdates:dataArray];
     }
-    else if([dataArray[0] isEqualToString:@"babyTerminating"]) {
-        
+}
+
+
+- (void)handleUsernameUpdates:(NSArray *)dataArray {
+    // check if profile sent from baby is an update on an already existing one and if so update it
+    for (int i = 0; i < profiles.count; i++) {
+        // if device names match, change username
+        if([profiles[i][1] isEqualToString:dataArray[1]]) {
+            profiles[i][2] = dataArray[2];
+        }
     }
+    
+    [self updateTextView];
 }
 
 
@@ -321,8 +293,10 @@ typedef struct SimNormalizedResults {
 
 // profile data setup by indexes of mutablearray
 // 0 : type of data being sent (profileToMomma)
-// 1 : username (defaults to devices name if no username selected)
-// 2 - 9 : concerns in order of most important to least important
+// 1 : device name
+// 2 : username (defaults to devices name if no username selected)
+// 3 - 10 : concerns in order of most important to least important
+
 - (void) handleProfileUpdates:(NSArray *)dataArray {
     BOOL oldProfile = 0;
     
@@ -341,10 +315,14 @@ typedef struct SimNormalizedResults {
     
     [self sendProfileUpdateToBabies:dataArray];
     
-    
+    [self updateTextView];
+}
+
+
+
+- (void) updateTextView {
     NSMutableString* allProfiles = [[NSMutableString alloc]initWithString:@""];
     
-    // update text view
     // loop through all the user profiles stored in mutableArray 'profiles'
     for (NSArray *profile in profiles) {
         NSString *profileString = [profile componentsJoinedByString:@"\n"];
@@ -353,7 +331,6 @@ typedef struct SimNormalizedResults {
         [allProfiles appendString:@"\n\n"];
     }
     _textView.text = allProfiles;
-    
 }
 
 
@@ -377,31 +354,5 @@ typedef struct SimNormalizedResults {
 }
 
 
-/*
- 
- - (IBAction)connectToGK:(UIButton *)sender {
- picker = [[GKPeerPickerController alloc] init];
- picker.delegate = self;
- picker.connectionTypesMask = GKPeerPickerConnectionTypeNearby;
- //don't hide connect for Momma since she wants to connect to all babies
- //[connect setHidden:YES];
- [disconnect setHidden:NO];
- [picker show];
- }
- 
- - (IBAction)disconnectFromGK:(UIButton *)sender {
- picker.delegate = nil;
- 
- // Nil out delegate
- _currentSession.delegate = nil;
- self.currentSession.available = NO;
- 
- [self.currentSession disconnectFromAllPeers];
- _currentSession = nil;
- [connect setHidden:NO];
- [disconnect setHidden:YES];
- }
- 
- */
 
 @end

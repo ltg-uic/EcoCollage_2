@@ -10,7 +10,7 @@
 #import "XYPieChart.h"
 #import <GameKit/GameKit.h>
 
-@interface PeprViewController : UIViewController <XYPieChartDelegate, XYPieChartDataSource>
+@interface PeprViewController : UIViewController <XYPieChartDelegate, XYPieChartDataSource, UITextFieldDelegate>
 
 @property (strong, nonatomic) IBOutlet UISwitch *surveyType;
 @property (strong, nonatomic) IBOutlet UISwitch *cpVisible;
@@ -21,5 +21,6 @@
 @property(nonatomic, strong) NSArray        *sliceColors;
 @property(nonatomic, strong) NSMutableArray *currentConcernRanking;
 @property (strong, nonatomic) IBOutlet UITextView *descriptionView;
+@property (strong, nonatomic) IBOutlet UITextField *usernameText;
 
 @end

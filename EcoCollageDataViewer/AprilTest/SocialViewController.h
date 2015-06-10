@@ -10,8 +10,6 @@
 #import <GameKit/GameKit.h>
 
 @interface SocialViewController : UIViewController
-@property (strong, nonatomic) IBOutlet UITextField *textField;
-- (IBAction)sendText:(UIButton *)sender;
 @property int studyNum;
 @property (strong, nonatomic) IBOutlet UITextView *textView;
 

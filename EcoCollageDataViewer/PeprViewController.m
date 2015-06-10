@@ -130,26 +130,13 @@ NSArray * importQuestions;
 
 
 
-/*
- 
- - (void)sendProfile {
- 
- //if(_currentSession) {
- NSData* data;
- NSString *str = [[NSString alloc] initWithFormat:@"%@|%@|%@|%@|%@|%@|%@|%@", [[surveyItems objectAtIndex:0]text], [[surveyItems objectAtIndex:1]text], [[surveyItems objectAtIndex:2]text], [[surveyItems objectAtIndex:3]text], [[surveyItems objectAtIndex:4]text], [[surveyItems objectAtIndex:5]text], [[surveyItems objectAtIndex:6]text], [[surveyItems objectAtIndex:7]text]];
- data = [str dataUsingEncoding: NSASCIIStringEncoding];
- //[self mySendDataToPeers:data];
- //}
- 
- }
- 
- */
-
 
 // profile data setup by indexes of mutablearray
 // 0 : type of data being sent (profileToMomma)
-// 1 : username (defaults to devices name if no username selected)
-// 2 - 9 : concerns in order of most important to least important
+// 1 : device name
+// 2 : username (defaults to devices name if no username selected)
+// 3 - 10 : concerns in order of most important to least important
+
 
 - (void)sendProfile {
     
@@ -158,16 +145,62 @@ NSArray * importQuestions;
         NSMutableArray *profile = [[NSMutableArray alloc]init];
         // add type of data
         [profile addObject:@"profileToMomma"];
+        
         // add devices name
         [profile addObject:[[UIDevice currentDevice]name]];
+        
+        // add username if it is not empty; if it is empty, use device name as username
+        if (![self.usernameText.text isEqualToString:@""]) {
+            [profile addObject:self.usernameText.text];
+        }
+        else {
+            [profile addObject:[[UIDevice currentDevice]name]];
+        }
+        
         for (int i = 0; i < 8; i++) {
-            // add each surveyItem and remove /t
+            // add each surveyItem and remove \t
             [profile addObject:[[[surveyItems objectAtIndex:i]text] stringByReplacingOccurrencesOfString:@"\t" withString:@""]];
         }
         NSDictionary *profileToSendToMomma = [NSDictionary dictionaryWithObject:profile
                                                                          forKey:@"data"];
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profileToSendToMomma];
-        [tabControl.session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+        [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+    }
+}
+
+
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if([textField isEqual:self.usernameText])
+        [self sendUsername];
+    [textField resignFirstResponder];
+    return YES;
+}
+
+
+- (void) sendUsername {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    if(tabControl.session) {
+        NSMutableArray *username = [[NSMutableArray alloc]init];
+        // add type of data
+        [username addObject:@"usernameUpdate"];
+        
+        // add device name
+        [username addObject:[[UIDevice currentDevice]name]];
+        
+        // add username if it is not empty; if it is empty, use device name as username
+        if (![self.usernameText.text isEqualToString:@""]) {
+            [username addObject:self.usernameText.text];
+        }
+        else {
+            [username addObject:[[UIDevice currentDevice]name]];
+        }
+        
+        NSDictionary *usernameToSendToMomma = [NSDictionary dictionaryWithObject:username
+                                                                         forKey:@"data"];
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:usernameToSendToMomma];
+        [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
     }
 }
 
@@ -531,7 +564,5 @@ NSArray * importQuestions;
 {
     return [self.sliceColors objectAtIndex:(index % self.sliceColors.count)];
 }
-
-
 
 @end

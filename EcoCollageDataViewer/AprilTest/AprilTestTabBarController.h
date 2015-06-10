@@ -16,4 +16,5 @@
 @property NSString * url;
 @property int studyNum;
 @property (nonatomic, strong) GKSession * session;
+@property NSString * peerIDForMomma;
 @end
