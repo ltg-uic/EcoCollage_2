@@ -36,6 +36,8 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
     return self;
 }
 
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -79,6 +81,7 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
     
     _trials = [[NSMutableArray alloc]init];
     _profiles = [[NSMutableArray alloc]init];
+    
 }
 
 
@@ -148,6 +151,9 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
         case GKPeerStateConnected:
         {
             NSLog(@"didChangeState: peer %@ connected", peerName);
+            if ([peerName isEqualToString:@"Momma"]) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"sendProfile" object:self];
+            }
             break;
         }
             
@@ -178,7 +184,7 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
     [session disconnectPeerFromAllPeers:session.peerID];
 }
 
-
+/*
 - (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context { //---convert the NSData to NSString---
     
     NSString * stringReceived = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
@@ -186,6 +192,137 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
     NSString *stringToDisplay = [arrayFromString componentsJoinedByString:@"\n"];
     
     NSDictionary *updateChat = [NSDictionary dictionaryWithObject:stringToDisplay
+                                                           forKey:@"chatUpdate"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"chatUpdated" object:self userInfo:updateChat];
+}
+*/
+
+
+- (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context {
+    // convert NSData to NSDictionary
+    NSDictionary *dataDictionary = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    
+    // convert NSDictionary to NSArray
+    NSArray *dataArray = [dataDictionary objectForKey:@"data"];
+    
+    if([dataArray[0] isEqualToString:@"profileToMomma"]) {
+        // do nothing
+    }
+    else if([dataArray[0] isEqualToString:@"usernameToMomma"]) {
+        // do nothing
+    }
+    else if([dataArray[0] isEqualToString:@"babyTerminating"]) {
+        // do nothing
+    }
+    else if([dataArray[0] isEqualToString:@"profileToBaby"]) {
+        // receive individual profile when updated by another baby bird
+        // parse profile data
+        [self receiveProfileFromMomma:dataArray];
+    }
+    else if([dataArray[0] isEqualToString:@"usernameToBaby"]) {
+        // parse username update
+    }
+    else if([dataArray[0] isEqualToString:@"allProfilesToNewBaby"]) {
+        // receive all profiles when baby bird first connects to Momma so that baby is brought up to speed
+        // parse profiles data
+        [self receiveAllProfilesFromMomma:dataArray];
+    }
+}
+
+
+
+- (void) receiveAllProfilesFromMomma:(NSArray *)dataArray {
+    // empty current profiles mutableArray if there is anything in there
+    if (_profiles.count != 0)
+        [_profiles removeAllObjects];
+    
+    
+    // add all profiles sent from momma to local profile list in baby
+    for (int i = 1; i < dataArray.count; i++) {
+        [_profiles addObject:[dataArray objectAtIndex:i]];
+    }
+    
+    [self updateTextView];
+}
+
+
+// profile data setup by indexes of mutablearray
+// 0 : type of data being sent (profileToBaby)
+// 1 : username (defaults to devices name if no username selected)
+// 2 - 9 : concerns in order of most important to least important
+- (void) receiveProfileFromMomma:(NSArray *)dataArray {
+    BOOL oldProfile = 0;
+    
+
+    // check if profile sent from baby is an update on an already existing one,
+    // and if so update it and send update to babies
+    for (int i = 0; i < _profiles.count; i++) {
+        if([_profiles[i][1] isEqualToString:dataArray[1]]) {
+            _profiles[i] = dataArray;
+            oldProfile = 1;
+        }
+    }
+    
+    // otherwise, the profile is new and should be added to the mutableArray 'profiles'
+    if (!oldProfile) {
+        [_profiles addObject:dataArray];
+    }
+    
+    [self updateTextView];
+}
+
+
+
+/*
+- (void) receiveAllProfilesFromMomma:(NSArray *)dataArray {
+    // add all profiles sent from momma to local profile list in baby
+    if (_profiles == nil) {
+        for (int i = 1; i < dataArray.count; i++) {
+            [_profiles addObject:[dataArray objectAtIndex:i]];
+        }
+    }
+    
+    [self updateTextView];
+}
+
+
+// profile data setup by indexes of mutablearray
+// 0 : type of data being sent (profileToBaby)
+// 1 : username (defaults to devices name if no username selected)
+// 2 - 9 : concerns in order of most important to least important
+- (void) receiveProfileFromMomma:(NSArray *)dataArray {
+    BOOL oldProfile = 0;
+    
+    
+    // check if profile sent from baby is an update on an already existing one,
+    // and if so update it and send update to babies
+    for (int i = 0; i < _profiles.count; i++) {
+        if([_profiles[i][1] isEqualToString:dataArray[1]]) {
+            _profiles[i] = dataArray;
+            oldProfile = 1;
+        }
+    }
+    
+    // otherwise, the profile is new and should be added to the mutableArray 'profiles'
+    if (!oldProfile) {
+        [_profiles addObject:dataArray];
+    }
+    
+}
+*/
+
+
+- (void) updateTextView {
+    // loop through all the user profiles stored in mutableArray 'profiles'
+    NSMutableString* allProfiles = [[NSMutableString alloc]initWithString:@""];
+    for (int i = 0; i < _profiles.count; i++) {
+        NSString *profileString = [_profiles[i] componentsJoinedByString:@"\n"];
+        
+        [allProfiles appendString:profileString];
+        [allProfiles appendString:@"\n\n"];
+    }
+    
+    NSDictionary *updateChat = [NSDictionary dictionaryWithObject:allProfiles
                                                            forKey:@"chatUpdate"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"chatUpdated" object:self userInfo:updateChat];
 }

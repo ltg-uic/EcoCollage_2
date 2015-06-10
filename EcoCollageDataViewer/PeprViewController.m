@@ -120,13 +120,12 @@ NSArray * importQuestions;
     
     [self displayExplicitSurvey];
     [_pie reloadData];
-}
-
-
-
-- (void)applicationWillTerminate:(UIApplication *)app {
     
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sendProfile)
+                                                 name:@"sendProfile"
+                                               object:nil];
 }
 
 
@@ -146,6 +145,12 @@ NSArray * importQuestions;
  
  */
 
+
+// profile data setup by indexes of mutablearray
+// 0 : type of data being sent (profileToMomma)
+// 1 : username (defaults to devices name if no username selected)
+// 2 - 9 : concerns in order of most important to least important
+
 - (void)sendProfile {
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -160,7 +165,7 @@ NSArray * importQuestions;
             [profile addObject:[[[surveyItems objectAtIndex:i]text] stringByReplacingOccurrencesOfString:@"\t" withString:@""]];
         }
         NSDictionary *profileToSendToMomma = [NSDictionary dictionaryWithObject:profile
-                                                                         forKey:@"dataForMomma"];
+                                                                         forKey:@"data"];
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profileToSendToMomma];
         [tabControl.session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
     }

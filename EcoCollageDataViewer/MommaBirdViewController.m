@@ -189,10 +189,7 @@ typedef struct SimNormalizedResults {
         case GKPeerStateConnected:
         {
             NSLog(@"didChangeState: peer %@ connected", peerName);
-            NSData *data;
-            NSString *stringToSend = _textView.text;
-            data = [stringToSend dataUsingEncoding:NSASCIIStringEncoding];
-            [self mySendDataToPeers:data];
+            [self sendAllProfilesToNewBaby:peerID];
             break;
         }
             
@@ -244,60 +241,6 @@ typedef struct SimNormalizedResults {
 
 
 
-/*
- 
- - (void)applicationWillTerminate:(UIApplication *)app {
- picker.delegate = nil;
- 
- // Nil out delegate
- _currentSession.delegate = nil;
- self.currentSession.available = NO;
- 
- [self.currentSession disconnectFromAllPeers];
- _currentSession = nil;
- }
- 
- 
- 
- 
- - (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *) session {
- session.available = NO;
- _currentSession = session;
- session.delegate = self;
- [session setDataReceiveHandler:self withContext:nil];
- picker.delegate = nil;
- [picker dismiss];
- //[picker autorelease];
- }
- 
- - (void)peerPickerControllerDidCancel:(GKPeerPickerController *)picker {
- _currentSession.available = NO;
- picker.delegate = nil;
- //[picker autorelease];
- [connect setHidden:NO];
- [disconnect setHidden:YES];
- }
- 
- 
- 
- - (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state {
- switch (state)
- {
- case GKPeerStateConnected:
- NSLog(@"connected");
- break;
- case GKPeerStateDisconnected:
- NSLog(@"disconnected");
- //[self.currentSession release];
- _currentSession = nil;
- [connect setHidden:NO];
- [disconnect setHidden:YES];
- break;
- }
- }
- 
- */
-
 
 - (void) mySendDataToPeers:(NSData *) data {
     [self.session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
@@ -332,7 +275,7 @@ typedef struct SimNormalizedResults {
     NSDictionary *dataDictionary = [NSKeyedUnarchiver unarchiveObjectWithData:data];
     
     // convert NSDictionary to NSArray
-    NSArray *dataArray = [dataDictionary objectForKey:@"dataForMomma"];
+    NSArray *dataArray = [dataDictionary objectForKey:@"data"];
     
     if([dataArray[0] isEqualToString:@"profileToMomma"]) {
         [self handleProfileUpdates:dataArray];
@@ -346,20 +289,57 @@ typedef struct SimNormalizedResults {
 }
 
 
-- (void) handleProfileUpdates:(NSArray *)data {
+
+
+/* how data is setup in "profiles"
+    profiles is a mutableArray of NSArray's, each array containing the data for a baby's profile
+    to send this data, the first index of the array sent must be "allProfilesToNewBaby"
+    after that, the profiles can be stored in their NSArray's and set over
+*/
+// when a new baby is connected, that baby receives all the user profiles to get it up to date
+- (void) sendAllProfilesToNewBaby:(NSString *)peerID {
+    if (profiles == nil) {
+        return;
+    }
+    NSMutableArray *profilesForNewBaby = [[NSMutableArray alloc]init];
+    [profilesForNewBaby addObject:@"allProfilesToNewBaby"];
+    
+    for (NSArray *individualProfile in profiles) {
+        [profilesForNewBaby addObject:individualProfile];
+    }
+    
+    NSDictionary *profilesToSendToBaby = [NSDictionary dictionaryWithObject:profilesForNewBaby
+                                                                    forKey:@"data"];
+    // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
+    if(profilesToSendToBaby != nil) {
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profilesToSendToBaby];
+        [_session sendData:data toPeers:@[peerID] withDataMode:GKSendDataReliable error:nil];
+    }
+    
+}
+
+
+// profile data setup by indexes of mutablearray
+// 0 : type of data being sent (profileToMomma)
+// 1 : username (defaults to devices name if no username selected)
+// 2 - 9 : concerns in order of most important to least important
+- (void) handleProfileUpdates:(NSArray *)dataArray {
     BOOL oldProfile = 0;
     
-    // check if profile sent from baby is an update on an already existing one, and if so update it
+    // check if profile sent from baby is an update on an already existing one and if so update it
     for (int i = 0; i < profiles.count; i++) {
-        if([profiles[i][1] isEqualToString:data[1]]) {
-            profiles[i] = data;
+        if([profiles[i][1] isEqualToString:dataArray[1]]) {
+            profiles[i] = dataArray;
             oldProfile = 1;
         }
     }
     // otherwise, the profile is new and should be added to the mutableArray 'profiles'
     if (!oldProfile) {
-        [profiles addObject:data];
+        [profiles addObject:dataArray];
     }
+    
+    
+    [self sendProfileUpdateToBabies:dataArray];
     
     
     NSMutableString* allProfiles = [[NSMutableString alloc]initWithString:@""];
@@ -374,6 +354,26 @@ typedef struct SimNormalizedResults {
     }
     _textView.text = allProfiles;
     
+}
+
+
+// profile data setup by indexes of mutablearray
+// 0 : type of data being sent (profileToBaby)
+// 1 : username (defaults to devices name if no username selected)
+// 2 - 9 : concerns in order of most important to least important
+- (void) sendProfileUpdateToBabies:(NSArray *)dataArray {
+    // convert to mutableArray so that the type of data being sent can be changed
+    NSMutableArray *dataMutableArray = [dataArray mutableCopy];
+    [dataMutableArray replaceObjectAtIndex:0 withObject:@"profileToBaby"];
+     
+     
+    NSDictionary *profileToSendToBaby = [NSDictionary dictionaryWithObject:dataMutableArray
+                                                                     forKey:@"data"];
+    // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
+    if(profileToSendToBaby != nil) {
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profileToSendToBaby];
+        [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+    }
 }
 
 
