@@ -19,7 +19,6 @@
 @property (strong, nonatomic) IBOutlet UIScrollView *SliderWindow;
 
 @property NSString * url;
-@property (strong, nonatomic) IBOutlet UISlider *hoursAfterStorm;
 @property (strong, nonatomic) IBOutlet UILabel *hoursAfterStormLabel;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (strong, nonatomic) IBOutlet UIPickerView *sortingPicker;
@@ -30,6 +29,6 @@
 - (IBAction)NormTypeSwitched:(UISwitch *)sender;
 
 
-@property (strong, nonatomic) IBOutlet UITextView *currentMaxInvestment;
+@property (strong, nonatomic) IBOutlet UILabel *currentMaxInvestment;
 
 @end
