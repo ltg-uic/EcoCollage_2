@@ -1389,8 +1389,7 @@ float frame_height = 31;
         
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
             
-            CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
-            
+            CGRect frame  = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
             BudgetSlider = [[UISlider alloc] initWithFrame:frame];
             [BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
             [BudgetSlider setBackgroundColor:[UIColor clearColor]];
@@ -1400,6 +1399,16 @@ float frame_height = 31;
             [BudgetSlider setValue:currInvest animated:YES];
             _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:currInvest]]];
             [_SliderWindow addSubview:BudgetSlider];
+            
+            //draw min/max cost labels under slider
+            CGRect minCostFrame = CGRectMake(width + 5, 45, currentVar.widthOfVisualization/5, 15);
+            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -40, 45, currentVar.widthOfVisualization/5, 15);
+            UILabel *minCostLabel = [[UILabel alloc] initWithFrame:minCostFrame];
+            minCostLabel.text = [NSString stringWithFormat:@"$0"];
+            UILabel *maxCostLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
+            maxCostLabel.text = [NSString stringWithFormat:@"$5M"];
+            [_SliderWindow addSubview:minCostLabel];
+            [_SliderWindow addSubview:maxCostLabel];
             
         }
         else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
@@ -1417,6 +1426,16 @@ float frame_height = 31;
             _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%@ hours", [NSNumber numberWithInt:hours]];
 
             [_SliderWindow addSubview:StormPlayBack];
+            
+            //draw labels for range of hours
+            CGRect minCostFrame = CGRectMake(width + 5, 45, currentVar.widthOfVisualization/5, 15);
+            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 45, currentVar.widthOfVisualization/4, 15);
+            UILabel *minHoursLabel = [[UILabel alloc] initWithFrame:minCostFrame];
+            minHoursLabel.text = [NSString stringWithFormat:@" 0 hrs"];
+            UILabel *maxHoursLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
+            maxHoursLabel.text = [NSString stringWithFormat:@"48 hrs"];
+            [_SliderWindow addSubview:minHoursLabel];
+            [_SliderWindow addSubview:maxHoursLabel];
         }
         else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
             CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
@@ -1431,9 +1450,18 @@ float frame_height = 31;
             StormPlayBack2.continuous = YES;
             StormPlayBack2.value = hours;
 
-            
             _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%@ hours", [NSNumber numberWithInt:hours]];
             [_SliderWindow addSubview:StormPlayBack2];
+            
+            //draw labels for range of hours
+            CGRect minCostFrame = CGRectMake(width + 5, 45, currentVar.widthOfVisualization/5, 15);
+            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 45, currentVar.widthOfVisualization/4, 15);
+            UILabel *minHoursLabel = [[UILabel alloc] initWithFrame:minCostFrame];
+            minHoursLabel.text = [NSString stringWithFormat:@" 0 hrs"];
+            UILabel *maxHoursLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
+            maxHoursLabel.text = [NSString stringWithFormat:@"48 hrs"];
+            [_SliderWindow addSubview:minHoursLabel];
+            [_SliderWindow addSubview:maxHoursLabel];
         }
         
         else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
