@@ -1383,13 +1383,14 @@ float frame_height = 31;
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
         UILabel * currentVarLabel = [[UILabel alloc] init];
         currentVarLabel.backgroundColor = [scoreColors objectForKey:currentVar.name];
-        currentVarLabel.frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
+        currentVarLabel.frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 70);
         currentVarLabel.font = [UIFont boldSystemFontOfSize:15.3];
         
         
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
             
             CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
+            
             BudgetSlider = [[UISlider alloc] initWithFrame:frame];
             [BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
             [BudgetSlider setBackgroundColor:[UIColor clearColor]];
