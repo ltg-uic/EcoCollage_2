@@ -80,6 +80,8 @@ int hoursAfterStorm;
 float currInvest = 50000;
 float minInvest = 0;
 float maxInvest = 5000000;
+int publicCostPos;
+
 float frame_x = 137;
 float frame_y = 642;
 float frame_width = 214;
@@ -116,7 +118,6 @@ float frame_height = 31;
     _titleWindow.delegate = self;
     _SliderWindow.delegate = self;
     bgCols = [[NSMutableArray alloc] init];
-    
     
     _loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _loadingIndicator.center = CGPointMake(512, 300);
@@ -167,6 +168,9 @@ float frame_height = 31;
     }
     [self drawTitles];
     [self drawSliders];
+    publicCostPos = [self xPositionFromSliderValue:BudgetSlider];
+    //publicCostPos = 160;
+    
     [_dataWindow setContentOffset:CGPointMake(0, 0)];
     [_mapWindow setContentOffset:CGPointMake(0,0 )];
     [_dataWindow flashScrollIndicators];
@@ -210,13 +214,13 @@ float frame_height = 31;
     
     if ([sender isOn]){
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        
+        publicCostPos = 98;
         [self removeBudgetLabels];
         [self normalizeAllandUpdateDynamically];
     }
     else{
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Static" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        
+        publicCostPos = [self xPositionFromSliderValue:BudgetSlider];
         [self normalizaAllandUpdateStatically];
         
     }
@@ -372,6 +376,16 @@ float frame_height = 31;
     //}
 }
 
+- (int)xPositionFromSliderValue:(UISlider *)aSlider;
+{
+    float sliderRange = aSlider.frame.size.width - aSlider.currentThumbImage.size.width;
+    float sliderOrigin = aSlider.frame.origin.x + (aSlider.currentThumbImage.size.width / 2.0);
+    
+    float sliderValueToPixels = (((aSlider.value-aSlider.minimumValue)/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
+    int returnLocation = (int)sliderValueToPixels;
+    returnLocation = returnLocation - 25;
+    return returnLocation;
+}
 
 //selector method that handles a change in value when budget changes (slider under titles)
 -(void)BudgetChanged:(id)sender
@@ -389,6 +403,8 @@ float frame_height = 31;
     currInvest = value;
     printf("You received this value: %d\n", value);
     
+    //obtain location of slider
+    publicCostPos = [self xPositionFromSliderValue:BudgetSlider];
     //only update all labels/bars if Static normalization is switched on
     if (!_StaticNormalization.isOn){
         [self normalizaAllandUpdateStatically];
@@ -671,7 +687,8 @@ float frame_height = 31;
 //updates the score of the public install costs to reflect new trial
 - (void) updatePublicCostDisplays:(int) trial
 {
-    AprilTestCostDisplay *newCD;
+    AprilTestSimRun             *var;
+    AprilTestCostDisplay        *newCD;
     AprilTestNormalizedVariable *normVar;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -681,15 +698,19 @@ float frame_height = 31;
         for (int i = 0; i < trial; i++){
             newCD = [publicCostDisplays objectAtIndex:i];
             normVar = [trialRunsDynNorm objectAtIndex:i];
-            [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, 130, 30)];
+            [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, publicCostPos, 30)];
         }
     }
     //Static
     else{
         for (int i = 0; i < trial; i++){
-            newCD = [publicCostDisplays objectAtIndex:i];
+            newCD   = [publicCostDisplays objectAtIndex:i];
+            [newCD.budgetUsed removeFromSuperview];
+            [newCD.budget removeFromSuperview];
+            
             normVar = [trialRunsNormalized objectAtIndex:i];
-            [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, 130, 30)];
+            [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, publicCostPos, 30)];
+            //[publicCostDisplays insertObject:newCD atIndex:i];
         }
 
     }
@@ -1005,13 +1026,13 @@ float frame_height = 31;
             AprilTestCostDisplay *cd;
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
-                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andScore:investmentInstallN andFrame:CGRectMake(width +25, simRun.trialNum*175 + 40, 130, 30)];
+                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andScore:investmentInstallN andFrame:CGRectMake(width + 25, simRun.trialNum*175 + 40, publicCostPos, 30)];
                 [_dataWindow addSubview: cd];
                 [publicCostDisplays addObject:cd];
             } else {
                 //NSLog(@"Repositioning water display");
                 cd = [publicCostDisplays objectAtIndex:trial];
-                cd.frame = CGRectMake(width + 25, simRun.trialNum*175 + 40, 130, 30);
+                cd.frame = CGRectMake(width + 25, simRun.trialNum*175 + 40, publicCostPos, 30);
                 [_dataWindow addSubview:cd];
             }
             
@@ -1389,7 +1410,7 @@ float frame_height = 31;
         
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
             
-            CGRect frame  = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
+            CGRect frame  = CGRectMake(width + 25, 2, 160, 40);
             BudgetSlider = [[UISlider alloc] initWithFrame:frame];
             [BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
             [BudgetSlider setBackgroundColor:[UIColor clearColor]];
@@ -1401,8 +1422,8 @@ float frame_height = 31;
             [_SliderWindow addSubview:BudgetSlider];
             
             //draw min/max cost labels under slider
-            CGRect minCostFrame = CGRectMake(width + 5, 45, currentVar.widthOfVisualization/5, 15);
-            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -40, 45, currentVar.widthOfVisualization/5, 15);
+            CGRect minCostFrame = CGRectMake(width + 25, 45, currentVar.widthOfVisualization/5, 15);
+            CGRect maxCostFrame = CGRectMake((width + 185) -35, 45, currentVar.widthOfVisualization/5, 15);
             UILabel *minCostLabel = [[UILabel alloc] initWithFrame:minCostFrame];
             minCostLabel.text = [NSString stringWithFormat:@"$0"];
             UILabel *maxCostLabel = [[UILabel alloc] initWithFrame:maxCostFrame];

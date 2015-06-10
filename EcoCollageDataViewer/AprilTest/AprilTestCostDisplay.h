@@ -10,6 +10,10 @@
 @property UIView *view;
 @property float cost;
 @property float normScore;
+@property UILabel *budget;
+@property UILabel *valueLabel;
+@property UILabel *budgetUsed;
+
 - (id) initWithCost: (float) cost andScore: (float) normScore andFrame: (CGRect) frame;
 - (id) updateCDWithScore: (float) normScore andFrame: (CGRect) frame;
 
