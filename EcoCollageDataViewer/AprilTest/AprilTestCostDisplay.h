@@ -13,7 +13,7 @@
 @property UILabel *budget;
 @property UILabel *valueLabel;
 @property UILabel *budgetUsed;
-
+@property UILabel *budgetOver;
 - (id) initWithCost: (float) cost andScore: (float) normScore andFrame: (CGRect) frame;
 - (id) updateCDWithScore: (float) normScore andFrame: (CGRect) frame;
 

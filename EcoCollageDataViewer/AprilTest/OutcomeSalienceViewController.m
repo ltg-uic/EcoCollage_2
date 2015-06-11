@@ -78,7 +78,7 @@ float thresh = 6;
 float hours = 0;
 int hoursAfterStorm;
 float currInvest = 50000;
-float minInvest = 0;
+float minInvest = 1000;
 float maxInvest = 5000000;
 int dynamic_cd_width;
 
@@ -169,7 +169,6 @@ float frame_height = 31;
     [self drawTitles];
     [self drawSliders];
     dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
-    //dynamic_cd_width = 160;
     
     [_dataWindow setContentOffset:CGPointMake(0, 0)];
     [_mapWindow setContentOffset:CGPointMake(0,0 )];
@@ -358,15 +357,14 @@ float frame_height = 31;
     
     _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
     currInvest = value;
-    printf("You received this value: %d\n", value);
     
     //obtain location of slider
     dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
     
     //only update all labels/bars if Static normalization is switched on
-    //if (!_DynamicNormalization.isOn){
+    if (!_DynamicNormalization.isOn){
         [self normalizaAllandUpdateStatically];
-    //}
+    }
 }
 
 
@@ -656,6 +654,7 @@ float frame_height = 31;
             newCD = [publicCostDisplays objectAtIndex:i];
             [newCD.budgetUsed removeFromSuperview];
             [newCD.budget removeFromSuperview];
+            [newCD.budgetOver removeFromSuperview];
             
             normVar = [trialRunsDynNorm objectAtIndex:i];
             [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
@@ -667,11 +666,12 @@ float frame_height = 31;
             newCD   = [publicCostDisplays objectAtIndex:i];
             [newCD.budgetUsed removeFromSuperview];
             [newCD.budget removeFromSuperview];
+            [newCD.budgetOver removeFromSuperview];
             
             normVar = [trialRunsNormalized objectAtIndex:i];
             [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
             
-
+            printf("%d\n", dynamic_cd_width);
         }
 
     }
@@ -982,7 +982,7 @@ float frame_height = 31;
             AprilTestCostDisplay *cd;
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
-                //CGRect *frame2 = CGRectMake(dynamic_cd_width, simRun.trialNum*175 + 40, , 30);
+                
                 cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andScore:investmentInstallN andFrame:CGRectMake(width + 25, simRun.trialNum*175 + 40, dynamic_cd_width, 30)];
                 [_dataWindow addSubview: cd];
                 [publicCostDisplays addObject:cd];
@@ -1382,7 +1382,7 @@ float frame_height = 31;
             CGRect minCostFrame = CGRectMake(width + 25, 45, currentVar.widthOfVisualization/5, 15);
             CGRect maxCostFrame = CGRectMake((width + 185) -35, 45, currentVar.widthOfVisualization/5, 15);
             UILabel *minCostLabel = [[UILabel alloc] initWithFrame:minCostFrame];
-            minCostLabel.text = [NSString stringWithFormat:@"$0"];
+            minCostLabel.text = [NSString stringWithFormat:@"$1K"];
             UILabel *maxCostLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
             maxCostLabel.text = [NSString stringWithFormat:@"$5M"];
             [_SliderWindow addSubview:minCostLabel];

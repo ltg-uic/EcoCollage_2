@@ -14,6 +14,7 @@
 @synthesize budget = _budget;
 @synthesize valueLabel = _valueLabel;
 @synthesize budgetUsed = _budgetUsed;
+@synthesize budgetOver = _budgetOver;
 
 - (id) initWithCost: (float) cost andScore: (float) normScore andFrame: (CGRect) frame
 {
@@ -44,11 +45,12 @@
     _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, widthBudgetUsed*frame.size.width , 20)];
     _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
     [self addSubview:_budgetUsed];
+    
     /*
     if(normScore > 1){
-        UILabel *budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width*.75, 20, (normScore - 1) * frame.size.width *.75, 20)];
-        budgetOver.backgroundColor = [UIColor redColor];
-        [self addSubview:budgetOver];
+        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore - 1) * frame.size.width , 20)];
+        _budgetOver.backgroundColor = [UIColor redColor];
+        [self addSubview:_budgetOver];
     }*/
     
     return self;
@@ -68,10 +70,11 @@
     _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
     [self addSubview:_budgetUsed];
     
-    /*if(normScore > 1){
-        UILabel *budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width*.75, 20, (normScore - 1) * frame.size.width *.75, 20)];
-        budgetOver.backgroundColor = [UIColor redColor];
-        [self addSubview:budgetOver];
+    /*
+    if(normScore > 1){
+        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore - 1) * frame.size.width, 20)];
+        _budgetOver.backgroundColor = [UIColor redColor];
+        [self addSubview:_budgetOver];
     }*/
     
     return self;
