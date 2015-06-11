@@ -227,6 +227,8 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
             _profiles[i][2] = dataArray[2];
         }
     }
+    
+    [self updateTextView];
 }
 
 
@@ -277,10 +279,16 @@ static NSTimeInterval const kConnectionTimeout = 30.0;
 
 
 - (void) updateTextView {
-    // loop through all the user profiles stored in mutableArray 'profiles'
     NSMutableString* allProfiles = [[NSMutableString alloc]initWithString:@""];
-    for (int i = 0; i < _profiles.count; i++) {
-        NSString *profileString = [_profiles[i] componentsJoinedByString:@"\n"];
+    
+    
+    // loop through all the user profiles stored in mutableArray 'profiles'
+    for (NSArray *profile in _profiles) {
+        NSMutableArray *tempProfile = [[NSMutableArray alloc]init];
+        for (int i = 1; i < profile.count; i++) {
+            [tempProfile addObject:[profile objectAtIndex:i]];
+        }
+        NSString *profileString = [tempProfile componentsJoinedByString:@"\n"];
         
         [allProfiles appendString:profileString];
         [allProfiles appendString:@"\n\n"];

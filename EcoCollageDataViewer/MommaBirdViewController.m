@@ -257,6 +257,21 @@ typedef struct SimNormalizedResults {
         }
     }
     
+    
+    
+    NSMutableArray *usernameForBaby = [[NSMutableArray alloc]init];
+    [usernameForBaby addObject:@"usernameToBaby"];
+    [usernameForBaby addObject:[dataArray objectAtIndex:1]];
+    [usernameForBaby addObject:[dataArray objectAtIndex:2]];
+    
+    NSDictionary *usernameToSendToBaby = [NSDictionary dictionaryWithObject:usernameForBaby
+                                                                     forKey:@"data"];
+    // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
+    if(usernameToSendToBaby != nil) {
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:usernameToSendToBaby];
+        [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+    }
+    
     [self updateTextView];
 }
 
@@ -323,13 +338,19 @@ typedef struct SimNormalizedResults {
 - (void) updateTextView {
     NSMutableString* allProfiles = [[NSMutableString alloc]initWithString:@""];
     
+    
     // loop through all the user profiles stored in mutableArray 'profiles'
     for (NSArray *profile in profiles) {
-        NSString *profileString = [profile componentsJoinedByString:@"\n"];
+        NSMutableArray *tempProfile = [[NSMutableArray alloc]init];
+        for (int i = 1; i < profile.count; i++) {
+            [tempProfile addObject:[profile objectAtIndex:i]];
+        }
+        NSString *profileString = [tempProfile componentsJoinedByString:@"\n"];
         
         [allProfiles appendString:profileString];
         [allProfiles appendString:@"\n\n"];
     }
+
     _textView.text = allProfiles;
 }
 

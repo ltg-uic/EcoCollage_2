@@ -196,11 +196,16 @@ NSArray * importQuestions;
         else {
             [username addObject:[[UIDevice currentDevice]name]];
         }
+
         
         NSDictionary *usernameToSendToMomma = [NSDictionary dictionaryWithObject:username
                                                                          forKey:@"data"];
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:usernameToSendToMomma];
-        [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+        
+        if(usernameToSendToMomma != nil) {
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:usernameToSendToMomma];
+            if (tabControl.peerIDForMomma != nil)
+                [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+        }
     }
 }
 
