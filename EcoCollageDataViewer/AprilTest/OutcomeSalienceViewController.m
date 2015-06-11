@@ -73,8 +73,8 @@ UISlider *BudgetSlider;
 UISlider *StormPlayBack;
 UISlider *StormPlayBack2;
 
-//hardcoded values that will represent the flooding depth slider
-float thresh = 6; //used for the max flooded area
+//Important values that change elements of objects
+float thresh = 6;
 float hours = 0;
 int hoursAfterStorm;
 float currInvest = 50000;
@@ -214,7 +214,7 @@ float frame_height = 31;
     
     if ([sender isOn]){
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        dynamic_cd_width = 98;
+        dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
         [self removeBudgetLabels];
         [self normalizeAllandUpdateDynamically];
     }
@@ -285,51 +285,6 @@ float frame_height = 31;
     if (hoursAfterStorm % 2 != 0) hoursAfterStorm--;
     _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%d hours", hoursAfterStorm];
     
-    /*
-    NSMutableString * content = [NSMutableString alloc];
-    
-    hoursAfterStorm = floorf(hours);
-    if (hoursAfterStorm % 2 != 0) hoursAfterStorm--;
-    _hoursAfterStorm.value = hoursAfterStorm;
-    _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%d hours", hoursAfterStorm];
-    [_hoursAfterStormLabel sizeToFit];
-    for(int i = 0; i < waterDisplays.count; i++){
-        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
-        AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
-        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxWaterDisplays objectAtIndex: i];
-        [temp2 updateViewForHour:hoursAfterStorm];
-        //[temp updateView:hoursAfterStorm];
-        [temp fastUpdateView:hoursAfterStorm];
-        [tempHeights updateView:48];
-    }
-    
-    [_hoursAfterStorm setEnabled:TRUE];
-    [_mapWindow setScrollEnabled:TRUE];
-    [_dataWindow setScrollEnabled:TRUE];
-    [_titleWindow setScrollEnabled:TRUE];
-    [_loadingIndicator stopAnimating];
-    NSDate *myDate = [[NSDate alloc] init];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"HH:mm:ss"];
-    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
-    
-    if(sender == StormPlayBack || sender == StormPlayBack2){
-        content = [content initWithFormat:@"%@\tHours after storm set to: %d",prettyVersion, hoursAfterStorm];
-        
-        //    NSLog(content);
-        [content appendString:@"\n\n"];
-        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-        NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-        
-        //create file if it doesn't exist
-        if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-            [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-        
-        NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-        [file seekToEndOfFile];
-        [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];;
-    }*/
-
 }
 
 - (void)StormHoursChosen:(NSNotification *)notification {
@@ -407,10 +362,11 @@ float frame_height = 31;
     
     //obtain location of slider
     dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
+    
     //only update all labels/bars if Static normalization is switched on
-    if (!_DynamicNormalization.isOn){
+    //if (!_DynamicNormalization.isOn){
         [self normalizaAllandUpdateStatically];
-    }
+    //}
 }
 
 
@@ -426,8 +382,8 @@ float frame_height = 31;
         [self updateComponentScore:i];
 }
 
--(void) normalizeAllandUpdateDynamically
-{
+-(void) normalizeAllandUpdateDynamically{
+   
     //normalize all trials right after adding the newest trial
     [self normalizeDynamically];
     
@@ -714,6 +670,8 @@ float frame_height = 31;
             
             normVar = [trialRunsNormalized objectAtIndex:i];
             [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
+            
+
         }
 
     }
@@ -1024,6 +982,7 @@ float frame_height = 31;
             AprilTestCostDisplay *cd;
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
+                //CGRect *frame2 = CGRectMake(dynamic_cd_width, simRun.trialNum*175 + 40, , 30);
                 cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andScore:investmentInstallN andFrame:CGRectMake(width + 25, simRun.trialNum*175 + 40, dynamic_cd_width, 30)];
                 [_dataWindow addSubview: cd];
                 [publicCostDisplays addObject:cd];
@@ -1412,8 +1371,8 @@ float frame_height = 31;
             BudgetSlider = [[UISlider alloc] initWithFrame:frame];
             [BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
             [BudgetSlider setBackgroundColor:[UIColor clearColor]];
-            BudgetSlider.minimumValue = 0.0;
-            BudgetSlider.maximumValue = 5000000;
+            BudgetSlider.minimumValue = minInvest;
+            BudgetSlider.maximumValue = maxInvest;
             BudgetSlider.continuous = YES;
             [BudgetSlider setValue:currInvest animated:YES];
             _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:currInvest]]];
