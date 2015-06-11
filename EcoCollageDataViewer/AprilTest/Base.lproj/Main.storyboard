@@ -367,8 +367,8 @@
                     <tabBarItem key="tabBarItem" title="Simulation Results" image="sim-1x.png" id="cPa-gy-q4n"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
+                        <outlet property="DynamicNormalization" destination="5z6-bh-otB" id="w5t-rG-kso"/>
                         <outlet property="SliderWindow" destination="O62-Rl-KMv" id="53D-Pj-ytX"/>
-                        <outlet property="StaticNormalization" destination="5z6-bh-otB" id="hZr-Y6-OQk"/>
                         <outlet property="currentMaxInvestment" destination="WtP-yN-q8Z" id="qU4-mT-yCJ"/>
                         <outlet property="dataWindow" destination="8p1-eo-fnN" id="hJO-jf-96m"/>
                         <outlet property="hoursAfterStormLabel" destination="hq7-1I-tcS" id="RQ4-f0-jjN"/>

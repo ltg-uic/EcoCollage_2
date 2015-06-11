@@ -80,7 +80,7 @@ int hoursAfterStorm;
 float currInvest = 50000;
 float minInvest = 0;
 float maxInvest = 5000000;
-int publicCostPos;
+int dynamic_cd_width;
 
 float frame_x = 137;
 float frame_y = 642;
@@ -168,8 +168,8 @@ float frame_height = 31;
     }
     [self drawTitles];
     [self drawSliders];
-    publicCostPos = [self xPositionFromSliderValue:BudgetSlider];
-    //publicCostPos = 160;
+    dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
+    //dynamic_cd_width = 160;
     
     [_dataWindow setContentOffset:CGPointMake(0, 0)];
     [_mapWindow setContentOffset:CGPointMake(0,0 )];
@@ -214,13 +214,13 @@ float frame_height = 31;
     
     if ([sender isOn]){
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        publicCostPos = 98;
+        dynamic_cd_width = 98;
         [self removeBudgetLabels];
         [self normalizeAllandUpdateDynamically];
     }
     else{
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Static" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        publicCostPos = [self xPositionFromSliderValue:BudgetSlider];
+        dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
         [self normalizaAllandUpdateStatically];
         
     }
@@ -382,8 +382,10 @@ float frame_height = 31;
     float sliderOrigin = aSlider.frame.origin.x + (aSlider.currentThumbImage.size.width / 2.0);
     
     float sliderValueToPixels = (((aSlider.value-aSlider.minimumValue)/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
-    int returnLocation = (int)sliderValueToPixels;
-    returnLocation = returnLocation - 25;
+    float sliderValforZero    = (((0-aSlider.minimumValue)/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
+    
+    int returnLocation = (int)sliderValueToPixels - (int)sliderValforZero;
+    returnLocation = returnLocation;
     return returnLocation;
 }
 
@@ -404,9 +406,9 @@ float frame_height = 31;
     printf("You received this value: %d\n", value);
     
     //obtain location of slider
-    publicCostPos = [self xPositionFromSliderValue:BudgetSlider];
+    dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
     //only update all labels/bars if Static normalization is switched on
-    if (!_StaticNormalization.isOn){
+    if (!_DynamicNormalization.isOn){
         [self normalizaAllandUpdateStatically];
     }
 }
@@ -687,18 +689,20 @@ float frame_height = 31;
 //updates the score of the public install costs to reflect new trial
 - (void) updatePublicCostDisplays:(int) trial
 {
-    AprilTestSimRun             *var;
     AprilTestCostDisplay        *newCD;
     AprilTestNormalizedVariable *normVar;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     
     //Dynamic
-    if (_StaticNormalization.isOn){
+    if (_DynamicNormalization.isOn){
         for (int i = 0; i < trial; i++){
             newCD = [publicCostDisplays objectAtIndex:i];
+            [newCD.budgetUsed removeFromSuperview];
+            [newCD.budget removeFromSuperview];
+            
             normVar = [trialRunsDynNorm objectAtIndex:i];
-            [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, publicCostPos, 30)];
+            [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
         }
     }
     //Static
@@ -709,8 +713,7 @@ float frame_height = 31;
             [newCD.budget removeFromSuperview];
             
             normVar = [trialRunsNormalized objectAtIndex:i];
-            [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, publicCostPos, 30)];
-            //[publicCostDisplays insertObject:newCD atIndex:i];
+            [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
         }
 
     }
@@ -721,7 +724,7 @@ float frame_height = 31;
     AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
     AprilTestNormalizedVariable *simRunNormal;
     
-    if (_StaticNormalization.isOn){
+    if (_DynamicNormalization.isOn){
         simRunNormal = [trialRunsDynNorm objectAtIndex:trial];
     }
     else{
@@ -907,13 +910,8 @@ float frame_height = 31;
         
         
         //chooses between static/dynamic normalization of trial data
-        /**
-          * Poor Choice of property name: 
-          *  _StaticNormalization.isOn -> Dynamic Normalization switched on
-          * !_StaticNormalization.isOn -> Static Normalization switched on
-          */
-        
-        if (_StaticNormalization.isOn) {
+    
+        if (_DynamicNormalization.isOn) {
             [self normalizeAllandUpdateDynamically]; //updates previous trials's visualizations and renormalizes
         }
         else{
@@ -948,7 +946,7 @@ float frame_height = 31;
     AprilTestNormalizedVariable *simRunNormal;
     
     //determines via UIswitch what type of normalization is being drawn
-    if (_StaticNormalization.isOn){
+    if (_DynamicNormalization.isOn){
         simRunNormal = [trialRunsDynNorm objectAtIndex:trial];
     }
     else{
@@ -1026,19 +1024,19 @@ float frame_height = 31;
             AprilTestCostDisplay *cd;
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
-                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andScore:investmentInstallN andFrame:CGRectMake(width + 25, simRun.trialNum*175 + 40, publicCostPos, 30)];
+                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andScore:investmentInstallN andFrame:CGRectMake(width + 25, simRun.trialNum*175 + 40, dynamic_cd_width, 30)];
                 [_dataWindow addSubview: cd];
                 [publicCostDisplays addObject:cd];
             } else {
                 //NSLog(@"Repositioning water display");
                 cd = [publicCostDisplays objectAtIndex:trial];
-                cd.frame = CGRectMake(width + 25, simRun.trialNum*175 + 40, publicCostPos, 30);
+                cd.frame = CGRectMake(width + 25, simRun.trialNum*175 + 40, dynamic_cd_width, 30);
                 [_dataWindow addSubview:cd];
             }
             
             
             //checks if over budget, if so, prints warning message
-            if ((simRun.publicInstallCost > currInvest) && (!_StaticNormalization.isOn)){
+            if ((simRun.publicInstallCost > currInvest) && (!_DynamicNormalization.isOn)){
                 //store update labels for further use (updating over budget when using absolute val)
                
                 UILabel *valueLabel = [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-currInvest)]] ] withConcernPosition:width+25 andyValue:simRun.trialNum *175 + 80 andColor:[UIColor redColor]];

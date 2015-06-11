@@ -544,7 +544,7 @@ NSArray * importQuestions;
          */
         
         [_pie reloadData];
-        [self sendProfile];
+        //[self sendProfile];
     }
     
 }

@@ -25,7 +25,7 @@
 @property (strong, nonatomic) NSMutableArray *scenarioNames;
 
 
-@property (weak, nonatomic) IBOutlet UISwitch *StaticNormalization;
+@property (strong, nonatomic) IBOutlet UISwitch *DynamicNormalization;
 - (IBAction)NormTypeSwitched:(UISwitch *)sender;
 
 
