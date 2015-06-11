@@ -14,6 +14,7 @@
 @property (strong, nonatomic) CBCentralManager      *myCentralManager;
 @property (strong, nonatomic) CBPeripheral          *discoveredPeripheral;
 @property (strong) IBOutlet NSTextFieldCell *textView;
+@property (strong) IBOutlet NSTextField *studyNumberTextField;
 
 
 @end
@@ -24,23 +25,28 @@
 @synthesize myCentralManager = _myCentralManager;
 @synthesize discoveredPeripheral = _discoveredPeripheral;
 
+int studyNumber;
+
+- (IBAction)trialNumberButton:(NSButton *)sender {
+    [sender setEnabled:NO];
+    studyNumber = (int)self.studyNumberTextField.integerValue;
+    
+    NSLog(@"Initializing myCentralManager for trial %d", studyNumber);
+    self.textView.stringValue = [NSString stringWithFormat:@"Initializing myCentralManager for trial %d", studyNumber];
+    self.myCentralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     // Do any additional setup after loading the view.
-    NSLog(@"Initializing myCentralManager");
-    self.textView.stringValue = [NSString stringWithFormat:@"Initializing myCentralManager"];
-    self.myCentralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
 }
 
 - (void)setRepresentedObject:(id)representedObject {
     [super setRepresentedObject:representedObject];
-    
     // Update the view, if already loaded.
 }
 
-# pragma mark core bluetooth methods
+# pragma mark Core Bluetooth Methods
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
 {
@@ -165,7 +171,7 @@ didDiscoverPeripheral:(CBPeripheral *)peripheral
 }
 
 
-# pragma mark update notification methods
+# pragma mark Update Notification Methods
 
 - (void)peripheral:(CBPeripheral *)peripheral
 didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
