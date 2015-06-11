@@ -30,6 +30,8 @@
                                              selector:@selector(handleChatUpdate:)
                                                  name:@"chatUpdated"
                                                object:nil];
+    
+    
 }
 
 

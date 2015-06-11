@@ -20,7 +20,7 @@
 @synthesize studyNum = _studyNum;
 @synthesize textView = _textView;
 
-static NSTimeInterval const kConnectionTimeout = 30.0;
+static NSTimeInterval const kConnectionTimeout = 15.0;
 NSMutableArray *profiles;
 NSMutableArray *trials;
 
@@ -110,6 +110,8 @@ typedef struct SimNormalizedResults {
     
     profiles = [[NSMutableArray alloc]init];
     trials = [[NSMutableArray alloc]init];
+    
+    self.studyNumberLabel.text = [NSString stringWithFormat:@"%d", _studyNum];
 }
 
 
@@ -356,9 +358,11 @@ typedef struct SimNormalizedResults {
 
 
 // profile data setup by indexes of mutablearray
-// 0 : type of data being sent (profileToBaby)
-// 1 : username (defaults to devices name if no username selected)
-// 2 - 9 : concerns in order of most important to least important
+// 0 : type of data being sent (profileToMomma)
+// 1 : device name
+// 2 : username (defaults to devices name if no username selected)
+// 3 - 10 : concerns in order of most important to least important
+
 - (void) sendProfileUpdateToBabies:(NSArray *)dataArray {
     // convert to mutableArray so that the type of data being sent can be changed
     NSMutableArray *dataMutableArray = [dataArray mutableCopy];

@@ -23,7 +23,7 @@
 @synthesize trials = _trials;
 @synthesize profiles = _profiles;
 
-static NSTimeInterval const kConnectionTimeout = 30.0;
+static NSTimeInterval const kConnectionTimeout = 15.0;
 
 
 
