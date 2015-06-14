@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>75ED48A2-EE3B-4694-A0E9-B28AD522E7AD</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>EcoCollageMacPeripheralSide</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>3013647EA56EF95AC77FBA19ADBC848B578B1E51</key>
 		<string>https://github.com/ltg-uic/EcoCollage_2.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>EcoCollageMacPeripheralSide/EcoCollageMacPeripheralSide.xcodeproj/project.xcworkspace</string>
+	<string>EcoCollageMacPeripheralSide/EcoCollageMacPeripheralSide.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>3013647EA56EF95AC77FBA19ADBC848B578B1E51</key>

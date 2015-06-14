@@ -13,6 +13,7 @@
 @property (nonatomic, strong) GKSession *session;
 @property (strong, nonatomic) CBCentralManager      *myCentralManager;
 @property (strong, nonatomic) CBPeripheral          *discoveredPeripheral;
+@property (strong, nonatomic) NSMutableData         *data;
 @end
 
 @implementation MommaBirdViewController
@@ -20,6 +21,7 @@
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
 @synthesize textView = _textView;
+@synthesize macMiniTextView = _macMiniTextView;
 @synthesize myCentralManager = _myCentralManager;
 @synthesize discoveredPeripheral = _discoveredPeripheral;
 
@@ -118,7 +120,9 @@ typedef struct SimNormalizedResults {
     self.studyNumberLabel.text = [NSString stringWithFormat:@"%d", _studyNum];
     
     // setup core bluetooth connection to mac mini
+    self.data = [[NSMutableData alloc]init];
     self.myCentralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
+
 }
 
 
@@ -527,11 +531,32 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 // this method is called whenever a subscribed characteristic updates on the peripheral side
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     
-    NSData *data = characteristic.value;
-    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+    if (error) {
+        NSLog(@"Error discovering characteristics: %@", [error localizedDescription]);
+        return;
+    }
     
-    NSLog(@"Received data: %@", dataString);
+    NSString *stringFromData = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
+    
+    // Have we got everything we need?
+    if ([stringFromData isEqualToString:@"EOM"]) {
+        // We have, so show the data,
+        NSString *stringForMacMiniTextView = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
+
+        _macMiniTextView.text = stringForMacMiniTextView;
+        
+        [self.data setLength:0];
+        
+        return;
+    }
+    
+    // Otherwise, just add the data on to what we already have
+    [self.data appendData:characteristic.value];
+    
+    // Log it
+    NSLog(@"Received: %@", stringFromData);
 }
+
 
 
 @end

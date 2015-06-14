@@ -15,6 +15,7 @@
 @property NSString *url;
 @property int studyNum;
 @property (strong, nonatomic) IBOutlet UITextView *textView;
+@property (strong, nonatomic) IBOutlet UITextView *macMiniTextView;
 
 @property (strong, nonatomic) IBOutlet UILabel *studyNumberLabel;
 

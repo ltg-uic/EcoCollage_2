@@ -9,16 +9,18 @@
 #import "ViewController.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 
-@interface ViewController () <CBPeripheralManagerDelegate, CBPeripheralDelegate>
+@interface ViewController () <CBPeripheralManagerDelegate>
 @property (strong, nonatomic) CBPeripheralManager *myPeripheralManager;
-@property (strong, nonatomic) CBUUID* serviceUUID;         //4732CA16-1009-4E0A-AC8E-9E8CC2A68A24
-@property (strong, nonatomic) CBUUID* trialsCharacteristicUUID; //E4AE0854-E6F7-46BD-99DE-51A9B9049E8B
-@property (strong, nonatomic) CBMutableService* service;
 @property (strong, nonatomic) CBMutableCharacteristic* trialsCharacteristic;
 
 @property (strong, nonatomic) NSData *trialsData;
 @property (strong) IBOutlet NSTextField *textField;
+@property (nonatomic, readwrite) NSInteger              sendDataIndex;
 @end
+
+#define MAX_TRANSFER_AMOUNT     20
+#define SERVICE_UUID            @"4732CA16-1009-4E0A-AC8E-9E8CC2A68A24"
+#define CHARACTERISTIC_UUID     @"E4AE0854-E6F7-46BD-99DE-51A9B9049E8B"
 
 
 @implementation ViewController
@@ -28,22 +30,28 @@
 
     // Do any additional setup after loading the view.
     
-    _trialsData = [@"Hello" dataUsingEncoding:NSASCIIStringEncoding];
-    [self setupCoreBluetoothSession];
+    _trialsData = [@"Hello" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    
+    // calls peripheralManagerDidUpdateState with state CBPeripheralManagerStatePoweredOn
+    _myPeripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil options:nil];
 }
 
 
 - (void) setupCoreBluetoothSession {
-    // setup peripheral manager
-    _myPeripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil options:nil];
+    // Start with the CBMutableCharacteristic
+    self.trialsCharacteristic = [[CBMutableCharacteristic alloc] initWithType:[CBUUID UUIDWithString:CHARACTERISTIC_UUID] properties:CBCharacteristicPropertyRead value:nil permissions:CBAttributePermissionsReadable];
     
-    _serviceUUID = [CBUUID UUIDWithString:@"4732CA16-1009-4E0A-AC8E-9E8CC2A68A24"];
-    _trialsCharacteristicUUID = [CBUUID UUIDWithString:@"E4AE0854-E6F7-46BD-99DE-51A9B9049E8B"];
-    _trialsCharacteristic = [[CBMutableCharacteristic alloc] initWithType:_trialsCharacteristicUUID properties:CBCharacteristicPropertyRead value:_trialsData permissions:CBAttributePermissionsReadable];
+    // Then the service
+    CBMutableService *service = [[CBMutableService alloc] initWithType:[CBUUID UUIDWithString:SERVICE_UUID] primary:YES];
     
-    _service = [[CBMutableService alloc] initWithType:_serviceUUID primary:YES];
-    _service.characteristics = @[_trialsCharacteristic];
-    [_myPeripheralManager addService:_service];
+    // Add the characteristic to the service
+    service.characteristics = @[self.trialsCharacteristic];
+    
+    // And add it to the peripheral manager
+    [self.myPeripheralManager addService:service];
+    
+    [_myPeripheralManager startAdvertising:@{ CBAdvertisementDataServiceUUIDsKey : @[service.UUID] }];
 }
 
 - (void)setRepresentedObject:(id)representedObject {
@@ -80,9 +88,7 @@
     else if([peripheral state] == CBPeripheralManagerStatePoweredOn)
     {
         NSLog(@"CoreBluetooth BLE state is powered on and ready");
-        //Will start advertising
-        NSLog(@"Advertising Data..");
-        [_myPeripheralManager startAdvertising:@{ CBAdvertisementDataServiceUUIDsKey : @[_service.UUID] }];
+        [self setupCoreBluetoothSession];
     }
     else {}
 }
@@ -119,11 +125,14 @@
 
 # pragma mark CoreBluetooth subscribers methods
 
-- (void)peripheralManager:(CBPeripheralManager *)peripheral
-                  central:(CBCentral *)central
-didSubscribeToCharacteristic:(CBCharacteristic *)characteristic {
+- (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didSubscribeToCharacteristic:(CBCharacteristic *)characteristic {
     
     NSLog(@"Central subscribed to characteristic %@", characteristic);
+    
+    // Reset the index
+    self.sendDataIndex = 0;
+    
+    [self sendData];
 
 
 }
@@ -152,12 +161,7 @@ didSubscribeToCharacteristic:(CBCharacteristic *)characteristic {
 
 // called when queue is full and cannot transmit data at that time
 - (void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral {
-    NSData *updatedValue = [self.textField.stringValue dataUsingEncoding:NSASCIIStringEncoding];
-    
-    // if there is not enough room in the queue, updateValue calls peripheralManagerIsReadToUpdateSubscribers
-    // and this method will send an update when there is enough room in the queue
-    [_myPeripheralManager updateValue:updatedValue
-                    forCharacteristic:_trialsCharacteristic onSubscribedCentrals:nil];
+    [self sendData];
 }
 
 
@@ -165,14 +169,114 @@ didSubscribeToCharacteristic:(CBCharacteristic *)characteristic {
 # pragma mark Non-Bluetooth methods
 
 - (IBAction)updateCharacteristic:(id)sender {
-    NSData *updatedValue = [self.textField.stringValue dataUsingEncoding:NSASCIIStringEncoding];
+    // Reset the index
+    self.sendDataIndex = 0;
+    
+    [self sendData];
+}
+
+/*
+- (void)sendData {
+    NSData *updatedValue = [self.textField.stringValue dataUsingEncoding:NSUTF8StringEncoding];
+    
+    if([self.textField.stringValue isEqualToString:@""])
+        updatedValue = [@"Hello" dataUsingEncoding:NSUTF8StringEncoding];
     
     // if there is not enough room in the queue, updateValue calls peripheralManagerIsReadToUpdateSubscribers
     // and this method will send an update when there is enough room in the queue
-    if (![_myPeripheralManager updateValue:updatedValue
-                   forCharacteristic:_trialsCharacteristic onSubscribedCentrals:nil])
+    [_myPeripheralManager updateValue:updatedValue forCharacteristic:_trialsCharacteristic onSubscribedCentrals:nil];
+}
+*/
+
+
+
+- (void)sendData
+{
+    _trialsData = [self.textField.stringValue dataUsingEncoding:NSUTF8StringEncoding];
     
-        NSLog(@"Not enough room on queue to send update");
+    // First up, check if we're meant to be sending an EOM
+    static BOOL sendingEOM = NO;
+    
+    if (sendingEOM) {
+        
+        // send it
+        BOOL didSend = [self.myPeripheralManager updateValue:[@"EOM" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:self.trialsCharacteristic onSubscribedCentrals:nil];
+        
+        // Did it send?
+        if (didSend) {
+            
+            // It did, so mark it as sent
+            sendingEOM = NO;
+            
+            NSLog(@"Sent: EOM");
+        }
+        
+        // It didn't send, so we'll exit and wait for peripheralManagerIsReadyToUpdateSubscribers to call sendData again
+        return;
+    }
+    
+    // We're not sending an EOM, so we're sending data
+    
+    // Is there any left to send?
+    
+    if (self.sendDataIndex >= self.trialsData.length) {
+        
+        // No data left.  Do nothing
+        return;
+    }
+    
+    // There's data left, so send until the callback fails, or we're done.
+    
+    BOOL didSend = YES;
+    
+    while (didSend) {
+        
+        // Make the next chunk
+        
+        // Work out how big it should be
+        NSInteger amountToSend = self.trialsData.length - self.sendDataIndex;
+        
+        // Can't be longer than 20 bytes
+        if (amountToSend > MAX_TRANSFER_AMOUNT) amountToSend = MAX_TRANSFER_AMOUNT;
+        
+        // Copy out the data we want
+        NSData *chunk = [NSData dataWithBytes:self.trialsData.bytes+self.sendDataIndex length:amountToSend];
+        
+        // Send it
+        didSend = [self.myPeripheralManager updateValue:chunk forCharacteristic:self.trialsCharacteristic onSubscribedCentrals:nil];
+        
+        // If it didn't work, drop out and wait for the callback
+        if (!didSend) {
+            return;
+        }
+        
+        NSString *stringFromData = [[NSString alloc] initWithData:chunk encoding:NSUTF8StringEncoding];
+        NSLog(@"Sent: %@", stringFromData);
+        
+        // It did send, so update our index
+        self.sendDataIndex += amountToSend;
+        
+        // Was it the last one?
+        if (self.sendDataIndex >= self.trialsData.length) {
+            
+            // It was - send an EOM
+            
+            // Set this so if the send fails, we'll send it next time
+            sendingEOM = YES;
+            
+            // Send it
+            BOOL eomSent = [self.myPeripheralManager updateValue:[@"EOM" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:self.trialsCharacteristic onSubscribedCentrals:nil];
+            
+            if (eomSent) {
+                // It sent, we're all done
+                sendingEOM = NO;
+                
+                NSLog(@"Sent: EOM");
+            }
+            
+            return;
+        }
+    }
 }
 
 

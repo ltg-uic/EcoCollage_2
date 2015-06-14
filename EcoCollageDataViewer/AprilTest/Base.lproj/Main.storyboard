@@ -514,7 +514,14 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="zTP-a5-umh">
-                                <rect key="frame" x="334" y="165" width="356" height="460"/>
+                                <rect key="frame" x="140" y="180" width="356" height="460"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="MMS-DB-dNX">
+                                <rect key="frame" x="504" y="180" width="356" height="460"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
@@ -526,6 +533,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
+                        <outlet property="macMiniTextView" destination="MMS-DB-dNX" id="YZl-IL-n9W"/>
                         <outlet property="studyNumberLabel" destination="8CQ-hc-6k7" id="tPI-wT-Ri8"/>
                         <outlet property="textView" destination="zTP-a5-umh" id="Pok-D6-d4W"/>
                     </connections>
