@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5774CF791B2A1A9900EB9F50"
-               BuildableName = "EcoCollageCentralBluetooth.app"
-               BlueprintName = "EcoCollageCentralBluetooth"
-               ReferencedContainer = "container:EcoCollageCentralBluetooth.xcodeproj">
+               BlueprintIdentifier = "5753B0581B2CB5E000726234"
+               BuildableName = "EcoCollageMacPeripheralSide.app"
+               BlueprintName = "EcoCollageMacPeripheralSide"
+               ReferencedContainer = "container:EcoCollageMacPeripheralSide.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -28,10 +28,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5774CF8F1B2A1A9A00EB9F50"
-               BuildableName = "EcoCollageCentralBluetoothTests.xctest"
-               BlueprintName = "EcoCollageCentralBluetoothTests"
-               ReferencedContainer = "container:EcoCollageCentralBluetooth.xcodeproj">
+               BlueprintIdentifier = "5753B06E1B2CB5E000726234"
+               BuildableName = "EcoCollageMacPeripheralSideTests.xctest"
+               BlueprintName = "EcoCollageMacPeripheralSideTests"
+               ReferencedContainer = "container:EcoCollageMacPeripheralSide.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,20 +46,20 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5774CF8F1B2A1A9A00EB9F50"
-               BuildableName = "EcoCollageCentralBluetoothTests.xctest"
-               BlueprintName = "EcoCollageCentralBluetoothTests"
-               ReferencedContainer = "container:EcoCollageCentralBluetooth.xcodeproj">
+               BlueprintIdentifier = "5753B06E1B2CB5E000726234"
+               BuildableName = "EcoCollageMacPeripheralSideTests.xctest"
+               BlueprintName = "EcoCollageMacPeripheralSideTests"
+               ReferencedContainer = "container:EcoCollageMacPeripheralSide.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5774CF791B2A1A9900EB9F50"
-            BuildableName = "EcoCollageCentralBluetooth.app"
-            BlueprintName = "EcoCollageCentralBluetooth"
-            ReferencedContainer = "container:EcoCollageCentralBluetooth.xcodeproj">
+            BlueprintIdentifier = "5753B0581B2CB5E000726234"
+            BuildableName = "EcoCollageMacPeripheralSide.app"
+            BlueprintName = "EcoCollageMacPeripheralSide"
+            ReferencedContainer = "container:EcoCollageMacPeripheralSide.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -76,10 +76,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5774CF791B2A1A9900EB9F50"
-            BuildableName = "EcoCollageCentralBluetooth.app"
-            BlueprintName = "EcoCollageCentralBluetooth"
-            ReferencedContainer = "container:EcoCollageCentralBluetooth.xcodeproj">
+            BlueprintIdentifier = "5753B0581B2CB5E000726234"
+            BuildableName = "EcoCollageMacPeripheralSide.app"
+            BlueprintName = "EcoCollageMacPeripheralSide"
+            ReferencedContainer = "container:EcoCollageMacPeripheralSide.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -95,10 +95,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5774CF791B2A1A9900EB9F50"
-            BuildableName = "EcoCollageCentralBluetooth.app"
-            BlueprintName = "EcoCollageCentralBluetooth"
-            ReferencedContainer = "container:EcoCollageCentralBluetooth.xcodeproj">
+            BlueprintIdentifier = "5753B0581B2CB5E000726234"
+            BuildableName = "EcoCollageMacPeripheralSide.app"
+            BlueprintName = "EcoCollageMacPeripheralSide"
+            ReferencedContainer = "container:EcoCollageMacPeripheralSide.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

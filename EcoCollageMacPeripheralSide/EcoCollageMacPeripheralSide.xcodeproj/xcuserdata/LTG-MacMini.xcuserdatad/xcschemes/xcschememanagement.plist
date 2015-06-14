@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>EcoCollageCentralBluetooth.xcscheme</key>
+		<key>EcoCollageMacPeripheralSide.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,12 +12,12 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>5774CF791B2A1A9900EB9F50</key>
+		<key>5753B0581B2CB5E000726234</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5774CF8F1B2A1A9A00EB9F50</key>
+		<key>5753B06E1B2CB5E000726234</key>
 		<dict>
 			<key>primary</key>
 			<true/>

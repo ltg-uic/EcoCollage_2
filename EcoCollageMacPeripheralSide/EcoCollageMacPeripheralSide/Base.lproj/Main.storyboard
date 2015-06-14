@@ -10,11 +10,11 @@
                 <application id="hnw-xV-0zn" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
                         <items>
-                            <menuItem title="EcoCollageCentralBluetooth" id="1Xt-HY-uBw">
+                            <menuItem title="EcoCollageMacPeripheralSide" id="1Xt-HY-uBw">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="EcoCollageCentralBluetooth" systemMenu="apple" id="uQy-DD-JDr">
+                                <menu key="submenu" title="EcoCollageMacPeripheralSide" systemMenu="apple" id="uQy-DD-JDr">
                                     <items>
-                                        <menuItem title="About EcoCollageCentralBluetooth" id="5kV-Vb-QxS">
+                                        <menuItem title="About EcoCollageMacPeripheralSide" id="5kV-Vb-QxS">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="orderFrontStandardAboutPanel:" target="Ady-hI-5gd" id="Exp-CZ-Vem"/>
@@ -28,7 +28,7 @@
                                             <menu key="submenu" title="Services" systemMenu="services" id="hz9-B4-Xy5"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="4je-JR-u6R"/>
-                                        <menuItem title="Hide EcoCollageCentralBluetooth" keyEquivalent="h" id="Olw-nP-bQN">
+                                        <menuItem title="Hide EcoCollageMacPeripheralSide" keyEquivalent="h" id="Olw-nP-bQN">
                                             <connections>
                                                 <action selector="hide:" target="Ady-hI-5gd" id="PnN-Uc-m68"/>
                                             </connections>
@@ -46,7 +46,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
-                                        <menuItem title="Quit EcoCollageCentralBluetooth" keyEquivalent="q" id="4sb-4s-VLi">
+                                        <menuItem title="Quit EcoCollageMacPeripheralSide" keyEquivalent="q" id="4sb-4s-VLi">
                                             <connections>
                                                 <action selector="terminate:" target="Ady-hI-5gd" id="Te7-pn-YzF"/>
                                             </connections>
@@ -627,7 +627,7 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
                                     <items>
-                                        <menuItem title="EcoCollageCentralBluetooth Help" keyEquivalent="?" id="FKE-Sm-Kum">
+                                        <menuItem title="EcoCollageMacPeripheralSide Help" keyEquivalent="?" id="FKE-Sm-Kum">
                                             <connections>
                                                 <action selector="showHelp:" target="Ady-hI-5gd" id="y7X-2Q-9no"/>
                                             </connections>
@@ -672,37 +672,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kBS-5M-ENj">
-                                <rect key="frame" x="76" y="28" width="328" height="154"/>
-                                <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" title="Console replica" id="Ngk-u0-bB3">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Van-En-YSm">
-                                <rect key="frame" x="78" y="220" width="150" height="30"/>
-                                <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter study number" drawsBackground="YES" id="FWM-eI-nHW">
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k0b-0d-1Ls">
+                                <rect key="frame" x="41" y="97" width="183" height="76"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Insert text to send to central" drawsBackground="YES" id="BMC-UN-Y3V">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kt3-6K-XBO">
-                                <rect key="frame" x="255" y="227" width="117" height="16"/>
-                                <buttonCell key="cell" type="push" title="Save trial number" bezelStyle="rounded" alignment="center" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sTF-CZ-RLe">
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kGw-UH-EaK">
+                                <rect key="frame" x="304" y="118" width="159" height="32"/>
+                                <buttonCell key="cell" type="push" title="Update Peripherals" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5kt-it-05g">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="smallSystem"/>
+                                    <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="trialNumberButton:" target="XfG-lQ-9wD" id="NL8-ao-j5Q"/>
+                                    <action selector="updateCharacteristic:" target="XfG-lQ-9wD" id="7aJ-lK-HUa"/>
                                 </connections>
                             </button>
                         </subviews>
                     </view>
                     <connections>
-                        <outlet property="textView" destination="Ngk-u0-bB3" id="O12-y1-r0G"/>
-                        <outlet property="trialNumberTextField" destination="Van-En-YSm" id="Lp7-M0-dM1"/>
+                        <outlet property="textField" destination="k0b-0d-1Ls" id="IOu-DH-4fW"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

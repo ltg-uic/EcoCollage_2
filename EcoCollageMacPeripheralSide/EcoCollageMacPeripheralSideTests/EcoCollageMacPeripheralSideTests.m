@@ -1,19 +1,19 @@
 //
-//  EcoCollageCentralBluetoothTests.m
-//  EcoCollageCentralBluetoothTests
+//  EcoCollageMacPeripheralSideTests.m
+//  EcoCollageMacPeripheralSideTests
 //
-//  Created by Ryan Fogarty on 6/11/15.
+//  Created by Ryan Fogarty on 6/13/15.
 //  Copyright (c) 2015 Ryan Fogarty. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 
-@interface EcoCollageCentralBluetoothTests : XCTestCase
+@interface EcoCollageMacPeripheralSideTests : XCTestCase
 
 @end
 
-@implementation EcoCollageCentralBluetoothTests
+@implementation EcoCollageMacPeripheralSideTests
 
 - (void)setUp {
     [super setUp];

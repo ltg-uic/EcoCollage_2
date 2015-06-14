@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import <GameKit/GameKit.h>
+#import <CoreBluetooth/CoreBluetooth.h>
 
-@interface MommaBirdViewController : UIViewController <GKSessionDelegate>
+@interface MommaBirdViewController : UIViewController <GKSessionDelegate, CBCentralManagerDelegate, CBPeripheralDelegate>
 @property NSMutableArray *currentConcernRanking;
 @property NSString *url;
 @property int studyNum;

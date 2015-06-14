@@ -1,0 +1,422 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5753B0601B2CB5E000726234 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5753B05F1B2CB5E000726234 /* AppDelegate.m */; };
+		5753B0621B2CB5E000726234 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5753B0611B2CB5E000726234 /* main.m */; };
+		5753B0651B2CB5E000726234 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5753B0641B2CB5E000726234 /* ViewController.m */; };
+		5753B0671B2CB5E000726234 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5753B0661B2CB5E000726234 /* Images.xcassets */; };
+		5753B06A1B2CB5E000726234 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5753B0681B2CB5E000726234 /* Main.storyboard */; };
+		5753B0761B2CB5E000726234 /* EcoCollageMacPeripheralSideTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5753B0751B2CB5E000726234 /* EcoCollageMacPeripheralSideTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5753B0701B2CB5E000726234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5753B0511B2CB5E000726234 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5753B0581B2CB5E000726234;
+			remoteInfo = EcoCollageMacPeripheralSide;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5753B0591B2CB5E000726234 /* EcoCollageMacPeripheralSide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EcoCollageMacPeripheralSide.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5753B05D1B2CB5E000726234 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5753B05E1B2CB5E000726234 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		5753B05F1B2CB5E000726234 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		5753B0611B2CB5E000726234 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5753B0631B2CB5E000726234 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		5753B0641B2CB5E000726234 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		5753B0661B2CB5E000726234 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		5753B0691B2CB5E000726234 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5753B06F1B2CB5E000726234 /* EcoCollageMacPeripheralSideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EcoCollageMacPeripheralSideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5753B0741B2CB5E000726234 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5753B0751B2CB5E000726234 /* EcoCollageMacPeripheralSideTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EcoCollageMacPeripheralSideTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5753B0561B2CB5E000726234 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5753B06C1B2CB5E000726234 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5753B0501B2CB5E000726234 = {
+			isa = PBXGroup;
+			children = (
+				5753B05B1B2CB5E000726234 /* EcoCollageMacPeripheralSide */,
+				5753B0721B2CB5E000726234 /* EcoCollageMacPeripheralSideTests */,
+				5753B05A1B2CB5E000726234 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5753B05A1B2CB5E000726234 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5753B0591B2CB5E000726234 /* EcoCollageMacPeripheralSide.app */,
+				5753B06F1B2CB5E000726234 /* EcoCollageMacPeripheralSideTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5753B05B1B2CB5E000726234 /* EcoCollageMacPeripheralSide */ = {
+			isa = PBXGroup;
+			children = (
+				5753B05E1B2CB5E000726234 /* AppDelegate.h */,
+				5753B05F1B2CB5E000726234 /* AppDelegate.m */,
+				5753B0631B2CB5E000726234 /* ViewController.h */,
+				5753B0641B2CB5E000726234 /* ViewController.m */,
+				5753B0661B2CB5E000726234 /* Images.xcassets */,
+				5753B0681B2CB5E000726234 /* Main.storyboard */,
+				5753B05C1B2CB5E000726234 /* Supporting Files */,
+			);
+			path = EcoCollageMacPeripheralSide;
+			sourceTree = "<group>";
+		};
+		5753B05C1B2CB5E000726234 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5753B05D1B2CB5E000726234 /* Info.plist */,
+				5753B0611B2CB5E000726234 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5753B0721B2CB5E000726234 /* EcoCollageMacPeripheralSideTests */ = {
+			isa = PBXGroup;
+			children = (
+				5753B0751B2CB5E000726234 /* EcoCollageMacPeripheralSideTests.m */,
+				5753B0731B2CB5E000726234 /* Supporting Files */,
+			);
+			path = EcoCollageMacPeripheralSideTests;
+			sourceTree = "<group>";
+		};
+		5753B0731B2CB5E000726234 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5753B0741B2CB5E000726234 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5753B0581B2CB5E000726234 /* EcoCollageMacPeripheralSide */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5753B0791B2CB5E000726234 /* Build configuration list for PBXNativeTarget "EcoCollageMacPeripheralSide" */;
+			buildPhases = (
+				5753B0551B2CB5E000726234 /* Sources */,
+				5753B0561B2CB5E000726234 /* Frameworks */,
+				5753B0571B2CB5E000726234 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = EcoCollageMacPeripheralSide;
+			productName = EcoCollageMacPeripheralSide;
+			productReference = 5753B0591B2CB5E000726234 /* EcoCollageMacPeripheralSide.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5753B06E1B2CB5E000726234 /* EcoCollageMacPeripheralSideTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5753B07C1B2CB5E000726234 /* Build configuration list for PBXNativeTarget "EcoCollageMacPeripheralSideTests" */;
+			buildPhases = (
+				5753B06B1B2CB5E000726234 /* Sources */,
+				5753B06C1B2CB5E000726234 /* Frameworks */,
+				5753B06D1B2CB5E000726234 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5753B0711B2CB5E000726234 /* PBXTargetDependency */,
+			);
+			name = EcoCollageMacPeripheralSideTests;
+			productName = EcoCollageMacPeripheralSideTests;
+			productReference = 5753B06F1B2CB5E000726234 /* EcoCollageMacPeripheralSideTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5753B0511B2CB5E000726234 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0630;
+				ORGANIZATIONNAME = "Ryan Fogarty";
+				TargetAttributes = {
+					5753B0581B2CB5E000726234 = {
+						CreatedOnToolsVersion = 6.3.1;
+					};
+					5753B06E1B2CB5E000726234 = {
+						CreatedOnToolsVersion = 6.3.1;
+						TestTargetID = 5753B0581B2CB5E000726234;
+					};
+				};
+			};
+			buildConfigurationList = 5753B0541B2CB5E000726234 /* Build configuration list for PBXProject "EcoCollageMacPeripheralSide" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5753B0501B2CB5E000726234;
+			productRefGroup = 5753B05A1B2CB5E000726234 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5753B0581B2CB5E000726234 /* EcoCollageMacPeripheralSide */,
+				5753B06E1B2CB5E000726234 /* EcoCollageMacPeripheralSideTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5753B0571B2CB5E000726234 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5753B0671B2CB5E000726234 /* Images.xcassets in Resources */,
+				5753B06A1B2CB5E000726234 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5753B06D1B2CB5E000726234 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5753B0551B2CB5E000726234 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5753B0651B2CB5E000726234 /* ViewController.m in Sources */,
+				5753B0621B2CB5E000726234 /* main.m in Sources */,
+				5753B0601B2CB5E000726234 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5753B06B1B2CB5E000726234 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5753B0761B2CB5E000726234 /* EcoCollageMacPeripheralSideTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5753B0711B2CB5E000726234 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5753B0581B2CB5E000726234 /* EcoCollageMacPeripheralSide */;
+			targetProxy = 5753B0701B2CB5E000726234 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		5753B0681B2CB5E000726234 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5753B0691B2CB5E000726234 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		5753B0771B2CB5E000726234 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		5753B0781B2CB5E000726234 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		5753B07A1B2CB5E000726234 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = EcoCollageMacPeripheralSide/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5753B07B1B2CB5E000726234 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = EcoCollageMacPeripheralSide/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5753B07D1B2CB5E000726234 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = EcoCollageMacPeripheralSideTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EcoCollageMacPeripheralSide.app/Contents/MacOS/EcoCollageMacPeripheralSide";
+			};
+			name = Debug;
+		};
+		5753B07E1B2CB5E000726234 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = EcoCollageMacPeripheralSideTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EcoCollageMacPeripheralSide.app/Contents/MacOS/EcoCollageMacPeripheralSide";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5753B0541B2CB5E000726234 /* Build configuration list for PBXProject "EcoCollageMacPeripheralSide" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5753B0771B2CB5E000726234 /* Debug */,
+				5753B0781B2CB5E000726234 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5753B0791B2CB5E000726234 /* Build configuration list for PBXNativeTarget "EcoCollageMacPeripheralSide" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5753B07A1B2CB5E000726234 /* Debug */,
+				5753B07B1B2CB5E000726234 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		5753B07C1B2CB5E000726234 /* Build configuration list for PBXNativeTarget "EcoCollageMacPeripheralSideTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5753B07D1B2CB5E000726234 /* Debug */,
+				5753B07E1B2CB5E000726234 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5753B0511B2CB5E000726234 /* Project object */;
+}
