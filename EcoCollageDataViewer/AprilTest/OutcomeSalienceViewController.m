@@ -77,15 +77,19 @@ UISlider *StormPlayBack2;
 float thresh = 6;
 float hours = 0;
 int hoursAfterStorm;
-float maxBudget = 250000;
-float min_budget_limit = 500;
-float max_budget_limit = 500000;
+float maxBudget = 250000;  //max budget set by user
+
+//budget limits set by the application
+NSString *minBudgetLabel;
+int min_budget_limit = 50000;
+int min_budgetLimitDivider = 1000;
+NSString *maxBudgetLabel;
+int max_budget_limit = 5000000;
+int max_budgetLimitDivider = 1000000;
+
+//length of the budget bars set by the change in the budget slider
 int dynamic_cd_width;
 
-float frame_x = 137;
-float frame_y = 642;
-float frame_width = 214;
-float frame_height = 31;
 
 @synthesize currentConcernRanking = _currentConcernRanking;
 
@@ -161,11 +165,14 @@ float frame_height = 31;
     for (UIView *view in [_SliderWindow subviews]){
         [view removeFromSuperview];
     }
-//    int prevTrialNum = trialNum;
-//    trialNum = 0;
+
     for (int i =0; i < trialNum; i++){
         [self drawTrial:i];
     }
+    
+    minBudgetLabel = [NSString stringWithFormat:@"$%dK", (min_budget_limit/min_budgetLimitDivider)];
+    maxBudgetLabel = [NSString stringWithFormat:@"$%dK", (max_budget_limit/max_budgetLimitDivider)];
+    
     [self drawTitles];
     [self drawSliders];
     dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
@@ -659,6 +666,9 @@ float frame_height = 31;
             [newCD.budgetOver removeFromSuperview];
             
             normVar = [trialRunsDynNorm objectAtIndex:i];
+            
+            //The -1's have no significance, we don't want a red bar when dynamically normalizing
+            //but the nature of the normalization makes it impossible to have a normalization greater than 1 (so were in the clear!)
             [newCD updateCDWithScore:normVar.publicInstallCost andCost:-1 andMaxBudget:-1 andbudgetLimit:-1 andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
         }
     }
@@ -1382,12 +1392,12 @@ float frame_height = 31;
             [_SliderWindow addSubview:BudgetSlider];
             
             //draw min/max cost labels under slider
-            CGRect minCostFrame = CGRectMake(width + 25, 45, currentVar.widthOfVisualization/5, 15);
-            CGRect maxCostFrame = CGRectMake((width + 185) -35, 45, currentVar.widthOfVisualization/5, 15);
+            CGRect minCostFrame = CGRectMake(width + 25, 45, currentVar.widthOfVisualization/3, 15);
+            CGRect maxCostFrame = CGRectMake((width + 185) -35, 45, currentVar.widthOfVisualization/3, 15);
             UILabel *minCostLabel = [[UILabel alloc] initWithFrame:minCostFrame];
-            minCostLabel.text = [NSString stringWithFormat:@"$1K"];
+            minCostLabel.text =  minBudgetLabel;
             UILabel *maxCostLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
-            maxCostLabel.text = [NSString stringWithFormat:@"$5M"];
+            maxCostLabel.text = maxBudgetLabel;
             [_SliderWindow addSubview:minCostLabel];
             [_SliderWindow addSubview:maxCostLabel];
             
