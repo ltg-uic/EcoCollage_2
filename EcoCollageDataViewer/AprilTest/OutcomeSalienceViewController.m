@@ -77,9 +77,9 @@ UISlider *StormPlayBack2;
 float thresh = 6;
 float hours = 0;
 int hoursAfterStorm;
-float currInvest = 50000;
-float minInvest = 1000;
-float maxInvest = 5000000;
+float maxBudget = 250000;
+float min_budget_limit = 500;
+float max_budget_limit = 500000;
 int dynamic_cd_width;
 
 float frame_x = 137;
@@ -264,8 +264,8 @@ float frame_height = 31;
     for (int i = 0; i < trialRuns.count; i++){
         AprilTestSimRun *simRun = [trialRuns objectAtIndex:i];
         
-        if (simRun.publicInstallCost > currInvest){
-            UILabel *valueLabel = [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-currInvest)]] ] withConcernPosition:width+25 andyValue:simRun.trialNum *175 + 80 andColor:[UIColor redColor]];
+        if (simRun.publicInstallCost > maxBudget){
+            UILabel *valueLabel = [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-maxBudget)]] ] withConcernPosition:width+25 andyValue:simRun.trialNum *175 + 80 andColor:[UIColor redColor]];
             
             [OverBudgetLabels addObject:valueLabel];
         }
@@ -356,7 +356,7 @@ float frame_height = 31;
     value = 1000.0 * floor((value/1000.0)+0.5);
     
     _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
-    currInvest = value;
+    maxBudget = value;
     
     //obtain location of slider
     dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
@@ -364,6 +364,7 @@ float frame_height = 31;
     //only update all labels/bars if Static normalization is switched on
     if (!_DynamicNormalization.isOn){
         [self normalizaAllandUpdateStatically];
+        
     }
 }
 
@@ -400,11 +401,11 @@ float frame_height = 31;
         AprilTestSimRun *someTrial = [trialRuns objectAtIndex:i];
         AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
         
-        if (currInvest == 0){ currInvest = .01; }
+        if (maxBudget == 0){ maxBudget = .01; }
         
         //public cost
-        someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(currInvest));
-        someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(currInvest));
+        someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(maxBudget));
+        someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(maxBudget));
     }
     
     
@@ -645,6 +646,7 @@ float frame_height = 31;
 {
     AprilTestCostDisplay        *newCD;
     AprilTestNormalizedVariable *normVar;
+    AprilTestSimRun             *var;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     
@@ -657,7 +659,7 @@ float frame_height = 31;
             [newCD.budgetOver removeFromSuperview];
             
             normVar = [trialRunsDynNorm objectAtIndex:i];
-            [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
+            [newCD updateCDWithScore:normVar.publicInstallCost andCost:-1 andMaxBudget:-1 andbudgetLimit:-1 andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
         }
     }
     //Static
@@ -668,8 +670,9 @@ float frame_height = 31;
             [newCD.budget removeFromSuperview];
             [newCD.budgetOver removeFromSuperview];
             
+            var     = [trialRuns objectAtIndex:i];
             normVar = [trialRunsNormalized objectAtIndex:i];
-            [newCD updateCDWithScore:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
+            [newCD updateCDWithScore:normVar.publicInstallCost andCost:var.publicInstallCost andMaxBudget:maxBudget andbudgetLimit:max_budget_limit andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
             
             printf("%d\n", dynamic_cd_width);
         }
@@ -983,7 +986,7 @@ float frame_height = 31;
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
                 
-                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andScore:investmentInstallN andFrame:CGRectMake(width + 25, simRun.trialNum*175 + 40, dynamic_cd_width, 30)];
+                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, simRun.trialNum*175 + 40, dynamic_cd_width, 30)];
                 [_dataWindow addSubview: cd];
                 [publicCostDisplays addObject:cd];
             } else {
@@ -995,10 +998,10 @@ float frame_height = 31;
             
             
             //checks if over budget, if so, prints warning message
-            if ((simRun.publicInstallCost > currInvest) && (!_DynamicNormalization.isOn)){
+            if ((simRun.publicInstallCost > maxBudget) && (!_DynamicNormalization.isOn)){
                 //store update labels for further use (updating over budget when using absolute val)
                
-                UILabel *valueLabel = [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-currInvest)]] ] withConcernPosition:width+25 andyValue:simRun.trialNum *175 + 80 andColor:[UIColor redColor]];
+                UILabel *valueLabel = [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudget)]] ] withConcernPosition:width+25 andyValue:simRun.trialNum *175 + 80 andColor:[UIColor redColor]];
                 
                 [OverBudgetLabels addObject:valueLabel];
             }
@@ -1371,11 +1374,11 @@ float frame_height = 31;
             BudgetSlider = [[UISlider alloc] initWithFrame:frame];
             [BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
             [BudgetSlider setBackgroundColor:[UIColor clearColor]];
-            BudgetSlider.minimumValue = minInvest;
-            BudgetSlider.maximumValue = maxInvest;
+            BudgetSlider.minimumValue = min_budget_limit;
+            BudgetSlider.maximumValue = max_budget_limit;
             BudgetSlider.continuous = YES;
-            [BudgetSlider setValue:currInvest animated:YES];
-            _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:currInvest]]];
+            [BudgetSlider setValue:maxBudget animated:YES];
+            _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:maxBudget]]];
             [_SliderWindow addSubview:BudgetSlider];
             
             //draw min/max cost labels under slider

@@ -16,7 +16,7 @@
 @synthesize budgetUsed = _budgetUsed;
 @synthesize budgetOver = _budgetOver;
 
-- (id) initWithCost: (float) cost andScore: (float) normScore andFrame: (CGRect) frame
+- (id) initWithCost: (float) cost andMaxBudget: (float) max andbudgetLimit: (float) budgetLimit andScore: (float) normScore andFrame: (CGRect) frame
 {
     self = [super initWithFrame:frame];
     
@@ -46,17 +46,19 @@
     _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
     [self addSubview:_budgetUsed];
     
-    /*
+    
     if(normScore > 1){
-        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore - 1) * frame.size.width , 20)];
+        
+        normScore = (cost - max)/ (budgetLimit - max);
+        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore) * (161 - frame.size.width) , 20)];
         _budgetOver.backgroundColor = [UIColor redColor];
         [self addSubview:_budgetOver];
-    }*/
+    }
     
     return self;
 }
 
-- (id) updateCDWithScore: (float) normScore andFrame: (CGRect) frame
+- (id) updateCDWithScore: (float) normScore andCost: (float) cost andMaxBudget: (float) max andbudgetLimit: (float) budgetLimit andFrame: (CGRect) frame
 {
     _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
     _budget.backgroundColor = [UIColor lightGrayColor];
@@ -70,12 +72,14 @@
     _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
     [self addSubview:_budgetUsed];
     
-    /*
+    
     if(normScore > 1){
-        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore - 1) * frame.size.width, 20)];
+        
+        normScore = (cost - max)/ (budgetLimit - max);
+        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore) * (161 - frame.size.width), 20)];
         _budgetOver.backgroundColor = [UIColor redColor];
         [self addSubview:_budgetOver];
-    }*/
+    }
     
     return self;
 }
