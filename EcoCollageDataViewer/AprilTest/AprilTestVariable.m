@@ -17,11 +17,13 @@
 @synthesize baseRatings = _baseRatings;
 
 -(id) initWith:(NSString *)name withDisplayName: (NSString *) displayName withNumVar: (int) numVar withWidth:(int)widthOfVisualization withRank:(int)currentConcernRanking{
+    self = [super init];
     _name = name;
     _widthOfVisualization = widthOfVisualization;
     _currentConcernRanking = currentConcernRanking;
     _displayName = displayName;
     _baseRating = 0;
+    
     _baseRatings = [[NSMutableArray alloc] initWithCapacity:numVar];
     for(int i = 0; i < numVar; i++){
         [_baseRatings insertObject:[NSNumber numberWithInt:0] atIndex:i];

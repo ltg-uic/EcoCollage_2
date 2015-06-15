@@ -44,6 +44,7 @@
 
 // release notification is view is unloaded for memory purposes
 - (void) viewDidUnload {
+    [super viewDidUnload];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 

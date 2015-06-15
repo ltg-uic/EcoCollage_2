@@ -81,10 +81,10 @@ float maxBudget = 250000;  //max budget set by user
 
 //budget limits set by the application
 NSString *minBudgetLabel;
-int min_budget_limit = 50000;
-int min_budgetLimitDivider = 1000;
+int min_budget_limit = 100000;
+float min_budgetLimitDivider = 1000;
 NSString *maxBudgetLabel;
-int max_budget_limit = 5000000;
+float max_budget_limit = 5000000;
 int max_budgetLimitDivider = 1000000;
 
 //length of the budget bars set by the change in the budget slider
@@ -170,8 +170,8 @@ int dynamic_cd_width;
         [self drawTrial:i];
     }
     
-    minBudgetLabel = [NSString stringWithFormat:@"$%dK", (min_budget_limit/min_budgetLimitDivider)];
-    maxBudgetLabel = [NSString stringWithFormat:@"$%dK", (max_budget_limit/max_budgetLimitDivider)];
+    minBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", (min_budget_limit/min_budgetLimitDivider), (min_budgetLimitDivider == 1000) ? 'K' : 'M'];
+    maxBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", (max_budget_limit/max_budgetLimitDivider), (max_budgetLimitDivider == 1000) ? 'K' : 'M'];
     
     [self drawTitles];
     [self drawSliders];
@@ -217,16 +217,15 @@ int dynamic_cd_width;
     /**
       * Make Sure to update all displays/labels to reflect the change 
       */
+    dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
     
     if ([sender isOn]){
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
         [self removeBudgetLabels];
         [self normalizeAllandUpdateDynamically];
     }
     else{
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Static" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
         [self normalizaAllandUpdateStatically];
         
     }
@@ -371,7 +370,6 @@ int dynamic_cd_width;
     //only update all labels/bars if Static normalization is switched on
     if (!_DynamicNormalization.isOn){
         [self normalizaAllandUpdateStatically];
-        
     }
 }
 
@@ -1484,6 +1482,7 @@ int dynamic_cd_width;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
+    \
     if([scrollView isEqual:_dataWindow]) {
         CGPoint offset = _mapWindow.contentOffset;
         offset.y = _dataWindow.contentOffset.y;
@@ -1497,6 +1496,7 @@ int dynamic_cd_width;
         offset.y = _mapWindow.contentOffset.y;
         [_dataWindow setContentOffset:offset];
     }
+    
     
     NSDate *myDate = [[NSDate alloc] init];
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
