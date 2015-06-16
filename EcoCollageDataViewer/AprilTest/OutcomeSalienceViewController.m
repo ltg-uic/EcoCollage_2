@@ -88,7 +88,7 @@ float max_budget_limit = 700000;
 
 //length of the budget bars set by the change in the budget slider
 int dynamic_cd_width;
-
+float maxPublicInstallNorm;
 
 @synthesize currentConcernRanking = _currentConcernRanking;
 
@@ -169,6 +169,7 @@ int dynamic_cd_width;
         [self drawTrial:i];
     }
     
+    //determine depending on min and max budget limits what is to be drawn on UILabels under le BudgetSlider
     minBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((min_budget_limit/1000000 < 1) ? (min_budget_limit/1000) : (min_budget_limit/1000000)), (min_budget_limit/1000000 < 1) ? 'K' : 'M'];
     maxBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((max_budget_limit/1000000 < 1) ? (max_budget_limit/1000) : (max_budget_limit/1000000)), (max_budget_limit/1000000 < 1) ? 'K' : 'M'];
     
@@ -216,16 +217,17 @@ int dynamic_cd_width;
     /**
       * Make Sure to update all displays/labels to reflect the change 
       */
-    dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
     
     if ([sender isOn]){
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
         [self removeBudgetLabels];
-        
         [self normalizeAllandUpdateDynamically];
+        
     }
     else{
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Static" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
+        [self updateBudgetSliderTo:maxBudget];
+        dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
         [self normalizaAllandUpdateStatically];
         
     }
@@ -345,8 +347,11 @@ int dynamic_cd_width;
     float sliderValforZero    = ((0/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
     
     int returnLocation = (int)sliderValueToPixels - (int)sliderValforZero;
-    returnLocation = returnLocation;
-    return returnLocation;
+    if (returnLocation == 0){
+        return 1;
+    }
+    else
+        return returnLocation;
 }
 
 //selector method that handles a change in value when budget changes (slider under titles)
@@ -366,7 +371,6 @@ int dynamic_cd_width;
     
     //update the width of the public install cost bars (make sure it isn't 0)
     dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
-    (dynamic_cd_width == 0 ) ? dynamic_cd_width = 1 : dynamic_cd_width;
     
     //only update all labels/bars if Static normalization is switched on
     if (!_DynamicNormalization.isOn){
@@ -374,6 +378,17 @@ int dynamic_cd_width;
     }
 }
 
+//method that updates Budget slider with animation and writes the new value to a label WITHOUT making a change to the max set by the User
+-(void) updateBudgetSliderTo: (float) newValue
+{
+    [BudgetSlider setValue:newValue animated:YES];
+    
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:newValue]]];
+    
+}
 
 -(void) normalizaAllandUpdateStatically{
     trialNum = (int)[trialRuns count];
@@ -392,9 +407,8 @@ int dynamic_cd_width;
     //normalize all trials right after adding the newest trial
     [self normalizeDynamically];
     
-    float bestInstallationCost = (maxBudget < installationCost->highestCost) ? maxBudget : installationCost->highestCost;
-    float newScore = (bestInstallationCost - min_budget_limit)/(maxBudget - min_budget_limit);
-    dynamic_cd_width = newScore * [self xPositionFromSliderValue:BudgetSlider];
+    [self updateBudgetSliderTo:installationCost->highestCost];
+    dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
     
     //updates the normalization of the previous trials in respect to the newest trial
     [self updatePublicCostDisplays: trialNum];
@@ -488,6 +502,7 @@ int dynamic_cd_width;
         
         if (someTrial.publicInstallCost <= installationCost->lowestCost){ installationCost->lowestCost = someTrial.publicInstallCost; }
         if (someTrial.publicInstallCost >= installationCost->highestCost) { installationCost->highestCost = someTrial.publicInstallCost; }
+        
         
         //private cost
         if (someTrial.privateDamages <= privateDamages->lowestCost){  privateDamages->lowestCost = someTrial.privateDamages; }
@@ -670,8 +685,6 @@ int dynamic_cd_width;
             var     = [trialRuns objectAtIndex:i];
             normVar = [trialRunsDynNorm objectAtIndex:i];
             
-            //The -1's have no significance, we don't want a red bar when dynamically normalizing
-            //but the nature of the normalization makes it impossible to have a normalization greater than 1 (so were in the clear!)
             [newCD updateCDWithScore:normVar.publicInstallCost andCost:var.publicInstallCost andMaxBudget:min_budget_limit andbudgetLimit:maxBudget andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
         }
     }
