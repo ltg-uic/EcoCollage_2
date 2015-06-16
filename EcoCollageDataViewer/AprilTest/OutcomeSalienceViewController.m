@@ -77,15 +77,14 @@ UISlider *StormPlayBack2;
 float thresh = 6;
 float hours = 0;
 int hoursAfterStorm;
-float maxBudget = 250000;  //max budget set by user
+float maxBudget = 125000;  //max budget set by user
 
 //budget limits set by the application
 NSString *minBudgetLabel;
-int min_budget_limit = 100000;
-float min_budgetLimitDivider = 1000;
 NSString *maxBudgetLabel;
-float max_budget_limit = 5000000;
-int max_budgetLimitDivider = 1000000;
+float min_budget_limit = 100000;
+float max_budget_limit = 700000;
+
 
 //length of the budget bars set by the change in the budget slider
 int dynamic_cd_width;
@@ -170,8 +169,8 @@ int dynamic_cd_width;
         [self drawTrial:i];
     }
     
-    minBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", (min_budget_limit/min_budgetLimitDivider), (min_budgetLimitDivider == 1000) ? 'K' : 'M'];
-    maxBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", (max_budget_limit/max_budgetLimitDivider), (max_budgetLimitDivider == 1000) ? 'K' : 'M'];
+    minBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((min_budget_limit/1000000 < 1) ? (min_budget_limit/1000) : (min_budget_limit/1000000)), (min_budget_limit/1000000 < 1) ? 'K' : 'M'];
+    maxBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((max_budget_limit/1000000 < 1) ? (max_budget_limit/1000) : (max_budget_limit/1000000)), (max_budget_limit/1000000 < 1) ? 'K' : 'M'];
     
     [self drawTitles];
     [self drawSliders];
@@ -222,6 +221,7 @@ int dynamic_cd_width;
     if ([sender isOn]){
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
         [self removeBudgetLabels];
+        
         [self normalizeAllandUpdateDynamically];
     }
     else{
@@ -342,7 +342,7 @@ int dynamic_cd_width;
     float sliderOrigin = aSlider.frame.origin.x + (aSlider.currentThumbImage.size.width / 2.0);
     
     float sliderValueToPixels = (((aSlider.value-aSlider.minimumValue)/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
-    float sliderValforZero    = (((0-aSlider.minimumValue)/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
+    float sliderValforZero    = ((0/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
     
     int returnLocation = (int)sliderValueToPixels - (int)sliderValforZero;
     returnLocation = returnLocation;
@@ -364,8 +364,9 @@ int dynamic_cd_width;
     _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
     maxBudget = value;
     
-    //obtain location of slider
+    //update the width of the public install cost bars (make sure it isn't 0)
     dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
+    (dynamic_cd_width == 0 ) ? dynamic_cd_width = 1 : dynamic_cd_width;
     
     //only update all labels/bars if Static normalization is switched on
     if (!_DynamicNormalization.isOn){
@@ -390,6 +391,10 @@ int dynamic_cd_width;
    
     //normalize all trials right after adding the newest trial
     [self normalizeDynamically];
+    
+    float bestInstallationCost = (maxBudget < installationCost->highestCost) ? maxBudget : installationCost->highestCost;
+    float newScore = (bestInstallationCost - min_budget_limit)/(maxBudget - min_budget_limit);
+    dynamic_cd_width = newScore * [self xPositionFromSliderValue:BudgetSlider];
     
     //updates the normalization of the previous trials in respect to the newest trial
     [self updatePublicCostDisplays: trialNum];
@@ -662,12 +667,12 @@ int dynamic_cd_width;
             [newCD.budgetUsed removeFromSuperview];
             [newCD.budget removeFromSuperview];
             [newCD.budgetOver removeFromSuperview];
-            
+            var     = [trialRuns objectAtIndex:i];
             normVar = [trialRunsDynNorm objectAtIndex:i];
             
             //The -1's have no significance, we don't want a red bar when dynamically normalizing
             //but the nature of the normalization makes it impossible to have a normalization greater than 1 (so were in the clear!)
-            [newCD updateCDWithScore:normVar.publicInstallCost andCost:-1 andMaxBudget:-1 andbudgetLimit:-1 andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
+            [newCD updateCDWithScore:normVar.publicInstallCost andCost:var.publicInstallCost andMaxBudget:min_budget_limit andbudgetLimit:maxBudget andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
         }
     }
     //Static

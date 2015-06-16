@@ -37,20 +37,28 @@
     _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
     _budget.backgroundColor = [UIColor lightGrayColor];
     [self addSubview:_budget];
+    
     float widthBudgetUsed;
     if(normScore < 1)
         widthBudgetUsed = normScore;
     else
         widthBudgetUsed = 1;
-    _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, widthBudgetUsed*frame.size.width , 20)];
+    
+    int budgetWidth = frame.size.width;
+    
+    _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, widthBudgetUsed*budgetWidth , 20)];
     _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
     [self addSubview:_budgetUsed];
     
     
     if(normScore > 1){
-        
         normScore = (cost - max)/ (budgetLimit - max);
-        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore) * (161 - frame.size.width) , 20)];
+        
+        //cap off the percentage at 100% if it happens to surpass it 
+        if(normScore > 1)
+            normScore = 1;
+        
+        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore) * (160 - frame.size.width) , 20)];
         _budgetOver.backgroundColor = [UIColor redColor];
         [self addSubview:_budgetOver];
     }
@@ -68,15 +76,22 @@
         widthBudgetUsed = normScore;
     else
         widthBudgetUsed = 1;
-    _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, widthBudgetUsed*frame.size.width , 20)];
+    
+    int budgetWidth = frame.size.width;
+    
+    _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, widthBudgetUsed*budgetWidth , 20)];
     _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
     [self addSubview:_budgetUsed];
     
     
     if(normScore > 1){
-        
         normScore = (cost - max)/ (budgetLimit - max);
-        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore) * (161 - frame.size.width), 20)];
+        
+        //cap off the percentage at 100% if it happens to surpass it 
+        if(normScore > 1)
+            normScore = 1;
+        
+        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore) * (160 - frame.size.width), 20)];
         _budgetOver.backgroundColor = [UIColor redColor];
         [self addSubview:_budgetOver];
     }
