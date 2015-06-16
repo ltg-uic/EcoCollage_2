@@ -30,65 +30,8 @@ NSMutableArray *profiles;
 NSMutableArray *trials;
 int studyNumber;
 
-typedef struct UserProfiles {
-    int userNumber;
-    int investment;
-    int damageReduction;
-    int efficiencyOfIntervention;
-    int capacityUsed;
-    int waterDepth;
-    int maxFloodedArea;
-    int groundwaterInfiltration;
-    int impactOnNeighbors;
-    
-    struct UserProfiles *next;
-} UserProfiles;
 
-#define string char**
-
-typedef struct SimResults {
-    int simID;
-    int studyID;
-    int trialID;
-    string map;
-    int publicCost;
-    int privateCost;
-    int publicDamages;
-    int privateDamages;
-    int publicMaintenanceCost;
-    int privateMaintenanceCost;
-    string standingWater;
-    float impactNeighbors;
-    float neightborsImpactMe;
-    float infiltration;
-    string efficiency;
-    string maxWaterHeights;
-    string dollarsPerGallon;
-    
-    struct SimResults *next;
-} SimResults;
-
-typedef struct SimNormalizedResults {
-    int simID;
-    int studyID;
-    int trialID;
-    float publicCost;
-    float privateCost;
-    float publicDamages;
-    float privateDamages;
-    float publicMaintenanceCost;
-    float privateMaintenanceCost;
-    float standingWater;
-    float impactNeighbors;
-    float neighborsImpactMe;
-    float infiltration;
-    float efficiency;
-    float MaxWaterHeight;
-    float floodedStreets;
-    
-    struct SimNormalizedResults *next;
-} SimNormalizedResults;
-
+#define SEPARATOR_FOR_TRIAL_DATA        @"$(TRIAL_DATA)$"
 
 
 #pragma mark - View Lifecycle
@@ -542,9 +485,12 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     if ([stringFromData isEqualToString:@"EOM"]) {
         // We have, so show the data,
         NSString *stringForMacMiniTextView = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
-
-        _macMiniTextView.text = stringForMacMiniTextView;
         
+        [trials addObject:stringForMacMiniTextView];
+
+        [self updateMacMiniTextView];
+        
+        // reset data for next transfer
         [self.data setLength:0];
         
         return;
@@ -555,6 +501,21 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     
     // Log it
     NSLog(@"Received: %@", stringFromData);
+}
+
+
+- (void) updateMacMiniTextView {
+    NSMutableString *stringForMacMiniTextView = [[NSMutableString alloc]initWithString:@""];
+    
+    for (int i = 0; i < trials.count; i++) {
+        NSArray *array = [[trials objectAtIndex:i] componentsSeparatedByString:SEPARATOR_FOR_TRIAL_DATA];
+        
+        [stringForMacMiniTextView appendString:[[NSString alloc]initWithFormat:@"Trial %d\n", i]];
+        [stringForMacMiniTextView appendString:[array componentsJoinedByString:@"\n"]];
+        [stringForMacMiniTextView appendString:@"\n\n"];
+    }
+    
+    _macMiniTextView.text = stringForMacMiniTextView;
 }
 
 

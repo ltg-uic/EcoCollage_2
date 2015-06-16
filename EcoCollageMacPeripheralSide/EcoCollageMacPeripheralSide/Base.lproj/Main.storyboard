@@ -673,15 +673,15 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k0b-0d-1Ls">
-                                <rect key="frame" x="41" y="97" width="183" height="76"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Insert text to send to central" drawsBackground="YES" id="BMC-UN-Y3V">
+                                <rect key="frame" x="149" y="167" width="183" height="76"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="trial data 1" drawsBackground="YES" id="BMC-UN-Y3V">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kGw-UH-EaK">
-                                <rect key="frame" x="304" y="118" width="159" height="32"/>
+                                <rect key="frame" x="161" y="29" width="159" height="32"/>
                                 <buttonCell key="cell" type="push" title="Update Peripherals" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5kt-it-05g">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -690,10 +690,19 @@
                                     <action selector="updateCharacteristic:" target="XfG-lQ-9wD" id="7aJ-lK-HUa"/>
                                 </connections>
                             </button>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bbf-3T-Vkq">
+                                <rect key="frame" x="149" y="71" width="183" height="76"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="trial data 2" drawsBackground="YES" id="nk1-cc-R22">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
-                        <outlet property="textField" destination="k0b-0d-1Ls" id="IOu-DH-4fW"/>
+                        <outlet property="trialDataTextField" destination="k0b-0d-1Ls" id="Rvi-MG-pUF"/>
+                        <outlet property="trialDataTextField2" destination="bbf-3T-Vkq" id="L9P-b3-ZkS"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

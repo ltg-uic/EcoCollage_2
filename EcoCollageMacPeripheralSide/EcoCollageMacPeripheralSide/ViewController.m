@@ -14,13 +14,16 @@
 @property (strong, nonatomic) CBMutableCharacteristic* trialsCharacteristic;
 
 @property (strong, nonatomic) NSData *trialsData;
-@property (strong) IBOutlet NSTextField *textField;
+@property (strong, nonatomic) NSMutableString *trialsStringData;
+@property (strong) IBOutlet NSTextField *trialDataTextField;
+@property (strong) IBOutlet NSTextField *trialDataTextField2;
 @property (nonatomic, readwrite) NSInteger              sendDataIndex;
 @end
 
-#define MAX_TRANSFER_AMOUNT     20
-#define SERVICE_UUID            @"4732CA16-1009-4E0A-AC8E-9E8CC2A68A24"
-#define CHARACTERISTIC_UUID     @"E4AE0854-E6F7-46BD-99DE-51A9B9049E8B"
+#define MAX_TRANSFER_AMOUNT             20
+#define SERVICE_UUID                    @"4732CA16-1009-4E0A-AC8E-9E8CC2A68A24"
+#define CHARACTERISTIC_UUID             @"E4AE0854-E6F7-46BD-99DE-51A9B9049E8B"
+#define SEPARATOR_FOR_TRIAL_DATA        @"$(TRIAL_DATA)$"
 
 
 @implementation ViewController
@@ -30,7 +33,8 @@
 
     // Do any additional setup after loading the view.
     
-    _trialsData = [@"Hello" dataUsingEncoding:NSUTF8StringEncoding];
+    _trialsData = [[NSData alloc]init];
+    _trialsStringData = [[NSMutableString alloc]initWithString:@""];
     
     
     // calls peripheralManagerDidUpdateState with state CBPeripheralManagerStatePoweredOn
@@ -161,7 +165,7 @@
 
 // called when queue is full and cannot transmit data at that time
 - (void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral {
-    [self sendData];
+    [self sendDataR];
 }
 
 
@@ -175,25 +179,18 @@
     [self sendData];
 }
 
-/*
+
 - (void)sendData {
-    NSData *updatedValue = [self.textField.stringValue dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *dataString = [[NSString alloc]initWithFormat:@"%@%@%@", self.trialDataTextField.stringValue, SEPARATOR_FOR_TRIAL_DATA, self.trialDataTextField2.stringValue];
     
-    if([self.textField.stringValue isEqualToString:@""])
-        updatedValue = [@"Hello" dataUsingEncoding:NSUTF8StringEncoding];
+    _trialsData = [dataString dataUsingEncoding:NSUTF8StringEncoding];
     
-    // if there is not enough room in the queue, updateValue calls peripheralManagerIsReadToUpdateSubscribers
-    // and this method will send an update when there is enough room in the queue
-    [_myPeripheralManager updateValue:updatedValue forCharacteristic:_trialsCharacteristic onSubscribedCentrals:nil];
+    [self sendDataR];
 }
-*/
 
 
-
-- (void)sendData
+- (void)sendDataR
 {
-    _trialsData = [self.textField.stringValue dataUsingEncoding:NSUTF8StringEncoding];
-    
     // First up, check if we're meant to be sending an EOM
     static BOOL sendingEOM = NO;
     
@@ -211,7 +208,7 @@
             NSLog(@"Sent: EOM");
         }
         
-        // It didn't send, so we'll exit and wait for peripheralManagerIsReadyToUpdateSubscribers to call sendData again
+        // It didn't send, so we'll exit and wait for peripheralManagerIsReadyToUpdateSubscribers to call sendDataR again
         return;
     }
     
