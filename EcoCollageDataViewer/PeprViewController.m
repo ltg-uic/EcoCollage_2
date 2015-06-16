@@ -174,7 +174,7 @@ NSArray * importQuestions;
 }
 
 
-- (void)removeProfileFromMomma {
+- (void)removeProfileFromPeers {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     if(tabControl.session) {
         NSMutableArray *profileToRemove = [[NSMutableArray alloc]init];
@@ -241,7 +241,7 @@ NSArray * importQuestions;
     UISwitch *mySwitch = (UISwitch *)sender;
     if ([mySwitch isOn])
         [self sendProfile];
-    else [self removeProfileFromMomma];
+    else [self removeProfileFromPeers];
 }
 
 
