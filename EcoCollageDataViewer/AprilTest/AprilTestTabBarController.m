@@ -215,6 +215,22 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
         // receive all profiles when baby bird first connects to Momma so that baby is brought up to speed
         [self receiveAllProfilesFromMomma:dataArray];
     }
+    else if([dataArray[0] isEqualToString:@"removeProfile"]) {
+        [self removeProfile:dataArray];
+    }
+}
+
+
+- (void)removeProfile:(NSArray *)dataArray {
+    // check if profile sent from baby is an update on an already existing one and if so update it
+    for (int i = 0; i < _profiles.count; i++) {
+        // if device names match, change username
+        if([_profiles[i][1] isEqualToString:dataArray[1]]) {
+            [_profiles removeObjectAtIndex:i];
+        }
+    }
+    
+    [self updateTextView];
 }
 
 

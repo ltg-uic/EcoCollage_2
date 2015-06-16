@@ -201,6 +201,22 @@ int studyNumber;
     else if([dataArray[0] isEqualToString:@"usernameUpdate"]) {
         [self handleUsernameUpdates:dataArray];
     }
+    else if([dataArray[0] isEqualToString:@"removeProfile"]) {
+        [self removeProfile:dataArray];
+    }
+}
+
+
+- (void)removeProfile:(NSArray *)dataArray {
+    // check if profile sent from baby is an update on an already existing one and if so update it
+    for (int i = 0; i < profiles.count; i++) {
+        // if device names match, change username
+        if([profiles[i][1] isEqualToString:dataArray[1]]) {
+            [profiles removeObjectAtIndex:i];
+        }
+    }
+    
+    [self updateTextView];
 }
 
 

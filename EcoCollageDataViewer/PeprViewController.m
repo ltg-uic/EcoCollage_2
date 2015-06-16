@@ -24,6 +24,7 @@
 @synthesize slices = _slices;
 @synthesize sliceColors = _sliceColors;
 @synthesize currentConcernRanking = _currentConcernRanking;
+@synthesize sharingSwitch = _sharingSwitch;
 
 
 
@@ -141,7 +142,7 @@ NSArray * importQuestions;
 - (void)sendProfile {
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    if(tabControl.session) {
+    if(tabControl.session && _sharingSwitch.isOn) {
         NSMutableArray *profile = [[NSMutableArray alloc]init];
         // add type of data
         [profile addObject:@"profileToMomma"];
@@ -163,8 +164,31 @@ NSArray * importQuestions;
         }
         NSDictionary *profileToSendToMomma = [NSDictionary dictionaryWithObject:profile
                                                                          forKey:@"data"];
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profileToSendToMomma];
-        [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+        
+        if(profileToSendToMomma != nil) {
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profileToSendToMomma];
+            if(tabControl.peerIDForMomma != nil)
+                [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+        }
+    }
+}
+
+
+- (void)removeProfileFromMomma {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    if(tabControl.session) {
+        NSMutableArray *profileToRemove = [[NSMutableArray alloc]init];
+        [profileToRemove addObject:@"removeProfile"];
+        
+        // add devices name
+        [profileToRemove addObject:[[UIDevice currentDevice]name]];
+        
+        NSDictionary *profileToRemoveDict = [NSDictionary dictionaryWithObject:profileToRemove forKey:@"data"];
+        if(profileToRemove != nil) {
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profileToRemoveDict];
+            if(tabControl.peerIDForMomma != nil)
+                [tabControl.session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+        }
     }
 }
 
@@ -180,8 +204,9 @@ NSArray * importQuestions;
 
 
 - (void) sendUsername {
+    // only send if sharing
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    if(tabControl.session) {
+    if(tabControl.session && _sharingSwitch.isOn) {
         NSMutableArray *username = [[NSMutableArray alloc]init];
         // add type of data
         [username addObject:@"usernameUpdate"];
@@ -207,6 +232,16 @@ NSArray * importQuestions;
                 [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
         }
     }
+}
+
+
+
+
+- (IBAction)profileSharingSwitch:(UISwitch *)sender {
+    UISwitch *mySwitch = (UISwitch *)sender;
+    if ([mySwitch isOn])
+        [self sendProfile];
+    else [self removeProfileFromMomma];
 }
 
 
@@ -544,7 +579,7 @@ NSArray * importQuestions;
          */
         
         [_pie reloadData];
-        //[self sendProfile];
+        [self sendProfile];
     }
     
 }
@@ -569,5 +604,4 @@ NSArray * importQuestions;
 {
     return [self.sliceColors objectAtIndex:(index % self.sliceColors.count)];
 }
-
 @end
