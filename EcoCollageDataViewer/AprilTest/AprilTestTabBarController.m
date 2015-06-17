@@ -231,6 +231,8 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     }
     
     [self updateTextView];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
 
@@ -245,6 +247,8 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     }
     
     [self updateTextView];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
 
@@ -260,6 +264,8 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     }
     
     [self updateTextView];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
 
@@ -272,7 +278,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 - (void) receiveProfileFromMomma:(NSArray *)dataArray {
     BOOL oldProfile = 0;
     
-
+    
     // check if profile sent from baby is an update on an already existing one,
     // and if so update it and send update to babies
     for (int i = 0; i < _profiles.count; i++) {
@@ -288,6 +294,8 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     }
     
     [self updateTextView];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
 
@@ -336,4 +344,6 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 
 
 @end
+
+
 

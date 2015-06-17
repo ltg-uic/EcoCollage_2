@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <GameKit/GameKit.h>
 
-@interface SocialViewController : UIViewController
+@interface SocialViewController : UIViewController <UIScrollViewDelegate>
 @property int studyNum;
 @property (strong, nonatomic) IBOutlet UITextView *textView;
+@property (strong, nonatomic) IBOutlet UIScrollView *profilesWindow;
 
 @end
