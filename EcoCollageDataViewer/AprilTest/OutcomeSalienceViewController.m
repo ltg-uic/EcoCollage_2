@@ -72,7 +72,7 @@ NSTimer *scrollingTimer = nil;
 UISlider *BudgetSlider;
 UISlider *StormPlayBack;
 UISlider *StormPlayBack2;
-
+NSMutableArray  *testLabelGlob;
 //Important values that change elements of objects
 float thresh = 6;
 float hours = 0;
@@ -110,12 +110,13 @@ float maxPublicInstallNorm;
     trialRuns = [[NSMutableArray alloc] init];
     trialRunsNormalized = [[NSMutableArray alloc] init];
     trialRunsDynNorm    = [[NSMutableArray alloc] init];
-    waterDisplays = [[NSMutableArray alloc] init];
-    maxWaterDisplays = [[NSMutableArray alloc] init];
-    efficiency = [[NSMutableArray alloc] init];
-    _scenarioNames = [[NSMutableArray alloc] init];
-    publicCostDisplays = [[NSMutableArray alloc] init];
-    OverBudgetLabels   = [[NSMutableArray alloc] init];
+    waterDisplays       = [[NSMutableArray alloc] init];
+    maxWaterDisplays    = [[NSMutableArray alloc] init];
+    efficiency          = [[NSMutableArray alloc] init];
+    _scenarioNames      = [[NSMutableArray alloc] init];
+    publicCostDisplays  = [[NSMutableArray alloc] init];
+    OverBudgetLabels    = [[NSMutableArray alloc] init];
+    testLabelGlob       = [[NSMutableArray alloc] init];
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
@@ -273,7 +274,8 @@ float maxPublicInstallNorm;
         AprilTestSimRun *simRun = [trialRuns objectAtIndex:i];
         
         if (simRun.publicInstallCost > maxBudget){
-            UILabel *valueLabel = [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-maxBudget)]] ] withConcernPosition:width+25 andyValue:simRun.trialNum *175 + 80 andColor:[UIColor redColor]];
+            UILabel *valueLabel;
+            [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-maxBudget)]] ] withConcernPosition:width+25 andyValue:simRun.trialNum *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
             
             [OverBudgetLabels addObject:valueLabel];
         }
@@ -885,7 +887,6 @@ float maxPublicInstallNorm;
     
     
     if(content != NULL && content.length > 100 && contentN != NULL){
-        
         //Adds a new trial to a list of trials (normalized, real, dynamic)
         AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:content withTrialNum:trialNum];
         AprilTestNormalizedVariable *simRunNormal = [[AprilTestNormalizedVariable alloc] init: contentN withTrialNum:trialNum];
@@ -895,9 +896,7 @@ float maxPublicInstallNorm;
         [trialRunsNormalized addObject:simRunNormal];   //contains trials containing normalized values
         [trialRunsDynNorm addObject:simRunDyn];         //contains normalized data that will be dynamically altered every time a new trial is fetched
         
-        
         //chooses between static/dynamic normalization of trial data
-    
         if (_DynamicNormalization.isOn) {
             [self normalizeAllandUpdateDynamically]; //updates previous trials's visualizations and renormalizes
         }
@@ -905,9 +904,10 @@ float maxPublicInstallNorm;
             [self normalizeStatically:trialNum];     //normalizes a trial one at a time
         }
         
+        
         //draws the newest trial after latest normalization of data (static or dynamic)
         [self drawTrial: trialNum];
-        
+
         trialNum++;
     }
     
@@ -915,16 +915,26 @@ float maxPublicInstallNorm;
     if (trialNum > 3)
         scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
                                                                   target:self selector:@selector(autoscrollTimerFired) userInfo:nil repeats:NO];
+
     
     [_loadingIndicator stopAnimating];
     
 }
+
 
 //autoscroll to the bottom of the mapwindow (trial and component score) scrollview
 - (void) autoscrollTimerFired
 {
     CGPoint bottomOffset = CGPointMake(0, _mapWindow.contentSize.height - _mapWindow.bounds.size.height);
     [_mapWindow setContentOffset:bottomOffset animated:YES];
+}
+
+-(void) OffsetView: (UIView*) view toX:(int)x andY:(int)y{
+    ///GENERAL FORMULA FOR TRANSLATING A FRAME
+    CGRect frame = view.frame;
+    frame.origin.x = x;
+    frame.origin.y = y;
+    [view setFrame: frame];
 }
 
 -(void) drawTrial: (int) trial{
@@ -1027,14 +1037,15 @@ float maxPublicInstallNorm;
             if ((simRun.publicInstallCost > maxBudget) && (!_DynamicNormalization.isOn)){
                 //store update labels for further use (updating over budget when using absolute val)
                
-                UILabel *valueLabel = [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudget)]] ] withConcernPosition:width+25 andyValue:simRun.trialNum *175 + 80 andColor:[UIColor redColor]];
+                UILabel *valueLabel;
+                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudget)]] ] withConcernPosition:width+25 andyValue:simRun.trialNum *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
                 
                 [OverBudgetLabels addObject:valueLabel];
             }
             
            
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum * 175) +100 andColor:[UIColor blackColor]];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum * 175) +100 andColor:[UIColor blackColor] to:nil];
             
             
             scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
@@ -1052,9 +1063,9 @@ float maxPublicInstallNorm;
             //just damages now
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +40 andColor:[UIColor blackColor]];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70 andColor:[UIColor blackColor]];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue: (simRun.trialNum ) * 175 + 100 andColor:[UIColor blackColor]];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +40 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (simRun.trialNum*175) +70 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue: (simRun.trialNum ) * 175 + 100 andColor:[UIColor blackColor] to:nil];
             
 
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
@@ -1069,8 +1080,8 @@ float maxPublicInstallNorm;
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             
            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue: (simRun.trialNum ) * 175 + 40 andColor:[UIColor blackColor]];
-            [self drawTextBasedVar: [NSString stringWithFormat:@" run-off to neighbors"] withConcernPosition:width + 30 andyValue: (simRun.trialNum ) * 175 + 55 andColor:[UIColor blackColor]];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue: (simRun.trialNum ) * 175 + 40 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" run-off to neighbors"] withConcernPosition:width + 30 andyValue: (simRun.trialNum ) * 175 + 55 andColor:[UIColor blackColor] to:nil];
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
             [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
@@ -1078,16 +1089,16 @@ float maxPublicInstallNorm;
         } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
             
         
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (simRun.trialNum)*175 + 40 andColor:[UIColor blackColor]];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (simRun.trialNum)*175 + 40 andColor:[UIColor blackColor] to:nil];
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe)]];
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
-        
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater was", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue: (simRun.trialNum)* 175 + 40 andColor:[UIColor blackColor]];
-            [self drawTextBasedVar: [NSString stringWithFormat:@" infiltrated by the swales"] withConcernPosition:width + 30 andyValue: (simRun.trialNum)* 175 + 55  andColor:[UIColor blackColor]];
+            /*
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater was", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue: (simRun.trialNum)* 175 + 40 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" infiltrated by the swales"] withConcernPosition:width + 30 andyValue: (simRun.trialNum)* 175 + 55  andColor:[UIColor blackColor] to:nil];*/
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
@@ -1151,7 +1162,7 @@ float maxPublicInstallNorm;
             [ev updateViewForHour: StormPlayBack.value];
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (simRun.trialNum * 175) + 40 andColor: [UIColor blackColor]];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (simRun.trialNum * 175) + 40 andColor: [UIColor blackColor] to:nil];
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * 0]];
             [scoreVisNames addObject:currentVar.name];
@@ -1306,16 +1317,25 @@ float maxPublicInstallNorm;
 }
 
 //Draws Labels to set on the dataWindo Scrollview but also returns object to be added into a MutableArray (used for updating labels)
--(UILabel*) drawTextBasedVar: (NSString *) outputValue withConcernPosition: (int) concernPos andyValue: (int) yValue andColor: (UIColor*) color{
-    UILabel *valueLabel = [[UILabel alloc] init];
-    valueLabel.text = outputValue;
-    valueLabel.frame =CGRectMake(concernPos, yValue, 0, 0);
-    [valueLabel sizeToFit ];
-    valueLabel.font = [UIFont systemFontOfSize:14.0];
-    valueLabel.textColor = color;
-    [[self dataWindow] addSubview:valueLabel];
-    
-    return valueLabel;
+-(void) drawTextBasedVar: (NSString *) outputValue withConcernPosition: (int) concernPos andyValue: (int) yValue andColor: (UIColor*) color to:(UILabel**) label{
+    if (label != nil){
+        *label = [[UILabel alloc] init];
+        (*label).text = outputValue;
+        (*label).frame =CGRectMake(concernPos, yValue, 0, 0);
+        [*label sizeToFit ];
+        (*label).font = [UIFont systemFontOfSize:14.0];
+        (*label).textColor = color;
+        [_dataWindow addSubview:*label];
+    }else
+    {
+        UILabel *valueLabel = [[UILabel alloc] init];
+        valueLabel.text = outputValue;
+        valueLabel.frame =CGRectMake(concernPos, yValue, 0, 0);
+        [valueLabel sizeToFit ];
+        valueLabel.font = [UIFont systemFontOfSize:14.0];
+        valueLabel.textColor = color;
+        [_dataWindow addSubview:valueLabel];
+    }
 }
 
 -(void) drawTitles{
