@@ -22,6 +22,7 @@
 @synthesize session = _session;
 @synthesize trials = _trials;
 @synthesize profiles = _profiles;
+@synthesize ownProfile = _ownProfile;
 
 static NSTimeInterval const kConnectionTimeout = 15.0;
 
@@ -77,13 +78,15 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     
     [self setupSession];
     
+    
+    _trials = [[NSMutableArray alloc]init];
+    _profiles = [[NSMutableArray alloc]init];
+    _ownProfile = [[NSMutableArray alloc]init];
+    
     // load all the view controllers so they can setup their notifications
     for(UIViewController * viewController in  self.viewControllers){
         viewController.view;
     }
-    
-    _trials = [[NSMutableArray alloc]init];
-    _profiles = [[NSMutableArray alloc]init];
     
 }
 
@@ -164,6 +167,8 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
         case GKPeerStateDisconnected:
         {
             NSLog(@"didChangeState: peer %@ disconnected", peerName);
+            [self teardownSession];
+            [self setupSession];
             break;
         }
             
@@ -179,6 +184,8 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 - (void)session:(GKSession *)session connectionWithPeerFailed:(NSString *)peerID withError:(NSError *)error
 {
     NSLog(@"connectionWithPeerFailed: peer: %@, error: %@", [session displayNameForPeer:peerID], error);
+    [self teardownSession];
+    [self setupSession];
 }
 
 - (void)session:(GKSession *)session didFailWithError:(NSError *)error
@@ -186,6 +193,8 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     NSLog(@"didFailWithError: error: %@", error);
     
     [session disconnectPeerFromAllPeers:session.peerID];
+    [self teardownSession];
+    [self setupSession];
 }
 
 
@@ -230,8 +239,6 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
         }
     }
     
-    [self updateTextView];
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
@@ -245,8 +252,6 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
             _profiles[i][2] = dataArray[2];
         }
     }
-    
-    [self updateTextView];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
@@ -262,8 +267,6 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     for (int i = 1; i < dataArray.count; i++) {
         [_profiles addObject:[dataArray objectAtIndex:i]];
     }
-    
-    [self updateTextView];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
@@ -292,36 +295,10 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     if (!oldProfile) {
         [_profiles addObject:dataArray];
     }
-    
-    [self updateTextView];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
-
-
-
-
-- (void) updateTextView {
-    NSMutableString* allProfiles = [[NSMutableString alloc]initWithString:@""];
-    
-    
-    // loop through all the user profiles stored in mutableArray 'profiles'
-    for (NSArray *profile in _profiles) {
-        NSMutableArray *tempProfile = [[NSMutableArray alloc]init];
-        for (int i = 1; i < profile.count; i++) {
-            [tempProfile addObject:[profile objectAtIndex:i]];
-        }
-        NSString *profileString = [tempProfile componentsJoinedByString:@"\n"];
-        
-        [allProfiles appendString:profileString];
-        [allProfiles appendString:@"\n\n"];
-    }
-    
-    NSDictionary *updateChat = [NSDictionary dictionaryWithObject:allProfiles
-                                                           forKey:@"chatUpdate"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"chatUpdated" object:self userInfo:updateChat];
-}
 
 
 - (void)didReceiveMemoryWarning

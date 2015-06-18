@@ -13,6 +13,7 @@
 @property NSMutableArray * currentConcernRanking;
 @property NSMutableArray * trials;
 @property NSMutableArray * profiles;
+@property NSMutableArray * ownProfile;
 @property NSString * url;
 @property int studyNum;
 @property (nonatomic, strong) GKSession * session;

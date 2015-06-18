@@ -14,12 +14,11 @@
 
 @implementation SocialViewController
 
-@synthesize textView = _textView;
 @synthesize studyNum = _studyNum;
 @synthesize profilesWindow = _profilesWindow;
 
 NSMutableDictionary *concernColors;
-
+int widthOfTitleVisualization = 250;
 
 
 
@@ -29,11 +28,6 @@ NSMutableDictionary *concernColors;
     
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleChatUpdate:)
-                                                 name:@"chatUpdated"
-                                               object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleProfileUpdate)
@@ -61,6 +55,9 @@ NSMutableDictionary *concernColors;
     
     _profilesWindow.delegate = self;
     
+    _profilesWindow.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    _profilesWindow.layer.borderWidth = 1.0;
+    
 }
 
 
@@ -77,78 +74,142 @@ NSMutableDictionary *concernColors;
 
 
 
-
-- (void)handleChatUpdate:(NSNotification *)note {
-    NSDictionary *dictData = [note userInfo];
+- (void)viewWillAppear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleProfileUpdate)
+                                                 name:@"profileUpdate"
+                                               object:nil];
     
-    NSString *received = [dictData objectForKey:@"chatUpdate"];
-    _textView.text = received;
+    [self handleProfileUpdate];
 }
+
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 
 
 - (void)handleProfileUpdate {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    
-    int amountOfProfilesLoaded = 0;
-    
+
+    // then load other user profiles
     for (UIView *view in [_profilesWindow subviews]){
         [view removeFromSuperview];
     }
     
+    // first load the devices profile
+    [self loadOwnProfile];
+    
+    int amountOfProfilesLoaded = 1;
     
     for (NSArray *profileArray in tabControl.profiles) {
-        amountOfProfilesLoaded++;
         int width = 0;
-        int widthOfVisualization = 200;
         
-        // load name of profile
-        UILabel *nameLabel = [[UILabel alloc]init];
-        nameLabel.backgroundColor = [UIColor whiteColor];
-        nameLabel.frame = CGRectMake(width, amountOfProfilesLoaded * 120 + 2, widthOfVisualization, 40);
-        nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
-        nameLabel.text = [profileArray objectAtIndex:2];
-        if(nameLabel != NULL) {
-            [_profilesWindow addSubview:nameLabel];
-        }
-        width += widthOfVisualization;
         
-        // load concerns in order
-        for (int i = 3; i < profileArray.count; i++) {
-            NSLog(@"Adding %@ to profilesWindow", [profileArray objectAtIndex:i]);
-            UILabel *currentLabel = [[UILabel alloc]init];
-            currentLabel.backgroundColor = [concernColors objectForKey:[profileArray objectAtIndex:i]];
-            currentLabel.frame = CGRectMake(width, amountOfProfilesLoaded * 120 + 2, widthOfVisualization, 40);
-            currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
-        
-            if([[profileArray objectAtIndex:i] isEqualToString:@"Investment"])
-                currentLabel.text = @"  Investment";
-            else if([[profileArray objectAtIndex:i] isEqualToString:@"Damage Reduction"])
-                currentLabel.text = @" Damage Reduction";
-            else if([[profileArray objectAtIndex:i] isEqualToString:@"Efficiency of Intervention ($/Gallon)"])
-                currentLabel.text = @" Efficiency of Intervention";
-            else if([[profileArray objectAtIndex:i] isEqualToString:@"Capacity Used"])
-                currentLabel.text = @" Intervention Capacity";
-            else if([[profileArray objectAtIndex:i] isEqualToString:@"Water Depth Over Time"])
-                currentLabel.text = @" Water Depth Over Storm";
-            else if([[profileArray objectAtIndex:i] isEqualToString:@"Maximum Flooded Area"])
-                currentLabel.text = @" Maximum Flooded Area";
-            else if([[profileArray objectAtIndex:i] isEqualToString:@"Groundwater Infiltration"])
-                currentLabel.text = @" Groundwater Infiltration";
-            else if([[profileArray objectAtIndex:i] isEqualToString:@"Impact on my Neighbors"])
-                currentLabel.text = @" Impact on my Neighbors";
-            else {
-                currentLabel.text = @" Invalid label";
+        if(![[profileArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]]) {
+            // load name of profile
+            UILabel *nameLabel = [[UILabel alloc]init];
+            nameLabel.backgroundColor = [UIColor whiteColor];
+            nameLabel.frame = CGRectMake(width, amountOfProfilesLoaded * 200 + 2, widthOfTitleVisualization, 40);
+            nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
+            nameLabel.text = [NSString stringWithFormat:@"  %@", [profileArray objectAtIndex:2]];
+            if(nameLabel != NULL) {
+                [_profilesWindow addSubview:nameLabel];
             }
+            width += widthOfTitleVisualization;
         
-            if(currentLabel != NULL){
-                [_profilesWindow addSubview:currentLabel];
+            // load concerns in order
+            for (int i = 3; i < profileArray.count; i++) {
+                UILabel *currentLabel = [[UILabel alloc]init];
+                currentLabel.backgroundColor = [concernColors objectForKey:[profileArray objectAtIndex:i]];
+                currentLabel.frame = CGRectMake(width, amountOfProfilesLoaded * 200 + 2, widthOfTitleVisualization, 40);
+                currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
+        
+                if([[profileArray objectAtIndex:i] isEqualToString:@"Investment"])
+                    currentLabel.text = @"  Investment";
+                else if([[profileArray objectAtIndex:i] isEqualToString:@"Damage Reduction"])
+                    currentLabel.text = @" Damage Reduction";
+                else if([[profileArray objectAtIndex:i] isEqualToString:@"Efficiency of Intervention ($/Gallon)"])
+                    currentLabel.text = @" Efficiency of Intervention";
+                else if([[profileArray objectAtIndex:i] isEqualToString:@"Capacity Used"])
+                    currentLabel.text = @" Intervention Capacity";
+                else if([[profileArray objectAtIndex:i] isEqualToString:@"Water Depth Over Time"])
+                    currentLabel.text = @" Water Depth Over Storm";
+                else if([[profileArray objectAtIndex:i] isEqualToString:@"Maximum Flooded Area"])
+                    currentLabel.text = @" Maximum Flooded Area";
+                else if([[profileArray objectAtIndex:i] isEqualToString:@"Groundwater Infiltration"])
+                    currentLabel.text = @" Groundwater Infiltration";
+                else if([[profileArray objectAtIndex:i] isEqualToString:@"Impact on my Neighbors"])
+                    currentLabel.text = @" Impact on my Neighbors";
+                else {
+                    currentLabel = NULL;
+                }
+            
+                if(currentLabel != NULL){
+                    [_profilesWindow addSubview:currentLabel];
+                }
+                width+= widthOfTitleVisualization;
             }
-            width+= widthOfVisualization;
-        }
     
-        [_profilesWindow setContentSize: CGSizeMake(width + 10, _profilesWindow.contentSize.height)];
+            [_profilesWindow setContentSize: CGSizeMake(width + 10, _profilesWindow.contentSize.height)];
+            amountOfProfilesLoaded++;
+        }
     }
     
+}
+
+
+- (void)loadOwnProfile {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    int width = 0;
+    
+    // load name of profile
+    UILabel *nameLabel = [[UILabel alloc]init];
+    nameLabel.backgroundColor = [UIColor whiteColor];
+    nameLabel.frame = CGRectMake(width, 2, widthOfTitleVisualization, 40);
+    nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
+    nameLabel.text = [NSString stringWithFormat:@"  %@ (You)", [tabControl.ownProfile objectAtIndex:0]];
+    if(nameLabel != NULL) {
+        [_profilesWindow addSubview:nameLabel];
+    }
+    width += widthOfTitleVisualization;
+    
+    // load concerns in order
+    for (int i = 1; i < tabControl.ownProfile.count; i++) {
+        UILabel *currentLabel = [[UILabel alloc]init];
+        currentLabel.backgroundColor = [concernColors objectForKey:[tabControl.ownProfile objectAtIndex:i]];
+        currentLabel.frame = CGRectMake(width, 2, widthOfTitleVisualization, 40);
+        currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
+        
+        if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Investment"])
+            currentLabel.text = @"  Investment";
+        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Damage Reduction"])
+            currentLabel.text = @" Damage Reduction";
+        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Efficiency of Intervention ($/Gallon)"])
+            currentLabel.text = @" Efficiency of Intervention";
+        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Capacity Used"])
+            currentLabel.text = @" Intervention Capacity";
+        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Water Depth Over Time"])
+            currentLabel.text = @" Water Depth Over Storm";
+        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Maximum Flooded Area"])
+            currentLabel.text = @" Maximum Flooded Area";
+        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Groundwater Infiltration"])
+            currentLabel.text = @" Groundwater Infiltration";
+        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Impact on my Neighbors"])
+            currentLabel.text = @" Impact on my Neighbors";
+        else {
+            currentLabel = NULL;
+        }
+        
+        if(currentLabel != NULL){
+            [_profilesWindow addSubview:currentLabel];
+        }
+        width+= widthOfTitleVisualization;
+    }
+    
+    [_profilesWindow setContentSize: CGSizeMake(width + 10, _profilesWindow.contentSize.height)];
+
 }
 
 

@@ -123,6 +123,9 @@ NSArray * importQuestions;
     [_pie reloadData];
     
     
+    [self loadOwnProfile];
+    
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(sendProfile)
                                                  name:@"sendProfile"
@@ -193,11 +196,35 @@ NSArray * importQuestions;
 }
 
 
+-(void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    
+    if ([textField isEqual:self.usernameText]) {
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDelegate:self];
+        [UIView setAnimationDuration:0.5];
+        [UIView setAnimationBeginsFromCurrentState:YES];
+        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y-190.0,
+                                     self.view.frame.size.width, self.view.frame.size.height);
+        [UIView commitAnimations];
+    }
+}
+
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if([textField isEqual:self.usernameText])
+    if([textField isEqual:self.usernameText]) {
         [self sendUsername];
+        [self loadOwnProfile];
+        
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDelegate:self];
+        [UIView setAnimationDuration:0.5];
+        [UIView setAnimationBeginsFromCurrentState:YES];
+        self.view .frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y+190.0,
+                                      self.view.frame.size.width, self.view.frame.size.height);
+        [UIView commitAnimations];
+    }
     [textField resignFirstResponder];
     return YES;
 }
@@ -231,6 +258,23 @@ NSArray * importQuestions;
             if (tabControl.peerIDForMomma != nil)
                 [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
         }
+    }
+}
+
+
+- (void)loadOwnProfile {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    [tabControl.ownProfile removeAllObjects];
+    
+    if ([_usernameText.text isEqualToString:@""])
+         [tabControl.ownProfile addObject:[[UIDevice currentDevice]name]];
+    else
+         [tabControl.ownProfile addObject:_usernameText.text];
+          
+    for (int i = 0; i < 8; i++) {
+        // add each surveyItem and remove \t
+        [tabControl.ownProfile addObject:[[[surveyItems objectAtIndex:i]text] stringByReplacingOccurrencesOfString:@"\t" withString:@""]];
     }
 }
 
@@ -580,6 +624,7 @@ NSArray * importQuestions;
         
         [_pie reloadData];
         [self sendProfile];
+        [self loadOwnProfile];
     }
     
 }
