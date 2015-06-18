@@ -72,7 +72,7 @@ NSTimer *scrollingTimer = nil;
 UISlider *BudgetSlider;
 UISlider *StormPlayBack;
 UISlider *StormPlayBack2;
-NSMutableArray  *testLabelGlob;
+
 //Important values that change elements of objects
 float thresh = 6;
 float hours = 0;
@@ -116,7 +116,7 @@ float maxPublicInstallNorm;
     _scenarioNames      = [[NSMutableArray alloc] init];
     publicCostDisplays  = [[NSMutableArray alloc] init];
     OverBudgetLabels    = [[NSMutableArray alloc] init];
-    testLabelGlob       = [[NSMutableArray alloc] init];
+
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
@@ -904,7 +904,6 @@ float maxPublicInstallNorm;
             [self normalizeStatically:trialNum];     //normalizes a trial one at a time
         }
         
-        
         //draws the newest trial after latest normalization of data (static or dynamic)
         [self drawTrial: trialNum];
 
@@ -1002,7 +1001,7 @@ float maxPublicInstallNorm;
     for(int i = 0 ; i <_currentConcernRanking.count ; i++){
         
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
-        if(simRun.trialNum ==0 && visibleIndex %2 == 0 && currentVar.widthOfVisualization > 0){
+        if(trial == 0 && visibleIndex %2 == 0 && currentVar.widthOfVisualization > 0){
             UILabel *bgCol = [[UILabel alloc] initWithFrame:CGRectMake(width, -2, currentVar.widthOfVisualization+1, _dataWindow.contentSize.height + 100)];
             bgCol.backgroundColor = [UIColor whiteColor];
             bgCol.layer.borderColor = [UIColor lightGrayColor].CGColor;
