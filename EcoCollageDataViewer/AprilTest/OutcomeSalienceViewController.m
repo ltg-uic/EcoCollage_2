@@ -63,6 +63,7 @@ NSArray *arrStatus;
 NSMutableDictionary *scoreColors;
 int lastMoved = 0;
 int trialNum = 0;
+int trialOffset = 0;
 bool passFirstThree = FALSE;
 float kOFFSET_FOR_KEYBOARD = 425.0;
 float offsetForMoving = 0.0;
@@ -227,8 +228,8 @@ float maxPublicInstallNorm;
     }
     else{
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Static" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        [self updateBudgetSliderTo:maxBudget];
-        dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
+        //[self updateBudgetSliderTo:maxBudget];
+        //dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
         [self normalizaAllandUpdateStatically];
         
     }
@@ -405,12 +406,10 @@ float maxPublicInstallNorm;
 }
 
 -(void) normalizeAllandUpdateDynamically{
-   
     //normalize all trials right after adding the newest trial
     [self normalizeDynamically];
     
-    [self updateBudgetSliderTo:installationCost->highestCost];
-    dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
+    if (installationCost->highestCost > maxBudget){ dynamic_cd_width = 160; }
     
     //updates the normalization of the previous trials in respect to the newest trial
     [self updatePublicCostDisplays: trialNum];
@@ -687,7 +686,9 @@ float maxPublicInstallNorm;
             var     = [trialRuns objectAtIndex:i];
             normVar = [trialRunsDynNorm objectAtIndex:i];
             
-            [newCD updateCDWithScore:normVar.publicInstallCost andCost:var.publicInstallCost andMaxBudget:min_budget_limit andbudgetLimit:maxBudget andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
+            /*[newCD updateCDWithScore:normVar.publicInstallCost andCost:var.publicInstallCost andMaxBudget:min_budget_limit andbudgetLimit:maxBudget andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];*/
+            
+            [newCD updateWithCost:var.publicInstallCost andMaxBudget:maxBudget withMinLimit:min_budget_limit andMaxLimit:max_budget_limit Score:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
         }
     }
     //Static
@@ -700,7 +701,9 @@ float maxPublicInstallNorm;
             
             var     = [trialRuns objectAtIndex:i];
             normVar = [trialRunsNormalized objectAtIndex:i];
-            [newCD updateCDWithScore:normVar.publicInstallCost andCost:var.publicInstallCost andMaxBudget:maxBudget andbudgetLimit:max_budget_limit andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
+            /*[newCD updateCDWithScore:normVar.publicInstallCost andCost:var.publicInstallCost andMaxBudget:maxBudget andbudgetLimit:max_budget_limit andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];*/
+            
+            [newCD updateWithCost:var.publicInstallCost andMaxBudget:maxBudget withMinLimit:min_budget_limit andMaxLimit:max_budget_limit Score:normVar.publicInstallCost andFrame:CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30)];
             
             printf("%d\n", dynamic_cd_width);
         }
@@ -1021,7 +1024,9 @@ float maxPublicInstallNorm;
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
                 
-                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30)];
+                /*cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30)];*/
+                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget withMinLimit:min_budget_limit andMaxLimit:max_budget_limit Score:investmentInstallN andFrame:CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30)];
+                
                 [_dataWindow addSubview: cd];
                 [publicCostDisplays addObject:cd];
             } else {
