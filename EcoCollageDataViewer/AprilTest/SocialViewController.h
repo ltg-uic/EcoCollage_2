@@ -12,5 +12,6 @@
 @interface SocialViewController : UIViewController <UIScrollViewDelegate>
 @property int studyNum;
 @property (strong, nonatomic) IBOutlet UIScrollView *profilesWindow;
+@property (strong, nonatomic) IBOutlet UIScrollView *usernamesWindow;
 
 @end
