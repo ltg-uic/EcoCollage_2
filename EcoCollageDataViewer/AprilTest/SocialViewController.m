@@ -251,6 +251,7 @@ int heightOfVisualization = 290;
 }
 
 
+// synchronizes vertical scrolling between usersnamesWindow and profilesWindow
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if ([scrollView isEqual:_usernamesWindow]) {
         float verticalOffset = _usernamesWindow.contentOffset.y;
@@ -258,7 +259,6 @@ int heightOfVisualization = 290;
         contentOffset.y = verticalOffset;
         contentOffset.x = _profilesWindow.contentOffset.x;
         [_profilesWindow setContentOffset:contentOffset];
-        
     }
     else if ([scrollView isEqual:_profilesWindow]) {
         float verticalOffset = _profilesWindow.contentOffset.y;
@@ -266,7 +266,6 @@ int heightOfVisualization = 290;
         contentOffset.y = verticalOffset;
         contentOffset.x = _usernamesWindow.contentOffset.x;
         [_usernamesWindow setContentOffset:contentOffset];
-        
     }
 }
 
