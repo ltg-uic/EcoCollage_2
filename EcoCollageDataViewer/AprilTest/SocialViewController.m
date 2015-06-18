@@ -20,7 +20,7 @@
 
 NSMutableDictionary *concernColors;
 int widthOfTitleVisualization = 250;
-int heightOfVisualization = 200;
+int heightOfVisualization = 290;
 
 
 
@@ -34,6 +34,11 @@ int heightOfVisualization = 200;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleProfileUpdate)
                                                  name:@"profileUpdate"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(loadUsernames)
+                                                 name:@"usernameUpdate"
                                                object:nil];
     
     
@@ -56,6 +61,7 @@ int heightOfVisualization = 200;
                     [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"Investment", @"publicCostI", @"publicCostM", @"publicCostD", @"Damage Reduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"Efficiency of Intervention ($/Gallon)", @"Water Depth Over Time", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", @"Capacity Used", nil] ];
     
     _profilesWindow.delegate = self;
+    _usernamesWindow.delegate = self;
     
     _profilesWindow.layer.borderColor = [UIColor lightGrayColor].CGColor;
     _profilesWindow.layer.borderWidth = 1.0;
@@ -80,6 +86,11 @@ int heightOfVisualization = 200;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleProfileUpdate)
                                                  name:@"profileUpdate"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(loadUsernames)
+                                                 name:@"usernameUpdate"
                                                object:nil];
     
     [self handleProfileUpdate];
@@ -107,11 +118,11 @@ int heightOfVisualization = 200;
     [self loadOwnProfile];
     
     int amountOfProfilesLoaded = 1;
+    int height = heightOfVisualization;
+    int overallWidth = widthOfTitleVisualization * 8;
     
     for (NSArray *profileArray in tabControl.profiles) {
         int width = 0;
-        
-        
         if(![[profileArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]]) {
             // load concerns in order
             for (int i = 3; i < profileArray.count; i++) {
@@ -147,9 +158,11 @@ int heightOfVisualization = 200;
             }
             
             amountOfProfilesLoaded++;
-            [_profilesWindow setContentSize: CGSizeMake(width + 10, _profilesWindow.contentSize.height)];
+            height += heightOfVisualization;
         }
     }
+    
+    [_profilesWindow setContentSize: CGSizeMake(overallWidth + 10, height)];
     
 }
 
@@ -190,8 +203,6 @@ int heightOfVisualization = 200;
             width += widthOfTitleVisualization;
         }
     }
-    
-    [_profilesWindow setContentSize: CGSizeMake(width + 10, _profilesWindow.contentSize.height)];
 
 }
 
@@ -201,6 +212,8 @@ int heightOfVisualization = 200;
     for (UIView *view in [_usernamesWindow subviews]) {
         [view removeFromSuperview];
     }
+    
+    int height = 0;
     
     // load name of own profile
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -212,6 +225,7 @@ int heightOfVisualization = 200;
     nameLabel.text = [NSString stringWithFormat:@"  %@ (You)", [tabControl.ownProfile objectAtIndex:0]];
     if(nameLabel != NULL) {
         [_usernamesWindow addSubview:nameLabel];
+        height += heightOfVisualization;
     }
 
     int numberOfUsernames = 1;
@@ -228,8 +242,31 @@ int heightOfVisualization = 200;
             if(nameLabel != NULL) {
                 [_usernamesWindow addSubview:nameLabel];
                 numberOfUsernames++;
+                height += heightOfVisualization;
             }
         }
+    }
+    
+    [_usernamesWindow setContentSize: CGSizeMake(_usernamesWindow.contentSize.width, height)];
+}
+
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if ([scrollView isEqual:_usernamesWindow]) {
+        float verticalOffset = _usernamesWindow.contentOffset.y;
+        CGPoint contentOffset;
+        contentOffset.y = verticalOffset;
+        contentOffset.x = _profilesWindow.contentOffset.x;
+        [_profilesWindow setContentOffset:contentOffset];
+        
+    }
+    else if ([scrollView isEqual:_profilesWindow]) {
+        float verticalOffset = _profilesWindow.contentOffset.y;
+        CGPoint contentOffset;
+        contentOffset.y = verticalOffset;
+        contentOffset.x = _usernamesWindow.contentOffset.x;
+        [_usernamesWindow setContentOffset:contentOffset];
+        
     }
 }
 

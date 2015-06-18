@@ -253,7 +253,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
         }
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"usernameUpdate" object:self userInfo:nil];
 }
 
 
@@ -305,6 +305,9 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+    
+    UIAlertView *alert= [[UIAlertView alloc] initWithTitle:@"Memory Warning!" message:@"Device is running low on memory. Application may crash soon." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
 }
 
 
