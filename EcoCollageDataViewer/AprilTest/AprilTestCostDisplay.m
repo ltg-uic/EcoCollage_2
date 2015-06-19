@@ -16,7 +16,7 @@
 @synthesize budgetUsed = _budgetUsed;
 @synthesize budgetOver = _budgetOver;
 
-
+/*
 - (id) initWithCost: (float) cost andMaxBudget: (float) max andbudgetLimit: (float) budgetLimit andScore: (float) normScore andFrame: (CGRect) frame
 {
     self = [super initWithFrame:frame];
@@ -98,7 +98,9 @@
     }
     
     return self;
-}
+}*/
+ 
+ 
 
 - (id) initWithCost: (float)cost highestCost:(float) highestCost MaxBudget: (float) max MinLimit: (float) minLimit MaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame
 {
@@ -154,12 +156,7 @@
     //Dynamic
     else{
          //set visualization for overall budget
-        if (highestCost > max){
-            _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, 160, 20)];
-        }
-        else{
-            _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
-        }
+        _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
         
         _budget.backgroundColor = [UIColor lightGrayColor];
         [self addSubview:_budget];
@@ -224,10 +221,7 @@
     //Dynamic
     else{
         //set visualization for overall budget
-        if (highestCost > max)
-            _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, 160, 20)];
-        else
-            _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
+        _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
         
         _budget.backgroundColor = [UIColor lightGrayColor];
         [self addSubview:_budget];
