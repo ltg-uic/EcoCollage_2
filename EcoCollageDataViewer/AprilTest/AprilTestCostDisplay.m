@@ -17,7 +17,6 @@
 @synthesize budgetOver = _budgetOver;
 
 
-/*
 - (id) initWithCost: (float) cost andMaxBudget: (float) max andbudgetLimit: (float) budgetLimit andScore: (float) normScore andFrame: (CGRect) frame
 {
     self = [super initWithFrame:frame];
@@ -99,9 +98,9 @@
     }
     
     return self;
-}*/
+}
 
-- (id) initWithCost: (float) cost andMaxBudget: (float) max withMinLimit: (float) minLimit andMaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame
+- (id) initWithCost: (float)cost highestCost:(float) highestCost MaxBudget: (float) max MinLimit: (float) minLimit MaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame
 {
     self = [super initWithFrame:frame];
     
@@ -119,79 +118,139 @@
     _valueLabel.textColor = [UIColor blackColor];
     [self addSubview:_valueLabel];
     
-    _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
-    _budget.backgroundColor = [UIColor lightGrayColor];
-    [self addSubview:_budget];
-    
-    int budgetWidth = frame.size.width;
     float widthBudgetUsed;
+    int budgetWidth;
     
-    //within budget
-    if (cost <= max){
-        widthBudgetUsed = normScore;
+    //static
+    if (highestCost == -1){
+        _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
+        _budget.backgroundColor = [UIColor lightGrayColor];
+        [self addSubview:_budget];
+        
+        if(normScore < 1)
+            widthBudgetUsed = normScore;
+        else
+            widthBudgetUsed = 1;
+        
+        budgetWidth = frame.size.width;
         
         _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, widthBudgetUsed*budgetWidth , 20)];
         _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
         [self addSubview:_budgetUsed];
-    }
-    //over budget
-    else{
-        widthBudgetUsed = (max - minLimit)/(maxLimit - minLimit);
         
-        _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20,widthBudgetUsed*budgetWidth , 20)];
+        if(normScore > 1){
+            normScore = (cost - max)/ (maxLimit - max);
+            
+            //cap off the percentage at 100% if it happens to surpass it
+            if(normScore > 1)
+                normScore = 1;
+            
+            _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore) * (160 - frame.size.width), 20)];
+            _budgetOver.backgroundColor = [UIColor redColor];
+            [self addSubview:_budgetOver];
+        }
+        
+    }
+    //Dynamic
+    else{
+         //set visualization for overall budget
+        if (highestCost > max){
+            _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, 160, 20)];
+        }
+        else{
+            _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
+        }
+        
+        _budget.backgroundColor = [UIColor lightGrayColor];
+        [self addSubview:_budget];
+        
+        //budget used in respect to max budget set
+        budgetWidth = normScore * frame.size.width;
+        _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, budgetWidth , 20)];
         _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
         [self addSubview:_budgetUsed];
         
-        normScore = (cost - max)/ (maxLimit - max);
-        
-        //cap off the percentage at 100% if it happens to surpass it
-        if(normScore > 1)
-            normScore = 1;
-        
-        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(widthBudgetUsed*budgetWidth, 20, (normScore) * (160 - frame.size.width) , 20)];
-        _budgetOver.backgroundColor = [UIColor redColor];
-        [self addSubview:_budgetOver];
-
+        //add red label if over budget
+        if (cost > max){
+            normScore = (cost - budgetWidth)/ (maxLimit - budgetWidth);
+            
+            if(normScore > 1)
+                normScore = 1;
+            
+            _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(budgetWidth, 20, (normScore) * (160 - frame.size.width), 20)];
+            _budgetOver.backgroundColor = [UIColor redColor];
+            [self addSubview:_budgetOver];
+        }
     }
+    
     return self;
 }
 
-- (id) updateWithCost: (float) cost andMaxBudget: (float) max withMinLimit: (float) minLimit andMaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame
+- (id) updateWithCost: (float)cost highestCost:(float) highestCost MaxBudget: (float) max MinLimit: (float) minLimit MaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame
 {
-    _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
-    _budget.backgroundColor = [UIColor lightGrayColor];
-    [self addSubview:_budget];
-    
-    int budgetWidth = frame.size.width;
     float widthBudgetUsed;
+    int budgetWidth;
     
-    //within budget
-    if (cost <= max){
-        widthBudgetUsed = normScore;
+    //static
+    if (highestCost == -1){
+        _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
+        _budget.backgroundColor = [UIColor lightGrayColor];
+        [self addSubview:_budget];
+        
+        if(normScore < 1)
+            widthBudgetUsed = normScore;
+        else
+            widthBudgetUsed = 1;
+        
+        budgetWidth = frame.size.width;
         
         _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, widthBudgetUsed*budgetWidth , 20)];
         _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
         [self addSubview:_budgetUsed];
+        
+        if(normScore > 1){
+            normScore = (cost - max)/ (maxLimit - max);
+            
+            //cap off the percentage at 100% if it happens to surpass it
+            if(normScore > 1)
+                normScore = 1;
+            
+            _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(frame.size.width, 20, (normScore) * (160 - frame.size.width), 20)];
+            _budgetOver.backgroundColor = [UIColor redColor];
+            [self addSubview:_budgetOver];
+        }
+        
     }
-    //over budget
+    //Dynamic
     else{
-        widthBudgetUsed = (max - minLimit)/(maxLimit - minLimit);
+        //set visualization for overall budget
+        if (highestCost > max)
+            _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, 160, 20)];
+        else
+            _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
         
-        _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, widthBudgetUsed*budgetWidth , 20)];
+        _budget.backgroundColor = [UIColor lightGrayColor];
+        [self addSubview:_budget];
+        
+        //budget used in respect to max budget set
+         budgetWidth = normScore * frame.size.width;
+        _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, budgetWidth , 20)];
         _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
         [self addSubview:_budgetUsed];
         
-        normScore = (cost - max)/ (maxLimit - max);
-        
-        //cap off the percentage at 100% if it happens to surpass it
-        if(normScore > 1)
-            normScore = 1;
-        
-        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(widthBudgetUsed*budgetWidth, 20, (normScore) * (160 - frame.size.width) , 20)];
-        _budgetOver.backgroundColor = [UIColor redColor];
-        [self addSubview:_budgetOver];
-        
+        //add red label if over budget
+        if (cost > max){
+            normScore = (cost - budgetWidth)/ (maxLimit - budgetWidth);
+            
+            if(normScore > 1)
+                normScore = 1;
+            
+            _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(budgetWidth, 20, (normScore) * (160 - frame.size.width), 20)];
+            _budgetOver.backgroundColor = [UIColor redColor];
+            [self addSubview:_budgetOver];
+        }
     }
+    
     return self;
 }
 

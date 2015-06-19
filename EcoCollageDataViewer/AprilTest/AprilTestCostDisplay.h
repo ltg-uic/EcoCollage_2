@@ -15,10 +15,9 @@
 @property UILabel *budgetUsed;
 @property UILabel *budgetOver;
 
-/*
-- (id) initWithCost: (float) cost andMaxBudget: (float) max andbudgetLimit: (float) budgetLimit andScore: (float) normScore andFrame: (CGRect) frame;
-- (id) updateCDWithScore: (float) normScore andCost: (float) cost andMaxBudget: (float) budget andbudgetLimit: (float) budgetLimit andFrame: (CGRect) frame;*/
-- (id) initWithCost: (float) cost andMaxBudget: (float) max withMinLimit: (float) minLimit andMaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame;
-- (id) updateWithCost: (float) cost andMaxBudget: (float) max withMinLimit: (float) minLimit andMaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame;
 
+- (id) initWithCost: (float) cost andMaxBudget: (float) max andbudgetLimit: (float) budgetLimit andScore: (float) normScore andFrame: (CGRect) frame;
+- (id) updateCDWithScore: (float) normScore andCost: (float) cost andMaxBudget: (float) budget andbudgetLimit: (float) budgetLimit andFrame: (CGRect) frame;
+- (id) initWithCost: (float)cost highestCost:(float) highestCost MaxBudget: (float) max MinLimit: (float) minLimit MaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame;
+- (id) updateWithCost: (float)cost highestCost:(float) highestCost MaxBudget: (float) max MinLimit: (float) minLimit MaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame;
 @end
