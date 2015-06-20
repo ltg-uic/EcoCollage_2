@@ -231,7 +231,10 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 
 
 - (void)removeProfile:(NSArray *)dataArray {
-    // check if profile sent from baby is an update on an already existing one and if so update it
+    // if profile belongs to us, don't do anything
+    if ([[dataArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]])
+        return;
+    
     for (int i = 0; i < _profiles.count; i++) {
         // if device names match, change username
         if([_profiles[i][1] isEqualToString:dataArray[1]]) {
@@ -245,7 +248,10 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 
 
 - (void)handleUsernameUpdates:(NSArray *)dataArray {
-    // check if profile sent from baby is an update on an already existing one and if so update it
+    // if username belongs to this device, don't do anything (name changes are stored locally already)
+    if ([[dataArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]])
+        return;
+    
     for (int i = 0; i < _profiles.count; i++) {
         // if device names match, change username
         if([_profiles[i][1] isEqualToString:dataArray[1]]) {
@@ -265,9 +271,12 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     
     // add all profiles sent from momma to local profile list in baby
     for (int i = 1; i < dataArray.count; i++) {
-        [_profiles addObject:[dataArray objectAtIndex:i]];
+        // only add the profile if it is not our own
+        if (![[[dataArray objectAtIndex:i]objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name] ])
+            [_profiles addObject:[dataArray objectAtIndex:i]];
     }
     
+    NSLog(@"Received all profiles from Momma");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
@@ -279,6 +288,11 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 // 3 - 10 : concerns in order of most important to least important
 
 - (void) receiveProfileFromMomma:(NSArray *)dataArray {
+    // if profile belongs to us, don't do anything
+    if ([[dataArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]])
+        return;
+    
+    
     BOOL oldProfile = 0;
     
     

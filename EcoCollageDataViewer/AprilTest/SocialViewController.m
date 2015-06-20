@@ -123,43 +123,41 @@ int heightOfVisualization = 290;
     
     for (NSArray *profileArray in tabControl.profiles) {
         int width = 0;
-        if(![[profileArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]]) {
-            // load concerns in order
-            for (int i = 3; i < profileArray.count; i++) {
-                UILabel *currentLabel = [[UILabel alloc]init];
-                currentLabel.backgroundColor = [concernColors objectForKey:[profileArray objectAtIndex:i]];
-                currentLabel.frame = CGRectMake(width, amountOfProfilesLoaded * heightOfVisualization + 2, widthOfTitleVisualization, 40);
-                currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
+        // load concerns in order
+        for (int i = 3; i < profileArray.count; i++) {
+            UILabel *currentLabel = [[UILabel alloc]init];
+            currentLabel.backgroundColor = [concernColors objectForKey:[profileArray objectAtIndex:i]];
+            currentLabel.frame = CGRectMake(width, amountOfProfilesLoaded * heightOfVisualization + 2, widthOfTitleVisualization, 40);
+            currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
         
-                if([[profileArray objectAtIndex:i] isEqualToString:@"Investment"])
-                    currentLabel.text = @"  Investment";
-                else if([[profileArray objectAtIndex:i] isEqualToString:@"Damage Reduction"])
-                    currentLabel.text = @"  Damage Reduction";
-                else if([[profileArray objectAtIndex:i] isEqualToString:@"Efficiency of Intervention ($/Gallon)"])
-                    currentLabel.text = @"  Efficiency of Intervention";
-                else if([[profileArray objectAtIndex:i] isEqualToString:@"Capacity Used"])
-                    currentLabel.text = @"  Intervention Capacity";
-                else if([[profileArray objectAtIndex:i] isEqualToString:@"Water Depth Over Time"])
-                    currentLabel.text = @"  Water Depth Over Storm";
-                else if([[profileArray objectAtIndex:i] isEqualToString:@"Maximum Flooded Area"])
-                    currentLabel.text = @"  Maximum Flooded Area";
-                else if([[profileArray objectAtIndex:i] isEqualToString:@"Groundwater Infiltration"])
-                    currentLabel.text = @"  Groundwater Infiltration";
-                else if([[profileArray objectAtIndex:i] isEqualToString:@"Impact on my Neighbors"])
-                    currentLabel.text = @"  Impact on my Neighbors";
-                else {
-                    currentLabel = NULL;
-                }
-            
-                if(currentLabel != NULL){
-                    [_profilesWindow addSubview:currentLabel];
-                    width += widthOfTitleVisualization;
-                }
+            if([[profileArray objectAtIndex:i] isEqualToString:@"Investment"])
+                currentLabel.text = @"  Investment";
+            else if([[profileArray objectAtIndex:i] isEqualToString:@"Damage Reduction"])
+                currentLabel.text = @"  Damage Reduction";
+            else if([[profileArray objectAtIndex:i] isEqualToString:@"Efficiency of Intervention ($/Gallon)"])
+                currentLabel.text = @"  Efficiency of Intervention";
+            else if([[profileArray objectAtIndex:i] isEqualToString:@"Capacity Used"])
+                currentLabel.text = @"  Intervention Capacity";
+            else if([[profileArray objectAtIndex:i] isEqualToString:@"Water Depth Over Time"])
+                currentLabel.text = @"  Water Depth Over Storm";
+            else if([[profileArray objectAtIndex:i] isEqualToString:@"Maximum Flooded Area"])
+                currentLabel.text = @"  Maximum Flooded Area";
+            else if([[profileArray objectAtIndex:i] isEqualToString:@"Groundwater Infiltration"])
+                currentLabel.text = @"  Groundwater Infiltration";
+            else if([[profileArray objectAtIndex:i] isEqualToString:@"Impact on my Neighbors"])
+                currentLabel.text = @"  Impact on my Neighbors";
+            else {
+                currentLabel = NULL;
             }
-            
-            amountOfProfilesLoaded++;
-            height += heightOfVisualization;
+        
+            if(currentLabel != NULL){
+                [_profilesWindow addSubview:currentLabel];
+                width += widthOfTitleVisualization;
+            }
         }
+            
+        amountOfProfilesLoaded++;
+        height += heightOfVisualization;
     }
     
     [_profilesWindow setContentSize: CGSizeMake(overallWidth + 10, height)];
@@ -232,18 +230,15 @@ int heightOfVisualization = 290;
     
     // loop through other profiles and load their name labels
     for (NSArray *profile in tabControl.profiles) {
-        // only load the username if it is not your own
-        if (![[profile objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]]) {
-            UILabel *nameLabel = [[UILabel alloc]init];
-            nameLabel.backgroundColor = [UIColor whiteColor];
-            nameLabel.frame = CGRectMake(0, numberOfUsernames * heightOfVisualization + 2, _usernamesWindow.frame.size.width, 40);
-            nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
-            nameLabel.text = [NSString stringWithFormat:@"  %@", [profile objectAtIndex:2]];
-            if(nameLabel != NULL) {
-                [_usernamesWindow addSubview:nameLabel];
-                numberOfUsernames++;
-                height += heightOfVisualization;
-            }
+        UILabel *nameLabel = [[UILabel alloc]init];
+        nameLabel.backgroundColor = [UIColor whiteColor];
+        nameLabel.frame = CGRectMake(0, numberOfUsernames * heightOfVisualization + 2, _usernamesWindow.frame.size.width, 40);
+        nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
+        nameLabel.text = [NSString stringWithFormat:@"  %@", [profile objectAtIndex:2]];
+        if(nameLabel != NULL) {
+            [_usernamesWindow addSubview:nameLabel];
+            numberOfUsernames++;
+            height += heightOfVisualization;
         }
     }
     
