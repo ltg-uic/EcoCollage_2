@@ -18,5 +18,6 @@
 @property (strong, nonatomic) IBOutlet UITextView *macMiniTextView;
 
 @property (strong, nonatomic) IBOutlet UILabel *studyNumberLabel;
+@property (strong, nonatomic) IBOutlet UILabel *trialNumberLabel;
 
 @end

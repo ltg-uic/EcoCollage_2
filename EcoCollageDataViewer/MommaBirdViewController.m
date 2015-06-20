@@ -7,6 +7,8 @@
 //
 
 #import "MommaBirdViewController.h"
+#import "AprilTestTabBarController.h"
+#import "AprilTestSimRun.h"
 #import <Foundation/Foundation.h>
 
 @interface MommaBirdViewController () // Class extension
@@ -27,8 +29,11 @@
 
 static NSTimeInterval const kConnectionTimeout = 15.0;
 NSMutableArray *profiles;
-NSMutableArray *trials;
-int studyNumber;
+NSMutableArray * trialRuns;             //contains list of simulation data from dataFromMacMini pulled
+NSMutableArray * trialRunsNormalized;   //contains list of simulation data from dataFromMacMini pulled in normalized STATIC  form
+NSMutableArray * trialRunsDynNorm;      //contains list of simulation data from dataFromMacMini pulled in normalized DYNAMIC form
+NSMutableArray *dataFromMacMini;
+int trialNum;
 
 
 #define SEPARATOR_FOR_TRIAL_DATA        @"$(TRIAL_DATA)$"
@@ -38,6 +43,12 @@ int studyNumber;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    _url = tabControl.url;
+    _studyNum = tabControl.studyNum;
+    trialNum = 0;
     
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     
@@ -58,9 +69,13 @@ int studyNumber;
     [self setupGKSession];
     
     profiles = [[NSMutableArray alloc]init];
-    trials = [[NSMutableArray alloc]init];
+    dataFromMacMini = [[NSMutableArray alloc]init];
+    trialRuns = [[NSMutableArray alloc]init];
+    trialRunsNormalized = [[NSMutableArray alloc]init];
+    trialRunsDynNorm = [[NSMutableArray alloc]init];
     
-    self.studyNumberLabel.text = [NSString stringWithFormat:@"%d", _studyNum];
+    self.studyNumberLabel.text = [NSString stringWithFormat:@"Study Number %d", _studyNum];
+    self.trialNumberLabel.text = [NSString stringWithFormat:@"Trial Number %d", trialNum];
     
     // setup core bluetooth connection to mac mini
     self.data = [[NSMutableData alloc]init];
@@ -502,7 +517,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         // We have, so show the data,
         NSString *stringForMacMiniTextView = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
         
-        [trials addObject:stringForMacMiniTextView];
+        [dataFromMacMini addObject:stringForMacMiniTextView];
 
         [self updateMacMiniTextView];
         
@@ -523,8 +538,8 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 - (void) updateMacMiniTextView {
     NSMutableString *stringForMacMiniTextView = [[NSMutableString alloc]initWithString:@""];
     
-    for (int i = 0; i < trials.count; i++) {
-        NSArray *array = [[trials objectAtIndex:i] componentsSeparatedByString:SEPARATOR_FOR_TRIAL_DATA];
+    for (int i = 0; i < dataFromMacMini.count; i++) {
+        NSArray *array = [[dataFromMacMini objectAtIndex:i] componentsSeparatedByString:SEPARATOR_FOR_TRIAL_DATA];
         
         [stringForMacMiniTextView appendString:[[NSString alloc]initWithFormat:@"Trial %d\n", i]];
         [stringForMacMiniTextView appendString:[array componentsJoinedByString:@"\n"]];
@@ -534,6 +549,60 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     _macMiniTextView.text = stringForMacMiniTextView;
 }
 
+- (IBAction)loadNextTrial:(UIButton *)sender {
+    /*
+    
+    //pull content from the server that is said to be from le trial with real vals
+    NSString * urlPlusFile = [NSString stringWithFormat:@"%@/%@", _url, @"simOutput.php"];
+    NSString *myRequestString = [[NSString alloc] initWithFormat:@"trialID=%d&studyID=%d", trialNum, _studyNum ];
+    NSData *myRequestData = [ NSData dataWithBytes: [ myRequestString UTF8String ] length: [ myRequestString length ] ];
+    NSMutableURLRequest *request = [ [ NSMutableURLRequest alloc ] initWithURL: [ NSURL URLWithString: urlPlusFile ] ];
+    [ request setHTTPMethod: @"POST" ];
+    [ request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+    [ request setHTTPBody: myRequestData ];
+    
+    NSString *content;
+    while( !content){
+        NSURLResponse *response;
+        NSError *err;
+        NSData *returnData = [ NSURLConnection sendSynchronousRequest: request returningResponse:&response error:&err];
+        //NSLog(@"error: %@", err);
+        
+        if( [returnData bytes]) content = [NSString stringWithUTF8String:[returnData bytes]];
+        NSLog(@"responseData: %@", content);
+    }
+    
+    //pull content from the server that is said to be from le trial that is said to be normalized vals (ranging from 0 to 1)
+    NSString *urlPlusFileN = [NSString stringWithFormat:@"%@/%@", _url, @"simOutputN.php"];
+    NSString *myRequestStringN = [[NSString alloc] initWithFormat:@"trialID=%d&studyID=%d", trialNum, _studyNum ];
+    NSData *myRequestDataN = [ NSData dataWithBytes: [ myRequestStringN UTF8String ] length: [ myRequestStringN length ] ];
+    NSMutableURLRequest *requestN = [ [ NSMutableURLRequest alloc ] initWithURL: [ NSURL URLWithString: urlPlusFileN ] ];
+    [ requestN setHTTPMethod: @"POST" ];
+    [ requestN setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
+    [ requestN setHTTPBody: myRequestDataN ];
+    
+    NSString *contentN;
+    while( !contentN){
+        NSURLResponse *responseN;
+        NSError *err;
+        NSData *returnDataN = [ NSURLConnection sendSynchronousRequest: requestN returningResponse:&responseN error:&err];
+        //NSLog(@"error: %@", err);
+        
+        if( [returnDataN bytes]) contentN = [NSString stringWithUTF8String:[returnDataN bytes]];
+        //NSLog(@"responseData: %@", contentN);
+    }
+    
+    if(content != NULL && content.length > 100 && contentN != NULL){
+        //Adds a new trial to a list of trials
+        AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:content withTrialNum:trialNum];
+        
+        [trialRuns addObject: simRun];                  //contains trials containing real values
+        
+        trialNum++;
+        self.trialNumberLabel.text = [NSString stringWithFormat:@"Trial Number %d", trialNum];
+    }
+     */
+}
 
 
 @end

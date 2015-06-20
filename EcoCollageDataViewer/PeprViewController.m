@@ -210,9 +210,14 @@ NSArray * importQuestions;
     }
 }
 
-
+// calls textFieldDidEndEditing when done
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+    [textField resignFirstResponder];
+    return YES;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField{
     if([textField isEqual:self.usernameText]) {
         [self sendUsername];
         [self loadOwnProfile];
@@ -225,8 +230,7 @@ NSArray * importQuestions;
                                       self.view.frame.size.width, self.view.frame.size.height);
         [UIView commitAnimations];
     }
-    [textField resignFirstResponder];
-    return YES;
+    
 }
 
 

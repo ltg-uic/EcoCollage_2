@@ -862,7 +862,7 @@ float maxPublicInstallNorm;
         //NSLog(@"error: %@", err);
         
         if( [returnData bytes]) content = [NSString stringWithUTF8String:[returnData bytes]];
-        //NSLog(@"responseData: %@", content);
+        NSLog(@"responseData: %@", content);
     }
     
     //pull content from the server that is said to be from le trial that is said to be normalized vals (ranging from 0 to 1)
