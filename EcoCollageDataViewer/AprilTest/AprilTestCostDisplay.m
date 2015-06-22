@@ -98,9 +98,7 @@
     }
     
     return self;
-}*/
- 
- 
+}
 
 - (id) initWithCost: (float)cost highestCost:(float) highestCost MaxBudget: (float) max MinLimit: (float) minLimit MaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame
 {
@@ -243,6 +241,67 @@
             _budgetOver.backgroundColor = [UIColor redColor];
             [self addSubview:_budgetOver];
         }
+    }
+    
+    return self;
+}*/
+
+- (id) initWithCost: (float)cost costWidth:(float) costWidth maxBudgetWidth:(float) MaxWidth globalBudgetWidth: (float) globalWidth highCostWidth:(float)highCostWidth andFrame: (CGRect) frame
+{
+    self = [super initWithFrame:frame];
+    _cost = cost;
+    
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    _valueLabel = [[UILabel alloc] init];
+    _valueLabel.text = [NSString stringWithFormat:@"Installation Cost $%@", [formatter stringFromNumber: [NSNumber numberWithInt:cost] ]];
+    _valueLabel.frame =CGRectMake(0, 0, 0, 0);
+    [_valueLabel sizeToFit ];
+    _valueLabel.font = [UIFont systemFontOfSize:14.0];
+    _valueLabel.textColor = [UIColor blackColor];
+    [self addSubview:_valueLabel];
+    
+    if (highCostWidth != -1){
+        _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, highCostWidth, 20)];
+    }
+    else
+        _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
+    
+    _budget.backgroundColor = [UIColor lightGrayColor];
+    [self addSubview:_budget];
+    
+    _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, costWidth, 20)];
+    _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
+    [self addSubview:_budgetUsed];
+    
+    if (costWidth > MaxWidth){
+        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(MaxWidth, 20, costWidth - MaxWidth, 20)];
+        _budgetOver.backgroundColor = [UIColor redColor];
+        [self addSubview:_budgetOver];
+    }
+    
+    return self;
+}
+- (id) updateWithCost: (float)cost costWidth:(float) costWidth maxBudgetWidth:(float) MaxWidth globalBudgetWidth: (float) globalWidth highCostWidth:(float)highCostWidth andFrame: (CGRect) frame
+{
+    if (highCostWidth != -1){
+        _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, highCostWidth, 20)];
+    }
+    else
+        _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
+    
+    _budget.backgroundColor = [UIColor lightGrayColor];
+    [self addSubview:_budget];
+    
+    _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, costWidth, 20)];
+    _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
+    [self addSubview:_budgetUsed];
+    
+    if (costWidth > MaxWidth){
+        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(MaxWidth, 20, costWidth - MaxWidth, 20)];
+        _budgetOver.backgroundColor = [UIColor redColor];
+        [self addSubview:_budgetOver];
     }
     
     return self;

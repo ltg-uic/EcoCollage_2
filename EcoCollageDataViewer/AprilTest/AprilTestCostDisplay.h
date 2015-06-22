@@ -15,9 +15,11 @@
 @property UILabel *budgetUsed;
 @property UILabel *budgetOver;
 
-
+/*
 - (id) initWithCost: (float) cost andMaxBudget: (float) max andbudgetLimit: (float) budgetLimit andScore: (float) normScore andFrame: (CGRect) frame;
 - (id) updateCDWithScore: (float) normScore andCost: (float) cost andMaxBudget: (float) budget andbudgetLimit: (float) budgetLimit andFrame: (CGRect) frame;
 - (id) initWithCost: (float)cost highestCost:(float) highestCost MaxBudget: (float) max MinLimit: (float) minLimit MaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame;
-- (id) updateWithCost: (float)cost highestCost:(float) highestCost MaxBudget: (float) max MinLimit: (float) minLimit MaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame;
+- (id) updateWithCost: (float)cost highestCost:(float) highestCost MaxBudget: (float) max MinLimit: (float) minLimit MaxLimit:(float) maxLimit Score: (float) normScore andFrame: (CGRect) frame;*/
+- (id) initWithCost: (float)cost costWidth:(float) costWidth maxBudgetWidth:(float) MaxWidth globalBudgetWidth: (float) globalWidth highCostWidth:(float)highCostWidth andFrame: (CGRect) frame;
+- (id) updateWithCost: (float)cost costWidth:(float) costWidth maxBudgetWidth:(float) MaxWidth globalBudgetWidth: (float) globalWidth highCostWidth:(float)highCostWidth andFrame: (CGRect) frame;
 @end

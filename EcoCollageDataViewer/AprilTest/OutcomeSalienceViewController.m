@@ -177,7 +177,7 @@ float maxPublicInstallNorm;
     
     [self drawTitles];
     [self drawSliders];
-    dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
     
     [_dataWindow setContentOffset:CGPointMake(0, 0)];
     [_mapWindow setContentOffset:CGPointMake(0,0 )];
@@ -340,12 +340,16 @@ float maxPublicInstallNorm;
     //}
 }
 
-- (int)xPositionFromSliderValue:(UISlider *)aSlider;
+- (int)getWidthFromSlider:(UISlider *)aSlider toValue:(float) value;
 {
+    if (value < aSlider.minimumValue){
+        return 0;
+    }
+    
     float sliderRange = aSlider.frame.size.width - aSlider.currentThumbImage.size.width;
     float sliderOrigin = aSlider.frame.origin.x + (aSlider.currentThumbImage.size.width / 2.0);
     
-    float sliderValueToPixels = (((aSlider.value-aSlider.minimumValue)/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
+    float sliderValueToPixels = (((value-aSlider.minimumValue)/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
     float sliderValforZero    = ((0/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
     
     int returnLocation = (int)sliderValueToPixels - (int)sliderValforZero;
@@ -372,7 +376,7 @@ float maxPublicInstallNorm;
     maxBudget = value;
     
     //update the width of the public install cost bars (make sure it isn't 0)
-    dynamic_cd_width = [self xPositionFromSliderValue:BudgetSlider];
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
     
     //only update all labels/bars if Static normalization is switched on
     if (!_DynamicNormalization.isOn){
@@ -384,6 +388,7 @@ float maxPublicInstallNorm;
 -(void) updateBudgetSliderTo: (float) newValue
 {
     [BudgetSlider setValue:newValue animated:YES];
+    maxBudget = newValue;
     
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -394,8 +399,9 @@ float maxPublicInstallNorm;
 
 -(void) normalizaAllandUpdateStatically{
     trialNum = (int)[trialRuns count];
-    
     [self normalizeStatically:trialNum];
+    
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
     [self updatePublicCostDisplays: trialNum];
     [self updateBudgetLabels:trialNum];
     
@@ -408,8 +414,9 @@ float maxPublicInstallNorm;
     //normalize all trials right after adding the newest trial
     [self normalizeDynamically];
     
-    //updates the normalization of the previous trials in respect to the newest trial
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:installationCost->highestCost];
     [self updatePublicCostDisplays: trialNum];
+    [self updateBudgetLabels:trialNum];
     
     //updates the component scores
     for (int i = 0; i < trialNum; i++)
@@ -687,7 +694,13 @@ float maxPublicInstallNorm;
             normVar = [trialRunsDynNorm objectAtIndex:i];
             frame   = CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30);
             
-            [newCD updateWithCost:var.publicInstallCost highestCost:installationCost->highestCost MaxBudget:maxBudget MinLimit:min_budget_limit MaxLimit:max_budget_limit Score:normVar.publicInstallCost andFrame:frame];
+            float costWidth = [self getWidthFromSlider:BudgetSlider toValue:var.publicInstallCost];
+            float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
+            float highCostWidth = [self getWidthFromSlider:BudgetSlider toValue:installationCost->highestCost];
+            float globalBudgetWidth = 160;
+            
+            [newCD updateWithCost:var.publicInstallCost costWidth:costWidth maxBudgetWidth:maxBudgetWidth globalBudgetWidth:globalBudgetWidth highCostWidth:highCostWidth andFrame:frame];
+
         }
     }
     //Static
@@ -701,8 +714,11 @@ float maxPublicInstallNorm;
             normVar = [trialRunsNormalized objectAtIndex:i];
             frame   = CGRectMake(25, normVar.trialNum*175 + 40, dynamic_cd_width, 30);
             
-            [newCD updateWithCost:var.publicInstallCost highestCost:-1 MaxBudget:maxBudget MinLimit:min_budget_limit MaxLimit:max_budget_limit Score:normVar.publicInstallCost andFrame:frame];
+            float costWidth = [self getWidthFromSlider:BudgetSlider toValue:var.publicInstallCost];
+            float maxBudgetWidth = dynamic_cd_width;
+            float globalBudgetWidth = 160;
             
+            [newCD updateWithCost:var.publicInstallCost costWidth:costWidth maxBudgetWidth:maxBudgetWidth globalBudgetWidth:globalBudgetWidth highCostWidth:-1 andFrame:frame];
         }
 
     }
@@ -1016,16 +1032,21 @@ float maxPublicInstallNorm;
             float investmentMaintain = simRun.publicMaintenanceCost;
             float investmentInstallN = simRunNormal.publicInstallCost;
             float investmentMaintainN = simRunNormal.publicMaintenanceCost;
+            float highCostWidth = (_DynamicNormalization.isOn) ? ([self getWidthFromSlider:BudgetSlider toValue:installationCost->highestCost]) : -1;
             CGRect frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
-            float highCost = (_DynamicNormalization.isOn) ? installationCost->highestCost : -1;
             
             AprilTestCostDisplay *cd;
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
-                /*
-                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30)];*/
-                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall highestCost:highCost MaxBudget:maxBudget MinLimit:min_budget_limit MaxLimit:max_budget_limit Score:investmentInstallN andFrame:frame];
                 
+                /*cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30)];
+                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall highestCost:highCost MaxBudget:maxBudget MinLimit:min_budget_limit MaxLimit:max_budget_limit Score:investmentInstallN andFrame:frame];*/
+                
+                float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.publicInstallCost];
+                float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
+                float globalBudgetWidth = 160;
+                
+                cd = [[AprilTestCostDisplay alloc] initWithCost:simRun.publicInstallCost costWidth:costWidth maxBudgetWidth:maxBudgetWidth globalBudgetWidth:globalBudgetWidth highCostWidth:highCostWidth andFrame:frame];
                 
                 [_dataWindow addSubview: cd];
                 [publicCostDisplays addObject:cd];
@@ -1047,7 +1068,6 @@ float maxPublicInstallNorm;
                 [OverBudgetLabels addObject:valueLabel];
             }
             
-           
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (trial * 175) +100 andColor:[UIColor blackColor] to:nil];
             
