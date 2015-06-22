@@ -11,11 +11,14 @@
 
 @interface AprilTestTabBarController : UITabBarController <GKSessionDelegate>
 @property NSMutableArray * currentConcernRanking;
-@property NSMutableArray * trials;
+@property NSMutableArray * trialRuns;
+@property NSMutableArray * trialRunsNormalized;
+@property NSMutableArray * trialRunsDynNorm;
 @property NSMutableArray * profiles;
 @property NSMutableArray * ownProfile;
 @property NSString * url;
 @property int studyNum;
+@property int trialNum;
 @property (nonatomic, strong) GKSession * session;
 @property NSString * peerIDForMomma;
 @end

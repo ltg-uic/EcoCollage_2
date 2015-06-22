@@ -74,15 +74,11 @@
         AprilTestTabBarController *tab = [segue destinationViewController];
         tab.url = _url;
         tab.studyNum = _studyNum;
-        // don't need to init tab.currentSession since the GK session will be
-        // set up in the AprilTestTabBarController
     }
     else {
         MommaBirdViewController *momma_data = [segue destinationViewController];
         momma_data.url = _url;
         momma_data.studyNum = _studyNum;
-        // don't need to init momma_data.currentSession since the GK session will be
-        // set up in the MommaBirdViewController
     }
 }
 @end

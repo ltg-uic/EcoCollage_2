@@ -8,6 +8,8 @@
 
 #import "AprilTestTabBarController.h"
 #import "AprilTestVariable.h"
+#import "AprilTestNormalizedVariable.h"
+#import "AprilTestSimRun.h"
 
 @interface AprilTestTabBarController ()
 
@@ -19,10 +21,13 @@
 @synthesize currentConcernRanking = _currentConcernRanking;
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
+@synthesize trialNum = _trialNum;
 @synthesize session = _session;
-@synthesize trials = _trials;
 @synthesize profiles = _profiles;
 @synthesize ownProfile = _ownProfile;
+@synthesize trialRuns = _trialRuns;
+@synthesize trialRunsNormalized = _trialRunsNormalized;
+@synthesize trialRunsDynNorm = _trialRunsDynNorm;
 
 static NSTimeInterval const kConnectionTimeout = 15.0;
 
@@ -43,6 +48,8 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 {
     [super viewDidLoad];
     
+    _trialNum = 0;
+    
     //manually derived list of variables that are going to be implemented in this test. Eventually, should be replaced with a access to database, such that width, etc, are all documented as such.
     
     //_currentConcernRanking = [[NSMutableArray alloc] initWithObjects: [[AprilTestVariable alloc] initWith: @"publicCost" withDisplayName:@"Public Costs" withNumVar: 1 withWidth: 220 withRank:3], [[AprilTestVariable alloc] initWith: @"privateCost" withDisplayName:@"Private Costs" withNumVar: 3 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith: @"efficiencyOfIntervention" withDisplayName:@"Efficiency of Intervention ($/Gallon)" withNumVar: 1 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleTime" withDisplayName:@"Water Depth over Storm" withNumVar: 1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"impactingMyNeighbors" withDisplayName:@"Impact on my Neighbors" withNumVar: 1 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith:@"groundwaterInfiltration" withDisplayName:@"Groundwater Infiltration" withNumVar: 1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleMax" withDisplayName:@"Maximum Water Extent" withNumVar: 1 withWidth:220 withRank:1], nil];
@@ -58,6 +65,17 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     _currentConcernRanking = [[NSMutableArray alloc] initWithObjects: [[AprilTestVariable alloc] initWith:@"publicCost" withDisplayName:@"Investment" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"privateCost" withDisplayName:@"Damage Reduction" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"efficiencyOfIntervention" withDisplayName:@"Efficiency of Intervention ($/Gallon)" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"capacity" withDisplayName:@"Capacity Used" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleTime" withDisplayName:@"Water Depth Over Time" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleMax" withDisplayName:@"Maximum Flooded Area" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"groundwaterInfiltration" withDisplayName:@"Groundwater Infiltration" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"impactingMyNeighbors" withDisplayName:@"Impact on my Neighbors" withNumVar:1 withWidth:220 withRank:1], nil];
     
     // Do any additional setup after loading the view.
+    
+    _trialRuns = [[NSMutableArray alloc]init];
+    _trialRunsNormalized = [[NSMutableArray alloc]init];
+    _trialRunsDynNorm = [[NSMutableArray alloc]init];
+    _profiles = [[NSMutableArray alloc]init];
+    _ownProfile = [[NSMutableArray alloc]init];
+    
+    // load all the view controllers so they can setup their notifications
+    for(UIViewController * viewController in  self.viewControllers){
+        viewController.view;
+    }
     
     
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
@@ -77,16 +95,6 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
                         object:nil];
     
     [self setupSession];
-    
-    
-    _trials = [[NSMutableArray alloc]init];
-    _profiles = [[NSMutableArray alloc]init];
-    _ownProfile = [[NSMutableArray alloc]init];
-    
-    // load all the view controllers so they can setup their notifications
-    for(UIViewController * viewController in  self.viewControllers){
-        viewController.view;
-    }
     
 }
 
@@ -227,6 +235,12 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     else if([dataArray[0] isEqualToString:@"removeProfile"]) {
         [self removeProfile:dataArray];
     }
+    else if([dataArray[0] isEqualToString:@"singleTrialData"]) {
+        [self receiveSingleTrial:dataArray];
+    }
+    else if([dataArray[0] isEqualToString:@"multipleTrialsData"]) {
+        [self receiveMultipleTrials:dataArray];
+    }
 }
 
 
@@ -311,6 +325,43 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     }
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
+}
+
+
+- (void) receiveSingleTrial:(NSArray *)dataArray {
+    AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:[dataArray objectAtIndex:1] withTrialNum:_trialNum];
+    AprilTestNormalizedVariable *simRunNormal = [[AprilTestNormalizedVariable alloc] init: [dataArray objectAtIndex:2] withTrialNum:_trialNum];
+    AprilTestNormalizedVariable *simRunDyn    = [[AprilTestNormalizedVariable alloc] init: [dataArray objectAtIndex:2] withTrialNum:_trialNum];
+    
+    [_trialRuns addObject:simRun];
+    [_trialRunsNormalized addObject:simRunNormal];
+    [_trialRunsDynNorm addObject:simRunDyn];
+    
+    _trialNum++;
+}
+
+
+- (void) receiveMultipleTrials:(NSArray *)dataArray {
+    // empty trials arrays to prepare to receive all from Momma
+    [_trialRuns removeAllObjects];
+    [_trialRunsNormalized removeAllObjects];
+    [_trialRunsDynNorm removeAllObjects];
+    
+    _trialNum = 0;
+    
+    for (int i = 1; i < dataArray.count; i += 2) {
+        
+        AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:[dataArray objectAtIndex:i] withTrialNum:_trialNum];
+        AprilTestNormalizedVariable *simRunNormal = [[AprilTestNormalizedVariable alloc] init: [dataArray objectAtIndex:i+1] withTrialNum:_trialNum];
+        AprilTestNormalizedVariable *simRunDyn    = [[AprilTestNormalizedVariable alloc] init: [dataArray objectAtIndex:i+1] withTrialNum:_trialNum];
+        
+        [_trialRuns addObject:simRun];
+        [_trialRunsNormalized addObject:simRunNormal];
+        [_trialRunsDynNorm addObject:simRunDyn];
+        
+        _trialNum++;
+    }
+    
 }
 
 

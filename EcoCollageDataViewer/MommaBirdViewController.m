@@ -7,8 +7,8 @@
 //
 
 #import "MommaBirdViewController.h"
-#import "AprilTestTabBarController.h"
 #import "AprilTestSimRun.h"
+#import "AprilTestNormalizedVariable.h"
 #import <Foundation/Foundation.h>
 
 @interface MommaBirdViewController () // Class extension
@@ -29,9 +29,8 @@
 
 static NSTimeInterval const kConnectionTimeout = 15.0;
 NSMutableArray *profiles;
-NSMutableArray * trialRuns;             //contains list of simulation data from dataFromMacMini pulled
-NSMutableArray * trialRunsNormalized;   //contains list of simulation data from dataFromMacMini pulled in normalized STATIC  form
-NSMutableArray * trialRunsDynNorm;      //contains list of simulation data from dataFromMacMini pulled in normalized DYNAMIC form
+NSMutableArray * trialRuns;             // array of strings, not yet analyzed as trial data, to be passed to babies
+NSMutableArray * trialRunsNormalized;   // same as above, but this contains normalized raw data
 NSMutableArray *dataFromMacMini;
 int trialNum;
 
@@ -45,9 +44,6 @@ int trialNum;
     [super viewDidLoad];
 
     
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    _url = tabControl.url;
-    _studyNum = tabControl.studyNum;
     trialNum = 0;
     
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
@@ -72,7 +68,6 @@ int trialNum;
     dataFromMacMini = [[NSMutableArray alloc]init];
     trialRuns = [[NSMutableArray alloc]init];
     trialRunsNormalized = [[NSMutableArray alloc]init];
-    trialRunsDynNorm = [[NSMutableArray alloc]init];
     
     self.studyNumberLabel.text = [NSString stringWithFormat:@"Study Number %d", _studyNum];
     self.trialNumberLabel.text = [NSString stringWithFormat:@"Trial Number %d", trialNum];
@@ -150,7 +145,15 @@ int trialNum;
         case GKPeerStateConnected:
         {
             NSLog(@"didChangeState: peer %@ connected", peerName);
-            [self sendAllProfilesToNewBaby:peerID];
+            // when a baby is connected, send it all of the profiles loaded
+            if ([profiles count] != 0) {
+                [self sendAllProfilesToNewBaby:peerID];
+            }
+            
+            // when a baby is connected, send it all of the trials loaded
+            if ([trialRuns count] != 0 && [trialRunsNormalized count] != 0) {
+                [self sendAllTrialsToSpecificBaby:peerID];
+            }
             break;
         }
             
@@ -354,12 +357,91 @@ int trialNum;
     [dataMutableArray replaceObjectAtIndex:0 withObject:@"profileToBaby"];
      
      
-    NSDictionary *profileToSendToBaby = [NSDictionary dictionaryWithObject:dataMutableArray
-                                                                     forKey:@"data"];
+    NSDictionary *profileToSendToBaby = [NSDictionary dictionaryWithObject:dataMutableArray forKey:@"data"];
     // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
     if(profileToSendToBaby != nil) {
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profileToSendToBaby];
         [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+    }
+}
+
+
+- (void) sendSingleTrialToBabies:(NSString *)trialContent normalizedData:(NSString *) trialContentN {
+    NSMutableArray *dataArray = [[NSMutableArray alloc]init];
+    
+    // add the type of data that is being sent
+    [dataArray addObject:@"singleTrialData"];
+    
+    // add trial content
+    [dataArray addObject:trialContent];
+    
+    // add normalized trial content
+    [dataArray addObject:trialContentN];
+    
+    NSDictionary *trialToSendToBaby = [NSDictionary dictionaryWithObject:dataArray forKey:@"data"];
+    
+    // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
+    if(trialToSendToBaby != nil) {
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:trialToSendToBaby];
+        [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+    }
+}
+
+
+- (void) sendSingleTrialToSpecificBaby:(NSString *)trialContent normalizedData:(NSString *) trialContentN peerID:(NSString *)peerID {
+    NSMutableArray *dataArray = [[NSMutableArray alloc]init];
+    
+    // add the type of data that is being sent
+    [dataArray addObject:@"singleTrialData"];
+    
+    // add trial content
+    [dataArray addObject:trialContent];
+    
+    // add normalized trial content
+    [dataArray addObject:trialContentN];
+    
+    NSDictionary *trialToSendToBaby = [NSDictionary dictionaryWithObject:dataArray forKey:@"data"];
+    
+    // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
+    if(trialToSendToBaby != nil) {
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:trialToSendToBaby];
+        [_session sendData:data toPeers:@[peerID] withDataMode:GKSendDataReliable error:nil];
+    }
+}
+
+
+- (void) sendAllTrialsToSpecificBaby:(NSString *)peerID {
+    // if there is only one trial loaded, send it by itself
+    if ([trialRuns count] == 1 && [trialRunsNormalized count] == 1) {
+        [self sendSingleTrialToSpecificBaby:[trialRuns objectAtIndex:0] normalizedData:[trialRunsNormalized objectAtIndex:0] peerID:peerID];
+        return;
+    }
+    
+    // if there are unequal numbers of trials loaded in these two arrays, there will be issues down the line, so bail out if that is the case
+    if ([trialRuns count] != [trialRunsNormalized count])
+        return;
+    
+    // if more than one trial loaded, must add them together
+    NSMutableArray *dataArray = [[NSMutableArray alloc]init];
+    
+    // add the type of data that is being sent
+    [dataArray addObject:@"multipleTrialsData"];
+    
+    for (int i = 0; i < trialRuns.count; i++) {
+        // add trial content
+        [dataArray addObject:[trialRuns objectAtIndex:i]];
+        
+        // add normalized content
+        [dataArray addObject:[trialRunsNormalized objectAtIndex:i]];
+    }
+    
+    NSDictionary *trialsToSendToBaby = [NSDictionary dictionaryWithObject:dataArray forKey:@"data"];
+    
+    
+    // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
+    if(trialsToSendToBaby != nil) {
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:trialsToSendToBaby];
+        [_session sendData:data toPeers:@[peerID] withDataMode:GKSendDataReliable error:nil];
     }
 }
 
@@ -550,8 +632,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 }
 
 - (IBAction)loadNextTrial:(UIButton *)sender {
-    /*
-    
+
     //pull content from the server that is said to be from le trial with real vals
     NSString * urlPlusFile = [NSString stringWithFormat:@"%@/%@", _url, @"simOutput.php"];
     NSString *myRequestString = [[NSString alloc] initWithFormat:@"trialID=%d&studyID=%d", trialNum, _studyNum ];
@@ -569,7 +650,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         //NSLog(@"error: %@", err);
         
         if( [returnData bytes]) content = [NSString stringWithUTF8String:[returnData bytes]];
-        NSLog(@"responseData: %@", content);
+        //NSLog(@"responseData: %@", content);
     }
     
     //pull content from the server that is said to be from le trial that is said to be normalized vals (ranging from 0 to 1)
@@ -593,15 +674,17 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     }
     
     if(content != NULL && content.length > 100 && contentN != NULL){
-        //Adds a new trial to a list of trials
-        AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:content withTrialNum:trialNum];
+        [self sendSingleTrialToBabies:content normalizedData:contentN];
         
-        [trialRuns addObject: simRun];                  //contains trials containing real values
+        // store the trials so they can be sent to a new Baby if it joins late
+        [trialRuns addObject: content];                  //contains trials containing real values
+        [trialRunsNormalized addObject:contentN];   //contains trials containing normalized values
+        
+        NSLog(@"Number of trials loaded %lu", (unsigned long)trialRuns.count);
         
         trialNum++;
         self.trialNumberLabel.text = [NSString stringWithFormat:@"Trial Number %d", trialNum];
     }
-     */
 }
 
 
