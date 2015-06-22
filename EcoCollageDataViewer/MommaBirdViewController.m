@@ -74,7 +74,7 @@ int trialNum;
     
     // setup core bluetooth connection to mac mini
     self.data = [[NSMutableData alloc]init];
-    self.myCentralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
+    //self.myCentralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
 
 }
 
