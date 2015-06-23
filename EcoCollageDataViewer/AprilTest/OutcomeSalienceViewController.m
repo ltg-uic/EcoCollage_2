@@ -30,6 +30,7 @@
 @synthesize hoursAfterStormLabel = _hoursAfterStormLabel;
 @synthesize loadingIndicator = _loadingIndicator;
 @synthesize scenarioNames = _scenarioNames;
+@synthesize SortPickerTextField = _SortPickerTextField;
 
 //structs that will keep track of the highest and lowest costs of Installation and maintenance (for convenience)
 typedef struct Value
@@ -48,6 +49,10 @@ Value  *floodedStreets    = NULL;
 Value  *standingWater     = NULL;
 Value  *efficiency_val    = NULL;
 
+NSArray *sortedTrialRuns;
+NSArray *sortedTrialDyn;
+NSArray *sortedTrialStatic;
+
 NSMutableArray * trialRuns;             //contains list of simulation data from trials pulled
 NSMutableArray * trialRunsNormalized;   //contains list of simulation data from trials pulled in normalized STATIC  form
 NSMutableArray * trialRunsDynNorm;      //contains list of simulation data from trials pulled in normalized DYNAMIC form
@@ -58,9 +63,11 @@ NSMutableArray *lastKnownConcernProfile;
 NSMutableArray *bgCols;
 NSMutableArray *publicCostDisplays;
 NSMutableArray *OverBudgetLabels;
+
 UILabel *redThreshold;
 NSArray *arrStatus;
 NSMutableDictionary *scoreColors;
+int sortChosen = 0;
 int lastMoved = 0;
 int trialNum = 0;
 int trialOffset = 0;
@@ -73,6 +80,7 @@ NSTimer *scrollingTimer = nil;
 UISlider *BudgetSlider;
 UISlider *StormPlayBack;
 UISlider *StormPlayBack2;
+UIPickerView *SortType;
 
 //Important values that change elements of objects
 float thresh = 6;
@@ -130,6 +138,17 @@ float maxPublicInstallNorm;
     [self.view addSubview:_loadingIndicator];
 
      arrStatus = [[NSArray alloc] initWithObjects:@"Trial Number", @"Best Score", @"Public Cost", @"Private Cost", @"Rainwater to Neighbors", @"Rainwater from Neighbors", @"Intervention Efficiency", @"% Rainwater Infiltrated", nil];
+    
+    _SortPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus[sortChosen]];
+    _SortPickerTextField.delegate = self;
+    if (SortType == nil){
+        SortType = [[UIPickerView alloc]init];
+        [SortType setDataSource:self];
+        [SortType setDelegate:self];
+        [SortType setShowsSelectionIndicator:YES];
+        _SortPickerTextField.selectedTextRange = nil;
+        [_SortPickerTextField setInputView:SortType];
+    }
     
     scoreColors = [[NSMutableDictionary alloc] initWithObjects:
                    [NSArray arrayWithObjects:
@@ -234,6 +253,7 @@ float maxPublicInstallNorm;
     }
   
 }
+
 
 -(void) removeBudgetLabels{
     for (int i = 0; i < OverBudgetLabels.count; i++){
@@ -1586,6 +1606,10 @@ float maxPublicInstallNorm;
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
     // Handle the selection
+    _SortPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus[row]];
+    sortChosen = (int)row;
+    
+    [[self view] endEditing:YES];
 }
 
 // tell the picker how many rows are available for a given component
@@ -1623,7 +1647,7 @@ float maxPublicInstallNorm;
 
 // tell the picker the width of each row for a given component
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component {
-    int sectionWidth = 250;
+    int sectionWidth = 150;
     
     return sectionWidth;
 }

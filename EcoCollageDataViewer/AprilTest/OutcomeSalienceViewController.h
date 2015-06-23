@@ -31,4 +31,5 @@
 
 @property (strong, nonatomic) IBOutlet UILabel *currentMaxInvestment;
 
+@property (strong, nonatomic) IBOutlet UITextField *SortPickerTextField;
 @end
