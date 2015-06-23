@@ -254,8 +254,7 @@ int trialNum;
     [usernameForBaby addObject:[dataArray objectAtIndex:1]];
     [usernameForBaby addObject:[dataArray objectAtIndex:2]];
     
-    NSDictionary *usernameToSendToBaby = [NSDictionary dictionaryWithObject:usernameForBaby
-                                                                     forKey:@"data"];
+    NSDictionary *usernameToSendToBaby = [NSDictionary dictionaryWithObject:usernameForBaby forKey:@"data"];
     // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
     if(usernameToSendToBaby != nil) {
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:usernameToSendToBaby];
