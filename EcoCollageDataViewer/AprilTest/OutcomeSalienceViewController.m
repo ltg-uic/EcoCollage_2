@@ -1602,7 +1602,11 @@ float maxPublicInstallNorm;
     }
 }
 
-
+- (void) handleSort:(int) row{
+    if ([arrStatus[row]  isEqual: @"Public Cost"]) {
+        
+    }
+}
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
     // Handle the selection
@@ -1610,6 +1614,9 @@ float maxPublicInstallNorm;
     sortChosen = (int)row;
     
     [[self view] endEditing:YES];
+    
+    //Handle the sort afterwards
+    [self handleSort:(int)row];
 }
 
 // tell the picker how many rows are available for a given component
