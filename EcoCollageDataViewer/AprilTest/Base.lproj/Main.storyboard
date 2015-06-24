@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="q8p-ax-VWt">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="q8p-ax-VWt">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
     </dependencies>
     <scenes>
         <!--Concern Profile Builder-->
@@ -50,27 +50,6 @@
                                     <outlet property="delegate" destination="9pv-A4-QxB" id="4Xd-SL-rrw"/>
                                 </connections>
                             </textField>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="eTc-CQ-z0G">
-                                <rect key="frame" x="230" y="571" width="51" height="31"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <connections>
-                                    <action selector="profileSharingSwitch:" destination="9pv-A4-QxB" eventType="valueChanged" id="uCD-r5-7hm"/>
-                                </connections>
-                            </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hide profile" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Syv-nB-yDS">
-                                <rect key="frame" x="135" y="576" width="88" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Share profile" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="D9I-tv-gn4">
-                                <rect key="frame" x="296" y="576" width="97" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -82,7 +61,6 @@
                     <connections>
                         <outlet property="descriptionView" destination="deu-3f-fV3" id="8Fa-gM-mkn"/>
                         <outlet property="pie" destination="bom-ma-b1V" id="JQR-N7-ung"/>
-                        <outlet property="sharingSwitch" destination="eTc-CQ-z0G" id="pIt-fk-nem"/>
                         <outlet property="surveyView" destination="LuY-eH-avc" id="OEn-pM-cLf"/>
                         <outlet property="usernameText" destination="qyI-0i-xfG" id="Znx-vh-b7R"/>
                     </connections>
@@ -487,17 +465,6 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="h0J-3j-HDd">
-                                <rect key="frame" x="380" y="370" width="265" height="29"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <segments>
-                                    <segment title="Baby Bird"/>
-                                    <segment title="Momma Bird"/>
-                                </segments>
-                                <connections>
-                                    <action selector="applicationType:" destination="q8p-ax-VWt" eventType="valueChanged" id="Kod-jX-qRN"/>
-                                </connections>
-                            </segmentedControl>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Xi7-9O-1t0">
                                 <rect key="frame" x="893" y="402" width="37" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -508,11 +475,44 @@
                                     <action selector="switchUI:" destination="q8p-ax-VWt" eventType="touchUpInside" id="v9c-my-cKZ"/>
                                 </connections>
                             </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="pfG-zz-ogM">
+                                <rect key="frame" x="492" y="439" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="profileSharingSwitch:" destination="9pv-A4-QxB" eventType="valueChanged" id="AU4-S5-4ZE"/>
+                                </connections>
+                            </switch>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Private Profile (For admin use)" id="yOQ-Ah-g2x">
+                                <rect key="frame" x="364" y="430" width="122" height="49"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Public Profile" id="n9O-6Q-PYz">
+                                <rect key="frame" x="560" y="439" width="99" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="h0J-3j-HDd">
+                                <rect key="frame" x="367" y="386" width="265" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="Baby Bird"/>
+                                    <segment title="Momma Bird"/>
+                                </segments>
+                                <connections>
+                                    <action selector="applicationType:" destination="q8p-ax-VWt" eventType="valueChanged" id="Kod-jX-qRN"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
+                        <outlet property="profileHidingSwitch" destination="pfG-zz-ogM" id="g0k-3c-xSn"/>
                         <outlet property="server" destination="nRX-iQ-cwX" id="Xcw-Bf-Vbb"/>
                         <outlet property="studyNumber" destination="TDK-Th-F3A" id="i8w-3h-OTA"/>
                         <segue destination="49e-Tb-3d3" kind="modal" identifier="switchToBabyBird" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="cjZ-Ri-2LM"/>

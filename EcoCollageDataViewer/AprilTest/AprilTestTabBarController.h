@@ -21,4 +21,5 @@
 @property int trialNum;
 @property (nonatomic, strong) GKSession * session;
 @property NSString * peerIDForMomma;
+@property int showProfile;
 @end

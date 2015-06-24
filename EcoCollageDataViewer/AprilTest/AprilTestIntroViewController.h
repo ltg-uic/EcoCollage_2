@@ -15,4 +15,5 @@
 @property NSString * url;
 @property int studyNum;
 @property int appType;
+@property (strong, nonatomic) IBOutlet UISwitch *profileHidingSwitch;
 @end

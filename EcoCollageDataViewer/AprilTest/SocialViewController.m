@@ -19,8 +19,8 @@
 @synthesize usernamesWindow = _usernamesWindow;
 
 NSMutableDictionary *concernColors;
-int widthOfTitleVisualization = 250;
-int heightOfVisualization = 290;
+int widthOfTitleVisualization = 220;
+int heightOfVisualization = 270;
 
 
 
@@ -100,7 +100,6 @@ int heightOfVisualization = 290;
 - (void)viewWillDisappear:(BOOL)animated {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
-
 
 
 - (void)handleProfileUpdate {

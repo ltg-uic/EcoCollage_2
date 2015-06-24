@@ -74,6 +74,9 @@
         AprilTestTabBarController *tab = [segue destinationViewController];
         tab.url = _url;
         tab.studyNum = _studyNum;
+        if ([self.profileHidingSwitch isOn])
+            tab.showProfile = 1;
+        else tab.showProfile = 0;
     }
     else {
         MommaBirdViewController *momma_data = [segue destinationViewController];

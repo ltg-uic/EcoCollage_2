@@ -272,8 +272,6 @@
 				8453FA6418F2FC8F0010D12F /* Main.storyboard */,
 				57EEF5521B1E452200BECE7F /* SocialViewController.h */,
 				57EEF5531B1E452200BECE7F /* SocialViewController.m */,
-				575D6C711B39B7C5000A235D /* UIViewWithTitle.h */,
-				575D6C721B39B7C5000A235D /* UIViewWithTitle.m */,
 				574737061B14E52C00D5EED8 /* MommaBirdViewController.h */,
 				574737071B14E52C00D5EED8 /* MommaBirdViewController.m */,
 				843B9CD91AE6B70000FF2C8B /* AprilTestIntroViewController.h */,
@@ -288,6 +286,8 @@
 				846B971E18FE0B1F0008BD59 /* rainbarrel.png */,
 				841C0A1E1A16744500ED7A2E /* questions2.txt */,
 				846B971F18FE0B1F0008BD59 /* sewer.png */,
+				575D6C711B39B7C5000A235D /* UIViewWithTitle.h */,
+				575D6C721B39B7C5000A235D /* UIViewWithTitle.m */,
 				8453FA5918F2FC8F0010D12F /* Supporting Files */,
 				846B972018FE0B1F0008BD59 /* swale.png */,
 			);

@@ -24,9 +24,6 @@
 @synthesize slices = _slices;
 @synthesize sliceColors = _sliceColors;
 @synthesize currentConcernRanking = _currentConcernRanking;
-@synthesize sharingSwitch = _sharingSwitch;
-
-
 
 
 NSMutableDictionary * segConToVar;
@@ -145,7 +142,7 @@ NSArray * importQuestions;
 - (void)sendProfile {
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    if(tabControl.session && _sharingSwitch.isOn) {
+    if(tabControl.session && tabControl.showProfile == 1) {
         NSMutableArray *profile = [[NSMutableArray alloc]init];
         // add type of data
         [profile addObject:@"profileToMomma"];
@@ -237,7 +234,7 @@ NSArray * importQuestions;
 - (void) sendUsername {
     // only send if sharing
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    if(tabControl.session && _sharingSwitch.isOn) {
+    if(tabControl.session && tabControl.showProfile == 1) {
         NSMutableArray *username = [[NSMutableArray alloc]init];
         // add type of data
         [username addObject:@"usernameUpdate"];
@@ -281,17 +278,6 @@ NSArray * importQuestions;
         [tabControl.ownProfile addObject:[[[surveyItems objectAtIndex:i]text] stringByReplacingOccurrencesOfString:@"\t" withString:@""]];
     }
 }
-
-
-
-
-- (IBAction)profileSharingSwitch:(UISwitch *)sender {
-    UISwitch *mySwitch = (UISwitch *)sender;
-    if ([mySwitch isOn])
-        [self sendProfile];
-    else [self removeProfileFromPeers];
-}
-
 
 
 
