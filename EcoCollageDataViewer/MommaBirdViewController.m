@@ -181,8 +181,12 @@ int trialNum;
     BOOL connectionEstablished = FALSE;
     NSString *peerName = [session displayNameForPeer:peerID];
     
-    if([peerName isEqualToString:@"Baby"])
+    if([peerName isEqualToString:[NSString stringWithFormat:@"Baby%d", _studyNum]])
         connectionEstablished = [session acceptConnectionFromPeer:peerID error:&error];
+    else {
+        [session denyConnectionFromPeer:peerID];
+        NSLog(@"Denied connection");
+    }
     
     if (!connectionEstablished)
     {

@@ -13,5 +13,6 @@
 @property int studyNum;
 @property (strong, nonatomic) IBOutlet UIScrollView *profilesWindow;
 @property (strong, nonatomic) IBOutlet UIScrollView *usernamesWindow;
+@property (strong, nonatomic) IBOutlet UITextField *trialNumber;
 
 @end

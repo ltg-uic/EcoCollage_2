@@ -115,7 +115,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 - (void)setupSession
 {
     // GKSessionModePeer: a peer advertises like a server and searches like a client.
-    _session = [[GKSession alloc] initWithSessionID:@"GKForEcoCollage" displayName:@"Baby" sessionMode:GKSessionModeClient];
+    _session = [[GKSession alloc] initWithSessionID:@"GKForEcoCollage" displayName:[NSString stringWithFormat:@"Baby%d", _studyNum] sessionMode:GKSessionModeClient];
     self.session.delegate = self;
     self.session.available = YES;
     [_session setDataReceiveHandler:self withContext:nil];
@@ -329,6 +329,8 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 
 
 - (void) receiveSingleTrial:(NSArray *)dataArray {
+    NSLog(@"Received single trial");
+    
     AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:[dataArray objectAtIndex:1] withTrialNum:_trialNum];
     AprilTestNormalizedVariable *simRunNormal = [[AprilTestNormalizedVariable alloc] init: [dataArray objectAtIndex:2] withTrialNum:_trialNum];
     AprilTestNormalizedVariable *simRunDyn    = [[AprilTestNormalizedVariable alloc] init: [dataArray objectAtIndex:2] withTrialNum:_trialNum];
@@ -338,10 +340,15 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     [_trialRunsDynNorm addObject:simRunDyn];
     
     _trialNum++;
+    
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
 
 - (void) receiveMultipleTrials:(NSArray *)dataArray {
+    NSLog(@"Received multiple trials");
+    
     // empty trials arrays to prepare to receive all from Momma
     [_trialRuns removeAllObjects];
     [_trialRunsNormalized removeAllObjects];
@@ -361,6 +368,9 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
         
         _trialNum++;
     }
+    
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
     
 }
 

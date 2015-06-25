@@ -8,6 +8,8 @@
 
 #import "SocialViewController.h"
 #import "AprilTestTabBarController.h"
+#import "AprilTestSimRun.h"
+#import "FebTestIntervention.h"
 
 @interface SocialViewController ()
 @end
@@ -17,16 +19,19 @@
 @synthesize studyNum = _studyNum;
 @synthesize profilesWindow = _profilesWindow;
 @synthesize usernamesWindow = _usernamesWindow;
+@synthesize trialNumber = _trialNumber;
 
 NSMutableDictionary *concernColors;
 int widthOfTitleVisualization = 220;
-int heightOfVisualization = 270;
+int heightOfVisualization = 200;
 
 
 
 - (void)viewDidLoad {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _studyNum = tabControl.studyNum;
+    
+    self.trialNumber.delegate = self;
     
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -157,6 +162,7 @@ int heightOfVisualization = 270;
             
         amountOfProfilesLoaded++;
         height += heightOfVisualization;
+
     }
     
     [_profilesWindow setContentSize: CGSizeMake(overallWidth + 10, height)];
@@ -224,6 +230,8 @@ int heightOfVisualization = 270;
         [_usernamesWindow addSubview:nameLabel];
         height += heightOfVisualization;
     }
+    [self drawTrial:0 withProfileIndex:-1];
+    
 
     int numberOfUsernames = 1;
     
@@ -242,6 +250,38 @@ int heightOfVisualization = 270;
     }
     
     [_usernamesWindow setContentSize: CGSizeMake(_usernamesWindow.contentSize.width, height)];
+    
+    // draw trial for each user
+    for (int i = 0; i < tabControl.profiles.count; i++) {
+        // add 1 to profile index to account for the devices profile which is loaded separately
+        [self drawTrial:0 withProfileIndex:i + 1];
+    }
+}
+
+
+- (void)drawTrial:(int) trial withProfileIndex:(int) profileIndex {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    if ([tabControl.trialRuns count] < trial + 1)
+        return;
+    
+    if (profileIndex == -1) {
+        // load trial for own profile
+        AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trial];
+        
+        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 40, 115, 125))];
+        interventionView.view = [[_usernamesWindow subviews] objectAtIndex:0];
+        [interventionView updateView];
+        return;
+    }
+
+    // load trial for not your own profile
+    AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trial];
+    
+    FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, heightOfVisualization * profileIndex + 40, 115, 125))];
+    NSLog(@"Subviews count %d \nprofileIndex %d", [[_usernamesWindow subviews] count], profileIndex);
+    interventionView.view = [[_usernamesWindow subviews] objectAtIndex:profileIndex];
+    [interventionView updateView];
 }
 
 
@@ -263,15 +303,31 @@ int heightOfVisualization = 270;
     }
 }
 
+// calls textFieldDidEndEditing when done
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return YES;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField{
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    if([textField isEqual:self.trialNumber]) {
+        // load trial for own profile
+        [self drawTrial:self.trialNumber.text.integerValue withProfileIndex:-1];
+        
+        for (int i = 0; i < tabControl.profiles.count; i++)
+            [self drawTrial:self.trialNumber.text.integerValue withProfileIndex:i];
+    }
+    
+}
+
 
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-
-
-
 
 @end
