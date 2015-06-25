@@ -253,8 +253,7 @@ int heightOfVisualization = 200;
     
     // draw trial for each user
     for (int i = 0; i < tabControl.profiles.count; i++) {
-        // add 1 to profile index to account for the devices profile which is loaded separately
-        [self drawTrial:0 withProfileIndex:i + 1];
+        [self drawFebIntervention:_trialNumber.text.integerValue withProfileIndex:i];
     }
 }
 
@@ -262,6 +261,19 @@ int heightOfVisualization = 200;
 - (void)drawTrial:(int) trial withProfileIndex:(int) profileIndex {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
+    // make sure trial asked for is present
+    if ([tabControl.trialRuns count] < trial + 1)
+        return;
+    
+    // first, draw the FebTestIntervention in usernames window
+    [self drawFebIntervention:trial withProfileIndex:profileIndex];
+}
+
+
+- (void) drawFebIntervention:(int) trial withProfileIndex:(int) profileIndex {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    // make sure trial asked for is present
     if ([tabControl.trialRuns count] < trial + 1)
         return;
     
@@ -274,12 +286,14 @@ int heightOfVisualization = 200;
         [interventionView updateView];
         return;
     }
-
+    
+    // add 1 to profile index to account for the devices own profile which is loaded separately
+    profileIndex++;
+    
     // load trial for not your own profile
     AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trial];
     
-    FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, heightOfVisualization * profileIndex + 40, 115, 125))];
-    NSLog(@"Subviews count %d \nprofileIndex %d", [[_usernamesWindow subviews] count], profileIndex);
+    FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 40, 115, 125))];
     interventionView.view = [[_usernamesWindow subviews] objectAtIndex:profileIndex];
     [interventionView updateView];
 }
@@ -313,12 +327,13 @@ int heightOfVisualization = 200;
 - (void)textFieldDidEndEditing:(UITextField *)textField{
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
+    // draw specific trial for all profiles
     if([textField isEqual:self.trialNumber]) {
         // load trial for own profile
-        [self drawTrial:self.trialNumber.text.integerValue withProfileIndex:-1];
+        [self drawFebIntervention:self.trialNumber.text.integerValue withProfileIndex:-1];
         
         for (int i = 0; i < tabControl.profiles.count; i++)
-            [self drawTrial:self.trialNumber.text.integerValue withProfileIndex:i];
+            [self drawFebIntervention:self.trialNumber.text.integerValue withProfileIndex:i];
     }
     
 }
