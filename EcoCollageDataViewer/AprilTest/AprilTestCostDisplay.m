@@ -139,6 +139,17 @@
     _cost = cost;
     _normScore = normscore;
     
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    _valueLabel = [[UILabel alloc] init];
+    _valueLabel.text = [NSString stringWithFormat:@"Installation Cost $%@", [formatter stringFromNumber: [NSNumber numberWithInt:cost] ]];
+    _valueLabel.frame =CGRectMake(0, 0, 0, 0);
+    [_valueLabel sizeToFit ];
+    _valueLabel.font = [UIFont systemFontOfSize:14.0];
+    _valueLabel.textColor = [UIColor blackColor];
+    [self addSubview:_valueLabel];
+    
     _budget = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, frame.size.width, 20)];
     
     _budget.backgroundColor = [UIColor lightGrayColor];

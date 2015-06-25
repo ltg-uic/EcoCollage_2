@@ -53,16 +53,17 @@ NSArray *sortedTrialRuns;
 NSArray *sortedTrialDyn;
 NSArray *sortedTrialStatic;
 
+NSMutableArray * trialRunSubViews;      //contains all subviews/visualizations added to UIview per trial
 NSMutableArray * trialRuns;             //contains list of simulation data from trials pulled
 NSMutableArray * trialRunsNormalized;   //contains list of simulation data from trials pulled in normalized STATIC  form
 NSMutableArray * trialRunsDynNorm;      //contains list of simulation data from trials pulled in normalized DYNAMIC form
 NSMutableArray * waterDisplays;
 NSMutableArray * maxWaterDisplays;
 NSMutableArray * efficiency;
-NSMutableArray *lastKnownConcernProfile;
-NSMutableArray *bgCols;
-NSMutableArray *publicCostDisplays;
-NSMutableArray *OverBudgetLabels;
+NSMutableArray * lastKnownConcernProfile;
+NSMutableArray * bgCols;
+NSMutableArray * publicCostDisplays;
+NSMutableArray * OverBudgetLabels;
 
 UILabel *redThreshold;
 NSArray *arrStatus;
@@ -116,7 +117,8 @@ float maxPublicInstallNorm;
     _currentConcernRanking = tabControl.currentConcernRanking;
     _studyNum = tabControl.studyNum;
     _url = tabControl.url;
-    trialRuns = [[NSMutableArray alloc] init];
+    trialRunSubViews    = [[NSMutableArray alloc] init];
+    trialRuns           = [[NSMutableArray alloc] init];
     trialRunsNormalized = [[NSMutableArray alloc] init];
     trialRunsDynNorm    = [[NSMutableArray alloc] init];
     waterDisplays       = [[NSMutableArray alloc] init];
@@ -291,11 +293,12 @@ float maxPublicInstallNorm;
     
     //create a new label for any trials that are over the budget
     for (int i = 0; i < trialRuns.count; i++){
-        AprilTestSimRun *simRun = [trialRuns objectAtIndex:i];
+        //AprilTestSimRun *simRun = [trialRuns objectAtIndex:i];
+        AprilTestSimRun *simRun= [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
         
         if (simRun.publicInstallCost > maxBudget){
             UILabel *valueLabel;
-            [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-maxBudget)]] ] withConcernPosition:width+25 andyValue:simRun.trialNum *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
+            [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-maxBudget)]] ] withConcernPosition:width+25 andyValue:i *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
             
             [OverBudgetLabels addObject:valueLabel];
         }
@@ -427,7 +430,7 @@ float maxPublicInstallNorm;
 
 -(void) normalizaAllandUpdateStatically{
     trialNum = (int)[trialRuns count];
-    [self normalizeStatically:trialNum];
+    [self normalizeStatically];
     
     dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
     [self updatePublicCostDisplays: trialNum];
@@ -451,12 +454,15 @@ float maxPublicInstallNorm;
         [self updateComponentScore:i];
 }
 
--(void) normalizeStatically: (int) trial
+-(void) normalizeStatically
 {
     for (int i = 0; i < trialRuns.count; i++)
     {
-        AprilTestSimRun *someTrial = [trialRuns objectAtIndex:i];
-        AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
+        //AprilTestSimRun *someTrial = [trialRuns objectAtIndex:i];
+        //AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
+        AprilTestSimRun *someTrial = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
+        AprilTestNormalizedVariable *someTrialNorm = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"];
+        
         
         if (maxBudget == 0){ maxBudget = .01; }
         
@@ -485,20 +491,10 @@ float maxPublicInstallNorm;
     int i;
     for (i = 0; i < trialRuns.count; i++)
     {
-        AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
-        AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
-        
-        /*
-        printf("Trial %d\n"
-               "Install     Cost:%d\n"
-               "Maintenance Cost:%d\n"
-               "Private Damages :%d\n"
-               "Neighbors -> Me :%f\n"
-               "Me -> Neighbors :%f\n"
-               "GW Infiltration :%f\n"
-               "Flooded Streets :%f\n"
-               "Standing Water  :%f\n"
-               "Efficiency      :%f\n\n",i+1, someTrial.publicInstallCost, someTrial.publicMaintenanceCost, someTrial.privateDamages, someTrial.neighborsImpactMe, someTrial.impactNeighbors, someTrial.infiltration, currValStreets, someTrialNorm.standingWater, someTrialNorm.efficiency);*/
+        //AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
+        //AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
+        AprilTestSimRun *someTrial = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
+        AprilTestNormalizedVariable *someTrialNorm = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"];
         
         if (i == 0){
             installationCost->highestCost  =  someTrial.publicInstallCost;
@@ -640,9 +636,13 @@ float maxPublicInstallNorm;
     //normalize all the variables in accordance to the max value of all current trials
     for (i = 0; i < trialRuns.count; i++)
     {
-        AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
-        AprilTestNormalizedVariable  *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
-        AprilTestNormalizedVariable  *someTrialDyn  = [trialRunsDynNorm  objectAtIndex:i];
+        //AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
+        //AprilTestNormalizedVariable  *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
+        //AprilTestNormalizedVariable  *someTrialDyn  = [trialRunsDynNorm  objectAtIndex:i];
+        
+        AprilTestSimRun *someTrial = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
+        AprilTestNormalizedVariable *someTrialNorm = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"];
+        AprilTestNormalizedVariable *someTrialDyn  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialDynamic"];
         
         someTrialDyn.publicInstallCost     = (float)someTrial.publicInstallCost/installationCost->highestCost;
         someTrialDyn.publicMaintenanceCost = (float)someTrial.publicMaintenanceCost/maintenanceCost->highestCost;
@@ -674,23 +674,7 @@ float maxPublicInstallNorm;
         else
             someTrialDyn.efficiency = ((someTrialNorm.efficiency - efficiency_val->lowestCost) / (efficiency_val->highestCost - efficiency_val->lowestCost));
         
-        
-        /*
-        printf("Trial %d\n"
-               "Install Cost    :%f\n"
-               "Maintenance Cost:%f\n"
-               "Private Damages :%f\n"
-               "Neighbors -> Me :%f\n"
-               "Me -> Neighbors :%f\n"
-               "GW Infiltration :%f\n"
-               "Flooded Streets :%f\n"
-               "Standing Water  :%f\n"
-               "Efficiency      :%f\n\n",i+1, someTrialNorm.publicInstallCost, someTrialNorm.publicMaintenanceCost, someTrialNorm.privateDamages, someTrialNorm.neighborsImpactMe, someTrialNorm.impactNeighbors, someTrialNorm.infiltration, someTrialNorm.floodedStreets, someTrialNorm.standingWater, someTrialNorm.efficiency);*/
-        
-        
-        //printf("Trial %d\n Me -> Neighbors :%f\n",i+1, someTrialDyn.impactNeighbors );
     }
-    printf("\n");
 }
 
 //Updates the text of a UILabel (used to update labels after new trials are fetched)
@@ -716,9 +700,14 @@ float maxPublicInstallNorm;
         [newCD.budgetUsed removeFromSuperview];
         [newCD.budget removeFromSuperview];
         [newCD.budgetOver removeFromSuperview];
-        var     = [trialRuns objectAtIndex:i];
-        normVar = (_DynamicNormalization.isOn) ? ([trialRunsDynNorm objectAtIndex:i]) : ([trialRunsNormalized objectAtIndex:i]);
-        frame   = CGRectMake(25, var.trialNum*175 + 40, dynamic_cd_width, 30);
+        [newCD.valueLabel removeFromSuperview];
+        
+        //var     = [trialRuns objectAtIndex:i];
+        //normVar = (_DynamicNormalization.isOn) ? ([trialRunsDynNorm objectAtIndex:i]) : ([trialRunsNormalized objectAtIndex:i]);
+        var = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
+        normVar = (_DynamicNormalization.isOn) ? ([[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialDynamic"]) : ([[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"]);
+        
+        frame   = CGRectMake(25, i*175 + 40, dynamic_cd_width, 30);
         
         float costWidth = [self getWidthFromSlider:BudgetSlider toValue:var.publicInstallCost];
         
@@ -728,14 +717,18 @@ float maxPublicInstallNorm;
 }
 
 - (void) updateComponentScore: (int) trial{
-    AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
+    //AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
+    //AprilTestSimRun *simRun = [[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"];
+    
     AprilTestNormalizedVariable *simRunNormal;
     
     if (_DynamicNormalization.isOn){
-        simRunNormal = [trialRunsDynNorm objectAtIndex:trial];
+        //simRunNormal = [trialRunsDynNorm objectAtIndex:trial];
+        simRunNormal = [[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialDynamic"];
     }
     else{
-        simRunNormal = [trialRunsNormalized objectAtIndex:trial];
+        //simRunNormal = [trialRunsNormalized objectAtIndex:trial];
+        simRunNormal = [[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialStatic"];
     }
     
     float priorityTotal= 0;
@@ -838,9 +831,9 @@ float maxPublicInstallNorm;
     }
 
     //border around component score
-    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (simRun.trialNum)*175 + 88,  114, 26)];
+    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (trial)*175 + 88,  114, 26)];
     fullValueBorder.backgroundColor = [UIColor grayColor];
-    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (simRun.trialNum)*175 + 90,  110, 22)];
+    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (trial)*175 + 90,  110, 22)];
     fullValue.backgroundColor = [UIColor whiteColor];
     [_mapWindow addSubview:fullValueBorder];
     [_mapWindow addSubview:fullValue];
@@ -853,7 +846,7 @@ float maxPublicInstallNorm;
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
-        UILabel * componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (simRun.trialNum)*175 + 90, floor(scoreWidth), 22)];
+        UILabel * componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 90, floor(scoreWidth), 22)];
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
         [_mapWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
@@ -914,18 +907,20 @@ float maxPublicInstallNorm;
         [trialRunsNormalized addObject:simRunNormal];   //contains trials containing normalized values
         [trialRunsDynNorm addObject:simRunDyn];         //contains normalized data that will be dynamically altered every time a new trial is fetched
         
+        //draws the newest trial after latest normalization of data (static or dynamic)
+        [self drawTrial: trialNum];
+        
+        trialNum++;
+        
         //chooses between static/dynamic normalization of trial data
         if (_DynamicNormalization.isOn) {
             [self normalizeAllandUpdateDynamically]; //updates previous trials's visualizations and renormalizes
         }
         else{
-            [self normalizeStatically:trialNum];     //normalizes a trial one at a time
+            [self normalizeStatically];     //normalizes a trial one at a time
         }
         
-        //draws the newest trial after latest normalization of data (static or dynamic)
-        [self drawTrial: trialNum];
-
-        trialNum++;
+        
     }
     
     //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
@@ -955,7 +950,7 @@ float maxPublicInstallNorm;
 }
 
 -(void) drawTrial: (int) trial{
-
+    
     AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
     AprilTestNormalizedVariable *simRunNormal;
     
@@ -966,7 +961,7 @@ float maxPublicInstallNorm;
     else{
         simRunNormal = [trialRunsNormalized objectAtIndex:trial];
     }
-    
+
     FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
     interventionView.view = _mapWindow;
     [interventionView updateView];
@@ -1014,6 +1009,7 @@ float maxPublicInstallNorm;
     }];
     NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
     NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
+    AprilTestCostDisplay *cd;
     int visibleIndex = 0;
     
     for(int i = 0 ; i <_currentConcernRanking.count ; i++){
@@ -1028,6 +1024,7 @@ float maxPublicInstallNorm;
             [bgCols addObject:bgCol];
         }
         
+        
         //laziness: this is just the investment costs
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
             float investmentInstall = simRun.publicInstallCost;
@@ -1036,7 +1033,7 @@ float maxPublicInstallNorm;
             float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             CGRect frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
             
-            AprilTestCostDisplay *cd;
+            
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
                 
@@ -1205,18 +1202,20 @@ float maxPublicInstallNorm;
     //NSLog(@" %@", scoreVisVals);
     float maxX = 150;
     float totalScore = 0;
+    UILabel * componentScore;
     
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
-          UILabel * componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 90, floor(scoreWidth), 22)];
+           componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 90, floor(scoreWidth), 22)];
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
         [_mapWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
     }
-
+    
+    
     
     [_dataWindow setContentSize:CGSizeMake(width+=100, (trial+1)*200)];
     for(UILabel * bgCol in bgCols){
@@ -1242,6 +1241,17 @@ float maxPublicInstallNorm;
     [_mapWindow addSubview:scoreLabel2];
     
     
+    //Right now contains the contents of the map window scrollview
+    NSDictionary *trialRunInfo = @{@"TrialNum"         : [NSNumber numberWithInt:trial],
+                                   @"TrialRun"         : [trialRuns objectAtIndex:trial],
+                                   @"TrialStatic"      : [trialRunsNormalized objectAtIndex:trial],
+                                   @"TrialDynamic"     : [trialRunsDynNorm objectAtIndex:trial],
+                                   @"TrialTxTBox"      : tx,
+                                   @"FebTestMap"       : interventionView,
+                                   @"PerformanceBar"   : componentScore,
+                                   };
+    
+    [trialRunSubViews addObject:trialRunInfo];
     [_dataWindow flashScrollIndicators];          
     
 }
@@ -1340,7 +1350,7 @@ float maxPublicInstallNorm;
     [UIView commitAnimations];
 }
 
-//Draws Labels to set on the dataWindo Scrollview but also returns object to be added into a MutableArray (used for updating labels)
+//Draws Labels to set on the dataWindow Scrollview but also returns object to be added into a MutableArray (used for updating labels)
 -(void) drawTextBasedVar: (NSString *) outputValue withConcernPosition: (int) concernPos andyValue: (int) yValue andColor: (UIColor*) color to:(UILabel**) label{
     if (label != nil){
         *label = [[UILabel alloc] init];
@@ -1603,9 +1613,20 @@ float maxPublicInstallNorm;
 }
 
 - (void) handleSort:(int) row{
-    if ([arrStatus[row]  isEqual: @"Public Cost"]) {
+    /*if ([arrStatus[row]  isEqual: @"Public Cost"]) {
+        
+    }*/
+    
+    //right now trying to see if i can delegate some of the updating to the actual update methods (only sorting in descending order for now)
+    [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"TrialNum" ascending:NO] ]];
+    
+    for (int i = 0; i < trialRunSubViews.count; i++) {
+        UILabel *newTxt             = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
+        [self OffsetView:newTxt     toX:newTxt.frame.origin.x     andY:175*(i)+5];
         
     }
+    
+    (_DynamicNormalization.isOn) ? ([self normalizeAllandUpdateDynamically]) : ([self normalizaAllandUpdateStatically]);
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
