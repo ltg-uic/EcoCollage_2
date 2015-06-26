@@ -175,6 +175,7 @@ float maxPublicInstallNorm;
     //[trialRuns removeAllObjects];
     //[waterDisplays removeAllObjects];
     //[efficiency removeAllObjects];
+    
     for (UIView *view in [_titleWindow subviews]){
         [view removeFromSuperview];
     }
@@ -187,10 +188,14 @@ float maxPublicInstallNorm;
     for (UIView *view in [_SliderWindow subviews]){
         [view removeFromSuperview];
     }
-
+    
     for (int i =0; i < trialNum; i++){
         [self drawTrial:i];
     }
+    [self handleSort:0];
+    
+    NSLog(@"You have %lu", (unsigned long)trialRunSubViews.count);
+    NSLog(@"Next trial is %d", trialNum+1);
     
     //determine depending on min and max budget limits what is to be drawn on UILabels under le BudgetSlider
     minBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((min_budget_limit/1000000 < 1) ? (min_budget_limit/1000) : (min_budget_limit/1000000)), (min_budget_limit/1000000 < 1) ? 'K' : 'M'];
@@ -292,7 +297,7 @@ float maxPublicInstallNorm;
     }
     
     //create a new label for any trials that are over the budget
-    for (int i = 0; i < trialRuns.count; i++){
+    for (int i = 0; i < trialRunSubViews.count; i++){
         //AprilTestSimRun *simRun = [trialRuns objectAtIndex:i];
         AprilTestSimRun *simRun= [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
         
@@ -944,22 +949,30 @@ float maxPublicInstallNorm;
 -(void) OffsetView: (UIView*) view toX:(int)x andY:(int)y{
     ///GENERAL FORMULA FOR TRANSLATING A FRAME
     CGRect frame = view.frame;
-    frame.origin.x = x;
+    //frame.origin.x = x;
     frame.origin.y = y;
     [view setFrame: frame];
 }
 
 -(void) drawTrial: (int) trial{
+
+    UILabel *maintenance;
+    UILabel *damage;
+    UILabel *damageReduced;
+    UILabel *sewerLoad;
+    UILabel *impactNeighbor;
+    UILabel *gw_infiltration;
+    UILabel *efficiencyOfIntervention;
     
-    AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
+    AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([trialRuns objectAtIndex:trial]);
     AprilTestNormalizedVariable *simRunNormal;
-    
     //determines via UIswitch what type of normalization is being drawn
     if (_DynamicNormalization.isOn){
-        simRunNormal = [trialRunsDynNorm objectAtIndex:trial];
+        simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialDynamic"])  : ([trialRunsDynNorm objectAtIndex:trial]);
+        
     }
     else{
-        simRunNormal = [trialRunsNormalized objectAtIndex:trial];
+        simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialStatic"]) :([trialRunsNormalized objectAtIndex:trial]);
     }
 
     FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
@@ -1066,7 +1079,7 @@ float maxPublicInstallNorm;
             }
             
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (trial * 175) +100 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (trial * 175) +100 andColor:[UIColor blackColor] to:&maintenance];
             
             
             scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
@@ -1083,10 +1096,11 @@ float maxPublicInstallNorm;
 
             //just damages now
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
+
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue: (trial*175) +40 andColor:[UIColor blackColor] to:nil];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (trial*175) +70 andColor:[UIColor blackColor] to:nil];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue: (trial ) * 175 + 100 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue: (trial*175) +40 andColor:[UIColor blackColor] to:&damage];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (trial*175) +70 andColor:[UIColor blackColor] to:&damageReduced];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue: (trial ) * 175 + 100 andColor:[UIColor blackColor] to:&sewerLoad];
             
 
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
@@ -1101,7 +1115,7 @@ float maxPublicInstallNorm;
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             
            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 40 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 40 andColor:[UIColor blackColor] to:&impactNeighbor];
             [self drawTextBasedVar: [NSString stringWithFormat:@" run-off to neighbors"] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 55 andColor:[UIColor blackColor] to:nil];
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
@@ -1118,7 +1132,7 @@ float maxPublicInstallNorm;
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
 
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater was", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue: (trial)* 175 + 40 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater was", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue: (trial)* 175 + 40 andColor:[UIColor blackColor] to:&gw_infiltration];
             [self drawTextBasedVar: [NSString stringWithFormat:@" infiltrated by the swales"] withConcernPosition:width + 30 andyValue: (trial)* 175 + 55  andColor:[UIColor blackColor] to:nil];
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
@@ -1183,7 +1197,7 @@ float maxPublicInstallNorm;
             [ev updateViewForHour: StormPlayBack.value];
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (trial * 175) + 40 andColor: [UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (trial * 175) + 40 andColor: [UIColor blackColor] to:&efficiencyOfIntervention];
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * 0]];
             [scoreVisNames addObject:currentVar.name];
@@ -1242,16 +1256,25 @@ float maxPublicInstallNorm;
     
     
     //Right now contains the contents of the map window scrollview
-    NSDictionary *trialRunInfo = @{@"TrialNum"         : [NSNumber numberWithInt:trial],
-                                   @"TrialRun"         : [trialRuns objectAtIndex:trial],
-                                   @"TrialStatic"      : [trialRunsNormalized objectAtIndex:trial],
-                                   @"TrialDynamic"     : [trialRunsDynNorm objectAtIndex:trial],
-                                   @"TrialTxTBox"      : tx,
-                                   @"FebTestMap"       : interventionView,
-                                   @"PerformanceBar"   : componentScore,
-                                   };
-    
-    [trialRunSubViews addObject:trialRunInfo];
+    if (trial == trialRunSubViews.count){
+        NSDictionary *trialRunInfo = @{@"TrialNum"          : [NSNumber numberWithInt:simRun.trialNum],
+                                       @"TrialRun"          : [trialRuns objectAtIndex:trial],
+                                       @"TrialStatic"       : [trialRunsNormalized objectAtIndex:trial],
+                                       @"TrialDynamic"      : [trialRunsDynNorm objectAtIndex:trial],
+                                       @"TrialTxTBox"       : tx,
+                                       @"FebTestMap"        : interventionView,
+                                       @"Maintenance"       : maintenance,
+                                       @"Damage"            : damage,
+                                       @"DamageReduced"     : damageReduced,
+                                       @"SewerLoad"         : sewerLoad,
+                                       @"WaterInfiltration" : gw_infiltration,
+                                       @"Efficiency_Interv" : efficiencyOfIntervention,
+                                       @"ImpactNeighbor"    : impactNeighbor
+                                       };
+        [trialRunSubViews addObject:trialRunInfo];
+    }
+    NSLog(@"Just drew trial %d\n", simRun.trialNum);
+   
     [_dataWindow flashScrollIndicators];          
     
 }
@@ -1621,8 +1644,43 @@ float maxPublicInstallNorm;
     [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"TrialNum" ascending:NO] ]];
     
     for (int i = 0; i < trialRunSubViews.count; i++) {
-        UILabel *newTxt             = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
-        [self OffsetView:newTxt     toX:newTxt.frame.origin.x     andY:175*(i)+5];
+        UILabel *newTxt                     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
+        UILabel *Damage                     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Damage"];
+        UILabel *DamageReduced              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"DamageReduced"];
+        UILabel *SewerLoad                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"SewerLoad"];
+        UILabel *gw_infiltration            = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterInfiltration"];
+        UILabel *EfficiencyOfIntervention   = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Efficiency_Interv"];
+        UILabel *maintenance                = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
+        UILabel *impactNeighbor             = [[trialRunSubViews objectAtIndex:i] valueForKey:@"ImpactNeighbor"];
+        
+        AprilTestSimRun *simRun     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
+        FebTestIntervention *interventionView = [[trialRunSubViews objectAtIndex:i] valueForKey:@"FebTestMap"];
+        
+        //move over the febtestIntervention view (map under the trial run number label)
+        interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (i) + 40, 115, 125))];
+        interventionView.view = _mapWindow;
+        [interventionView updateView];
+        
+        
+        //move over the private damage labels
+        [self OffsetView:Damage toX:Damage.frame.origin.x andY:(i*175) +40 ];
+        [self OffsetView:DamageReduced toX:DamageReduced.frame.origin.x andY:(i*175) +70];
+        [self OffsetView:SewerLoad toX:SewerLoad.frame.origin.x andY:(i*175) + 100];
+        
+        //move over impact on Neighbors
+        [self OffsetView:impactNeighbor toX:impactNeighbor.frame.origin.x andY:(i*175) + 40];
+        
+        //move over groundwater infiltration
+        [self OffsetView:gw_infiltration toX:gw_infiltration.frame.origin.x andY:(i*175) + 40];
+        
+        //move over efficiency of intervention
+        [self OffsetView:EfficiencyOfIntervention toX:EfficiencyOfIntervention.frame.origin.x andY:(i*175) + 40];
+        
+        //move over maintenance
+        [self OffsetView:maintenance toX:maintenance.frame.origin.x andY:(i*175) + 100];
+        
+        //Offset the "Trial #" label
+        [self OffsetView:newTxt      toX:newTxt.frame.origin.x     andY:175*(i)+5];
         
     }
     
