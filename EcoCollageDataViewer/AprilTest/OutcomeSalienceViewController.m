@@ -189,13 +189,12 @@ float maxPublicInstallNorm;
         [view removeFromSuperview];
     }
     
+    
     for (int i =0; i < trialNum; i++){
         [self drawTrial:i];
     }
-    [self handleSort:0];
     
-    NSLog(@"You have %lu", (unsigned long)trialRunSubViews.count);
-    NSLog(@"Next trial is %d", trialNum+1);
+    //[self handleSort:0];
     
     //determine depending on min and max budget limits what is to be drawn on UILabels under le BudgetSlider
     minBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((min_budget_limit/1000000 < 1) ? (min_budget_limit/1000) : (min_budget_limit/1000000)), (min_budget_limit/1000000 < 1) ? 'K' : 'M'];
@@ -915,8 +914,6 @@ float maxPublicInstallNorm;
         //draws the newest trial after latest normalization of data (static or dynamic)
         [self drawTrial: trialNum];
         
-        trialNum++;
-        
         //chooses between static/dynamic normalization of trial data
         if (_DynamicNormalization.isOn) {
             [self normalizeAllandUpdateDynamically]; //updates previous trials's visualizations and renormalizes
@@ -925,7 +922,7 @@ float maxPublicInstallNorm;
             [self normalizeStatically];     //normalizes a trial one at a time
         }
         
-        
+        trialNum++;
     }
     
     //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
@@ -990,7 +987,7 @@ float maxPublicInstallNorm;
         priorityTotal += [(AprilTestVariable *)[_currentConcernRanking objectAtIndex:i] currentConcernRanking];
     }
     UITextField *tx;
-    if(trial >= _scenarioNames.count){
+    //if(trial >= _scenarioNames.count){
         tx = [[UITextField alloc] initWithFrame:CGRectMake(20, 175*(trial)+5, 245, 30)];
         tx.borderStyle = UITextBorderStyleRoundedRect;
         tx.font = [UIFont systemFontOfSize:15];
@@ -1004,11 +1001,11 @@ float maxPublicInstallNorm;
         tx.text = [NSString stringWithFormat:  @"Trial %d", simRunNormal.trialNum + 1];
         [_mapWindow addSubview:tx];
         [_scenarioNames addObject:tx];
-    } else {
-        tx = [_scenarioNames objectAtIndex:trial];
-        tx.frame = CGRectMake(20, 175*(trial)+5, 245, 30);
-        [_mapWindow addSubview:tx];
-    }
+    //} else {
+    //    tx = [_scenarioNames objectAtIndex:trial];
+    //    tx.frame = CGRectMake(20, 175*(trial)+5, 245, 30);
+    //    [_mapWindow addSubview:tx];
+    //}
     
     int width = 0;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
@@ -1255,24 +1252,28 @@ float maxPublicInstallNorm;
     [_mapWindow addSubview:scoreLabel2];
     
     
+    NSDictionary *trialRunInfo = @{@"TrialNum"          : [NSNumber numberWithInt:simRun.trialNum],
+                                   @"TrialRun"          : [trialRuns objectAtIndex:simRun.trialNum],
+                                   @"TrialStatic"       : [trialRunsNormalized objectAtIndex:simRun.trialNum],
+                                   @"TrialDynamic"      : [trialRunsDynNorm objectAtIndex:simRun.trialNum],
+                                   @"TrialTxTBox"       : tx,
+                                   @"FebTestMap"        : interventionView,
+                                   @"Maintenance"       : maintenance,
+                                   @"Damage"            : damage,
+                                   @"DamageReduced"     : damageReduced,
+                                   @"SewerLoad"         : sewerLoad,
+                                   @"WaterInfiltration" : gw_infiltration,
+                                   @"Efficiency_Interv" : efficiencyOfIntervention,
+                                   @"ImpactNeighbor"    : impactNeighbor
+                                   };
+   
     //Right now contains the contents of the map window scrollview
-    if (trial == trialRunSubViews.count){
-        NSDictionary *trialRunInfo = @{@"TrialNum"          : [NSNumber numberWithInt:simRun.trialNum],
-                                       @"TrialRun"          : [trialRuns objectAtIndex:trial],
-                                       @"TrialStatic"       : [trialRunsNormalized objectAtIndex:trial],
-                                       @"TrialDynamic"      : [trialRunsDynNorm objectAtIndex:trial],
-                                       @"TrialTxTBox"       : tx,
-                                       @"FebTestMap"        : interventionView,
-                                       @"Maintenance"       : maintenance,
-                                       @"Damage"            : damage,
-                                       @"DamageReduced"     : damageReduced,
-                                       @"SewerLoad"         : sewerLoad,
-                                       @"WaterInfiltration" : gw_infiltration,
-                                       @"Efficiency_Interv" : efficiencyOfIntervention,
-                                       @"ImpactNeighbor"    : impactNeighbor
-                                       };
-        [trialRunSubViews addObject:trialRunInfo];
+    if (trial < trialRunSubViews.count){
+        [trialRunSubViews replaceObjectAtIndex:trial withObject:trialRunInfo];
     }
+    else
+        [trialRunSubViews addObject:trialRunInfo];
+    
     NSLog(@"Just drew trial %d\n", simRun.trialNum);
    
     [_dataWindow flashScrollIndicators];          
@@ -1644,6 +1645,7 @@ float maxPublicInstallNorm;
     [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"TrialNum" ascending:NO] ]];
     
     for (int i = 0; i < trialRunSubViews.count; i++) {
+        
         UILabel *newTxt                     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
         UILabel *Damage                     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Damage"];
         UILabel *DamageReduced              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"DamageReduced"];
@@ -1661,6 +1663,15 @@ float maxPublicInstallNorm;
         interventionView.view = _mapWindow;
         [interventionView updateView];
         
+        /*
+        if   ([Damage superview] == nil) [_dataWindow addSubview:Damage];
+        if   ([DamageReduced superview] == nil) [_dataWindow addSubview:DamageReduced];
+        if   ([SewerLoad superview] == nil) [_dataWindow addSubview:SewerLoad];
+        if   ([gw_infiltration superview] == nil) [_dataWindow addSubview:gw_infiltration];
+        if   ([EfficiencyOfIntervention superview] == nil) [_dataWindow addSubview:EfficiencyOfIntervention];
+        if   ([maintenance superview] == nil) [_dataWindow addSubview:maintenance];
+        if   ([impactNeighbor superview] == nil) [_dataWindow addSubview:impactNeighbor];
+        if   ([newTxt superview] == nil ) [_mapWindow addSubview:newTxt];*/
         
         //move over the private damage labels
         [self OffsetView:Damage toX:Damage.frame.origin.x andY:(i*175) +40 ];
