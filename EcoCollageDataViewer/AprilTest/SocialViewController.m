@@ -10,6 +10,8 @@
 #import "AprilTestTabBarController.h"
 #import "AprilTestSimRun.h"
 #import "FebTestIntervention.h"
+#import "AprilTestVariable.h"
+#import "AprilTestCostDisplay.h"
 
 @interface SocialViewController ()
 @end
@@ -22,6 +24,7 @@
 @synthesize trialNumber = _trialNumber;
 
 NSMutableDictionary *concernColors;
+NSMutableDictionary *concernNames;
 int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
 
@@ -64,6 +67,8 @@ int heightOfVisualization = 200;
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
                     [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"Investment", @"publicCostI", @"publicCostM", @"publicCostD", @"Damage Reduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"Efficiency of Intervention ($/Gallon)", @"Water Depth Over Time", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", @"Capacity Used", nil] ];
+    
+    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Depth Over Time", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
     
     _profilesWindow.delegate = self;
     _usernamesWindow.delegate = self;
@@ -230,7 +235,7 @@ int heightOfVisualization = 200;
         [_usernamesWindow addSubview:nameLabel];
         height += heightOfVisualization;
     }
-    [self drawTrial:0 withProfileIndex:-1];
+    [self drawTrial:_trialNumber.text.integerValue withProfileIndex:-1];
     
 
     int numberOfUsernames = 1;
@@ -251,9 +256,10 @@ int heightOfVisualization = 200;
     
     [_usernamesWindow setContentSize: CGSizeMake(_usernamesWindow.contentSize.width, height)];
     
+    
     // draw trial for each user
     for (int i = 0; i < tabControl.profiles.count; i++) {
-        [self drawFebIntervention:_trialNumber.text.integerValue withProfileIndex:i];
+        [self drawTrial:_trialNumber.text.integerValue withProfileIndex:i];
     }
 }
 
@@ -261,22 +267,16 @@ int heightOfVisualization = 200;
 - (void)drawTrial:(int) trial withProfileIndex:(int) profileIndex {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
-    // make sure trial asked for is present
-    if ([tabControl.trialRuns count] < trial + 1)
+    // error checking
+    if ([tabControl.profiles count] < profileIndex + 1)
         return;
     
+    // make sure trial asked for is loaded
+    if ([tabControl.trialRuns count] < trial + 1)
+        return;
+
     // first, draw the FebTestIntervention in usernames window
-    [self drawFebIntervention:trial withProfileIndex:profileIndex];
-}
-
-
-- (void) drawFebIntervention:(int) trial withProfileIndex:(int) profileIndex {
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    
-    // make sure trial asked for is present
-    if ([tabControl.trialRuns count] < trial + 1)
-        return;
-    
+    AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trial];
     if (profileIndex == -1) {
         // load trial for own profile
         AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trial];
@@ -284,19 +284,54 @@ int heightOfVisualization = 200;
         FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 40, 115, 125))];
         interventionView.view = [[_usernamesWindow subviews] objectAtIndex:0];
         [interventionView updateView];
-        return;
+    }
+    else {
+        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 40, 115, 125))];
+        interventionView.view = [[_usernamesWindow subviews] objectAtIndex:profileIndex + 1];
+        [interventionView updateView];
     }
     
-    // add 1 to profile index to account for the devices own profile which is loaded separately
-    profileIndex++;
+    NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
+    NSArray *currentProfile = [[NSArray alloc]init];
+    int i;
+    if(profileIndex  > -1) {
+        currentProfile = [tabControl.profiles objectAtIndex:profileIndex];
+        i = 3;
+    }
+    else {
+        currentProfile = tabControl.ownProfile;
+        i = 1;
+    }
     
-    // load trial for not your own profile
-    AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trial];
+    for (; i < [currentProfile count]; i++) {
+        [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:i]] withDisplayName:[currentProfile objectAtIndex: i] withNumVar:1 withWidth:widthOfTitleVisualization withRank:9-i]];
+    }
     
-    FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 40, 115, 125))];
-    interventionView.view = [[_usernamesWindow subviews] objectAtIndex:profileIndex];
-    [interventionView updateView];
+    float priorityTotal= 0;
+    float scoreTotal = 0;
+    for(int i = 0; i < currentConcernRanking.count; i++){
+        
+        priorityTotal += [(AprilTestVariable *)[currentConcernRanking objectAtIndex:i] currentConcernRanking];
+    }
+
+    
+    int width = 0;
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    
+    NSArray *sortedArray = [currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+        if(first > second) return NSOrderedAscending;
+        else return NSOrderedDescending;
+    }];
+    NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
+    NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
+    AprilTestCostDisplay *cd;
+    int visibleIndex = 0;
 }
+
 
 
 // synchronizes vertical scrolling between usersnamesWindow and profilesWindow
@@ -330,10 +365,10 @@ int heightOfVisualization = 200;
     // draw specific trial for all profiles
     if([textField isEqual:self.trialNumber]) {
         // load trial for own profile
-        [self drawFebIntervention:self.trialNumber.text.integerValue withProfileIndex:-1];
+        [self drawTrial:self.trialNumber.text.integerValue withProfileIndex:-1];
         
         for (int i = 0; i < tabControl.profiles.count; i++)
-            [self drawFebIntervention:self.trialNumber.text.integerValue withProfileIndex:i];
+            [self drawTrial:self.trialNumber.text.integerValue withProfileIndex:i];
     }
     
 }
