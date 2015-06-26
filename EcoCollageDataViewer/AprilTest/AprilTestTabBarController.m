@@ -282,6 +282,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     if (_profiles.count != 0)
         [_profiles removeAllObjects];
     
+    [_profiles addObject:_ownProfile];
     
     // add all profiles sent from momma to local profile list in baby
     for (int i = 1; i < dataArray.count; i++) {

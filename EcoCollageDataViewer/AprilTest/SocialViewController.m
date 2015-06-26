@@ -123,11 +123,9 @@ int heightOfVisualization = 200;
     // load profile usernames
     [self loadUsernames];
     
-    // first load the devices profile
-    [self loadOwnProfile];
     
-    int amountOfProfilesLoaded = 1;
-    int height = heightOfVisualization;
+    int amountOfProfilesLoaded = 0;
+    int height = 0;
     int overallWidth = widthOfTitleVisualization * 8;
     
     for (NSArray *profileArray in tabControl.profiles) {
@@ -172,47 +170,13 @@ int heightOfVisualization = 200;
     
     [_profilesWindow setContentSize: CGSizeMake(overallWidth + 10, height)];
     
-}
-
-
-- (void)loadOwnProfile {
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    int width = 0;
-
-    // load concerns in order
-    for (int i = 1; i < tabControl.ownProfile.count; i++) {
-        UILabel *currentLabel = [[UILabel alloc]init];
-        currentLabel.backgroundColor = [concernColors objectForKey:[tabControl.ownProfile objectAtIndex:i]];
-        currentLabel.frame = CGRectMake(width, 2, widthOfTitleVisualization, 40);
-        currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
-        
-        if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Investment"])
-            currentLabel.text = @"  Investment";
-        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Damage Reduction"])
-            currentLabel.text = @"  Damage Reduction";
-        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Efficiency of Intervention ($/Gallon)"])
-            currentLabel.text = @"  Efficiency of Intervention";
-        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Capacity Used"])
-            currentLabel.text = @"  Intervention Capacity";
-        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Water Depth Over Time"])
-            currentLabel.text = @"  Water Depth Over Storm";
-        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Maximum Flooded Area"])
-            currentLabel.text = @"  Maximum Flooded Area";
-        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Groundwater Infiltration"])
-            currentLabel.text = @"  Groundwater Infiltration";
-        else if([[tabControl.ownProfile objectAtIndex:i] isEqualToString:@"Impact on my Neighbors"])
-            currentLabel.text = @"  Impact on my Neighbors";
-        else {
-            currentLabel = NULL;
-        }
-        
-        if(currentLabel != NULL){
-            [_profilesWindow addSubview:currentLabel];
-            width += widthOfTitleVisualization;
-        }
+    // draw trial for each user
+    for (int i = 0; i < tabControl.profiles.count; i++) {
+        [self drawTrial:_trialNumber.text.integerValue withProfileIndex:i];
     }
-
+    
 }
+
 
 
 - (void)loadUsernames {
@@ -223,22 +187,9 @@ int heightOfVisualization = 200;
     
     int height = 0;
     
-    // load name of own profile
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    
-    UILabel *nameLabel = [[UILabel alloc]init];
-    nameLabel.backgroundColor = [UIColor whiteColor];
-    nameLabel.frame = CGRectMake(0, 2, _usernamesWindow.frame.size.width, 40);
-    nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
-    nameLabel.text = [NSString stringWithFormat:@"  %@ (You)", [tabControl.ownProfile objectAtIndex:0]];
-    if(nameLabel != NULL) {
-        [_usernamesWindow addSubview:nameLabel];
-        height += heightOfVisualization;
-    }
-    [self drawTrial:_trialNumber.text.integerValue withProfileIndex:-1];
-    
 
-    int numberOfUsernames = 1;
+    int numberOfUsernames = 0;
     
     // loop through other profiles and load their name labels
     for (NSArray *profile in tabControl.profiles) {
@@ -246,7 +197,10 @@ int heightOfVisualization = 200;
         nameLabel.backgroundColor = [UIColor whiteColor];
         nameLabel.frame = CGRectMake(0, numberOfUsernames * heightOfVisualization + 2, _usernamesWindow.frame.size.width, 40);
         nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
-        nameLabel.text = [NSString stringWithFormat:@"  %@", [profile objectAtIndex:2]];
+        if ([profile isEqual:tabControl.ownProfile])
+            nameLabel.text = [NSString stringWithFormat:@"  %@ (You)", [profile objectAtIndex:2]];
+        else
+            nameLabel.text = [NSString stringWithFormat:@"  %@", [profile objectAtIndex:2]];
         if(nameLabel != NULL) {
             [_usernamesWindow addSubview:nameLabel];
             numberOfUsernames++;
@@ -255,12 +209,6 @@ int heightOfVisualization = 200;
     }
     
     [_usernamesWindow setContentSize: CGSizeMake(_usernamesWindow.contentSize.width, height)];
-    
-    
-    // draw trial for each user
-    for (int i = 0; i < tabControl.profiles.count; i++) {
-        [self drawTrial:_trialNumber.text.integerValue withProfileIndex:i];
-    }
 }
 
 
@@ -277,33 +225,16 @@ int heightOfVisualization = 200;
 
     // first, draw the FebTestIntervention in usernames window
     AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trial];
-    if (profileIndex == -1) {
-        // load trial for own profile
-        AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trial];
-        
-        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 40, 115, 125))];
-        interventionView.view = [[_usernamesWindow subviews] objectAtIndex:0];
-        [interventionView updateView];
-    }
-    else {
-        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 40, 115, 125))];
-        interventionView.view = [[_usernamesWindow subviews] objectAtIndex:profileIndex + 1];
-        [interventionView updateView];
-    }
+    FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 40, 115, 125))];
+    interventionView.view = [[_usernamesWindow subviews] objectAtIndex:profileIndex];
+    [interventionView updateView];
+
     
     NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
     NSArray *currentProfile = [[NSArray alloc]init];
-    int i;
-    if(profileIndex  > -1) {
-        currentProfile = [tabControl.profiles objectAtIndex:profileIndex];
-        i = 3;
-    }
-    else {
-        currentProfile = tabControl.ownProfile;
-        i = 1;
-    }
-    
-    for (; i < [currentProfile count]; i++) {
+    currentProfile = [tabControl.profiles objectAtIndex:profileIndex];
+
+    for (int i = 3; i < [currentProfile count]; i++) {
         [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:i]] withDisplayName:[currentProfile objectAtIndex: i] withNumVar:1 withWidth:widthOfTitleVisualization withRank:9-i]];
     }
     
@@ -364,9 +295,6 @@ int heightOfVisualization = 200;
     
     // draw specific trial for all profiles
     if([textField isEqual:self.trialNumber]) {
-        // load trial for own profile
-        [self drawTrial:self.trialNumber.text.integerValue withProfileIndex:-1];
-        
         for (int i = 0; i < tabControl.profiles.count; i++)
             [self drawTrial:self.trialNumber.text.integerValue withProfileIndex:i];
     }

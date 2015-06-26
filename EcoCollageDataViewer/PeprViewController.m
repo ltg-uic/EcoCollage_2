@@ -268,6 +268,9 @@ NSArray * importQuestions;
     
     [tabControl.ownProfile removeAllObjects];
     
+    [tabControl.ownProfile addObject:@"ownProfile"];
+    [tabControl.ownProfile addObject:[[UIDevice currentDevice]name]];
+    
     if ([_usernameText.text isEqualToString:@""])
          [tabControl.ownProfile addObject:[[UIDevice currentDevice]name]];
     else
@@ -277,6 +280,11 @@ NSArray * importQuestions;
         // add each surveyItem and remove \t
         [tabControl.ownProfile addObject:[[[surveyItems objectAtIndex:i]text] stringByReplacingOccurrencesOfString:@"\t" withString:@""]];
     }
+    
+    if([tabControl.profiles count] < 1)
+        [tabControl.profiles addObject:tabControl.ownProfile];
+    else
+        [tabControl.profiles replaceObjectAtIndex:0 withObject:tabControl.ownProfile];
 }
 
 
