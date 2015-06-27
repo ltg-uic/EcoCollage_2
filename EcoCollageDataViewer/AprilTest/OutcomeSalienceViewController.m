@@ -1155,7 +1155,7 @@ float maxPublicInstallNorm;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
             [scoreVisNames addObject: currentVar.name];
             
-        }else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
             //display window for maxHeights
             FebTestWaterDisplay * mwd;
             if(maxWaterDisplays.count <= trial){
