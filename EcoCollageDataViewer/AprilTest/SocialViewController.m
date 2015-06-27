@@ -23,10 +23,14 @@
 @synthesize profilesWindow = _profilesWindow;
 @synthesize usernamesWindow = _usernamesWindow;
 @synthesize trialNumber = _trialNumber;
+@synthesize BudgetSlider = _BudgetSlider;
+@synthesize StormPlayBack = _StormPlayBack;
 
 NSMutableDictionary *concernColors;
 NSMutableDictionary *concernNames;
 NSMutableDictionary *scoreColors;
+NSMutableArray *publicCostDisplays;
+NSMutableArray *OverBudgetLabels;
 int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
 
@@ -88,6 +92,10 @@ int heightOfVisualization = 200;
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
                     [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
+    
+    
+    publicCostDisplays  = [[NSMutableArray alloc] init];
+    OverBudgetLabels    = [[NSMutableArray alloc] init];
     
     _profilesWindow.delegate = self;
     _usernamesWindow.delegate = self;
@@ -288,42 +296,49 @@ int heightOfVisualization = 200;
         
         //laziness: this is just the investment costs
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            /*
             float investmentInstall = simRun.publicInstallCost;
             float investmentMaintain = simRun.publicMaintenanceCost;
             float investmentInstallN = simRunNormal.publicInstallCost;
             float investmentMaintainN = simRunNormal.publicMaintenanceCost;
+            int maxBudget = 1000000;
+            int dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
             CGRect frame = CGRectMake(width + 25, profileIndex*heightOfVisualization + 60, dynamic_cd_width, 30);
             
             
-            if(publicCostDisplays.count <= trial){
+            if(publicCostDisplays.count <= profileIndex){
+                NSLog(@"check 1");
                 //NSLog(@"Drawing water display for first time");
                 
                 //cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, profileIndex*heightOfVisualization + 60, dynamic_cd_width, 30)];
                 
-                float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.publicInstallCost];
-                float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
+                float costWidth = [self getWidthFromSlider:_BudgetSlider toValue:simRun.publicInstallCost];
+                float maxBudgetWidth = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
                 
                 cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
                 
-                [_dataWindow addSubview: cd];
+                [_profilesWindow addSubview: cd];
                 [publicCostDisplays addObject:cd];
+                NSLog(@"check 2");
             } else {
+                NSLog(@"check 3");
                 //NSLog(@"Repositioning water display");
-                cd = [publicCostDisplays objectAtIndex:trial];
+                cd = [publicCostDisplays objectAtIndex:profileIndex];
                 cd.frame = CGRectMake(width + 25, profileIndex*heightOfVisualization + 60, dynamic_cd_width, 30);
-                [_dataWindow addSubview:cd];
+                [_profilesWindow addSubview:cd];
+                NSLog(@"check 4");
             }
             
             
             //checks if over budget, if so, prints warning message
-            if ((simRun.publicInstallCost > maxBudget) && (!_DynamicNormalization.isOn)){
+            if (simRun.publicInstallCost > maxBudget){
+                NSLog(@"check 5");
                 //store update labels for further use (updating over budget when using absolute val)
                 
                 UILabel *valueLabel;
                 [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudget)]] ] withConcernPosition:width+25 andyValue:profileIndex *heightOfVisualization + 100 andColor:[UIColor redColor] to:&valueLabel];
                 
                 [OverBudgetLabels addObject:valueLabel];
+                NSLog(@"check 6");
             }
             
             
@@ -343,7 +358,6 @@ int heightOfVisualization = 200;
             
             
             //just damages now
-             */
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
             
@@ -521,6 +535,32 @@ int heightOfVisualization = 200;
         valueLabel.textColor = color;
         [_profilesWindow addSubview:valueLabel];
     }
+}
+
+/**
+ * Returns the width from the minimum end of a slider
+ * to a particular value on the slider
+ *
+ * Used to draw the budget labels underneath the budget slider
+ */
+- (int)getWidthFromSlider:(UISlider *)aSlider toValue:(float) value;
+{
+    if (value < aSlider.minimumValue){
+        return 0;
+    }
+    
+    float sliderRange = aSlider.frame.size.width - aSlider.currentThumbImage.size.width;
+    float sliderOrigin = aSlider.frame.origin.x + (aSlider.currentThumbImage.size.width / 2.0);
+    
+    float sliderValueToPixels = (((value-aSlider.minimumValue)/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
+    float sliderValforZero    = ((0/(aSlider.maximumValue-aSlider.minimumValue)) * sliderRange) + sliderOrigin;
+    
+    int returnLocation = (int)sliderValueToPixels - (int)sliderValforZero;
+    if (returnLocation == 0){
+        return 1;
+    }
+    else
+        return returnLocation;
 }
 
 // synchronizes vertical scrolling between usersnamesWindow and profilesWindow
