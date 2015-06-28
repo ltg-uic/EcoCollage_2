@@ -11,6 +11,8 @@
 #import "AprilTestSimRun.h"
 #import "FebTestIntervention.h"
 #import "AprilTestVariable.h"
+#import "FebTestWaterDisplay.h"
+#import "AprilTestEfficiencyView.h"
 #import "AprilTestCostDisplay.h"
 #import "AprilTestNormalizedVariable.h"
 
@@ -29,10 +31,14 @@
 NSMutableDictionary *concernColors;
 NSMutableDictionary *concernNames;
 NSMutableDictionary *scoreColors;
-NSMutableArray *publicCostDisplays;
 NSMutableArray *OverBudgetLabels;
 int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
+int dynamic_cd_width = 0;
+int maxBudget;
+float min_budget = 100000;
+float max_budget = 700000;
+UILabel *budgetLabel;
 
 
 
@@ -49,12 +55,6 @@ int heightOfVisualization = 200;
                                              selector:@selector(handleProfileUpdate)
                                                  name:@"profileUpdate"
                                                object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(loadUsernames)
-                                                 name:@"usernameUpdate"
-                                               object:nil];
-    
     
     
     concernColors = [[NSMutableDictionary alloc] initWithObjects:
@@ -94,8 +94,14 @@ int heightOfVisualization = 200;
                     [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
     
-    publicCostDisplays  = [[NSMutableArray alloc] init];
     OverBudgetLabels    = [[NSMutableArray alloc] init];
+    
+    
+    [self drawMinMaxSliderLabels];
+    _BudgetSlider.minimumValue = min_budget;
+    _BudgetSlider.maximumValue = max_budget;
+    [_BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
+    [self BudgetChanged:_BudgetSlider];
     
     _profilesWindow.delegate = self;
     _usernamesWindow.delegate = self;
@@ -123,11 +129,6 @@ int heightOfVisualization = 200;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleProfileUpdate)
                                                  name:@"profileUpdate"
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(loadUsernames)
-                                                 name:@"usernameUpdate"
                                                object:nil];
     
     [self handleProfileUpdate];
@@ -300,45 +301,29 @@ int heightOfVisualization = 200;
             float investmentMaintain = simRun.publicMaintenanceCost;
             float investmentInstallN = simRunNormal.publicInstallCost;
             float investmentMaintainN = simRunNormal.publicMaintenanceCost;
-            int maxBudget = 1000000;
-            int dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
+            dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
             CGRect frame = CGRectMake(width + 25, profileIndex*heightOfVisualization + 60, dynamic_cd_width, 30);
             
             
-            if(publicCostDisplays.count <= profileIndex){
-                NSLog(@"check 1");
-                //NSLog(@"Drawing water display for first time");
-                
-                //cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, profileIndex*heightOfVisualization + 60, dynamic_cd_width, 30)];
-                
-                float costWidth = [self getWidthFromSlider:_BudgetSlider toValue:simRun.publicInstallCost];
-                float maxBudgetWidth = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
-                
-                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
-                
-                [_profilesWindow addSubview: cd];
-                [publicCostDisplays addObject:cd];
-                NSLog(@"check 2");
-            } else {
-                NSLog(@"check 3");
-                //NSLog(@"Repositioning water display");
-                cd = [publicCostDisplays objectAtIndex:profileIndex];
-                cd.frame = CGRectMake(width + 25, profileIndex*heightOfVisualization + 60, dynamic_cd_width, 30);
-                [_profilesWindow addSubview:cd];
-                NSLog(@"check 4");
-            }
+            //NSLog(@"Drawing water display for first time");
             
+            //cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, profileIndex*heightOfVisualization + 60, dynamic_cd_width, 30)];
+            
+            float costWidth = [self getWidthFromSlider:_BudgetSlider toValue:simRun.publicInstallCost];
+            float maxBudgetWidth = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
+            
+            cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
+            
+            [_profilesWindow addSubview: cd];
             
             //checks if over budget, if so, prints warning message
             if (simRun.publicInstallCost > maxBudget){
-                NSLog(@"check 5");
                 //store update labels for further use (updating over budget when using absolute val)
                 
                 UILabel *valueLabel;
                 [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudget)]] ] withConcernPosition:width+25 andyValue:profileIndex *heightOfVisualization + 100 andColor:[UIColor redColor] to:&valueLabel];
                 
                 [OverBudgetLabels addObject:valueLabel];
-                NSLog(@"check 6");
             }
             
             
@@ -543,8 +528,7 @@ int heightOfVisualization = 200;
  *
  * Used to draw the budget labels underneath the budget slider
  */
-- (int)getWidthFromSlider:(UISlider *)aSlider toValue:(float) value;
-{
+- (int)getWidthFromSlider:(UISlider *)aSlider toValue:(float)value {
     if (value < aSlider.minimumValue){
         return 0;
     }
@@ -562,6 +546,28 @@ int heightOfVisualization = 200;
     else
         return returnLocation;
 }
+
+//selector method that handles a change in value when budget changes (slider under titles)
+-(void)BudgetChanged:(id)sender {
+    UISlider *slider = (UISlider*)sender;
+    int value = slider.value;
+    //-- Do further actions
+    
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    value = 1000.0 * floor((value/1000.0)+0.5);
+    
+    maxBudget = value;
+    [self changeBudgetLabel:(int)maxBudget];
+    
+    //update the width of the public install cost bars (make sure it isn't 0)
+    dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
+    
+    //only update all labels/bars if Static normalization is switched on
+    [self handleProfileUpdate];
+}
+
 
 // synchronizes vertical scrolling between usersnamesWindow and profilesWindow
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -599,6 +605,44 @@ int heightOfVisualization = 200;
     
 }
 
+
+- (void)drawMinMaxSliderLabels {
+    NSNumberFormatter *formatter = [NSNumberFormatter new];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    UILabel *minLabel = [[UILabel alloc]init];
+    minLabel.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:min_budget]]];
+    minLabel.font = [UIFont systemFontOfSize:14.5];
+    [minLabel sizeToFit];
+    minLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x - (minLabel.frame.size.width + 10), 663, minLabel.frame.size.width, minLabel.frame.size.height);
+    [minLabel setBackgroundColor:[UIColor clearColor]];
+    [self.view addSubview:minLabel];
+    
+    UILabel *maxLabel = [[UILabel alloc]init];
+    maxLabel.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:max_budget]]];
+    maxLabel.font = [UIFont systemFontOfSize:14.5];
+    [maxLabel sizeToFit];
+    maxLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x + (_BudgetSlider.frame.size.width + 10), 663, maxLabel.frame.size.width, maxLabel.frame.size.height);
+    [maxLabel setBackgroundColor:[UIColor clearColor]];
+    [self.view addSubview:maxLabel];
+    
+    budgetLabel = [[UILabel alloc]init];
+    budgetLabel.text = [NSString stringWithFormat:@"Set Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:min_budget]]];
+    budgetLabel.font = [UIFont systemFontOfSize:14.5];
+    [budgetLabel sizeToFit];
+    budgetLabel.frame = CGRectMake(3 , 663, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
+    [budgetLabel setBackgroundColor:[UIColor clearColor]];
+    [self.view addSubview:budgetLabel];
+}
+
+
+- (void)changeBudgetLabel:(int)budget {
+    NSNumberFormatter *formatter = [NSNumberFormatter new];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    budgetLabel.text = [NSString stringWithFormat:@"Set Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:budget]]];
+    [budgetLabel sizeToFit];
+}
 
 
 - (void)didReceiveMemoryWarning {

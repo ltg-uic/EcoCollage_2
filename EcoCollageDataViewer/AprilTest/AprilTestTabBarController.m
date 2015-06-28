@@ -273,7 +273,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
         }
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"usernameUpdate" object:self userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
 
