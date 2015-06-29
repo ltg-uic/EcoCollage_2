@@ -26,7 +26,8 @@
     
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    
+    [formatter setGroupingSeparator:@","];
+ 
     _valueLabel = [[UILabel alloc] init];
     _valueLabel.text = [NSString stringWithFormat:@"Installation Cost $%@", [formatter stringFromNumber: [NSNumber numberWithInt:cost] ]];
     _valueLabel.frame =CGRectMake(0, 0, 0, 0);
@@ -109,6 +110,7 @@
     
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     _valueLabel = [[UILabel alloc] init];
     _valueLabel.text = [NSString stringWithFormat:@"Installation Cost $%@", [formatter stringFromNumber: [NSNumber numberWithInt:cost] ]];
@@ -141,6 +143,7 @@
     
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     _valueLabel = [[UILabel alloc] init];
     _valueLabel.text = [NSString stringWithFormat:@"Installation Cost $%@", [formatter stringFromNumber: [NSNumber numberWithInt:cost] ]];

@@ -32,9 +32,16 @@ NSMutableDictionary *concernColors;
 NSMutableDictionary *concernNames;
 NSMutableDictionary *scoreColors;
 NSMutableArray *OverBudgetLabels;
+NSMutableArray * waterDisplays;
+NSMutableArray *maxWaterDisplays;
 int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
 int dynamic_cd_width = 0;
+
+//Important values that change elements of objects
+float thresh_social = 6;
+float hours_social = 0;
+int hoursAfterStorm_social;
 int maxBudget;
 float min_budget = 100000;
 float max_budget = 700000;
@@ -95,12 +102,16 @@ UILabel *budgetLabel;
     
     
     OverBudgetLabels    = [[NSMutableArray alloc] init];
+    waterDisplays = [[NSMutableArray alloc]init];
+    maxWaterDisplays = [[NSMutableArray alloc]init];
     
     
     [self drawMinMaxSliderLabels];
     _BudgetSlider.minimumValue = min_budget;
     _BudgetSlider.maximumValue = max_budget;
-    [_BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
+    [_BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventTouchUpInside];
+    [_BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventTouchUpOutside];
+    [_BudgetSlider addTarget:self action:@selector(BudgetValueChanged:) forControlEvents:UIControlEventValueChanged];
     [self BudgetChanged:_BudgetSlider];
     
     _profilesWindow.delegate = self;
@@ -241,6 +252,7 @@ UILabel *budgetLabel;
 
 
 - (void)drawTrial:(int) trial withProfileIndex:(int) profileIndex {
+    NSLog(@"drawing trial %d for index %d", trial, profileIndex);
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     // error checking
@@ -278,6 +290,7 @@ UILabel *budgetLabel;
     int width = 0;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     
     NSArray *sortedArray = [currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
@@ -387,45 +400,42 @@ UILabel *budgetLabel;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
             [scoreVisNames addObject: currentVar.name];
         } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
-            /*
             FebTestWaterDisplay * wd;
             //NSLog(@"%d, %d", waterDisplays.count, i);
-            if(waterDisplays.count <= trial){
+            if(waterDisplays.count <= profileIndex){
                 //NSLog(@"Drawing water display for first time");
                 wd = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, (profileIndex)*heightOfVisualization + 60, 115, 125) andContent:simRun.standingWater];
-                wd.view = _dataWindow;
+                wd.view = _profilesWindow;
                 [waterDisplays addObject:wd];
             } else {
-                wd = [waterDisplays objectAtIndex:trial];
+                wd = [waterDisplays objectAtIndex:profileIndex];
                 wd.frame = CGRectMake(width + 10, (profileIndex)*heightOfVisualization + 60, 115, 125);
             }
-            wd.thresholdValue = thresh;
-            [wd fastUpdateView: StormPlayBack.value];
+
+            wd.thresholdValue = thresh_social;
+            [wd fastUpdateView: _StormPlayBack.value];
             
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
             [scoreVisNames addObject: currentVar.name];
-             */
             
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
-            /*
             //display window for maxHeights
             FebTestWaterDisplay * mwd;
-            if(maxWaterDisplays.count <= trial){
+            if(maxWaterDisplays.count <= profileIndex){
                 mwd  = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, (profileIndex)*heightOfVisualization + 60, 115, 125) andContent:simRun.maxWaterHeights];
-                mwd.view = _dataWindow;
+                mwd.view = _profilesWindow;
                 [maxWaterDisplays addObject:mwd];
             } else {
-                mwd = [maxWaterDisplays objectAtIndex:trial];
+                mwd = [maxWaterDisplays objectAtIndex:profileIndex];
                 mwd.frame = CGRectMake(width + 10, (profileIndex)*heightOfVisualization + 60, 115, 125);
             }
-            mwd.thresholdValue = thresh;
+            mwd.thresholdValue = thresh_social;
             [mwd updateView:48];
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
             [scoreVisNames addObject: currentVar.name];
-            */
         } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
             /*
             AprilTestEfficiencyView *ev;
@@ -459,9 +469,9 @@ UILabel *budgetLabel;
         if (currentVar.widthOfVisualization > 0) visibleIndex++;
     }
     //border around component score
-    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (profileIndex)*heightOfVisualization + 88,  114, 26)];
+    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (profileIndex)*heightOfVisualization + 78,  114, 26)];
     fullValueBorder.backgroundColor = [UIColor grayColor];
-    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (profileIndex)*heightOfVisualization + 90,  110, 22)];
+    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (profileIndex)*heightOfVisualization + 80,  110, 22)];
     fullValue.backgroundColor = [UIColor whiteColor];
     [_usernamesWindow addSubview:fullValueBorder];
     [_usernamesWindow addSubview:fullValue];
@@ -475,7 +485,7 @@ UILabel *budgetLabel;
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
-        componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (profileIndex)*heightOfVisualization + 90, floor(scoreWidth), 22)];
+        componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (profileIndex)*heightOfVisualization + 80, floor(scoreWidth), 22)];
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
         [_usernamesWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
@@ -483,14 +493,14 @@ UILabel *budgetLabel;
     
     [_profilesWindow setContentSize:CGSizeMake(width+=20, (profileIndex+1)*200)];
     
-    UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, heightOfVisualization*(profileIndex) + 50, 0, 0)];
+    UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, heightOfVisualization*(profileIndex) + 40, 0, 0)];
     //scoreLabel.text = [NSString stringWithFormat:  @"Score: %.0f / 100", totalScore];
     scoreLabel.text = @"Performance:";
     scoreLabel.font = [UIFont systemFontOfSize:14.0];
     [scoreLabel sizeToFit];
     scoreLabel.textColor = [UIColor blackColor];
     [_usernamesWindow addSubview:scoreLabel];
-    UILabel *scoreLabel2 = [[UILabel alloc] initWithFrame:CGRectMake(150, heightOfVisualization*(profileIndex) + 75, 0, 0)];
+    UILabel *scoreLabel2 = [[UILabel alloc] initWithFrame:CGRectMake(150, heightOfVisualization*(profileIndex) + 65, 0, 0)];
     scoreLabel2.text = [NSString stringWithFormat:  @"Broken down by source:"];
     scoreLabel2.font = [UIFont systemFontOfSize:10.0];
     [scoreLabel2 sizeToFit];
@@ -553,9 +563,6 @@ UILabel *budgetLabel;
     int value = slider.value;
     //-- Do further actions
     
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    
     value = 1000.0 * floor((value/1000.0)+0.5);
     
     maxBudget = value;
@@ -566,6 +573,16 @@ UILabel *budgetLabel;
     
     //only update all labels/bars if Static normalization is switched on
     [self handleProfileUpdate];
+}
+     
+     
+- (void)BudgetValueChanged:(id)sender {
+    UISlider *slider = (UISlider*)sender;
+    int value = slider.value;
+    
+    value = 1000.0 * floor((value/1000.0)+0.5);
+    maxBudget = value;
+    [self changeBudgetLabel:(int)maxBudget];
 }
 
 
@@ -595,12 +612,13 @@ UILabel *budgetLabel;
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField{
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    
     // draw specific trial for all profiles
     if([textField isEqual:self.trialNumber]) {
-        for (int i = 0; i < tabControl.profiles.count; i++)
-            [self handleProfileUpdate];
+        [maxWaterDisplays removeAllObjects];
+        [waterDisplays removeAllObjects];
+        
+        // handleProfileUpdates will loop through trial for all profiles
+        [self handleProfileUpdate];
     }
     
 }
@@ -609,10 +627,11 @@ UILabel *budgetLabel;
 - (void)drawMinMaxSliderLabels {
     NSNumberFormatter *formatter = [NSNumberFormatter new];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     UILabel *minLabel = [[UILabel alloc]init];
     minLabel.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:min_budget]]];
-    minLabel.font = [UIFont systemFontOfSize:14.5];
+    minLabel.font = [UIFont systemFontOfSize:15.0];
     [minLabel sizeToFit];
     minLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x - (minLabel.frame.size.width + 10), 663, minLabel.frame.size.width, minLabel.frame.size.height);
     [minLabel setBackgroundColor:[UIColor clearColor]];
@@ -620,7 +639,7 @@ UILabel *budgetLabel;
     
     UILabel *maxLabel = [[UILabel alloc]init];
     maxLabel.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:max_budget]]];
-    maxLabel.font = [UIFont systemFontOfSize:14.5];
+    maxLabel.font = [UIFont systemFontOfSize:15.0];
     [maxLabel sizeToFit];
     maxLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x + (_BudgetSlider.frame.size.width + 10), 663, maxLabel.frame.size.width, maxLabel.frame.size.height);
     [maxLabel setBackgroundColor:[UIColor clearColor]];
@@ -628,7 +647,7 @@ UILabel *budgetLabel;
     
     budgetLabel = [[UILabel alloc]init];
     budgetLabel.text = [NSString stringWithFormat:@"Set Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:min_budget]]];
-    budgetLabel.font = [UIFont systemFontOfSize:14.5];
+    budgetLabel.font = [UIFont systemFontOfSize:15.0];
     [budgetLabel sizeToFit];
     budgetLabel.frame = CGRectMake(3 , 663, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
     [budgetLabel setBackgroundColor:[UIColor clearColor]];
@@ -639,6 +658,7 @@ UILabel *budgetLabel;
 - (void)changeBudgetLabel:(int)budget {
     NSNumberFormatter *formatter = [NSNumberFormatter new];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     budgetLabel.text = [NSString stringWithFormat:@"Set Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:budget]]];
     [budgetLabel sizeToFit];

@@ -273,6 +273,7 @@ float maxPublicInstallNorm;
 
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     //remove all old labels
     [self removeBudgetLabels];
@@ -404,6 +405,7 @@ float maxPublicInstallNorm;
     
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     value = 1000.0 * floor((value/1000.0)+0.5);
     
@@ -427,6 +429,7 @@ float maxPublicInstallNorm;
     
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:newValue]]];
     
@@ -696,6 +699,7 @@ float maxPublicInstallNorm;
     CGRect                      frame;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
     
@@ -746,6 +750,7 @@ float maxPublicInstallNorm;
     int width = 0;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
         NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
@@ -1010,6 +1015,7 @@ float maxPublicInstallNorm;
     int width = 0;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
         NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
@@ -1451,6 +1457,7 @@ float maxPublicInstallNorm;
 -(void) drawSliders{
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
     
     int width = 0;
     
