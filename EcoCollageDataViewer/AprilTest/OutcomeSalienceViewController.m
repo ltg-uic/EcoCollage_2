@@ -857,7 +857,7 @@ float maxPublicInstallNorm;
         [_mapWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
     }
-    
+     NSLog(@"Trial: %d\nScore: %.0f / 100\n\n", simRunNormal.trialNum, totalScore);
 }
 
 - (void)loadNextSimulationRun{
@@ -1255,12 +1255,14 @@ float maxPublicInstallNorm;
     [_mapWindow addSubview:scoreLabel2];
     
     
+    NSLog(@"Trial: %d\nScore: %.0f / 100\n\n", simRun.trialNum, totalScore);
+    
     NSDictionary *trialRunInfo = @{@"TrialNum"          : [NSNumber numberWithInt:simRun.trialNum],
                                    @"TrialRun"          : [trialRuns objectAtIndex:simRun.trialNum],
                                    @"TrialStatic"       : [trialRunsNormalized objectAtIndex:simRun.trialNum],
                                    @"TrialDynamic"      : [trialRunsDynNorm objectAtIndex:simRun.trialNum],
                                    @"TrialTxTBox"       : tx,
-                                   @"PerformanceScore"  : [NSNumber numberWithInt: totalScore],
+                                   @"PerformanceScore"  : [NSNumber numberWithFloat: totalScore],
                                    @"FebTestMap"        : interventionView,
                                    @"WaterDisplay"      : wd,
                                    @"MWaterDisplay"     : mwd,
@@ -1643,9 +1645,20 @@ float maxPublicInstallNorm;
     if ([arrStatus[row] isEqual: @"Trial Number"])
         [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"TrialNum" ascending:YES]]];
     
-    else if ([arrStatus[row] isEqual: @"Best Score"])
-        [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"PerformanceScore" ascending:NO]]];
-
+    else if ([arrStatus[row] isEqual: @"Best Score"]){
+        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            NSInteger first  = (NSInteger)[obj1 valueForKey:@"PerformanceScore"];
+            NSInteger second = (NSInteger)[obj2 valueForKey:@"PerformanceScore"];
+            
+            if (first > second)
+                return NSOrderedAscending;
+            else if (second > first)
+                return NSOrderedDescending;
+            return NSOrderedSame;
+        }];
+        
+    }
+    
     else if ([arrStatus[row] isEqual: @"Public Cost"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
