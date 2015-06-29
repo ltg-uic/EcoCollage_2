@@ -951,7 +951,7 @@ float maxPublicInstallNorm;
 -(void) OffsetView: (UIView*) view toX:(int)x andY:(int)y{
     ///GENERAL FORMULA FOR TRANSLATING A FRAME
     CGRect frame = view.frame;
-    //frame.origin.x = x;
+    frame.origin.x = x;
     frame.origin.y = y;
     [view setFrame: frame];
 }
@@ -1026,6 +1026,9 @@ float maxPublicInstallNorm;
     NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
     NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
     AprilTestCostDisplay *cd;
+    FebTestWaterDisplay * wd;
+    FebTestWaterDisplay * mwd;
+    AprilTestEfficiencyView *ev;
     int visibleIndex = 0;
     
     for(int i = 0 ; i <_currentConcernRanking.count ; i++){
@@ -1142,7 +1145,7 @@ float maxPublicInstallNorm;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
             [scoreVisNames addObject: currentVar.name];
         } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
-            FebTestWaterDisplay * wd;
+            
             //NSLog(@"%d, %d", waterDisplays.count, i);
             if(waterDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
@@ -1162,8 +1165,8 @@ float maxPublicInstallNorm;
             [scoreVisNames addObject: currentVar.name];
             
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+            
             //display window for maxHeights
-            FebTestWaterDisplay * mwd;
             if(maxWaterDisplays.count <= trial){
                 mwd  = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125) andContent:simRun.maxWaterHeights];
                 mwd.view = _dataWindow;
@@ -1179,7 +1182,7 @@ float maxPublicInstallNorm;
             [scoreVisNames addObject: currentVar.name];
 
         } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
-            AprilTestEfficiencyView *ev;
+            
             if( efficiency.count <= trial){
                 //NSLog(@"Drawing efficiency display for first time");
             ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, (trial )*175 + 40, 130, 150) withContent: simRun.efficiency];
@@ -1264,6 +1267,9 @@ float maxPublicInstallNorm;
                                    @"TrialDynamic"      : [trialRunsDynNorm objectAtIndex:simRun.trialNum],
                                    @"TrialTxTBox"       : tx,
                                    @"FebTestMap"        : interventionView,
+                                   @"WaterDisplay"      : wd,
+                                   @"MWaterDisplay"     : mwd,
+                                   @"EfficiencyView"    : ev,
                                    @"Maintenance"       : maintenance,
                                    @"Damage"            : damage,
                                    @"DamageReduced"     : damageReduced,
@@ -1645,40 +1651,63 @@ float maxPublicInstallNorm;
 
 - (void) handleSort:(int) row{
     /*if ([arrStatus[row]  isEqual: @"Public Cost"]) {
-        
+        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        AprilTestSimRun *first = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
+        AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
+     
+        if (first.publicInstallCost > second.publicInstallCost){
+            return (NSComparisonResult)NSOrderedAscending;
+        }
+        else if (second.publicInstallCost > first.publicInstallCost){
+            return (NSComparisonResult)NSOrderedDescending;
+        }
+        return (NSComparisonResult)NSOrderedSame;
+     }];
     }*/
     
     //right now trying to see if i can delegate some of the updating to the actual update methods (only sorting in descending order for now)
-    [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"TrialNum" ascending:NO] ]];
+    [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        AprilTestSimRun *first = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
+        AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
+        
+        if (first.trialNum> second.trialNum){
+            return (NSComparisonResult)NSOrderedAscending;
+        }
+        else if (second.trialNum > first.trialNum){
+            return (NSComparisonResult)NSOrderedDescending;
+        }
+        return (NSComparisonResult)NSOrderedSame;
+    }];
     
     for (int i = 0; i < trialRunSubViews.count; i++) {
         
-        UILabel *newTxt                     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
-        UILabel *Damage                     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Damage"];
-        UILabel *DamageReduced              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"DamageReduced"];
-        UILabel *SewerLoad                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"SewerLoad"];
-        UILabel *gw_infiltration            = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterInfiltration"];
-        UILabel *EfficiencyOfIntervention   = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Efficiency_Interv"];
-        UILabel *maintenance                = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
-        UILabel *impactNeighbor             = [[trialRunSubViews objectAtIndex:i] valueForKey:@"ImpactNeighbor"];
-        
-        AprilTestSimRun *simRun     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
+        AprilTestSimRun *simRun               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
+        UILabel *newTxt                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
+        UILabel *Damage                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Damage"];
+        UILabel *DamageReduced                = [[trialRunSubViews objectAtIndex:i] valueForKey:@"DamageReduced"];
+        UILabel *SewerLoad                    = [[trialRunSubViews objectAtIndex:i] valueForKey:@"SewerLoad"];
+        UILabel *gw_infiltration              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterInfiltration"];
+        UILabel *EfficiencyOfIntervention     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Efficiency_Interv"];
+        UILabel *maintenance                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
+        UILabel *impactNeighbor               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"ImpactNeighbor"];
         FebTestIntervention *interventionView = [[trialRunSubViews objectAtIndex:i] valueForKey:@"FebTestMap"];
+        FebTestWaterDisplay *wd               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDisplay"];
+        FebTestWaterDisplay *mwd              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDisplay"];
+        AprilTestEfficiencyView *ev           = [[trialRunSubViews objectAtIndex:i] valueForKey:@"EfficiencyView"];
         
         //move over the febtestIntervention view (map under the trial run number label)
         interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (i) + 40, 115, 125))];
         interventionView.view = _mapWindow;
         [interventionView updateView];
         
-        /*
-        if   ([Damage superview] == nil) [_dataWindow addSubview:Damage];
-        if   ([DamageReduced superview] == nil) [_dataWindow addSubview:DamageReduced];
-        if   ([SewerLoad superview] == nil) [_dataWindow addSubview:SewerLoad];
-        if   ([gw_infiltration superview] == nil) [_dataWindow addSubview:gw_infiltration];
-        if   ([EfficiencyOfIntervention superview] == nil) [_dataWindow addSubview:EfficiencyOfIntervention];
-        if   ([maintenance superview] == nil) [_dataWindow addSubview:maintenance];
-        if   ([impactNeighbor superview] == nil) [_dataWindow addSubview:impactNeighbor];
-        if   ([newTxt superview] == nil ) [_mapWindow addSubview:newTxt];*/
+        [self OffsetView:ev toX:ev.frame.origin.x andY:175*i + 40];
+        [ev updateViewForHour: StormPlayBack.value];
+        
+        [self OffsetView:wd toX:wd.frame.origin.x andY:175*i + 40];
+        [wd fastUpdateView: StormPlayBack.value];
+        
+        [self OffsetView:mwd toX:mwd.frame.origin.x andY:175*i + 40];
+        [mwd updateView:48];
         
         //move over the private damage labels
         [self OffsetView:Damage toX:Damage.frame.origin.x andY:(i*175) +40 ];
