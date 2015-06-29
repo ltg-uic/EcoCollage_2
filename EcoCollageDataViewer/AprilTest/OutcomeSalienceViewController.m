@@ -189,12 +189,9 @@ float maxPublicInstallNorm;
         [view removeFromSuperview];
     }
     
-    
     for (int i =0; i < trialNum; i++){
         [self drawTrial:i];
     }
-    
-    //[self handleSort:0];
     
     //determine depending on min and max budget limits what is to be drawn on UILabels under le BudgetSlider
     minBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((min_budget_limit/1000000 < 1) ? (min_budget_limit/1000) : (min_budget_limit/1000000)), (min_budget_limit/1000000 < 1) ? 'K' : 'M'];
@@ -919,6 +916,8 @@ float maxPublicInstallNorm;
         //draws the newest trial after latest normalization of data (static or dynamic)
         [self drawTrial: trialNum];
         
+        trialNum++;
+        
         //chooses between static/dynamic normalization of trial data
         if (_DynamicNormalization.isOn) {
             [self normalizeAllandUpdateDynamically]; //updates previous trials's visualizations and renormalizes
@@ -926,8 +925,7 @@ float maxPublicInstallNorm;
         else{
             [self normalizeStatically];     //normalizes a trial one at a time
         }
-        
-        trialNum++;
+
     }
     
     //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
@@ -935,7 +933,6 @@ float maxPublicInstallNorm;
         scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
                                                                   target:self selector:@selector(autoscrollTimerFired) userInfo:nil repeats:NO];
 
-    
     [_loadingIndicator stopAnimating];
     
 }
@@ -957,7 +954,6 @@ float maxPublicInstallNorm;
 }
 
 -(void) drawTrial: (int) trial{
-
     UILabel *maintenance;
     UILabel *damage;
     UILabel *damageReduced;
@@ -968,10 +964,10 @@ float maxPublicInstallNorm;
     
     AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([trialRuns objectAtIndex:trial]);
     AprilTestNormalizedVariable *simRunNormal;
+    
     //determines via UIswitch what type of normalization is being drawn
     if (_DynamicNormalization.isOn){
         simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialDynamic"])  : ([trialRunsDynNorm objectAtIndex:trial]);
-        
     }
     else{
         simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialStatic"]) :([trialRunsNormalized objectAtIndex:trial]);
@@ -980,7 +976,6 @@ float maxPublicInstallNorm;
     FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
     interventionView.view = _mapWindow;
     [interventionView updateView];
-
     [_mapWindow setContentSize: CGSizeMake(_mapWindow.contentSize.width, (trial+1)*200)];
     
     //int scoreBar=0;
@@ -988,9 +983,9 @@ float maxPublicInstallNorm;
     float scoreTotal = 0;
     
     for(int i = 0; i < _currentConcernRanking.count; i++){
-
         priorityTotal += [(AprilTestVariable *)[_currentConcernRanking objectAtIndex:i] currentConcernRanking];
     }
+    
     UITextField *tx;
     //if(trial >= _scenarioNames.count){
         tx = [[UITextField alloc] initWithFrame:CGRectMake(20, 175*(trial)+5, 245, 30)];
@@ -1023,6 +1018,7 @@ float maxPublicInstallNorm;
         if(first > second) return NSOrderedAscending;
         else return NSOrderedDescending;
     }];
+    
     NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
     NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
     AprilTestCostDisplay *cd;
@@ -1055,17 +1051,15 @@ float maxPublicInstallNorm;
             
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
-                
-                /*cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30)];
-                */
+                /*cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30)];*/
                 
                 float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.publicInstallCost];
                 float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
                 
                 cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
-                
                 [_dataWindow addSubview: cd];
                 [publicCostDisplays addObject:cd];
+                
             } else {
                 //NSLog(@"Repositioning water display");
                 cd = [publicCostDisplays objectAtIndex:trial];
@@ -1266,6 +1260,7 @@ float maxPublicInstallNorm;
                                    @"TrialStatic"       : [trialRunsNormalized objectAtIndex:simRun.trialNum],
                                    @"TrialDynamic"      : [trialRunsDynNorm objectAtIndex:simRun.trialNum],
                                    @"TrialTxTBox"       : tx,
+                                   @"PerformanceScore"  : [NSNumber numberWithInt: totalScore],
                                    @"FebTestMap"        : interventionView,
                                    @"WaterDisplay"      : wd,
                                    @"MWaterDisplay"     : mwd,
@@ -1358,27 +1353,22 @@ float maxPublicInstallNorm;
 
 
 //method to move the view up/down whenever the keyboard is shown/dismissed
--(void)setViewMovedUp:(BOOL)movedUp
-{
+-(void)setViewMovedUp:(BOOL)movedUp{
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:0.3]; // if you want to slide up the view
     
     CGPoint rect = self.mapWindow.contentOffset;
     CGPoint rect2 = self.dataWindow.contentOffset;
     
-    if (movedUp)
-    {
-        
+    if (movedUp){
         originalOffset = rect.y;
         rect.y += (edittingTX.frame.origin.y + _mapWindow.contentOffset.y) - 225;
         rect2.y = rect.y;
     }
-    else
-    {
+    else{
         // revert back to the normal state.
         rect.y = originalOffset;
         rect2.y = originalOffset;
-
     }
     self.mapWindow.contentOffset = rect;
     self.dataWindow.contentOffset = rect2;
@@ -1486,7 +1476,6 @@ float maxPublicInstallNorm;
         
         
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            
             CGRect frame  = CGRectMake(width + 25, 2, 160, 40);
             BudgetSlider = [[UISlider alloc] initWithFrame:frame];
             [BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
@@ -1606,7 +1595,6 @@ float maxPublicInstallNorm;
         [_dataWindow setContentOffset:offset];
     }
     
-    
     NSDate *myDate = [[NSDate alloc] init];
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"HH:mm:ss"];
@@ -1650,35 +1638,96 @@ float maxPublicInstallNorm;
 }
 
 - (void) handleSort:(int) row{
-    /*if ([arrStatus[row]  isEqual: @"Public Cost"]) {
+    
+    //depending on what the type of sort it is, sort the mutable array of dictionaries
+    if ([arrStatus[row] isEqual: @"Trial Number"])
+        [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"TrialNum" ascending:YES]]];
+    
+    else if ([arrStatus[row] isEqual: @"Best Score"])
+        [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"PerformanceScore" ascending:NO]]];
+
+    else if ([arrStatus[row] isEqual: @"Public Cost"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        AprilTestSimRun *first = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
-        AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
-     
-        if (first.publicInstallCost > second.publicInstallCost){
-            return (NSComparisonResult)NSOrderedAscending;
-        }
-        else if (second.publicInstallCost > first.publicInstallCost){
-            return (NSComparisonResult)NSOrderedDescending;
-        }
-        return (NSComparisonResult)NSOrderedSame;
-     }];
-    }*/
-    
-    //right now trying to see if i can delegate some of the updating to the actual update methods (only sorting in descending order for now)
-    [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        AprilTestSimRun *first = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
-        AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
+            AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
+            AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
+            
+            if (first.publicInstallCost > second.publicInstallCost)
+                return NSOrderedAscending;
+            else if (second.publicInstallCost > first.publicInstallCost)
+                return NSOrderedDescending;
+            return NSOrderedSame;
+                
+        }];
+    }
+    else if ([arrStatus[row] isEqual: @"Private Cost"]){
+        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
+            AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
+            
+            if (first.privateDamages > second.privateDamages)
+                return NSOrderedAscending;
+            else if (second.privateDamages > first.privateDamages)
+                return NSOrderedDescending;
+            return NSOrderedSame;
+        }];
+    }
         
-        if (first.trialNum> second.trialNum){
-            return (NSComparisonResult)NSOrderedAscending;
-        }
-        else if (second.trialNum > first.trialNum){
-            return (NSComparisonResult)NSOrderedDescending;
-        }
-        return (NSComparisonResult)NSOrderedSame;
-    }];
+    else if ([arrStatus[row] isEqual: @"Rainwater to Neighbors"]){
+        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
+            AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
+            
+            if (first.impactNeighbors > second.impactNeighbors)
+                return NSOrderedAscending;
+            else if (second.impactNeighbors > first.impactNeighbors)
+                return NSOrderedDescending;
+            return NSOrderedSame;
+        }];
+    }
+        
+    else if ([arrStatus[row] isEqual: @"Rainwater from Neighbors"]){
+        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
+            AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
+            
+            if (first.neighborsImpactMe > second.neighborsImpactMe)
+                return NSOrderedAscending;
+            else if (second.neighborsImpactMe > first.neighborsImpactMe)
+                return NSOrderedDescending;
+            return NSOrderedSame;
+            
+        }];
+    }
+        
+    else if ([arrStatus[row] isEqual: @"Intervention Efficiency"]){
+        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
+            AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
+            
+            if (first.dollarsGallons > second.dollarsGallons)
+                return NSOrderedAscending;
+            else if (second.dollarsGallons > first.dollarsGallons)
+                return NSOrderedDescending;
+            return NSOrderedSame;
+            
+        }];
+    }
+        
+    else if ([arrStatus[row] isEqual: @"% Rainwater Infiltrated"]){
+        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
+            AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
+            
+            if (first.infiltration> second.infiltration)
+                return NSOrderedAscending;
+            else if (second.infiltration > first.infiltration)
+                return NSOrderedDescending;
+            return NSOrderedSame;
+            
+        }];
+    }
     
+    //loop through all entries (in sorted order) and update its frame to its new position
     for (int i = 0; i < trialRunSubViews.count; i++) {
         
         AprilTestSimRun *simRun               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
@@ -1694,6 +1743,7 @@ float maxPublicInstallNorm;
         FebTestWaterDisplay *wd               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDisplay"];
         FebTestWaterDisplay *mwd              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDisplay"];
         AprilTestEfficiencyView *ev           = [[trialRunSubViews objectAtIndex:i] valueForKey:@"EfficiencyView"];
+        
         
         //move over the febtestIntervention view (map under the trial run number label)
         interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (i) + 40, 115, 125))];
@@ -1742,7 +1792,9 @@ float maxPublicInstallNorm;
     [[self view] endEditing:YES];
     
     //Handle the sort afterwards
+    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     [self handleSort:(int)row];
+    [_loadingIndicator stopAnimating];
 }
 
 // tell the picker how many rows are available for a given component
