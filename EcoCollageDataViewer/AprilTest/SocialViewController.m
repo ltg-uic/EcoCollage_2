@@ -27,6 +27,7 @@
 @synthesize trialNumber = _trialNumber;
 @synthesize BudgetSlider = _BudgetSlider;
 @synthesize StormPlayBack = _StormPlayBack;
+@synthesize loadingIndicator = _loadingIndicator;
 
 NSMutableDictionary *concernColors;
 NSMutableDictionary *concernNames;
@@ -34,6 +35,7 @@ NSMutableDictionary *scoreColors;
 NSMutableArray *OverBudgetLabels;
 NSMutableArray * waterDisplays;
 NSMutableArray *maxWaterDisplays;
+NSMutableArray *efficiency;
 int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
 int dynamic_cd_width = 0;
@@ -46,6 +48,7 @@ int maxBudget;
 float min_budget = 100000;
 float max_budget = 700000;
 UILabel *budgetLabel;
+UILabel *hoursAfterStormLabel;
 
 
 
@@ -59,7 +62,7 @@ UILabel *budgetLabel;
     // Do any additional setup after loading the view.
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleProfileUpdate)
+                                             selector:@selector(profileUpdate)
                                                  name:@"profileUpdate"
                                                object:nil];
     
@@ -100,6 +103,11 @@ UILabel *budgetLabel;
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
                     [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
+    _loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    _loadingIndicator.center = CGPointMake(512, 300);
+    _loadingIndicator.color = [UIColor blueColor];
+    [self.view addSubview:_loadingIndicator];
+    
     
     OverBudgetLabels    = [[NSMutableArray alloc] init];
     waterDisplays = [[NSMutableArray alloc]init];
@@ -109,10 +117,21 @@ UILabel *budgetLabel;
     [self drawMinMaxSliderLabels];
     _BudgetSlider.minimumValue = min_budget;
     _BudgetSlider.maximumValue = max_budget;
-    [_BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventTouchUpInside];
-    [_BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventTouchUpOutside];
+    [_BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
     [_BudgetSlider addTarget:self action:@selector(BudgetValueChanged:) forControlEvents:UIControlEventValueChanged];
     [self BudgetChanged:_BudgetSlider];
+    
+    _StormPlayBack.minimumValue = 0;
+    _StormPlayBack.maximumValue = 48;
+    [_StormPlayBack addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
+    [_StormPlayBack addTarget:self
+                      action:@selector(StormHoursChosen:)
+            forControlEvents:(UIControlEventTouchUpInside | UIControlEventTouchUpOutside)];
+    [_StormPlayBack addTarget:self
+                       action:@selector(changeHoursLabel)
+             forControlEvents:(UIControlEventValueChanged)];
+    _StormPlayBack.continuous = YES;
+    _StormPlayBack.value = hours_social;
     
     _profilesWindow.delegate = self;
     _usernamesWindow.delegate = self;
@@ -138,16 +157,32 @@ UILabel *budgetLabel;
 
 - (void)viewWillAppear:(BOOL)animated {
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleProfileUpdate)
+                                             selector:@selector(profileUpdate)
                                                  name:@"profileUpdate"
                                                object:nil];
-    
-    [self handleProfileUpdate];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [self profileUpdate];
 }
 
 
 - (void)viewWillDisappear:(BOOL)animated {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    // remove notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"profileUpdate" object:nil];
+    
+    // remove all subviews from _usernamesWindow and _profilesWindow
+    for (UIView *view in [_usernamesWindow subviews])
+        [view removeFromSuperview];
+    for (UIView *view in [_profilesWindow subviews])
+        [view removeFromSuperview];
+    
+}
+
+- (void)profileUpdate {
+    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+    [self handleProfileUpdate];
+    [_loadingIndicator stopAnimating];
 }
 
 
@@ -437,17 +472,16 @@ UILabel *budgetLabel;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
-            /*
             AprilTestEfficiencyView *ev;
-            if( efficiency.count <= trial){
+            if( efficiency.count <= profileIndex){
                 //NSLog(@"Drawing efficiency display for first time");
                 ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, (profileIndex )*heightOfVisualization + 60, 130, 150) withContent: simRun.efficiency];
                 ev.trialNum = i;
-                ev.view = _dataWindow;
+                ev.view = _profilesWindow;
                 [efficiency addObject:ev];
             } else {
                 //NSLog(@"Repositioning efficiency display");
-                ev = [efficiency objectAtIndex:trial];
+                ev = [efficiency objectAtIndex:profileIndex];
                 ev.frame = CGRectMake(width, (profileIndex )*heightOfVisualization + 60, 130, 150);
             }
             
@@ -456,8 +490,7 @@ UILabel *budgetLabel;
             //NSLog(@"%@", NSStringFromCGRect(ev.frame));
             [scoreVisNames addObject: currentVar.name];
             
-            [ev updateViewForHour: StormPlayBack.value];
-            */
+            [ev updateViewForHour: _StormPlayBack.value];
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (profileIndex * heightOfVisualization) + 60 andColor: [UIColor blackColor] to:nil];
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
@@ -468,6 +501,18 @@ UILabel *budgetLabel;
         width+= currentVar.widthOfVisualization;
         if (currentVar.widthOfVisualization > 0) visibleIndex++;
     }
+    // code taken from StormHoursChosen function
+    for(int i = 0; i < waterDisplays.count; i++){
+        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
+        AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
+        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxWaterDisplays objectAtIndex: i];
+        [temp2 updateViewForHour:hoursAfterStorm_social];
+        //[temp updateView:hoursAfterStorm];
+        [temp fastUpdateView:hoursAfterStorm_social];
+        [tempHeights updateView:48];
+    }
+    
+    
     //border around component score
     UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (profileIndex)*heightOfVisualization + 78,  114, 26)];
     fullValueBorder.backgroundColor = [UIColor grayColor];
@@ -572,7 +617,7 @@ UILabel *budgetLabel;
     dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
     
     //only update all labels/bars if Static normalization is switched on
-    [self handleProfileUpdate];
+    [self profileUpdate];
 }
      
      
@@ -617,8 +662,8 @@ UILabel *budgetLabel;
         [maxWaterDisplays removeAllObjects];
         [waterDisplays removeAllObjects];
         
-        // handleProfileUpdates will loop through trial for all profiles
-        [self handleProfileUpdate];
+        // profileUpdate will loop through trial for all profiles
+        [self profileUpdate];
     }
     
 }
@@ -629,29 +674,53 @@ UILabel *budgetLabel;
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
     
-    UILabel *minLabel = [[UILabel alloc]init];
-    minLabel.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:min_budget]]];
-    minLabel.font = [UIFont systemFontOfSize:15.0];
-    [minLabel sizeToFit];
-    minLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x - (minLabel.frame.size.width + 10), 663, minLabel.frame.size.width, minLabel.frame.size.height);
-    [minLabel setBackgroundColor:[UIColor clearColor]];
-    [self.view addSubview:minLabel];
+    UILabel *minLabelBudget = [[UILabel alloc]init];
+    minLabelBudget.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:min_budget]]];
+    minLabelBudget.font = [UIFont systemFontOfSize:15.0];
+    [minLabelBudget sizeToFit];
+    minLabelBudget.frame = CGRectMake(_BudgetSlider.frame.origin.x - (minLabelBudget.frame.size.width + 10), _BudgetSlider.frame.origin.y + 6, minLabelBudget.frame.size.width, minLabelBudget.frame.size.height);
+    [minLabelBudget setBackgroundColor:[UIColor clearColor]];
+    [self.view addSubview:minLabelBudget];
     
-    UILabel *maxLabel = [[UILabel alloc]init];
-    maxLabel.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:max_budget]]];
-    maxLabel.font = [UIFont systemFontOfSize:15.0];
-    [maxLabel sizeToFit];
-    maxLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x + (_BudgetSlider.frame.size.width + 10), 663, maxLabel.frame.size.width, maxLabel.frame.size.height);
-    [maxLabel setBackgroundColor:[UIColor clearColor]];
-    [self.view addSubview:maxLabel];
+    UILabel *maxLabelBudget = [[UILabel alloc]init];
+    maxLabelBudget.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:max_budget]]];
+    maxLabelBudget.font = [UIFont systemFontOfSize:15.0];
+    [maxLabelBudget sizeToFit];
+    maxLabelBudget.frame = CGRectMake(_BudgetSlider.frame.origin.x + (_BudgetSlider.frame.size.width + 10), _BudgetSlider.frame.origin.y + 6, maxLabelBudget.frame.size.width, maxLabelBudget.frame.size.height);
+    [maxLabelBudget setBackgroundColor:[UIColor clearColor]];
+    [self.view addSubview:maxLabelBudget];
     
     budgetLabel = [[UILabel alloc]init];
     budgetLabel.text = [NSString stringWithFormat:@"Set Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:min_budget]]];
     budgetLabel.font = [UIFont systemFontOfSize:15.0];
     [budgetLabel sizeToFit];
-    budgetLabel.frame = CGRectMake(3 , 663, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
+    budgetLabel.frame = CGRectMake(minLabelBudget.frame.origin.x - (_BudgetSlider.frame.size.width + 10) , _BudgetSlider.frame.origin.y + 6, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
     [budgetLabel setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:budgetLabel];
+    
+    UILabel *minLabelStorm = [[UILabel alloc]init];
+    minLabelStorm.text = @"0 hrs";
+    minLabelStorm.font = [UIFont systemFontOfSize:15.0];
+    [minLabelStorm sizeToFit];
+    minLabelStorm.frame = (CGRectMake(_StormPlayBack.frame.origin.x - (minLabelStorm.frame.size.width + 10), _StormPlayBack.frame.origin.y + 6, minLabelStorm.frame.size.width, minLabelStorm.frame.size.height));
+    [minLabelStorm setBackgroundColor:[UIColor clearColor]];
+    [self.view addSubview:minLabelStorm];
+    
+    UILabel *maxLabelStorm = [[UILabel alloc]init];
+    maxLabelStorm.text = @"48 hrs";
+    maxLabelStorm.font = [UIFont systemFontOfSize: 15.0];
+    [maxLabelStorm sizeToFit];
+    maxLabelStorm.frame = CGRectMake(_StormPlayBack.frame.origin.x + (_StormPlayBack.frame.size.width + 10), _StormPlayBack.frame.origin.y + 6, maxLabelStorm.frame.size.width, maxLabelStorm.frame.size.height);
+    [maxLabelStorm setBackgroundColor:[UIColor clearColor]];
+    [self.view addSubview:maxLabelStorm];
+    
+    hoursAfterStormLabel = [[UILabel alloc]init];
+    hoursAfterStormLabel.text = [NSString stringWithFormat:@"Storm Playback %d hours", (int)hours_social];
+    hoursAfterStormLabel.font = [UIFont systemFontOfSize:15.0];
+    [hoursAfterStormLabel sizeToFit];
+    hoursAfterStormLabel.frame = CGRectMake(budgetLabel.frame.origin.x, _StormPlayBack.frame.origin.y + 6, hoursAfterStormLabel.frame.size.width, hoursAfterStormLabel.frame.size.height);
+    [hoursAfterStormLabel setBackgroundColor:[UIColor clearColor]];
+    [self.view addSubview:hoursAfterStormLabel];
 }
 
 
@@ -662,6 +731,67 @@ UILabel *budgetLabel;
     
     budgetLabel.text = [NSString stringWithFormat:@"Set Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:budget]]];
     [budgetLabel sizeToFit];
+}
+
+- (void)changeHoursLabel {
+    hoursAfterStormLabel.text = [NSString stringWithFormat:@"Storm Playback %d hours", (int)_StormPlayBack.value];
+    [hoursAfterStormLabel sizeToFit];
+    hoursAfterStormLabel.frame = CGRectMake(budgetLabel.frame.origin.x, _StormPlayBack.frame.origin.y + 6, hoursAfterStormLabel.frame.size.width, hoursAfterStormLabel.frame.size.height);
+    hours_social = (int)_StormPlayBack.value;
+}
+
+
+-(void)StormHoursChanged:(id)sender{
+    UISlider *slider = (UISlider*)sender;
+    hours_social= slider.value;
+    _StormPlayBack.value = hours_social;
+    
+    hoursAfterStorm_social = floorf(hours_social);
+    if (hoursAfterStorm_social % 2 != 0) hoursAfterStorm_social--;
+    
+}
+
+- (void)StormHoursChosen:(NSNotification *)notification {
+    
+    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+    
+    NSMutableString * content = [NSMutableString alloc];
+    for(int i = 0; i < waterDisplays.count; i++){
+        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
+        AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
+        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxWaterDisplays objectAtIndex: i];
+        [temp2 updateViewForHour:hoursAfterStorm_social];
+        //[temp updateView:hoursAfterStorm];
+        [temp fastUpdateView:hoursAfterStorm_social];
+        [tempHeights updateView:48];
+    }
+    
+    [_loadingIndicator stopAnimating];
+    
+    
+    /*
+    NSDate *myDate = [[NSDate alloc] init];
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setDateFormat:@"HH:mm:ss"];
+    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+    
+    //if(notification == UIControlEventTouchUpInside || notification == UIControlEventTouchUpOutside){
+    content = [content initWithFormat:@"%@\tHours after storm set to: %d",prettyVersion, hoursAfterStorm_social];
+    
+    //    NSLog(content);
+    [content appendString:@"\n\n"];
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
+    
+    //create file if it doesn't exist
+    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
+        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
+    
+    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
+    [file seekToEndOfFile];
+    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];;
+    //}
+     */
 }
 
 
