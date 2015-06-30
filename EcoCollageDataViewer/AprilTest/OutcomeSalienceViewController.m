@@ -249,13 +249,11 @@ float maxPublicInstallNorm;
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
         [self removeBudgetLabels];
         [self normalizeAllandUpdateDynamically];
-        
     }
     else{
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Static" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
         [self removeBudgetLabels];
         [self normalizaAllandUpdateStatically];
-        
     }
   
 }
@@ -270,7 +268,6 @@ float maxPublicInstallNorm;
 }
 
 - (void) updateBudgetLabels:(int) trial{
-
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
@@ -862,6 +859,7 @@ float maxPublicInstallNorm;
     }
      NSLog(@"Trial: %d\nScore: %.0f / 100\n\n", simRunNormal.trialNum, totalScore);
     
+    //update the length of the component (performance) score in order to be able to sort by best score
     NSNumber *newPerformanceScore = [NSNumber numberWithFloat:totalScore];
     NSDictionary *oldDictionary   = [trialRunSubViews objectAtIndex:trial];
     NSMutableDictionary *newDict = [[NSMutableDictionary alloc] init];
@@ -929,12 +927,10 @@ float maxPublicInstallNorm;
         trialNum++;
         
         //chooses between static/dynamic normalization of trial data
-        if (_DynamicNormalization.isOn) {
-            [self normalizeAllandUpdateDynamically]; //updates previous trials's visualizations and renormalizes
-        }
-        else{
-            [self normalizeStatically];     //normalizes a trial one at a time
-        }
+        if (_DynamicNormalization.isOn)
+            [self normalizeAllandUpdateDynamically];
+        else
+            [self normalizeStatically];
 
     }
     
@@ -1239,8 +1235,6 @@ float maxPublicInstallNorm;
         maxX+=floor(scoreWidth);
     }
     
-    
-    
     [_dataWindow setContentSize:CGSizeMake(width+=100, (trial+1)*200)];
     for(UILabel * bgCol in bgCols){
         if(_dataWindow.contentSize.height > _dataWindow.frame.size.height){
@@ -1251,7 +1245,6 @@ float maxPublicInstallNorm;
     }
     
     UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 175*(trial) + 50, 0, 0)];
-    //scoreLabel.text = [NSString stringWithFormat:  @"Score: %.0f / 100", totalScore];
     scoreLabel.text = @"Performance:";
     scoreLabel.font = [UIFont systemFontOfSize:14.0];
     [scoreLabel sizeToFit];
@@ -1265,7 +1258,7 @@ float maxPublicInstallNorm;
     [_mapWindow addSubview:scoreLabel2];
     
     
-    NSLog(@"Trial: %d\nScore: %@ / 100\n\n", simRun.trialNum, [NSNumber numberWithInt: totalScore]);
+    //NSLog(@"Trial: %d\nScore: %@ / 100\n\n", simRun.trialNum, [NSNumber numberWithInt: totalScore]);
     
     NSDictionary *trialRunInfo = @{@"TrialNum"          : [NSNumber numberWithInt:simRun.trialNum],
                                    @"TrialRun"          : [trialRuns objectAtIndex:simRun.trialNum],
