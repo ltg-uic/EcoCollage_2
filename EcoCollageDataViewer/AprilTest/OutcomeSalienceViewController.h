@@ -12,6 +12,7 @@
 @interface OutcomeSalienceViewController : UIViewController <UIScrollViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate>
 @property NSMutableArray * currentConcernRanking;
 @property int studyNum;
+@property float maxBudget;
 @property (strong, nonatomic) IBOutlet UIScrollView *dataWindow;
 @property (strong, nonatomic) IBOutlet UIScrollView *mapWindow;
 

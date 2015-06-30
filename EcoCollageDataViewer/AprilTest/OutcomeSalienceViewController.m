@@ -31,6 +31,8 @@
 @synthesize loadingIndicator = _loadingIndicator;
 @synthesize scenarioNames = _scenarioNames;
 @synthesize SortPickerTextField = _SortPickerTextField;
+@synthesize currentMaxInvestment = _currentMaxInvestment;
+@synthesize maxBudget = _maxBudget;
 
 //structs that will keep track of the highest and lowest costs of Installation and maintenance (for convenience)
 typedef struct Value
@@ -87,11 +89,12 @@ UIPickerView *SortType;
 float thresh = 6;
 float hours = 0;
 int hoursAfterStorm;
-float maxBudget = 125000;  //max budget set by user
+
 
 //budget limits set by the application
 NSString *minBudgetLabel;
 NSString *maxBudgetLabel;
+float maxBudgetLimit   = 150000;        //max budget set by user
 float min_budget_limit = 100000;
 float max_budget_limit = 700000;
 
@@ -107,7 +110,6 @@ float maxPublicInstallNorm;
 // necessary in case currentSession changes, i.e. is disconnected and reconnected again
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
 }
 
 - (void)viewDidLoad
@@ -199,7 +201,8 @@ float maxPublicInstallNorm;
     
     [self drawTitles];
     [self drawSliders];
-    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
+    
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
     
     [_dataWindow setContentOffset:CGPointMake(0, 0)];
     [_mapWindow setContentOffset:CGPointMake(0,0 )];
@@ -298,9 +301,9 @@ float maxPublicInstallNorm;
         //AprilTestSimRun *simRun = [trialRuns objectAtIndex:i];
         AprilTestSimRun *simRun= [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
         
-        if (simRun.publicInstallCost > maxBudget){
+        if (simRun.publicInstallCost > maxBudgetLimit){
             UILabel *valueLabel;
-            [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-maxBudget)]] ] withConcernPosition:width+25 andyValue:i *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
+            [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-maxBudgetLimit)]] ] withConcernPosition:width+25 andyValue:i *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
             
             [OverBudgetLabels addObject:valueLabel];
         }
@@ -407,10 +410,10 @@ float maxPublicInstallNorm;
     value = 1000.0 * floor((value/1000.0)+0.5);
     
     _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
-    maxBudget = value;
+    maxBudgetLimit = value;
     
     //update the width of the public install cost bars (make sure it isn't 0)
-    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
     
     //only update all labels/bars if Static normalization is switched on
     if (!_DynamicNormalization.isOn){
@@ -422,7 +425,7 @@ float maxPublicInstallNorm;
 -(void) updateBudgetSliderTo: (float) newValue
 {
     [BudgetSlider setValue:newValue animated:YES];
-    maxBudget = newValue;
+    maxBudgetLimit = newValue;
     
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -436,7 +439,7 @@ float maxPublicInstallNorm;
     trialNum = (int)[trialRuns count];
     [self normalizeStatically];
     
-    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
     [self updatePublicCostDisplays: trialNum];
     [self updateBudgetLabels:trialNum];
     
@@ -468,11 +471,11 @@ float maxPublicInstallNorm;
         AprilTestNormalizedVariable *someTrialNorm = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"];
         
         
-        if (maxBudget == 0){ maxBudget = .01; }
+        if (maxBudgetLimit == 0){ maxBudgetLimit = .01; }
         
         //public cost
-        someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(maxBudget));
-        someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(maxBudget));
+        someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(maxBudgetLimit));
+        someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(maxBudgetLimit));
     }
     
     
@@ -698,7 +701,7 @@ float maxPublicInstallNorm;
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
     
-    float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
+    float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
     
     for (int i = 0; i < trial; i++){
         newCD = [publicCostDisplays objectAtIndex:i];
@@ -858,6 +861,13 @@ float maxPublicInstallNorm;
         maxX+=floor(scoreWidth);
     }
      NSLog(@"Trial: %d\nScore: %.0f / 100\n\n", simRunNormal.trialNum, totalScore);
+    
+    NSNumber *newPerformanceScore = [NSNumber numberWithFloat:totalScore];
+    NSDictionary *oldDictionary   = [trialRunSubViews objectAtIndex:trial];
+    NSMutableDictionary *newDict = [[NSMutableDictionary alloc] init];
+    [newDict addEntriesFromDictionary:oldDictionary];
+    [newDict setObject:newPerformanceScore forKey:@"PerformanceScore"];
+    [trialRunSubViews replaceObjectAtIndex:trial withObject:newDict];
 }
 
 - (void)loadNextSimulationRun{
@@ -1054,7 +1064,7 @@ float maxPublicInstallNorm;
                 /*cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30)];*/
                 
                 float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.publicInstallCost];
-                float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudget];
+                float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
                 
                 cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
                 [_dataWindow addSubview: cd];
@@ -1069,11 +1079,11 @@ float maxPublicInstallNorm;
             
             
             //checks if over budget, if so, prints warning message
-            if ((simRun.publicInstallCost > maxBudget) && (!_DynamicNormalization.isOn)){
+            if ((simRun.publicInstallCost > maxBudgetLimit) && (!_DynamicNormalization.isOn)){
                 //store update labels for further use (updating over budget when using absolute val)
                
                 UILabel *valueLabel;
-                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudget)]] ] withConcernPosition:width+25 andyValue:trial *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
+                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudgetLimit)]] ] withConcernPosition:width+25 andyValue:trial *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
                 
                 [OverBudgetLabels addObject:valueLabel];
             }
@@ -1255,14 +1265,14 @@ float maxPublicInstallNorm;
     [_mapWindow addSubview:scoreLabel2];
     
     
-    NSLog(@"Trial: %d\nScore: %.0f / 100\n\n", simRun.trialNum, totalScore);
+    NSLog(@"Trial: %d\nScore: %@ / 100\n\n", simRun.trialNum, [NSNumber numberWithInt: totalScore]);
     
     NSDictionary *trialRunInfo = @{@"TrialNum"          : [NSNumber numberWithInt:simRun.trialNum],
                                    @"TrialRun"          : [trialRuns objectAtIndex:simRun.trialNum],
                                    @"TrialStatic"       : [trialRunsNormalized objectAtIndex:simRun.trialNum],
                                    @"TrialDynamic"      : [trialRunsDynNorm objectAtIndex:simRun.trialNum],
                                    @"TrialTxTBox"       : tx,
-                                   @"PerformanceScore"  : [NSNumber numberWithFloat: totalScore],
+                                   @"PerformanceScore"  : [NSNumber numberWithInt: totalScore],
                                    @"FebTestMap"        : interventionView,
                                    @"WaterDisplay"      : wd,
                                    @"MWaterDisplay"     : mwd,
@@ -1485,8 +1495,8 @@ float maxPublicInstallNorm;
             BudgetSlider.minimumValue = min_budget_limit;
             BudgetSlider.maximumValue = max_budget_limit;
             BudgetSlider.continuous = YES;
-            [BudgetSlider setValue:maxBudget animated:YES];
-            _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:maxBudget]]];
+            [BudgetSlider setValue:maxBudgetLimit animated:YES];
+            _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:maxBudgetLimit]]];
             [_SliderWindow addSubview:BudgetSlider];
             
             //draw min/max cost labels under slider
@@ -1646,17 +1656,7 @@ float maxPublicInstallNorm;
         [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"TrialNum" ascending:YES]]];
     
     else if ([arrStatus[row] isEqual: @"Best Score"]){
-        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-            NSInteger first  = (NSInteger)[obj1 valueForKey:@"PerformanceScore"];
-            NSInteger second = (NSInteger)[obj2 valueForKey:@"PerformanceScore"];
-            
-            if (first > second)
-                return NSOrderedAscending;
-            else if (second > first)
-                return NSOrderedDescending;
-            return NSOrderedSame;
-        }];
-        
+        [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"PerformanceScore" ascending:NO]]];
     }
     
     else if ([arrStatus[row] isEqual: @"Public Cost"]){
