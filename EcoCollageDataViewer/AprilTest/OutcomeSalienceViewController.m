@@ -1495,11 +1495,15 @@ float maxPublicInstallNorm;
             
             //draw min/max cost labels under slider
             CGRect minCostFrame = CGRectMake(width + 25, 45, currentVar.widthOfVisualization/3, 15);
-            CGRect maxCostFrame = CGRectMake((width + 185) -35, 45, currentVar.widthOfVisualization/3, 15);
             UILabel *minCostLabel = [[UILabel alloc] initWithFrame:minCostFrame];
+            minCostLabel.font =  [UIFont boldSystemFontOfSize:14.0];
             minCostLabel.text =  minBudgetLabel;
+            
+            CGRect maxCostFrame = CGRectMake((width + 185) -35, 45, currentVar.widthOfVisualization/3, 15);
             UILabel *maxCostLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
+            maxCostLabel.font = [UIFont boldSystemFontOfSize:14.0];
             maxCostLabel.text = maxBudgetLabel;
+            
             [_SliderWindow addSubview:minCostLabel];
             [_SliderWindow addSubview:maxCostLabel];
             
@@ -1522,11 +1526,15 @@ float maxPublicInstallNorm;
             
             //draw labels for range of hours
             CGRect minCostFrame = CGRectMake(width + 5, 45, currentVar.widthOfVisualization/5, 15);
-            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 45, currentVar.widthOfVisualization/4, 15);
             UILabel *minHoursLabel = [[UILabel alloc] initWithFrame:minCostFrame];
+            minHoursLabel.font = [UIFont boldSystemFontOfSize:14];
             minHoursLabel.text = [NSString stringWithFormat:@" 0 hrs"];
+            
+            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 45, currentVar.widthOfVisualization/4, 15);
             UILabel *maxHoursLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
+            maxHoursLabel.font = [UIFont boldSystemFontOfSize:14];
             maxHoursLabel.text = [NSString stringWithFormat:@"48 hrs"];
+            
             [_SliderWindow addSubview:minHoursLabel];
             [_SliderWindow addSubview:maxHoursLabel];
         }
@@ -1548,10 +1556,13 @@ float maxPublicInstallNorm;
             
             //draw labels for range of hours
             CGRect minCostFrame = CGRectMake(width + 5, 45, currentVar.widthOfVisualization/5, 15);
-            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 45, currentVar.widthOfVisualization/4, 15);
             UILabel *minHoursLabel = [[UILabel alloc] initWithFrame:minCostFrame];
+            minHoursLabel.font = [UIFont boldSystemFontOfSize:14];
             minHoursLabel.text = [NSString stringWithFormat:@" 0 hrs"];
+            
+            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 45, currentVar.widthOfVisualization/4, 15);
             UILabel *maxHoursLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
+            maxHoursLabel.font = [UIFont boldSystemFontOfSize:14];
             maxHoursLabel.text = [NSString stringWithFormat:@"48 hrs"];
             [_SliderWindow addSubview:minHoursLabel];
             [_SliderWindow addSubview:maxHoursLabel];
@@ -1724,6 +1735,8 @@ float maxPublicInstallNorm;
             
         }];
     }
+    
+    
     
     //loop through all entries (in sorted order) and update its frame to its new position
     for (int i = 0; i < trialRunSubViews.count; i++) {
