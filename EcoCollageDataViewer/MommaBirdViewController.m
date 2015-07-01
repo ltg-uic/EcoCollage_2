@@ -104,7 +104,7 @@ int trialNum;
 - (void)setupGKSession
 {
     // GKSessionModePeer: a peer advertises like a server and searches like a client.
-    _session = [[GKSession alloc] initWithSessionID:@"GKForEcoCollage" displayName:@"Momma" sessionMode:GKSessionModeServer];
+    _session = [[GKSession alloc] initWithSessionID:@"GKForEcoCollage" displayName:[NSString stringWithFormat:@"Momma%d", _studyNum] sessionMode:GKSessionModeServer];
     self.session.delegate = self;
     self.session.available = YES;
     [_session setDataReceiveHandler:self withContext:nil];

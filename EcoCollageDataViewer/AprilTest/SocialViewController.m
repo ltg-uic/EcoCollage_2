@@ -51,7 +51,6 @@ UILabel *budgetLabel;
 UILabel *hoursAfterStormLabel;
 
 
-
 - (void)viewDidLoad {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _studyNum = tabControl.studyNum;
@@ -60,11 +59,6 @@ UILabel *hoursAfterStormLabel;
     
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(profileUpdate)
-                                                 name:@"profileUpdate"
-                                               object:nil];
     
     
     concernColors = [[NSMutableDictionary alloc] initWithObjects:
@@ -160,6 +154,7 @@ UILabel *hoursAfterStormLabel;
                                              selector:@selector(profileUpdate)
                                                  name:@"profileUpdate"
                                                object:nil];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -170,14 +165,15 @@ UILabel *hoursAfterStormLabel;
 - (void)viewWillDisappear:(BOOL)animated {
     // remove notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"profileUpdate" object:nil];
-    
-    // remove all subviews from _usernamesWindow and _profilesWindow
+    /*
+    // empty _usernamesWindow and _profilesWindow to free memory
     for (UIView *view in [_usernamesWindow subviews])
         [view removeFromSuperview];
     for (UIView *view in [_profilesWindow subviews])
         [view removeFromSuperview];
-    
+    */
 }
+
 
 - (void)profileUpdate {
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
@@ -476,7 +472,7 @@ UILabel *hoursAfterStormLabel;
             if( efficiency.count <= profileIndex){
                 //NSLog(@"Drawing efficiency display for first time");
                 ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, (profileIndex )*heightOfVisualization + 60, 130, 150) withContent: simRun.efficiency];
-                ev.trialNum = i;
+                ev.trialNum = trial;
                 ev.view = _profilesWindow;
                 [efficiency addObject:ev];
             } else {
@@ -613,8 +609,6 @@ UILabel *hoursAfterStormLabel;
     maxBudget = value;
     [self changeBudgetLabel:(int)maxBudget];
     
-    //update the width of the public install cost bars (make sure it isn't 0)
-    dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
     
     //only update all labels/bars if Static normalization is switched on
     [self profileUpdate];
@@ -659,8 +653,10 @@ UILabel *hoursAfterStormLabel;
 - (void)textFieldDidEndEditing:(UITextField *)textField{
     // draw specific trial for all profiles
     if([textField isEqual:self.trialNumber]) {
+        // assume trial number was changed, so reset
         [maxWaterDisplays removeAllObjects];
         [waterDisplays removeAllObjects];
+        [efficiency removeAllObjects];
         
         // profileUpdate will loop through trial for all profiles
         [self profileUpdate];

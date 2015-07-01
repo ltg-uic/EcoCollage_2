@@ -42,6 +42,13 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     return self;
 }
 
+// make sure tab bar is same height regardless of which version of iOS is running (iOS 8 has smaller tab bar than iOS 7)
+- (void)viewWillLayoutSubviews {
+    CGRect tabFrame = self.tabBar.frame;
+    tabFrame.size.height = 49;
+    tabFrame.origin.y = self.view.frame.size.height - 49;
+    self.tabBar.frame = tabFrame;
+}
 
 
 - (void)viewDidLoad
@@ -71,12 +78,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     _trialRunsDynNorm = [[NSMutableArray alloc]init];
     _profiles = [[NSMutableArray alloc]init];
     _ownProfile = [[NSMutableArray alloc]init];
-    
-    // load all the view controllers so they can setup their notifications
-    for(UIViewController * viewController in  self.viewControllers){
-        viewController.view;
-    }
-    
+
     
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     
@@ -97,7 +99,6 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     [self setupSession];
     
 }
-
 
 #pragma mark - Memory management
 
@@ -141,7 +142,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
         {
             NSLog(@"didChangeState: peer %@ available", peerName);
             
-            BOOL shouldInvite = ([peerName isEqualToString:@"Momma"]);
+            BOOL shouldInvite = ([peerName isEqualToString:[NSString stringWithFormat:@"Momma%d", _studyNum]]);
             
             if (shouldInvite)
             {
@@ -165,7 +166,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
         case GKPeerStateConnected:
         {
             NSLog(@"didChangeState: peer %@ connected", peerName);
-            if ([peerName isEqualToString:@"Momma"]) {
+            if ([peerName isEqualToString:[NSString stringWithFormat:@"Momma%d", _studyNum]]) {
                 self.peerIDForMomma = peerID;
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"sendProfile" object:self];
             }
@@ -273,7 +274,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
         }
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:nil userInfo:nil];
 }
 
 
