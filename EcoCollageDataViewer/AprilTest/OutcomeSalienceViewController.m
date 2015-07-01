@@ -141,7 +141,7 @@ float maxPublicInstallNorm;
     _loadingIndicator.color = [UIColor blueColor];
     [self.view addSubview:_loadingIndicator];
 
-     arrStatus = [[NSArray alloc] initWithObjects:@"Trial Number", @"Best Score", @"Public Cost", @"Private Cost", @"Rainwater to Neighbors", @"Rainwater from Neighbors", @"Intervention Efficiency", @"% Rainwater Infiltrated", nil];
+     arrStatus = [[NSArray alloc] initWithObjects:@"Trial Number", @"Best Score", @"Public Cost", @"Damage", @"Impact on my Neighbors", @"Rainwater from Neighbors", @"Efficiency of Intervention", @"Groundwater Infiltration", nil];
     
     _SortPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus[sortChosen]];
     _SortPickerTextField.delegate = self;
@@ -326,10 +326,15 @@ float maxPublicInstallNorm;
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     
     NSMutableString * content = [NSMutableString alloc];
-    for(int i = 0; i < waterDisplays.count; i++){
-        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
-        AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
-        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxWaterDisplays objectAtIndex: i];
+    for(int i = 0; i < trialRunSubViews.count; i++){
+        //FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
+        //AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
+        //FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxWaterDisplays objectAtIndex: i];
+        
+        FebTestWaterDisplay * temp = [[trialRunSubViews objectAtIndex:i] objectForKey:@"WaterDisplay"];
+        AprilTestEfficiencyView * temp2 = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
+        FebTestWaterDisplay * tempHeights = [[trialRunSubViews objectAtIndex:i] objectForKey:@"MWaterDisplay"];
+        
         [temp2 updateViewForHour:hoursAfterStorm];
         //[temp updateView:hoursAfterStorm];
         [temp fastUpdateView:hoursAfterStorm];
@@ -433,7 +438,7 @@ float maxPublicInstallNorm;
 }
 
 -(void) normalizaAllandUpdateStatically{
-    trialNum = (int)[trialRuns count];
+    trialNum = (int)[trialRunSubViews count];
     [self normalizeStatically];
     
     dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
@@ -446,7 +451,7 @@ float maxPublicInstallNorm;
 }
 
 -(void) normalizeAllandUpdateDynamically{
-    //normalize all trials right after adding the newest trial
+    trialNum = (int)[trialRunSubViews count];
     [self normalizeDynamically];
     
     dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:installationCost->highestCost];
@@ -460,13 +465,12 @@ float maxPublicInstallNorm;
 
 -(void) normalizeStatically
 {
-    for (int i = 0; i < trialRuns.count; i++)
+    for (int i = 0; i < trialRunSubViews.count; i++)
     {
         //AprilTestSimRun *someTrial = [trialRuns objectAtIndex:i];
         //AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
         AprilTestSimRun *someTrial = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
         AprilTestNormalizedVariable *someTrialNorm = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"];
-        
         
         if (maxBudgetLimit == 0){ maxBudgetLimit = .01; }
         
@@ -474,7 +478,6 @@ float maxPublicInstallNorm;
         someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(maxBudgetLimit));
         someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(maxBudgetLimit));
     }
-    
     
 }
 
@@ -493,7 +496,7 @@ float maxPublicInstallNorm;
     
     //Obtain the min and max of the data elements found in a trial
     int i;
-    for (i = 0; i < trialRuns.count; i++)
+    for (i = 0; i < trialRunSubViews.count; i++)
     {
         //AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
         //AprilTestNormalizedVariable *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
@@ -638,7 +641,7 @@ float maxPublicInstallNorm;
     
     
     //normalize all the variables in accordance to the max value of all current trials
-    for (i = 0; i < trialRuns.count; i++)
+    for (i = 0; i < trialRunSubViews.count; i++)
     {
         //AprilTestSimRun  *someTrial     = [trialRuns objectAtIndex:i];
         //AprilTestNormalizedVariable  *someTrialNorm = [trialRunsNormalized objectAtIndex:i];
@@ -652,7 +655,6 @@ float maxPublicInstallNorm;
         someTrialDyn.publicMaintenanceCost = (float)someTrial.publicMaintenanceCost/maintenanceCost->highestCost;
         
         someTrialDyn.privateDamages        = (float)someTrial.privateDamages/privateDamages->highestCost;
-        
         
         if (impactNeighbors->highestCost == impactNeighbors->lowestCost){ someTrialDyn.impactNeighbors = .5; }
         else
@@ -713,9 +715,7 @@ float maxPublicInstallNorm;
         normVar = (_DynamicNormalization.isOn) ? ([[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialDynamic"]) : ([[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"]);
         
         frame   = CGRectMake(25, i*175 + 40, dynamic_cd_width, 30);
-        
         float costWidth = [self getWidthFromSlider:BudgetSlider toValue:var.publicInstallCost];
-        
         [newCD updateWithCost:var.publicInstallCost normScore: normVar.publicInstallCost costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
     }
     
@@ -923,7 +923,6 @@ float maxPublicInstallNorm;
         
         //draws the newest trial after latest normalization of data (static or dynamic)
         [self drawTrial: trialNum];
-        
         trialNum++;
         
         //chooses between static/dynamic normalization of trial data
@@ -931,14 +930,16 @@ float maxPublicInstallNorm;
             [self normalizeAllandUpdateDynamically];
         else
             [self normalizeStatically];
-
+        
+        //update with the current sort chosen after a new trial is drawn
+        [self handleSort: sortChosen];
+        
+        //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
+        if (trialNum > 3)
+            scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
+                                                              target:self selector:@selector(autoscrollTimerFired) userInfo:nil repeats:NO];
     }
     
-    //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
-    if (trialNum > 3)
-        scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
-                                                                  target:self selector:@selector(autoscrollTimerFired) userInfo:nil repeats:NO];
-
     [_loadingIndicator stopAnimating];
     
 }
@@ -1665,7 +1666,7 @@ float maxPublicInstallNorm;
                 
         }];
     }
-    else if ([arrStatus[row] isEqual: @"Private Cost"]){
+    else if ([arrStatus[row] isEqual: @"Damage"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
@@ -1678,7 +1679,7 @@ float maxPublicInstallNorm;
         }];
     }
         
-    else if ([arrStatus[row] isEqual: @"Rainwater to Neighbors"]){
+    else if ([arrStatus[row] isEqual: @"Impact on my Neighbors"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
@@ -1690,22 +1691,13 @@ float maxPublicInstallNorm;
             return NSOrderedSame;
         }];
     }
-        
+    
+    //change to something else since it doesnt exist anymore?
     else if ([arrStatus[row] isEqual: @"Rainwater from Neighbors"]){
-        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-            AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
-            AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
-            
-            if (first.neighborsImpactMe > second.neighborsImpactMe)
-                return NSOrderedAscending;
-            else if (second.neighborsImpactMe > first.neighborsImpactMe)
-                return NSOrderedDescending;
-            return NSOrderedSame;
-            
-        }];
+        
     }
         
-    else if ([arrStatus[row] isEqual: @"Intervention Efficiency"]){
+    else if ([arrStatus[row] isEqual: @"Efficiency of Intervention"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
@@ -1719,7 +1711,7 @@ float maxPublicInstallNorm;
         }];
     }
         
-    else if ([arrStatus[row] isEqual: @"% Rainwater Infiltrated"]){
+    else if ([arrStatus[row] isEqual: @"Groundwater Infiltration"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
@@ -1794,7 +1786,7 @@ float maxPublicInstallNorm;
     // Handle the selection
     _SortPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus[row]];
     sortChosen = (int)row;
-    
+
     [[self view] endEditing:YES];
     
     //Handle the sort afterwards
