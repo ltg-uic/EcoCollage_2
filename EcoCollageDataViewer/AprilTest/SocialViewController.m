@@ -122,6 +122,7 @@ UIPickerView *SortType_social;
     OverBudgetLabels    = [[NSMutableArray alloc] init];
     waterDisplays = [[NSMutableArray alloc]init];
     maxWaterDisplays = [[NSMutableArray alloc]init];
+    efficiency = [[NSMutableArray alloc]init];
     
     
     [self drawMinMaxSliderLabels];
@@ -172,7 +173,7 @@ UIPickerView *SortType_social;
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(pickerView:numberOfRowsInComponent:)
+                                             selector:@selector(updatePicker)
                                                  name:@"updatePicker"
                                                object:nil];
     
@@ -196,6 +197,12 @@ UIPickerView *SortType_social;
     */
 }
 
+- (void)updatePicker {
+    [self pickerView:SortType_social numberOfRowsInComponent:0];
+    
+    [SortType_social reloadAllComponents];
+}
+
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
     // Handle the selection
     _trialNumber.text = [NSString stringWithFormat:@"Trial %d", row];
@@ -210,7 +217,8 @@ UIPickerView *SortType_social;
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
-    NSUInteger numRows = tabControl.trialNum;
+    // add an extra row for "favorite trials"
+    NSUInteger numRows = tabControl.trialNum + 1;
     
     return numRows;
 }
@@ -229,12 +237,11 @@ UIPickerView *SortType_social;
         tView.font = [UIFont boldSystemFontOfSize:15.0];
         
     }
-    tView.text = [NSString stringWithFormat:@"Trial %d", row];
-    
-    
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     if (row == tabControl.trialNum)
         tView.text = @"Favorite Trials";
+    else
+        tView.text = [NSString stringWithFormat:@"Trial %d", row];
     // Fill the label text here
     
     return tView;
