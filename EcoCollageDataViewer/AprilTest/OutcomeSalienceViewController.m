@@ -239,7 +239,6 @@ float maxPublicInstallNorm;
     [self loadNextSimulationRun];
 }
 
-
 - (IBAction)NormTypeSwitched:(UISwitch *)sender {
     /**
       * Make Sure to update all displays/labels to reflect the change 
@@ -267,7 +266,7 @@ float maxPublicInstallNorm;
     [OverBudgetLabels removeAllObjects];
 }
 
-- (void) updateBudgetLabels:(int) trial{
+- (void) updateBudgetLabels{
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
@@ -443,7 +442,7 @@ float maxPublicInstallNorm;
     
     dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
     [self updatePublicCostDisplays: trialNum];
-    [self updateBudgetLabels:trialNum];
+    [self updateBudgetLabels];
     
     //updates the component scores
     for (int i = 0; i < trialNum; i++)
@@ -456,7 +455,7 @@ float maxPublicInstallNorm;
     
     dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:installationCost->highestCost];
     [self updatePublicCostDisplays: trialNum];
-    [self updateBudgetLabels:trialNum];
+    [self updateBudgetLabels];
     
     //updates the component scores
     for (int i = 0; i < trialNum; i++)
@@ -484,15 +483,15 @@ float maxPublicInstallNorm;
 //will normalize the cost of installation and maintenance
 - (void)normalizeDynamically
 {
-    if (installationCost == NULL)  { installationCost = (Value*)malloc(sizeof(Value));  }
-    if (maintenanceCost == NULL)   { maintenanceCost = (Value*) malloc(sizeof(Value));  }
-    if (privateDamages == NULL)    { privateDamages = (Value*)malloc(sizeof(Value));    }
+    if (installationCost  == NULL) { installationCost = (Value*)malloc(sizeof(Value));  }
+    if (maintenanceCost   == NULL) { maintenanceCost = (Value*) malloc(sizeof(Value));  }
+    if (privateDamages    == NULL) { privateDamages = (Value*)malloc(sizeof(Value));    }
     if (neighborsImpactMe == NULL) { neighborsImpactMe = (Value*)malloc(sizeof(Value)); }
-    if (impactNeighbors == NULL)   { impactNeighbors = (Value*)malloc(sizeof(Value));   }
-    if (gw_infiltration == NULL)   { gw_infiltration = (Value*) malloc(sizeof(Value));  }
-    if (floodedStreets == NULL)    { floodedStreets = (Value*) malloc(sizeof(Value));   }
-    if (standingWater == NULL)     { standingWater = (Value*) malloc(sizeof(Value));    }
-    if (efficiency_val == NULL)    { efficiency_val = (Value*) malloc(sizeof(Value));   }
+    if (impactNeighbors   == NULL) { impactNeighbors = (Value*)malloc(sizeof(Value));   }
+    if (gw_infiltration   == NULL) { gw_infiltration = (Value*) malloc(sizeof(Value));  }
+    if (floodedStreets    == NULL) { floodedStreets = (Value*) malloc(sizeof(Value));   }
+    if (standingWater     == NULL) { standingWater = (Value*) malloc(sizeof(Value));    }
+    if (efficiency_val    == NULL) { efficiency_val = (Value*) malloc(sizeof(Value));   }
     
     //Obtain the min and max of the data elements found in a trial
     int i;
@@ -653,7 +652,6 @@ float maxPublicInstallNorm;
         
         someTrialDyn.publicInstallCost     = (float)someTrial.publicInstallCost/installationCost->highestCost;
         someTrialDyn.publicMaintenanceCost = (float)someTrial.publicMaintenanceCost/maintenanceCost->highestCost;
-        
         someTrialDyn.privateDamages        = (float)someTrial.privateDamages/privateDamages->highestCost;
         
         if (impactNeighbors->highestCost == impactNeighbors->lowestCost){ someTrialDyn.impactNeighbors = .5; }
@@ -1277,7 +1275,8 @@ float maxPublicInstallNorm;
                                    @"SewerLoad"         : sewerLoad,
                                    @"WaterInfiltration" : gw_infiltration,
                                    @"Efficiency_Interv" : efficiencyOfIntervention,
-                                   @"ImpactNeighbor"    : impactNeighbor
+                                   @"ImpactNeighbor"    : impactNeighbor,
+                                   @"CostDisplay"       : cd
                                    };
    
     //Right now contains the contents of the map window scrollview
@@ -1356,7 +1355,6 @@ float maxPublicInstallNorm;
 
 
 }
-
 
 //method to move the view up/down whenever the keyboard is shown/dismissed
 -(void)setViewMovedUp:(BOOL)movedUp{
@@ -1740,7 +1738,6 @@ float maxPublicInstallNorm;
     
     //loop through all entries (in sorted order) and update its frame to its new position
     for (int i = 0; i < trialRunSubViews.count; i++) {
-        
         AprilTestSimRun *simRun               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
         UILabel *newTxt                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
         UILabel *Damage                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Damage"];
@@ -1789,7 +1786,6 @@ float maxPublicInstallNorm;
         
         //Offset the "Trial #" label
         [self OffsetView:newTxt      toX:newTxt.frame.origin.x     andY:175*(i)+5];
-        
     }
     
     (_DynamicNormalization.isOn) ? ([self normalizeAllandUpdateDynamically]) : ([self normalizaAllandUpdateStatically]);
@@ -1827,10 +1823,8 @@ float maxPublicInstallNorm;
         // Setup label properties - frame, font, colors etc
         tView.frame = CGRectMake(0, 0, 250, 30);
         tView.font = [UIFont boldSystemFontOfSize:15.0];
-
     }
     tView.text = [arrStatus objectAtIndex:row];
-    // Fill the label text here
 
     return tView;
 }
