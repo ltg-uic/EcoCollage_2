@@ -28,6 +28,7 @@
 @synthesize BudgetSlider = _BudgetSlider;
 @synthesize StormPlayBack = _StormPlayBack;
 @synthesize loadingIndicator = _loadingIndicator;
+@synthesize mapWindow = _mapWindow;
 
 NSMutableDictionary *concernColors;
 NSMutableDictionary *concernNames;
@@ -49,6 +50,7 @@ float min_budget = 100000;
 float max_budget = 700000;
 UILabel *budgetLabel;
 UILabel *hoursAfterStormLabel;
+UILabel *clickToEnlargeMapWindow;
 NSArray *arrStatus_social;
 int sortChosen_social= 0;
 UIPickerView *SortType_social;
@@ -146,9 +148,23 @@ UIPickerView *SortType_social;
     
     _profilesWindow.delegate = self;
     _usernamesWindow.delegate = self;
+    _mapWindow.delegate = self;
+    
     
     _profilesWindow.layer.borderColor = [UIColor lightGrayColor].CGColor;
     _profilesWindow.layer.borderWidth = 1.0;
+    _mapWindow.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    _mapWindow.layer.borderWidth = 1.0;
+    
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapOnMapWindowRecognized)];
+    [_mapWindow addGestureRecognizer:singleTap];
+    
+    clickToEnlargeMapWindow = [[UILabel alloc]init];
+    [clickToEnlargeMapWindow sizeToFit];
+    clickToEnlargeMapWindow.frame = CGRectMake((_mapWindow.frame.size.width - clickToEnlargeMapWindow.frame.size.width) / 2, (_mapWindow.frame.size.height - clickToEnlargeMapWindow.frame.size.height) / 2, clickToEnlargeMapWindow.frame.size.width, clickToEnlargeMapWindow.frame.size.height);
+    clickToEnlargeMapWindow.text = @"Click to enlarge maps";
+    clickToEnlargeMapWindow.font = [UIFont systemFontOfSize:14.0];
+    [_mapWindow addSubview:clickToEnlargeMapWindow];
     
 }
 
@@ -241,7 +257,7 @@ UIPickerView *SortType_social;
     if (row == tabControl.trialNum)
         tView.text = @"Favorite Trials";
     else
-        tView.text = [NSString stringWithFormat:@"Trial %d", row];
+        tView.text = [NSString stringWithFormat:@"Trial %d", (int)row];
     // Fill the label text here
     
     return tView;
@@ -251,6 +267,26 @@ UIPickerView *SortType_social;
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     [self handleProfileUpdate];
     [_loadingIndicator stopAnimating];
+}
+
+- (void)tapOnMapWindowRecognized {
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    if (_mapWindow.frame.size.height < 120) {
+        [clickToEnlargeMapWindow removeFromSuperview];
+        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y + 70, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height - 70);
+        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y + 70, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height - 70);
+        _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, 143);
+    }
+    else {
+        [_mapWindow addSubview:clickToEnlargeMapWindow];
+        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y - 70, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height + 70);
+        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y - 70, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height + 70);
+        _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, 73);
+    }
+    [UIView commitAnimations];
 }
 
 
@@ -359,6 +395,10 @@ UIPickerView *SortType_social;
     NSLog(@"drawing trial %d for index %d", trial, profileIndex);
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
+    
+    for (UIView *view in [_mapWindow subviews])
+        [view removeFromSuperview];
+    
     // error checking
     if ([tabControl.profiles count] < profileIndex + 1)
         return;
@@ -366,12 +406,31 @@ UIPickerView *SortType_social;
     // make sure trial asked for is loaded
     if ([tabControl.trialRuns count] < trial + 1)
         return;
-
+    
     // first, draw the FebTestIntervention in usernames window
     AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trial];
     AprilTestNormalizedVariable *simRunNormal = [tabControl.trialRunsNormalized objectAtIndex:trial];
+    /*
     FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 40, 115, 125))];
     interventionView.view = [[_usernamesWindow subviews] objectAtIndex:profileIndex];
+    [interventionView updateView];
+     */
+    
+    UILabel *mapWindowLabel = [[UILabel alloc]initWithFrame:(CGRectMake(2, 0, 113, 15))];
+    mapWindowLabel.text = [NSString stringWithFormat:@"  Trial %d", trial];
+    mapWindowLabel.font = [UIFont systemFontOfSize:13.0];
+    [_mapWindow addSubview:mapWindowLabel];
+    
+    if (_mapWindow.frame.size.height < 120) {
+        [clickToEnlargeMapWindow sizeToFit];
+        clickToEnlargeMapWindow.frame = CGRectMake((_mapWindow.frame.size.width - clickToEnlargeMapWindow.frame.size.width) / 2, (_mapWindow.frame.size.height - clickToEnlargeMapWindow.frame.size.height) / 2, clickToEnlargeMapWindow.frame.size.width, clickToEnlargeMapWindow.frame.size.height);
+        clickToEnlargeMapWindow.text = @"Click to enlarge maps";
+        clickToEnlargeMapWindow.font = [UIFont systemFontOfSize:14.0];
+        [_mapWindow addSubview:clickToEnlargeMapWindow];
+    }
+    
+    FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(18, 15, 115, 125))];
+    interventionView.view = [[_mapWindow subviews] objectAtIndex:0];
     [interventionView updateView];
 
     
