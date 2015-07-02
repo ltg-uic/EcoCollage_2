@@ -130,6 +130,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 }
 
 
+
 #pragma mark - GKSessionDelegate protocol conformance
 
 - (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state
@@ -342,9 +343,10 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     [_trialRunsDynNorm addObject:simRunDyn];
     
     _trialNum++;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"updatePicker" object:self];
     
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
+    if (_trialNum == 1)
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
 
@@ -372,6 +374,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     }
     
     
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"updatePicker" object:self];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
     
 }

@@ -49,6 +49,9 @@ float min_budget = 100000;
 float max_budget = 700000;
 UILabel *budgetLabel;
 UILabel *hoursAfterStormLabel;
+NSArray *arrStatus_social;
+int sortChosen_social= 0;
+UIPickerView *SortType_social;
 
 
 - (void)viewDidLoad {
@@ -103,6 +106,19 @@ UILabel *hoursAfterStormLabel;
     [self.view addSubview:_loadingIndicator];
     
     
+    arrStatus_social = [[NSArray alloc] initWithObjects:@"Trial 0", @"Favorite trials", nil];
+    _trialNumber.text = [NSString stringWithFormat:@"%@", arrStatus_social[sortChosen_social]];
+    _trialNumber.delegate = self;
+    if (SortType_social == nil){
+        SortType_social = [[UIPickerView alloc]init];
+        [SortType_social setDataSource:self];
+        [SortType_social setDelegate:self];
+        [SortType_social setShowsSelectionIndicator:YES];
+        _trialNumber.selectedTextRange = nil;
+        [_trialNumber setInputView:SortType_social];
+    }
+    
+    
     OverBudgetLabels    = [[NSMutableArray alloc] init];
     waterDisplays = [[NSMutableArray alloc]init];
     maxWaterDisplays = [[NSMutableArray alloc]init];
@@ -155,6 +171,11 @@ UILabel *hoursAfterStormLabel;
                                                  name:@"profileUpdate"
                                                object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(pickerView:numberOfRowsInComponent:)
+                                                 name:@"updatePicker"
+                                               object:nil];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -165,6 +186,7 @@ UILabel *hoursAfterStormLabel;
 - (void)viewWillDisappear:(BOOL)animated {
     // remove notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"profileUpdate" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updatePicker" object:nil];
     /*
     // empty _usernamesWindow and _profilesWindow to free memory
     for (UIView *view in [_usernamesWindow subviews])
@@ -174,6 +196,49 @@ UILabel *hoursAfterStormLabel;
     */
 }
 
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
+    // Handle the selection
+    _trialNumber.text = [NSString stringWithFormat:@"Trial %d", row];
+    sortChosen_social = (int)row;
+    
+    [[self view] endEditing:YES];
+    
+    [self handleProfileUpdate];
+}
+
+// tell the picker how many rows are available for a given component
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    NSUInteger numRows = tabControl.trialNum;
+    
+    return numRows;
+}
+
+// tell the picker how many components it will have
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 1;
+}
+
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view{
+    UILabel* tView = (UILabel*)view;
+    if (!tView){
+        tView = [[UILabel alloc] init];
+        // Setup label properties - frame, font, colors etc
+        tView.frame = CGRectMake(0, 0, 250, 30);
+        tView.font = [UIFont boldSystemFontOfSize:15.0];
+        
+    }
+    tView.text = [NSString stringWithFormat:@"Trial %d", row];
+    
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    if (row == tabControl.trialNum)
+        tView.text = @"Favorite Trials";
+    // Fill the label text here
+    
+    return tView;
+}
 
 - (void)profileUpdate {
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
@@ -242,7 +307,7 @@ UILabel *hoursAfterStormLabel;
     
     // draw trial for each user
     for (int i = 0; i < tabControl.profiles.count; i++) {
-        [self drawTrial:_trialNumber.text.integerValue withProfileIndex:i];
+        [self drawTrial:sortChosen_social withProfileIndex:i];
     }
     
 }
@@ -264,6 +329,7 @@ UILabel *hoursAfterStormLabel;
     // loop through other profiles and load their name labels
     for (NSArray *profile in tabControl.profiles) {
         UILabel *nameLabel = [[UILabel alloc]init];
+        nameLabel.tag = (numberOfUsernames + 1) * 100;
         nameLabel.backgroundColor = [UIColor whiteColor];
         nameLabel.frame = CGRectMake(0, numberOfUsernames * heightOfVisualization + 2, _usernamesWindow.frame.size.width, 40);
         nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
@@ -548,7 +614,6 @@ UILabel *hoursAfterStormLabel;
     scoreLabel2.textColor = [UIColor blackColor];
     [_usernamesWindow addSubview:scoreLabel2];
 }
-
 
 
 //Draws Labels to set on the dataWindow Scrollview but also returns object to be added into a MutableArray (used for updating labels)
