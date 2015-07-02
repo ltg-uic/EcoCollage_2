@@ -145,13 +145,18 @@ float maxPublicInstallNorm;
     
     _SortPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus[sortChosen]];
     _SortPickerTextField.delegate = self;
+    
     if (SortType == nil){
-        SortType = [[UIPickerView alloc]init];
+        float pickerXPos = _SortPickerTextField.frame.origin.x;
+        float pickerYPos = _SortPickerTextField.frame.origin.x + _SortPickerTextField.frame.size.height;
+        SortType = [[UIPickerView alloc] initWithFrame:CGRectMake(pickerXPos, pickerYPos, _SortPickerTextField.frame.size.width, 100)];
+        
         [SortType setDataSource:self];
         [SortType setDelegate:self];
         [SortType setShowsSelectionIndicator:YES];
         _SortPickerTextField.selectedTextRange = nil;
         [_SortPickerTextField setInputView:SortType];
+        
     }
     
     scoreColors = [[NSMutableDictionary alloc] initWithObjects:
@@ -1817,12 +1822,12 @@ float maxPublicInstallNorm;
 }
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view{
+    
     UILabel* tView = (UILabel*)view;
     if (!tView){
         tView = [[UILabel alloc] init];
         // Setup label properties - frame, font, colors etc
         tView.frame = CGRectMake(0, 0, 250, 30);
-        tView.font = [UIFont boldSystemFontOfSize:15.0];
     }
     tView.text = [arrStatus objectAtIndex:row];
 
