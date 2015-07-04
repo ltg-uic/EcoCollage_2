@@ -15,6 +15,7 @@
 #import "AprilTestEfficiencyView.h"
 #import "AprilTestCostDisplay.h"
 #import "AprilTestNormalizedVariable.h"
+#import "XYPieChart.h"
 
 @interface SocialViewController ()
 @end
@@ -50,10 +51,19 @@ float min_budget = 100000;
 float max_budget = 700000;
 UILabel *budgetLabel;
 UILabel *hoursAfterStormLabel;
-UILabel *clickToEnlargeMapWindow;
+UILabel *mapWindowStatusLabel;
 NSArray *arrStatus_social;
 int sortChosen_social= 0;
 UIPickerView *SortType_social;
+int smallSizeOfMapWindow = 50;
+int largeSizeOfMapWindow = 220;
+UIView *topOfMapWindow;
+UIView *bottomOfMapWindow;
+NSArray *sliceColors;
+NSMutableArray *slices;
+NSMutableDictionary *sliceNumbers;
+NSMutableArray *slicesInfo;
+
 
 
 - (void)viewDidLoad {
@@ -102,6 +112,22 @@ UIPickerView *SortType_social;
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
                     [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
+    sliceNumbers = [[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects: [NSNumber numberWithInt:8], [NSNumber numberWithInt:7],[NSNumber numberWithInt:6],[NSNumber numberWithInt:5],[NSNumber numberWithInt:4],[NSNumber numberWithInt:3],[NSNumber numberWithInt:2],[NSNumber numberWithInt:1], nil] forKeys: [NSArray arrayWithObjects: [NSNumber numberWithInt:1], [NSNumber numberWithInt:2],[NSNumber numberWithInt:3],[NSNumber numberWithInt:4],[NSNumber numberWithInt:5],[NSNumber numberWithInt:6],[NSNumber numberWithInt:7],[NSNumber numberWithInt:8], nil]];
+    
+    sliceColors =[NSArray arrayWithObjects:
+                       [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.5],
+                       [UIColor colorWithHue:.35 saturation:.8 brightness:.6 alpha: 0.5],
+                       [UIColor colorWithHue:.4 saturation:.8 brightness:.3 alpha: 0.5],
+                       [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5],
+                       [UIColor colorWithHue:.65 saturation:.8 brightness:.6 alpha: 0.5],
+                       [UIColor colorWithHue:.6 saturation:.8 brightness:.6 alpha: 0.5],
+                       [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
+                       [UIColor colorWithHue:.65 saturation:.0 brightness:.9 alpha: 0.5],
+                       [UIColor colorWithHue:.7 saturation: 0.6 brightness:.3 alpha: 0.5],
+                       [UIColor colorWithHue:.75 saturation: 0.6 brightness:.6 alpha: 0.5], nil];
+    
+    slicesInfo = [[NSMutableArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Depth Over Time", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", nil];
+    
     _loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _loadingIndicator.center = CGPointMake(512, 300);
     _loadingIndicator.color = [UIColor blueColor];
@@ -125,6 +151,11 @@ UIPickerView *SortType_social;
     waterDisplays = [[NSMutableArray alloc]init];
     maxWaterDisplays = [[NSMutableArray alloc]init];
     efficiency = [[NSMutableArray alloc]init];
+    slices = [[NSMutableArray alloc]init];
+    
+    for (int i = 0; i < 8; i++) {
+        [slices addObject:[NSNumber numberWithInt:1]];
+    }
     
     
     [self drawMinMaxSliderLabels];
@@ -151,20 +182,33 @@ UIPickerView *SortType_social;
     _mapWindow.delegate = self;
     
     
-    _profilesWindow.layer.borderColor = [UIColor lightGrayColor].CGColor;
-    _profilesWindow.layer.borderWidth = 1.0;
     _mapWindow.layer.borderColor = [UIColor lightGrayColor].CGColor;
     _mapWindow.layer.borderWidth = 1.0;
     
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapOnMapWindowRecognized)];
     [_mapWindow addGestureRecognizer:singleTap];
     
-    clickToEnlargeMapWindow = [[UILabel alloc]init];
-    [clickToEnlargeMapWindow sizeToFit];
-    clickToEnlargeMapWindow.frame = CGRectMake((_mapWindow.frame.size.width - clickToEnlargeMapWindow.frame.size.width) / 2, (_mapWindow.frame.size.height - clickToEnlargeMapWindow.frame.size.height) / 2, clickToEnlargeMapWindow.frame.size.width, clickToEnlargeMapWindow.frame.size.height);
-    clickToEnlargeMapWindow.text = @"Click to enlarge maps";
-    clickToEnlargeMapWindow.font = [UIFont systemFontOfSize:14.0];
-    [_mapWindow addSubview:clickToEnlargeMapWindow];
+    topOfMapWindow = [[UIView alloc]init];
+    topOfMapWindow.frame = CGRectMake(0, 0, _mapWindow.frame.size.width, smallSizeOfMapWindow);
+    [_mapWindow addSubview:topOfMapWindow];
+    
+    bottomOfMapWindow = [[UIView alloc]init];
+    bottomOfMapWindow.frame = CGRectMake(0, smallSizeOfMapWindow, _mapWindow.frame.size.width, largeSizeOfMapWindow - smallSizeOfMapWindow);
+    [_mapWindow addSubview:bottomOfMapWindow];
+    
+    mapWindowStatusLabel = [[UILabel alloc]init];
+    mapWindowStatusLabel.text = @"Tap to view map(s)";
+    mapWindowStatusLabel.font = [UIFont systemFontOfSize:15.0];
+    [mapWindowStatusLabel sizeToFit];
+    mapWindowStatusLabel.frame = CGRectMake((topOfMapWindow.frame.size.width - mapWindowStatusLabel.frame.size.width) / 2, (smallSizeOfMapWindow - mapWindowStatusLabel.frame.size.height) / 2, mapWindowStatusLabel.frame.size.width, mapWindowStatusLabel.frame.size.height);
+    [_mapWindow addSubview:mapWindowStatusLabel];
+    
+    // line below data viewers
+    UIView *lineBelowData = [[UIView alloc]init];
+    lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height, self.view.frame.size.width, 1);
+    lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    lineBelowData.layer.borderWidth = 1.0;
+    [self.view addSubview:lineBelowData];
     
 }
 
@@ -220,8 +264,12 @@ UIPickerView *SortType_social;
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     // Handle the selection
-    _trialNumber.text = [NSString stringWithFormat:@"Trial %d", row];
+    if (row == tabControl.trialNum)
+        _trialNumber.text = @"Favorite Trials";
+    else
+        _trialNumber.text = [NSString stringWithFormat:@"Trial %d", row];
     sortChosen_social = (int)row;
     
     [[self view] endEditing:YES];
@@ -270,21 +318,22 @@ UIPickerView *SortType_social;
 }
 
 - (void)tapOnMapWindowRecognized {
+    int sizeOfChange = largeSizeOfMapWindow - smallSizeOfMapWindow;
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:0.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
-    if (_mapWindow.frame.size.height < 120) {
-        [clickToEnlargeMapWindow removeFromSuperview];
-        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y + 70, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height - 70);
-        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y + 70, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height - 70);
-        _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, 143);
+    if (_mapWindow.frame.size.height < largeSizeOfMapWindow) {
+        mapWindowStatusLabel.text = @"Tap to hide map(s)";
+        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y + sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height - sizeOfChange);
+        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y + sizeOfChange, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height - sizeOfChange);
+        _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, largeSizeOfMapWindow);
     }
     else {
-        [_mapWindow addSubview:clickToEnlargeMapWindow];
-        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y - 70, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height + 70);
-        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y - 70, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height + 70);
-        _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, 73);
+        mapWindowStatusLabel.text = @"Tap to view map(s)";
+        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y - sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height + sizeOfChange);
+        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y - sizeOfChange, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height + sizeOfChange);
+        _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, smallSizeOfMapWindow);
     }
     [UIView commitAnimations];
 }
@@ -385,6 +434,25 @@ UIPickerView *SortType_social;
             numberOfUsernames++;
             height += heightOfVisualization;
         }
+        XYPieChart *pie = [[XYPieChart alloc]initWithFrame:CGRectMake(-5, heightOfVisualization * (numberOfUsernames - 1) + 5, 120, 120) Center:CGPointMake(80, 100) Radius:60.0];
+        
+        for (int i = 0; i < 8; i++) {
+            int index = [profile indexOfObject:[slicesInfo objectAtIndex:i]] - 2;
+            [slices replaceObjectAtIndex:i withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:index]]];
+        }
+        
+        
+        [pie setDataSource:self];
+        [pie setStartPieAngle:M_PI_2];
+        [pie setAnimationSpeed:1.0];
+        [pie setPieBackgroundColor:[UIColor colorWithWhite:0.95 alpha:1]];
+        [pie setUserInteractionEnabled:NO];
+        pie.showLabel = false;
+        [pie setLabelShadowColor:[UIColor blackColor]];
+        
+        [pie reloadData];
+        
+        [_usernamesWindow addSubview:pie];
     }
     
     [_usernamesWindow setContentSize: CGSizeMake(_usernamesWindow.contentSize.width, height)];
@@ -395,8 +463,8 @@ UIPickerView *SortType_social;
     NSLog(@"drawing trial %d for index %d", trial, profileIndex);
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
-    
-    for (UIView *view in [_mapWindow subviews])
+    // remove currently loaded maps from view
+    for (UIView *view in [bottomOfMapWindow subviews])
         [view removeFromSuperview];
     
     // error checking
@@ -416,23 +484,16 @@ UIPickerView *SortType_social;
     [interventionView updateView];
      */
     
-    UILabel *mapWindowLabel = [[UILabel alloc]initWithFrame:(CGRectMake(2, 0, 113, 15))];
+    UILabel *mapWindowLabel = [[UILabel alloc]init];
     mapWindowLabel.text = [NSString stringWithFormat:@"  Trial %d", trial];
-    mapWindowLabel.font = [UIFont systemFontOfSize:13.0];
-    [_mapWindow addSubview:mapWindowLabel];
+    mapWindowLabel.font = [UIFont systemFontOfSize:15.0];
+    [mapWindowLabel sizeToFit];
+    mapWindowLabel.frame = CGRectMake(0, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
+    [bottomOfMapWindow addSubview:mapWindowLabel];
     
-    if (_mapWindow.frame.size.height < 120) {
-        [clickToEnlargeMapWindow sizeToFit];
-        clickToEnlargeMapWindow.frame = CGRectMake((_mapWindow.frame.size.width - clickToEnlargeMapWindow.frame.size.width) / 2, (_mapWindow.frame.size.height - clickToEnlargeMapWindow.frame.size.height) / 2, clickToEnlargeMapWindow.frame.size.width, clickToEnlargeMapWindow.frame.size.height);
-        clickToEnlargeMapWindow.text = @"Click to enlarge maps";
-        clickToEnlargeMapWindow.font = [UIFont systemFontOfSize:14.0];
-        [_mapWindow addSubview:clickToEnlargeMapWindow];
-    }
-    
-    FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(18, 15, 115, 125))];
-    interventionView.view = [[_mapWindow subviews] objectAtIndex:0];
+    FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(mapWindowLabel.frame.origin.x + 20, mapWindowLabel.frame.size.height + 5, 115, 125))];
+    interventionView.view = [[bottomOfMapWindow subviews] objectAtIndex:0];
     [interventionView updateView];
-
     
     NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
     NSArray *currentProfile = [[NSArray alloc]init];
@@ -441,6 +502,7 @@ UIPickerView *SortType_social;
     for (int i = 3; i < [currentProfile count]; i++) {
         [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:i]] withDisplayName:[currentProfile objectAtIndex: i] withNumVar:1 withWidth:widthOfTitleVisualization withRank:9-i]];
     }
+    
     
     float priorityTotal= 0;
     float scoreTotal = 0;
@@ -919,6 +981,20 @@ UIPickerView *SortType_social;
     [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];;
     //}
      */
+}
+
+- (NSUInteger)numberOfSlicesInPieChart:(XYPieChart *)pieChart
+{
+    return 8;
+}
+
+- (CGFloat) pieChart:(XYPieChart *)pieChart valueForSliceAtIndex:(NSUInteger)index
+{
+    return [[slices objectAtIndex:index] intValue];
+}
+- (UIColor *)pieChart:(XYPieChart *)pieChart colorForSliceAtIndex:(NSUInteger)index
+{
+    return [sliceColors objectAtIndex:(index % sliceColors.count)];
 }
 
 
