@@ -124,12 +124,20 @@
     _budget.backgroundColor = [UIColor lightGrayColor];
     [self addSubview:_budget];
     
-    _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, costWidth, 20)];
+    if (costWidth > 160)
+        _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, MaxWidth, 20)];
+    else
+        _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, costWidth, 20)];
     _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
+    
     [self addSubview:_budgetUsed];
     
     if (costWidth > MaxWidth){
-        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(MaxWidth, 20, costWidth - MaxWidth, 20)];
+        if (costWidth > 160)
+             _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(MaxWidth, 20, 160-MaxWidth, 20)];
+        else
+            _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(MaxWidth, 20, costWidth - MaxWidth, 20)];
+        
         _budgetOver.backgroundColor = [UIColor redColor];
         [self addSubview:_budgetOver];
     }
@@ -158,12 +166,20 @@
     _budget.backgroundColor = [UIColor lightGrayColor];
     [self addSubview:_budget];
     
-    _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, costWidth, 20)];
+    if (costWidth > 160)
+        _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, MaxWidth, 20)];
+    else
+        _budgetUsed = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, costWidth, 20)];
+    
     _budgetUsed.backgroundColor = [UIColor colorWithRed:.3 green:.8 blue:.3 alpha:1.0];
     [self addSubview:_budgetUsed];
     
     if (costWidth > MaxWidth){
-        _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(MaxWidth, 20, costWidth - MaxWidth, 20)];
+        
+        if (costWidth > 160)
+            _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(MaxWidth, 20, 160-MaxWidth, 20)];
+        else
+            _budgetOver = [[UILabel alloc] initWithFrame:CGRectMake(MaxWidth, 20, costWidth - MaxWidth, 20)];
         _budgetOver.backgroundColor = [UIColor redColor];
         [self addSubview:_budgetOver];
     }

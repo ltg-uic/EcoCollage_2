@@ -27,11 +27,9 @@
 @synthesize mapWindow = _mapWindow;
 @synthesize titleWindow = _titleWindow;
 @synthesize SliderWindow = _SliderWindow;
-@synthesize hoursAfterStormLabel = _hoursAfterStormLabel;
 @synthesize loadingIndicator = _loadingIndicator;
 @synthesize scenarioNames = _scenarioNames;
 @synthesize SortPickerTextField = _SortPickerTextField;
-@synthesize currentMaxInvestment = _currentMaxInvestment;
 @synthesize maxBudget = _maxBudget;
 
 //structs that will keep track of the highest and lowest costs of Installation and maintenance (for convenience)
@@ -80,6 +78,9 @@ float offsetForMoving = 0.0;
 float originalOffset = 0.0;
 UITextField *edittingTX;
 NSTimer *scrollingTimer = nil;
+UILabel  *investmentBudget;
+UILabel  *interventionCap;
+UILabel  *WaterDepthOverStorm;
 UISlider *BudgetSlider;
 UISlider *StormPlayBack;
 UISlider *StormPlayBack2;
@@ -87,7 +88,7 @@ UIPickerView *SortType;
 
 //Important values that change elements of objects
 float thresh = 6;
-float hours = 0;
+int hours = 0;
 int hoursAfterStorm;
 
 
@@ -141,7 +142,7 @@ float maxPublicInstallNorm;
     _loadingIndicator.color = [UIColor blueColor];
     [self.view addSubview:_loadingIndicator];
 
-     arrStatus = [[NSArray alloc] initWithObjects:@"Trial Number", @"Best Score", @"Public Cost", @"Damage", @"Impact on my Neighbors", @"Rainwater from Neighbors", @"Efficiency of Intervention", @"Groundwater Infiltration", nil];
+     arrStatus = [[NSArray alloc] initWithObjects:@"Trial Number", @"Best Score", @"Investment", @"Damage Reduction",@"Intervention Capacity", @"Water Depth over Storm", @"Max Flooded Area", @"Impact on my Neighbors", @"Efficiency of Intervention", @"Groundwater Infiltration", nil];
     
     _SortPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus[sortChosen]];
     _SortPickerTextField.delegate = self;
@@ -321,8 +322,9 @@ float maxPublicInstallNorm;
     
     hoursAfterStorm = floorf(hours);
     if (hoursAfterStorm % 2 != 0) hoursAfterStorm--;
-    _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%d hours", hoursAfterStorm];
     
+    interventionCap.text = [NSString stringWithFormat:@"Storm Playback: %@ hours", [NSNumber numberWithInt:hours]];
+    WaterDepthOverStorm.text = [NSString stringWithFormat:@"Storm Playback: %@ hours", [NSNumber numberWithInt:hours]];
 }
 
 - (void)StormHoursChosen:(NSNotification *)notification {
@@ -415,7 +417,7 @@ float maxPublicInstallNorm;
     
     value = 1000.0 * floor((value/1000.0)+0.5);
     
-    _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
+    investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
     maxBudgetLimit = value;
     
     //update the width of the public install cost bars (make sure it isn't 0)
@@ -437,8 +439,7 @@ float maxPublicInstallNorm;
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
     
-    _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:newValue]]];
-    
+    investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:newValue]]];
 }
 
 -(void) normalizaAllandUpdateStatically{
@@ -1485,7 +1486,7 @@ float maxPublicInstallNorm;
         
         
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            CGRect frame  = CGRectMake(width + 25, 2, 160, 40);
+            CGRect frame  = CGRectMake(width + 25, 16, 160, 40);
             BudgetSlider = [[UISlider alloc] initWithFrame:frame];
             [BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
             [BudgetSlider setBackgroundColor:[UIColor clearColor]];
@@ -1493,26 +1494,31 @@ float maxPublicInstallNorm;
             BudgetSlider.maximumValue = max_budget_limit;
             BudgetSlider.continuous = YES;
             [BudgetSlider setValue:maxBudgetLimit animated:YES];
-            _currentMaxInvestment.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:maxBudgetLimit]]];
             [_SliderWindow addSubview:BudgetSlider];
             
             //draw min/max cost labels under slider
-            CGRect minCostFrame = CGRectMake(width + 25, 45, currentVar.widthOfVisualization/3, 15);
+            CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/3, 15);
             UILabel *minCostLabel = [[UILabel alloc] initWithFrame:minCostFrame];
             minCostLabel.font =  [UIFont boldSystemFontOfSize:14.0];
             minCostLabel.text =  minBudgetLabel;
             
-            CGRect maxCostFrame = CGRectMake((width + 185) -35, 45, currentVar.widthOfVisualization/3, 15);
+            CGRect maxCostFrame = CGRectMake(width + 160, 5, currentVar.widthOfVisualization/3, 15);
             UILabel *maxCostLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
             maxCostLabel.font = [UIFont boldSystemFontOfSize:14.0];
             maxCostLabel.text = maxBudgetLabel;
             
+            CGRect currCostFrame = CGRectMake(width + 35, 50, currentVar.widthOfVisualization, 15);
+            investmentBudget = [[UILabel alloc] initWithFrame:currCostFrame];
+            investmentBudget.font = [UIFont boldSystemFontOfSize:14.0];
+            investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:maxBudgetLimit]]];
+            
             [_SliderWindow addSubview:minCostLabel];
             [_SliderWindow addSubview:maxCostLabel];
+            [_SliderWindow addSubview:investmentBudget];
             
         }
         else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
-            CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
+            CGRect frame = CGRectMake(width, 16, currentVar.widthOfVisualization, 40);
             StormPlayBack = [[UISlider alloc] initWithFrame:frame];
             [StormPlayBack addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventValueChanged];
             [StormPlayBack addTarget:self
@@ -1523,26 +1529,31 @@ float maxPublicInstallNorm;
             StormPlayBack.maximumValue = 48;
             StormPlayBack.continuous = YES;
             StormPlayBack.value = hours;
-            _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%@ hours", [NSNumber numberWithInt:hours]];
 
             [_SliderWindow addSubview:StormPlayBack];
             
             //draw labels for range of hours
-            CGRect minCostFrame = CGRectMake(width + 5, 45, currentVar.widthOfVisualization/5, 15);
+            CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/5, 15);
             UILabel *minHoursLabel = [[UILabel alloc] initWithFrame:minCostFrame];
             minHoursLabel.font = [UIFont boldSystemFontOfSize:14];
             minHoursLabel.text = [NSString stringWithFormat:@" 0 hrs"];
             
-            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 45, currentVar.widthOfVisualization/4, 15);
+            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 5, currentVar.widthOfVisualization/4, 15);
             UILabel *maxHoursLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
             maxHoursLabel.font = [UIFont boldSystemFontOfSize:14];
             maxHoursLabel.text = [NSString stringWithFormat:@"48 hrs"];
             
+            CGRect currCostFrame = CGRectMake(width + 25, 50, currentVar.widthOfVisualization, 15);
+            WaterDepthOverStorm = [[UILabel alloc] initWithFrame:currCostFrame];
+            WaterDepthOverStorm.font = [UIFont boldSystemFontOfSize:14.0];
+            WaterDepthOverStorm.text = [NSString stringWithFormat:@"Storm Playback: %@ hours", [NSNumber numberWithInt:hours]];
+            
             [_SliderWindow addSubview:minHoursLabel];
             [_SliderWindow addSubview:maxHoursLabel];
+            [_SliderWindow addSubview:WaterDepthOverStorm];
         }
         else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
-            CGRect frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 40);
+            CGRect frame = CGRectMake(width, 16, currentVar.widthOfVisualization, 40);
             StormPlayBack2 = [[UISlider alloc] initWithFrame:frame];
             [StormPlayBack2 addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventValueChanged];
             [StormPlayBack2 addTarget:self
@@ -1553,22 +1564,27 @@ float maxPublicInstallNorm;
             StormPlayBack2.maximumValue = 48;
             StormPlayBack2.continuous = YES;
             StormPlayBack2.value = hours;
-
-            _hoursAfterStormLabel.text = [NSString stringWithFormat:@"%@ hours", [NSNumber numberWithInt:hours]];
             [_SliderWindow addSubview:StormPlayBack2];
             
             //draw labels for range of hours
-            CGRect minCostFrame = CGRectMake(width + 5, 45, currentVar.widthOfVisualization/5, 15);
+            CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/5, 15);
             UILabel *minHoursLabel = [[UILabel alloc] initWithFrame:minCostFrame];
             minHoursLabel.font = [UIFont boldSystemFontOfSize:14];
             minHoursLabel.text = [NSString stringWithFormat:@" 0 hrs"];
             
-            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 45, currentVar.widthOfVisualization/4, 15);
+            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 5, currentVar.widthOfVisualization/4, 15);
             UILabel *maxHoursLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
             maxHoursLabel.font = [UIFont boldSystemFontOfSize:14];
             maxHoursLabel.text = [NSString stringWithFormat:@"48 hrs"];
+            
+            CGRect currCostFrame = CGRectMake(width + 25, 50, currentVar.widthOfVisualization, 15);
+            interventionCap = [[UILabel alloc] initWithFrame:currCostFrame];
+            interventionCap.font = [UIFont boldSystemFontOfSize:14.0];
+            interventionCap.text = [NSString stringWithFormat:@"Storm Playback: %@ hours", [NSNumber numberWithInt:hours]];
+            
             [_SliderWindow addSubview:minHoursLabel];
             [_SliderWindow addSubview:maxHoursLabel];
+            [_SliderWindow addSubview:interventionCap];
         }
         
         else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
@@ -1667,7 +1683,7 @@ float maxPublicInstallNorm;
         [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"PerformanceScore" ascending:NO]]];
     }
     
-    else if ([arrStatus[row] isEqual: @"Public Cost"]){
+    else if ([arrStatus[row] isEqual: @"Investment"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
@@ -1680,7 +1696,7 @@ float maxPublicInstallNorm;
                 
         }];
     }
-    else if ([arrStatus[row] isEqual: @"Damage"]){
+    else if ([arrStatus[row] isEqual: @"Damage Reduction"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
@@ -1706,11 +1722,51 @@ float maxPublicInstallNorm;
         }];
     }
     
-    //change to something else since it doesnt exist anymore?
-    else if ([arrStatus[row] isEqual: @"Rainwater from Neighbors"]){
-        
+    else if ([arrStatus[row] isEqual: @"Intevention Capacity"]){
+        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            NSString *key = (_DynamicNormalization.isOn) ? @"TrialDynamic" : @"TrialStatic";
+            
+            AprilTestNormalizedVariable *first  = (AprilTestNormalizedVariable*)[obj1 valueForKey: key];
+            AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
+            
+            if (first.efficiency > second.efficiency)
+                return NSOrderedAscending;
+            else if (second.efficiency > first.efficiency)
+                return NSOrderedDescending;
+            return NSOrderedSame;
+        }];
     }
-        
+    
+    else if ([arrStatus[row] isEqual: @"Water Depth over Storm"]){
+        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            NSString *key = (_DynamicNormalization.isOn) ? @"TrialDynamic" : @"TrialStatic";
+            
+            AprilTestNormalizedVariable *first  = (AprilTestNormalizedVariable*)[obj1 valueForKey: key];
+            AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
+            
+            if (first.floodedStreets > second.floodedStreets)
+                return NSOrderedAscending;
+            else if (second.floodedStreets > first.floodedStreets)
+                return NSOrderedDescending;
+            return NSOrderedSame;
+        }];
+    }
+    
+    else if ([arrStatus[row] isEqual: @"Max Flooded Area"]){
+        [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            NSString *key = (_DynamicNormalization.isOn) ? @"TrialDynamic" : @"TrialStatic";
+            
+            AprilTestNormalizedVariable *first  = (AprilTestNormalizedVariable*)[obj1 valueForKey: key];
+            AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
+            
+            if (first.standingWater > second.standingWater)
+                return NSOrderedAscending;
+            else if (second.standingWater > first.standingWater)
+                return NSOrderedDescending;
+            return NSOrderedSame;
+        }];
+    }
+    
     else if ([arrStatus[row] isEqual: @"Efficiency of Intervention"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
