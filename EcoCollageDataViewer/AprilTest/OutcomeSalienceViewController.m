@@ -254,11 +254,13 @@ float maxPublicInstallNorm;
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
         [self removeBudgetLabels];
         [self normalizeAllandUpdateDynamically];
+        [self handleSort:sortChosen];
     }
     else{
         //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Static" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
         [self removeBudgetLabels];
         [self normalizaAllandUpdateStatically];
+        [self handleSort:sortChosen];
     }
   
 }
@@ -1271,7 +1273,6 @@ float maxPublicInstallNorm;
                                    @"TrialDynamic"      : [trialRunsDynNorm objectAtIndex:simRun.trialNum],
                                    @"TrialTxTBox"       : tx,
                                    @"PerformanceScore"  : [NSNumber numberWithInt: totalScore],
-                                   @"FebTestMap"        : interventionView,
                                    @"WaterDisplay"      : wd,
                                    @"MWaterDisplay"     : mwd,
                                    @"EfficiencyView"    : ev,
@@ -1808,14 +1809,13 @@ float maxPublicInstallNorm;
         UILabel *EfficiencyOfIntervention     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Efficiency_Interv"];
         UILabel *maintenance                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
         UILabel *impactNeighbor               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"ImpactNeighbor"];
-        FebTestIntervention *interventionView = [[trialRunSubViews objectAtIndex:i] valueForKey:@"FebTestMap"];
         FebTestWaterDisplay *wd               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDisplay"];
         FebTestWaterDisplay *mwd              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDisplay"];
         AprilTestEfficiencyView *ev           = [[trialRunSubViews objectAtIndex:i] valueForKey:@"EfficiencyView"];
         
         
         //move over the febtestIntervention view (map under the trial run number label)
-        interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (i) + 40, 115, 125))];
+        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (i) + 40, 115, 125))];
         interventionView.view = _mapWindow;
         [interventionView updateView];
         

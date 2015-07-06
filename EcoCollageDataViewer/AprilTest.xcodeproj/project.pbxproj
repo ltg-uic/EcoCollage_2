@@ -114,7 +114,7 @@
 		8453FA6718F2FC8F0010D12F /* AprilTestFirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AprilTestFirstViewController.h; sourceTree = "<group>"; };
 		8453FA6818F2FC8F0010D12F /* AprilTestFirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AprilTestFirstViewController.m; sourceTree = "<group>"; };
 		8453FA6A18F2FC8F0010D12F /* OutcomeSalienceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutcomeSalienceViewController.h; sourceTree = "<group>"; };
-		8453FA6B18F2FC8F0010D12F /* OutcomeSalienceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OutcomeSalienceViewController.m; sourceTree = "<group>"; };
+		8453FA6B18F2FC8F0010D12F /* OutcomeSalienceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OutcomeSalienceViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		8453FA6D18F2FC8F0010D12F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		8453FA7318F2FC8F0010D12F /* AprilTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AprilTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8453FA7418F2FC8F0010D12F /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
