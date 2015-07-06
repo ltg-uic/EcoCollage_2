@@ -307,10 +307,12 @@ int trialNum;
 
 - (void) handleProfileUpdates:(NSArray *)dataArray {
     BOOL oldProfile = 0;
+    BOOL didChange = 0;
     
     // check if profile sent from baby is an update on an already existing one and if so update it
     for (int i = 0; i < profiles.count; i++) {
         if([profiles[i][1] isEqualToString:dataArray[1]]) {
+            if (![profiles[i] isEqual:dataArray ]) didChange = 1;
             profiles[i] = dataArray;
             oldProfile = 1;
         }
@@ -318,12 +320,14 @@ int trialNum;
     // otherwise, the profile is new and should be added to the mutableArray 'profiles'
     if (!oldProfile) {
         [profiles addObject:dataArray];
+        didChange = 1;
     }
     
     
-    [self sendProfileUpdateToBabies:dataArray];
-    
-    [self updateTextView];
+    if (didChange) {
+        [self sendProfileUpdateToBabies:dataArray];
+        [self updateTextView];
+    }
 }
 
 

@@ -203,13 +203,6 @@ NSMutableArray *slicesInfo;
     mapWindowStatusLabel.frame = CGRectMake((topOfMapWindow.frame.size.width - mapWindowStatusLabel.frame.size.width) / 2, (smallSizeOfMapWindow - mapWindowStatusLabel.frame.size.height) / 2, mapWindowStatusLabel.frame.size.width, mapWindowStatusLabel.frame.size.height);
     [_mapWindow addSubview:mapWindowStatusLabel];
     
-    // line below data viewers
-    UIView *lineBelowData = [[UIView alloc]init];
-    lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height, self.view.frame.size.width, 1);
-    lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
-    lineBelowData.layer.borderWidth = 1.0;
-    [self.view addSubview:lineBelowData];
-    
 }
 
 
@@ -237,6 +230,29 @@ NSMutableArray *slicesInfo;
                                                  name:@"updatePicker"
                                                object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(usernameUpdate:)
+                                                 name:@"usernameUpdate"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateSingleProfile:)
+                                                 name:@"updateSingleProfile"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(drawNewProfile)
+                                                 name:@"drawNewProfile"
+                                               object:nil];
+    
+    // line below data viewers
+    UIView *lineBelowData = [[UIView alloc]init];
+    lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height, self.view.frame.size.width, 1);
+    lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    lineBelowData.layer.borderWidth = 1.0;
+    lineBelowData.tag = 9000;
+    [self.view addSubview:lineBelowData];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -248,6 +264,11 @@ NSMutableArray *slicesInfo;
     // remove notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"profileUpdate" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updatePicker" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"usernameUpdate" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateSingleProfile" object:nil];
+    
+    UIView *line = [self.view viewWithTag:9000];
+    [line removeFromSuperview];
     /*
     // empty _usernamesWindow and _profilesWindow to free memory
     for (UIView *view in [_usernamesWindow subviews])
@@ -255,6 +276,54 @@ NSMutableArray *slicesInfo;
     for (UIView *view in [_profilesWindow subviews])
         [view removeFromSuperview];
     */
+}
+
+- (void)usernameUpdate:(NSNotification *)note {
+    NSDictionary *dict  = note.userInfo;
+    int index = [[dict objectForKey:@"data"]integerValue];
+    
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    if ([tabControl.profiles count] <= index)
+        return;
+    
+    UIView *viewInUsernamesWindow = [_usernamesWindow viewWithTag:index + 1];
+    UILabel *nameLabel = (UILabel*) [viewInUsernamesWindow viewWithTag:1];
+    nameLabel.text = [NSString stringWithFormat:@"  %@",[[tabControl.profiles objectAtIndex:index]objectAtIndex:2]];
+}
+
+- (void)updateSingleProfile:(NSNotification *)note {
+    NSDictionary *dict = note.userInfo;
+    int index = [[dict objectForKey:@"data"]integerValue];
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    if([tabControl.profiles count] <= index)
+        return;
+    
+    UIView *viewInProfilesWindow = [_profilesWindow viewWithTag:index + 1];
+    [viewInProfilesWindow removeFromSuperview];
+    UIView *viewInUsernamesWindow = [_usernamesWindow viewWithTag:index + 1];
+    [viewInUsernamesWindow removeFromSuperview];
+    
+    
+    [maxWaterDisplays removeObjectAtIndex:index];
+    [waterDisplays removeObjectAtIndex:index];
+    [efficiency removeObjectAtIndex:index];
+    
+    [self createSubviewsForUsernamesWindow:index];
+    [self createSubviewsForProfilesWindow:index];
+    [self drawTrialForSpecificProfile:sortChosen_social forProfile:index];
+}
+
+- (void)drawNewProfile {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    int index = [tabControl.profiles count] - 1;
+    
+    [self createSubviewsForUsernamesWindow:index];
+    [self createSubviewsForProfilesWindow:index];
+    [self drawTrialForSpecificProfile:sortChosen_social forProfile:index];
 }
 
 - (void)updatePicker {
@@ -351,6 +420,96 @@ NSMutableArray *slicesInfo;
 }
 
 
+- (void)createSubviewsForProfilesWindow:(int) i {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    UIView *profileSubview = [[UIView alloc]init];
+    profileSubview.frame = CGRectMake(0, i * heightOfVisualization, widthOfTitleVisualization * 8, heightOfVisualization);
+    // tag == i + 1 since 0 tag goes to the superview
+    profileSubview.tag = i + 1;
+    [_profilesWindow addSubview:profileSubview];
+    
+    
+    // draw profile concerns in order
+    int width = 0;
+    for (int j = 3; j < [[tabControl.profiles objectAtIndex:i] count]; j++) {
+        NSArray *profileArray = [tabControl.profiles objectAtIndex:i];
+        
+        UILabel *currentLabel = [[UILabel alloc]init];
+        currentLabel.backgroundColor = [concernColors objectForKey:[profileArray objectAtIndex:j]];
+        currentLabel.frame = CGRectMake(width, 2, widthOfTitleVisualization, 40);
+        currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
+        
+        if([[profileArray objectAtIndex:j] isEqualToString:@"Investment"])
+            currentLabel.text = @"  Investment";
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Damage Reduction"])
+            currentLabel.text = @"  Damage Reduction";
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Efficiency of Intervention ($/Gallon)"])
+            currentLabel.text = @"  Efficiency of Intervention";
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Capacity Used"])
+            currentLabel.text = @"  Intervention Capacity";
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Water Depth Over Time"])
+            currentLabel.text = @"  Water Depth Over Storm";
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"])
+            currentLabel.text = @"  Maximum Flooded Area";
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"])
+            currentLabel.text = @"  Groundwater Infiltration";
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Impact on my Neighbors"])
+            currentLabel.text = @"  Impact on my Neighbors";
+        else {
+            currentLabel = NULL;
+        }
+        
+        if(currentLabel != NULL){
+            [profileSubview addSubview:currentLabel];
+            width += widthOfTitleVisualization;
+        }
+    }
+}
+
+- (void)createSubviewsForUsernamesWindow:(int) i {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    UIView *usernameSubview = [[UIView alloc]init];
+    usernameSubview.frame = CGRectMake(0, i * heightOfVisualization, _usernamesWindow.frame.size.width, heightOfVisualization);
+    // tag == i + 1 since 0 tag goes to the superview
+    usernameSubview.tag = i + 1;
+    [_usernamesWindow addSubview:usernameSubview];
+    
+    UILabel *nameLabel = [[UILabel alloc]init];
+    nameLabel.tag = 1;
+    nameLabel.backgroundColor = [UIColor whiteColor];
+    nameLabel.frame = CGRectMake(0, 2, _usernamesWindow.frame.size.width, 40);
+    nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
+    if ([[tabControl.profiles objectAtIndex:i] isEqual:tabControl.ownProfile])
+        nameLabel.text = [NSString stringWithFormat:@"  %@ (You)", [[tabControl.profiles objectAtIndex:i] objectAtIndex:2]];
+    else
+        nameLabel.text = [NSString stringWithFormat:@"  %@", [[tabControl.profiles objectAtIndex:i] objectAtIndex:2]];
+    if(nameLabel != NULL) {
+        [[_usernamesWindow viewWithTag:i + 1] addSubview:nameLabel];
+    }
+    
+    // draw pie chart
+    // draw profile pie charts
+    XYPieChart *pie = [[XYPieChart alloc]initWithFrame:CGRectMake(-5, 5, 120, 120) Center:CGPointMake(80, 100) Radius:60.0];
+    
+    for (int j = 0; j < 8; j++) {
+        int index = [[tabControl.profiles objectAtIndex:i] indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
+        [slices replaceObjectAtIndex:j withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:index]]];
+    }
+    
+    
+    [pie setDataSource:self];
+    [pie setStartPieAngle:M_PI_2];
+    [pie setAnimationSpeed:1.0];
+    [pie setPieBackgroundColor:[UIColor colorWithWhite:0.95 alpha:1]];
+    [pie setUserInteractionEnabled:NO];
+    pie.showLabel = false;
+    [pie setLabelShadowColor:[UIColor blackColor]];
+    
+    [pie reloadData];
+    
+    [[_usernamesWindow viewWithTag:i + 1] addSubview:pie];
+}
+
 
 // create a new subview for each profile with frame.origin.y = i * heightOfVisualization and width = widthOfTitleVisualization * 8
     // fill subview in _profilesWindow with profile information
@@ -396,95 +555,14 @@ NSMutableArray *slicesInfo;
     // create subviews in _usernamesWindow
     // nameLabel.tag == 1
     for (int i = 0; i < numberOfProfiles; i++) {
-        UIView *usernameSubview = [[UIView alloc]init];
-        usernameSubview.frame = CGRectMake(0, i * heightOfVisualization, _usernamesWindow.frame.size.width, heightOfVisualization);
-        // tag == i + 1 since 0 tag goes to the superview
-        usernameSubview.tag = i + 1;
-        [_usernamesWindow addSubview:usernameSubview];
-        
-        UILabel *nameLabel = [[UILabel alloc]init];
-        nameLabel.tag = 1;
-        nameLabel.backgroundColor = [UIColor whiteColor];
-        nameLabel.frame = CGRectMake(0, 2, _usernamesWindow.frame.size.width, 40);
-        nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
-        if ([[tabControl.profiles objectAtIndex:i] isEqual:tabControl.ownProfile])
-            nameLabel.text = [NSString stringWithFormat:@"  %@ (You)", [[tabControl.profiles objectAtIndex:i] objectAtIndex:2]];
-        else
-            nameLabel.text = [NSString stringWithFormat:@"  %@", [[tabControl.profiles objectAtIndex:i] objectAtIndex:2]];
-        if(nameLabel != NULL) {
-            [[_usernamesWindow viewWithTag:i + 1] addSubview:nameLabel];
-        }
-        
-        // draw pie chart
-        // draw profile pie charts
-        XYPieChart *pie = [[XYPieChart alloc]initWithFrame:CGRectMake(-5, 5, 120, 120) Center:CGPointMake(80, 100) Radius:60.0];
-            
-        for (int j = 0; j < 8; j++) {
-            int index = [[tabControl.profiles objectAtIndex:i] indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
-            [slices replaceObjectAtIndex:j withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:index]]];
-        }
-            
-            
-        [pie setDataSource:self];
-        [pie setStartPieAngle:M_PI_2];
-        [pie setAnimationSpeed:1.0];
-        [pie setPieBackgroundColor:[UIColor colorWithWhite:0.95 alpha:1]];
-        [pie setUserInteractionEnabled:NO];
-        pie.showLabel = false;
-        [pie setLabelShadowColor:[UIColor blackColor]];
-            
-        [pie reloadData];
-            
-        [[_usernamesWindow viewWithTag:i + 1] addSubview:pie];
+        [self createSubviewsForUsernamesWindow:i];
     }
     
     for (int i = 0; i < numberOfProfiles; i++) {
-        // create a new view for the profile
-        UIView *profileSubview = [[UIView alloc]init];
-        profileSubview.frame = CGRectMake(0, i * heightOfVisualization, widthOfTitleVisualization * 8, heightOfVisualization);
-        // tag == i + 1 since 0 tag goes to the superview
-        profileSubview.tag = i + 1;
-        [_profilesWindow addSubview:profileSubview];
-        
-        
-        // draw profile concerns in order
-        int width = 0;
-        for (int j = 3; j < [[tabControl.profiles objectAtIndex:i] count]; j++) {
-            NSArray *profileArray = [tabControl.profiles objectAtIndex:i];
-            
-            UILabel *currentLabel = [[UILabel alloc]init];
-            currentLabel.backgroundColor = [concernColors objectForKey:[profileArray objectAtIndex:j]];
-            currentLabel.frame = CGRectMake(width, 2, widthOfTitleVisualization, 40);
-            currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
-            
-            if([[profileArray objectAtIndex:j] isEqualToString:@"Investment"])
-                currentLabel.text = @"  Investment";
-            else if([[profileArray objectAtIndex:j] isEqualToString:@"Damage Reduction"])
-                currentLabel.text = @"  Damage Reduction";
-            else if([[profileArray objectAtIndex:j] isEqualToString:@"Efficiency of Intervention ($/Gallon)"])
-                currentLabel.text = @"  Efficiency of Intervention";
-            else if([[profileArray objectAtIndex:j] isEqualToString:@"Capacity Used"])
-                currentLabel.text = @"  Intervention Capacity";
-            else if([[profileArray objectAtIndex:j] isEqualToString:@"Water Depth Over Time"])
-                currentLabel.text = @"  Water Depth Over Storm";
-            else if([[profileArray objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"])
-                currentLabel.text = @"  Maximum Flooded Area";
-            else if([[profileArray objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"])
-                currentLabel.text = @"  Groundwater Infiltration";
-            else if([[profileArray objectAtIndex:j] isEqualToString:@"Impact on my Neighbors"])
-                currentLabel.text = @"  Impact on my Neighbors";
-            else {
-                currentLabel = NULL;
-            }
-            
-            if(currentLabel != NULL){
-                [profileSubview addSubview:currentLabel];
-                width += widthOfTitleVisualization;
-            }
-        }
-        
+        [self createSubviewsForProfilesWindow:i];
+
         // draw trial for each profile
-        [self drawTrialForAllProfiles:sortChosen_social forProfile:i];
+        [self drawTrialForSpecificProfile:sortChosen_social forProfile:i];
     }
     
     
@@ -492,7 +570,7 @@ NSMutableArray *slicesInfo;
     [_profilesWindow setContentSize: CGSizeMake(widthOfTitleVisualization * 8 + 10, numberOfProfiles * heightOfVisualization)];
 }
 
-- (void) drawTrialForAllProfiles:(int)trial forProfile:(int)currentProfileIndex {
+- (void) drawTrialForSpecificProfile:(int)trial forProfile:(int)currentProfileIndex {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     // error checking
@@ -739,41 +817,6 @@ NSMutableArray *slicesInfo;
     [scoreLabel2 sizeToFit];
     scoreLabel2.textColor = [UIColor blackColor];
     [[_usernamesWindow viewWithTag:currentProfileIndex + 1] addSubview:scoreLabel2];
-}
-
-
-
-- (void)loadUsernames {
-    // remove all labels
-    for (UIView *view in [_usernamesWindow subviews]) {
-        [view removeFromSuperview];
-    }
-    
-    int height = 0;
-    
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-
-    int numberOfUsernames = 0;
-    
-    // loop through other profiles and load their name labels
-    for (NSArray *profile in tabControl.profiles) {
-        UILabel *nameLabel = [[UILabel alloc]init];
-        nameLabel.tag = (numberOfUsernames + 1) * 100;
-        nameLabel.backgroundColor = [UIColor whiteColor];
-        nameLabel.frame = CGRectMake(0, numberOfUsernames * heightOfVisualization + 2, _usernamesWindow.frame.size.width, 40);
-        nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
-        if ([profile isEqual:tabControl.ownProfile])
-            nameLabel.text = [NSString stringWithFormat:@"  %@ (You)", [profile objectAtIndex:2]];
-        else
-            nameLabel.text = [NSString stringWithFormat:@"  %@", [profile objectAtIndex:2]];
-        if(nameLabel != NULL) {
-            [_usernamesWindow addSubview:nameLabel];
-            numberOfUsernames++;
-            height += heightOfVisualization;
-        }
-    }
-    
-    [_usernamesWindow setContentSize: CGSizeMake(_usernamesWindow.contentSize.width, height)];
 }
 
 

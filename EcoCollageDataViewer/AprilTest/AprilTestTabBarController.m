@@ -268,18 +268,25 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     if ([[dataArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]])
         return;
     
+    int index = -1;
+    
     for (int i = 0; i < _profiles.count; i++) {
         // if device names match, change username
         if([_profiles[i][1] isEqualToString:dataArray[1]]) {
             _profiles[i][2] = dataArray[2];
+            index = i;
         }
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:nil userInfo:nil];
+    if (index != -1) {
+        NSNumber *numIndex = [NSNumber numberWithInt:index];
+        NSDictionary *dict = [NSDictionary dictionaryWithObject:numIndex forKey:@"data"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"usernameUpdate" object:nil userInfo:dict];
+    }
 }
 
 
-- (void) receiveAllProfilesFromMomma:(NSArray *)dataArray {
+- (void) receiveAllProfilesFromMomma:(NSArray *)dataArray {    
     // empty current profiles mutableArray if there is anything in there
     if (_profiles.count != 0)
         [_profiles removeAllObjects];
@@ -293,8 +300,10 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
             [_profiles addObject:[dataArray objectAtIndex:i]];
     }
     
+    
     NSLog(@"Received all profiles from Momma");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
+
 }
 
 
@@ -305,13 +314,15 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 // 3 - 10 : concerns in order of most important to least important
 
 - (void) receiveProfileFromMomma:(NSArray *)dataArray {
+    NSLog(@"Received single profile from Momma");
+    
     // if profile belongs to us, don't do anything
     if ([[dataArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]])
         return;
     
     
     BOOL oldProfile = 0;
-    
+    int index = -1;
     
     // check if profile sent from baby is an update on an already existing one,
     // and if so update it and send update to babies
@@ -319,6 +330,8 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
         if([_profiles[i][1] isEqualToString:dataArray[1]]) {
             _profiles[i] = dataArray;
             oldProfile = 1;
+            // grab the index of the profile changed so social view visualization can reload that profile
+            index = i;
         }
     }
     
@@ -327,7 +340,13 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
         [_profiles addObject:dataArray];
     }
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
+    if (oldProfile) {
+        NSNumber *numIndex = [NSNumber numberWithInt:index];
+        NSDictionary *dict = [NSDictionary dictionaryWithObject:numIndex forKey:@"data"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateSingleProfile" object:self   userInfo:dict];
+    }
+    else
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"drawNewProfile" object:self userInfo:nil];
 }
 
 
