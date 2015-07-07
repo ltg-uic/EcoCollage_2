@@ -49,9 +49,7 @@ Value  *floodedStreets    = NULL;
 Value  *standingWater     = NULL;
 Value  *efficiency_val    = NULL;
 
-NSArray *sortedTrialRuns;
-NSArray *sortedTrialDyn;
-NSArray *sortedTrialStatic;
+NSArray *sortedArray;
 
 NSMutableArray * trialRunSubViews;      //contains all subviews/visualizations added to UIview per trial
 NSMutableArray * trialRuns;             //contains list of simulation data from trials pulled
@@ -184,6 +182,13 @@ float maxPublicInstallNorm;
     //[waterDisplays removeAllObjects];
     //[efficiency removeAllObjects];
     
+    sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+                            NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+                            NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+                            if(first > second) return NSOrderedAscending;
+                            else return NSOrderedDescending;
+                            }];
+    
     for (UIView *view in [_titleWindow subviews]){
         [view removeFromSuperview];
     }
@@ -282,16 +287,8 @@ float maxPublicInstallNorm;
     //remove all old labels
     [self removeBudgetLabels];
     
-    //get width of visualization to find out where public install is
-    NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
-        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
-        if(first > second) return NSOrderedAscending;
-        else return NSOrderedDescending;
-    }];
     
     int width = 0;
-
     for (int i = 0; i < _currentConcernRanking.count; i++){
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
         if ([currentVar.name compare: @"publicCost"] == NSOrderedSame)
@@ -755,12 +752,6 @@ float maxPublicInstallNorm;
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
     
-    NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
-        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
-        if(first > second) return NSOrderedAscending;
-        else return NSOrderedDescending;
-    }];
     NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
     NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
     
@@ -863,7 +854,6 @@ float maxPublicInstallNorm;
         [_mapWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
     }
-     NSLog(@"Trial: %d\nScore: %.0f / 100\n\n", simRunNormal.trialNum, totalScore);
     
     //update the length of the component (performance) score in order to be able to sort by best score
     NSNumber *newPerformanceScore = [NSNumber numberWithFloat:totalScore];
@@ -941,9 +931,10 @@ float maxPublicInstallNorm;
         [self handleSort: sortChosen];
         
         //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
-        if (trialNum > 3)
+        if (trialNum > 3){
             scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
-                                                              target:self selector:@selector(autoscrollTimerFired) userInfo:nil repeats:NO];
+                                                              target:self selector:@selector(autoscrollTimerFired:) userInfo:nil repeats:NO];
+        }
     }
     
     [_loadingIndicator stopAnimating];
@@ -952,10 +943,15 @@ float maxPublicInstallNorm;
 
 
 //autoscroll to the bottom of the mapwindow (trial and component score) scrollview
-- (void) autoscrollTimerFired
+- (void) autoscrollTimerFired: (NSTimer*)theTimer
 {
+    UITextField *lastDrawnTrial = [[trialRunSubViews objectAtIndex:trialNum-3] objectForKey:@"TrialTxTBox"];
     CGPoint bottomOffset = CGPointMake(0, _mapWindow.contentSize.height - _mapWindow.bounds.size.height);
     [_mapWindow setContentOffset:bottomOffset animated:YES];
+    
+    //UITextField *lastDrawnTrial = [[trialRunSubViews objectAtIndex:trialNum-1] objectForKey:@"TrialTxTBox"];
+    //[_mapWindow setBounds:CGRectMake(lastDrawnTrial.bounds.origin.x, lastDrawnTrial.bounds.origin.y, _mapWindow.bounds.size.width, _mapWindow.bounds.size.height)];
+    
 }
 
 -(void) OffsetView: (UIView*) view toX:(int)x andY:(int)y{
@@ -1024,13 +1020,6 @@ float maxPublicInstallNorm;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
-    
-    NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
-        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
-        if(first > second) return NSOrderedAscending;
-        else return NSOrderedDescending;
-    }];
     
     NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
     NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
@@ -1293,7 +1282,7 @@ float maxPublicInstallNorm;
     else
         [trialRunSubViews addObject:trialRunInfo];
     
-    NSLog(@"Just drew trial %d\n", simRun.trialNum);
+    NSLog(@"Just drew trial %d\n", simRun.trialNum+1);
    
     [_dataWindow flashScrollIndicators];          
     
@@ -1309,6 +1298,7 @@ float maxPublicInstallNorm;
         [content appendString: tx.text];
         [content appendString:@"\n"];
     }
+    
     [content appendString:@"\n"];
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
@@ -1410,15 +1400,8 @@ float maxPublicInstallNorm;
 }
 
 -(void) drawTitles{
-    int width = 0;
-
-    NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
-        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
-        if(first > second) return NSOrderedAscending;
-        else return NSOrderedDescending;
-    }];
     
+    int width = 0;
     int visibleIndex = 0;
     for(int i = 0 ; i <_currentConcernRanking.count ; i++){
 
@@ -1467,16 +1450,7 @@ float maxPublicInstallNorm;
     [formatter setGroupingSeparator:@","];
     
     int width = 0;
-    
-    NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
-        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
-        if(first > second) return NSOrderedAscending;
-        else return NSOrderedDescending;
-    }];
-    
     int visibleIndex = 0;
-    
     for(int i = 0 ; i <_currentConcernRanking.count ; i++){
         
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
@@ -1795,8 +1769,6 @@ float maxPublicInstallNorm;
             
         }];
     }
-    
-    
     
     //loop through all entries (in sorted order) and update its frame to its new position
     for (int i = 0; i < trialRunSubViews.count; i++) {
