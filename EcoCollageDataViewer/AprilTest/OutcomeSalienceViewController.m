@@ -16,6 +16,7 @@
 #import "AprilTestNormalizedVariable.h"
 #import "AprilTestCostDisplay.h"
 
+
 @interface OutcomeSalienceViewController ()
 
 @end
@@ -31,6 +32,7 @@
 @synthesize scenarioNames = _scenarioNames;
 @synthesize SortPickerTextField = _SortPickerTextField;
 @synthesize maxBudget = _maxBudget;
+@synthesize SortLowToHigh = _SortLowToHigh;
 
 //structs that will keep track of the highest and lowest costs of Installation and maintenance (for convenience)
 typedef struct Value
@@ -268,6 +270,11 @@ float maxPublicInstallNorm;
         [self handleSort:sortChosen];
     }
   
+}
+
+- (IBAction)SortOrientationChanged:(UISwitch *)sender{
+    
+    [self handleSort:sortChosen];
 }
 
 
@@ -945,7 +952,6 @@ float maxPublicInstallNorm;
 //autoscroll to the bottom of the mapwindow (trial and component score) scrollview
 - (void) autoscrollTimerFired: (NSTimer*)theTimer
 {
-    UITextField *lastDrawnTrial = [[trialRunSubViews objectAtIndex:trialNum-3] objectForKey:@"TrialTxTBox"];
     CGPoint bottomOffset = CGPointMake(0, _mapWindow.contentSize.height - _mapWindow.bounds.size.height);
     [_mapWindow setContentOffset:bottomOffset animated:YES];
     
@@ -1651,11 +1657,11 @@ float maxPublicInstallNorm;
 - (void) handleSort:(int) row{
     
     //depending on what the type of sort it is, sort the mutable array of dictionaries
-    if ([arrStatus[row] isEqual: @"Trial Number"])
+    if ([arrStatus[row] isEqual: @"Trial Number"]){
         [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"TrialNum" ascending:YES]]];
-    
+    }
     else if ([arrStatus[row] isEqual: @"Best Score"]){
-        [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"PerformanceScore" ascending:NO]]];
+        (_SortLowToHigh.isOn) ? ([trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"PerformanceScore" ascending:YES]]]) : ([trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"PerformanceScore" ascending:NO]]]);
     }
     
     else if ([arrStatus[row] isEqual: @"Investment"]){
@@ -1663,11 +1669,20 @@ float maxPublicInstallNorm;
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
-            if (first.publicInstallCost > second.publicInstallCost)
-                return NSOrderedAscending;
-            else if (second.publicInstallCost > first.publicInstallCost)
-                return NSOrderedDescending;
-            return NSOrderedSame;
+            if (_SortLowToHigh.isOn){
+                if (first.publicInstallCost < second.publicInstallCost)
+                    return NSOrderedAscending;
+                else if (second.publicInstallCost < first.publicInstallCost)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            else{
+                if (first.publicInstallCost > second.publicInstallCost)
+                    return NSOrderedAscending;
+                else if (second.publicInstallCost > first.publicInstallCost)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
                 
         }];
     }
@@ -1676,11 +1691,21 @@ float maxPublicInstallNorm;
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
-            if (first.privateDamages > second.privateDamages)
-                return NSOrderedAscending;
-            else if (second.privateDamages > first.privateDamages)
-                return NSOrderedDescending;
-            return NSOrderedSame;
+            if (_SortLowToHigh.isOn){
+                if (first.privateDamages < second.privateDamages)
+                    return NSOrderedAscending;
+                else if (second.privateDamages < first.privateDamages)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            else{
+                if (first.privateDamages > second.privateDamages)
+                    return NSOrderedAscending;
+                else if (second.privateDamages > first.privateDamages)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            
         }];
     }
         
@@ -1689,11 +1714,22 @@ float maxPublicInstallNorm;
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
-            if (first.impactNeighbors > second.impactNeighbors)
-                return NSOrderedAscending;
-            else if (second.impactNeighbors > first.impactNeighbors)
-                return NSOrderedDescending;
-            return NSOrderedSame;
+            if (_SortLowToHigh.isOn){
+                if (first.impactNeighbors < second.impactNeighbors)
+                    return NSOrderedAscending;
+                else if (second.impactNeighbors < first.impactNeighbors)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            else{
+                if (first.impactNeighbors > second.impactNeighbors)
+                    return NSOrderedAscending;
+                else if (second.impactNeighbors > first.impactNeighbors)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            
+            
         }];
     }
     
@@ -1704,11 +1740,21 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *first  = (AprilTestNormalizedVariable*)[obj1 valueForKey: key];
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
-            if (first.efficiency > second.efficiency)
-                return NSOrderedAscending;
-            else if (second.efficiency > first.efficiency)
-                return NSOrderedDescending;
-            return NSOrderedSame;
+            if (_SortLowToHigh.isOn){
+                if (first.efficiency < second.efficiency)
+                    return NSOrderedAscending;
+                else if (second.efficiency < first.efficiency)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            else{
+                if (first.efficiency > second.efficiency)
+                    return NSOrderedAscending;
+                else if (second.efficiency > first.efficiency)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            
         }];
     }
     
@@ -1719,11 +1765,22 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *first  = (AprilTestNormalizedVariable*)[obj1 valueForKey: key];
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
-            if (first.floodedStreets > second.floodedStreets)
-                return NSOrderedAscending;
-            else if (second.floodedStreets > first.floodedStreets)
-                return NSOrderedDescending;
-            return NSOrderedSame;
+            
+            if (_SortLowToHigh.isOn){
+                if (first.floodedStreets < second.floodedStreets)
+                    return NSOrderedAscending;
+                else if (second.floodedStreets < first.floodedStreets)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            else{
+                if (first.floodedStreets > second.floodedStreets)
+                    return NSOrderedAscending;
+                else if (second.floodedStreets > first.floodedStreets)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            
         }];
     }
     
@@ -1734,11 +1791,21 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *first  = (AprilTestNormalizedVariable*)[obj1 valueForKey: key];
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
-            if (first.standingWater > second.standingWater)
-                return NSOrderedAscending;
-            else if (second.standingWater > first.standingWater)
-                return NSOrderedDescending;
-            return NSOrderedSame;
+            if (_SortLowToHigh.isOn){
+                if (first.standingWater < second.standingWater)
+                    return NSOrderedAscending;
+                else if (second.standingWater < first.standingWater)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            else{
+                if (first.standingWater > second.standingWater)
+                    return NSOrderedAscending;
+                else if (second.standingWater > first.standingWater)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            
         }];
     }
     
@@ -1747,11 +1814,21 @@ float maxPublicInstallNorm;
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
-            if (first.dollarsGallons > second.dollarsGallons)
-                return NSOrderedAscending;
-            else if (second.dollarsGallons > first.dollarsGallons)
-                return NSOrderedDescending;
-            return NSOrderedSame;
+            
+            if (_SortLowToHigh.isOn){
+                if (first.dollarsGallons < second.dollarsGallons)
+                    return NSOrderedAscending;
+                else if (second.dollarsGallons < first.dollarsGallons)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            else{
+                if (first.dollarsGallons > second.dollarsGallons)
+                    return NSOrderedAscending;
+                else if (second.dollarsGallons > first.dollarsGallons)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
             
         }];
     }
@@ -1761,11 +1838,21 @@ float maxPublicInstallNorm;
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
-            if (first.infiltration> second.infiltration)
-                return NSOrderedAscending;
-            else if (second.infiltration > first.infiltration)
-                return NSOrderedDescending;
-            return NSOrderedSame;
+            
+            if (_SortLowToHigh.isOn){
+                if (first.infiltration < second.infiltration)
+                    return NSOrderedAscending;
+                else if (second.infiltration < first.infiltration)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
+            else{
+                if (first.infiltration > second.infiltration)
+                    return NSOrderedAscending;
+                else if (second.infiltration > first.infiltration)
+                    return NSOrderedDescending;
+                return NSOrderedSame;
+            }
             
         }];
     }

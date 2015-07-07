@@ -28,6 +28,9 @@
 @property (strong, nonatomic) IBOutlet UISwitch *DynamicNormalization;
 - (IBAction)NormTypeSwitched:(UISwitch *)sender;
 
+//change the orientation of the sort (low to high? high to low?)
+- (IBAction)SortOrientationChanged:(UISwitch *)sender;
+@property (strong, nonatomic) IBOutlet UISwitch *SortLowToHigh;
 
 
 @property (strong, nonatomic) IBOutlet UITextField *SortPickerTextField;
