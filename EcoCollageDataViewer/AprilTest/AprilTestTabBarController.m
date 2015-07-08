@@ -303,7 +303,7 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     
     NSLog(@"Received all profiles from Momma");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
-
+    NSLog(@"test");
 }
 
 

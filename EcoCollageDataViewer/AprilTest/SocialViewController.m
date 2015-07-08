@@ -34,12 +34,10 @@
 NSMutableDictionary *concernColors;
 NSMutableDictionary *concernNames;
 NSMutableDictionary *scoreColors;
-NSMutableArray *OverBudgetLabels;
-NSMutableArray * waterDisplays;
+NSMutableArray *waterDisplays;
 NSMutableArray *maxWaterDisplays;
 NSMutableArray *efficiency;
 NSMutableArray *personalFavorites;
-NSMutableArray *personalFavoriteUISwitches;
 int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
 int dynamic_cd_width = 0;
@@ -148,14 +146,11 @@ NSMutableArray *slicesInfo;
         [_trialNumber setInputView:SortType_social];
     }
     
-    
-    OverBudgetLabels    = [[NSMutableArray alloc] init];
     waterDisplays = [[NSMutableArray alloc]init];
     maxWaterDisplays = [[NSMutableArray alloc]init];
     efficiency = [[NSMutableArray alloc]init];
     slices = [[NSMutableArray alloc]init];
     personalFavorites = [[NSMutableArray alloc]init];
-    personalFavoriteUISwitches = [[NSMutableArray alloc]init];
     
     for (int i = 0; i < 8; i++) {
         [slices addObject:[NSNumber numberWithInt:1]];
@@ -581,7 +576,6 @@ NSMutableArray *slicesInfo;
     personalFavoriteSwitch.frame = CGRectMake(148, 112 + personalFavoriteLabel.frame.size.height + 2, 50, 20);
     personalFavoriteSwitch.tag = 100 + i;
     [[_usernamesWindow viewWithTag:i + 1] addSubview:personalFavoriteSwitch];
-    [personalFavoriteUISwitches addObject:personalFavoriteSwitch];
     
     NSString *username = [[tabControl.profiles objectAtIndex:i] objectAtIndex:1];
     NSNumber *trial = [NSNumber numberWithInt:sortChosen_social];
@@ -934,8 +928,6 @@ NSMutableArray *slicesInfo;
                 
                 UILabel *valueLabel;
                 [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudget)]] ] withConcernPosition:width+25 andyValue:100 andColor:[UIColor redColor] to:&valueLabel withIndex:currentProfileIndex];
-                
-                [OverBudgetLabels addObject:valueLabel];
             }
             
             
@@ -1249,8 +1241,6 @@ NSMutableArray *slicesInfo;
                 
                 UILabel *valueLabel;
                 [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudget)]] ] withConcernPosition:width+25 andyValue:100 andColor:[UIColor redColor] to:&valueLabel withIndex:currentProfileIndex];
-                
-                [OverBudgetLabels addObject:valueLabel];
             }
             
             
