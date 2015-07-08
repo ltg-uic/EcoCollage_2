@@ -34,9 +34,9 @@
 NSMutableDictionary *concernColors;
 NSMutableDictionary *concernNames;
 NSMutableDictionary *scoreColors;
-NSMutableArray *waterDisplays;
-NSMutableArray *maxWaterDisplays;
-NSMutableArray *efficiency;
+NSMutableArray *waterDisplaysSocial;
+NSMutableArray *maxwaterDisplaysSocial;
+NSMutableArray *efficiencySocial;
 NSMutableArray *personalFavorites;
 int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
@@ -146,9 +146,9 @@ NSMutableArray *slicesInfo;
         [_trialNumber setInputView:SortType_social];
     }
     
-    waterDisplays = [[NSMutableArray alloc]init];
-    maxWaterDisplays = [[NSMutableArray alloc]init];
-    efficiency = [[NSMutableArray alloc]init];
+    waterDisplaysSocial = [[NSMutableArray alloc]init];
+    maxwaterDisplaysSocial = [[NSMutableArray alloc]init];
+    efficiencySocial = [[NSMutableArray alloc]init];
     slices = [[NSMutableArray alloc]init];
     personalFavorites = [[NSMutableArray alloc]init];
     
@@ -312,9 +312,9 @@ NSMutableArray *slicesInfo;
     [viewInUsernamesWindow removeFromSuperview];
     
     
-    [maxWaterDisplays removeObjectAtIndex:index];
-    [waterDisplays removeObjectAtIndex:index];
-    [efficiency removeObjectAtIndex:index];
+    [maxwaterDisplaysSocial removeObjectAtIndex:index];
+    [waterDisplaysSocial removeObjectAtIndex:index];
+    [efficiencySocial removeObjectAtIndex:index];
     
     [self createSubviewsForUsernamesWindow:index];
     [self createSubviewsForProfilesWindow:index];
@@ -363,9 +363,9 @@ NSMutableArray *slicesInfo;
     [[self view]endEditing:YES];
 
     // trial number was changed, so reset arrays which are filled with info for previous trial loaded
-    [maxWaterDisplays removeAllObjects];
-    [waterDisplays removeAllObjects];
-    [efficiency removeAllObjects];
+    [maxwaterDisplaysSocial removeAllObjects];
+    [waterDisplaysSocial removeAllObjects];
+    [efficiencySocial removeAllObjects];
     
     [self profileUpdate];
 
@@ -742,9 +742,9 @@ NSMutableArray *slicesInfo;
         [interventionView updateView];
     }
     
-    [maxWaterDisplays removeAllObjects];
-    [waterDisplays removeAllObjects];
-    [efficiency removeAllObjects];
+    [maxwaterDisplaysSocial removeAllObjects];
+    [waterDisplaysSocial removeAllObjects];
+    [efficiencySocial removeAllObjects];
     
     // create subviews in _usernamesWindow
     // nameLabel.tag == 1
@@ -992,14 +992,14 @@ NSMutableArray *slicesInfo;
             [scoreVisNames addObject: currentVar.name];
         } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
             FebTestWaterDisplay * wd;
-            //NSLog(@"%d, %d", waterDisplays.count, i);
-            if(waterDisplays.count <= currentProfileIndex){
+            //NSLog(@"%d, %d", waterDisplaysSocial.count, i);
+            if(waterDisplaysSocial.count <= currentProfileIndex){
                 //NSLog(@"Drawing water display for first time");
                 wd = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, 60, 115, 125) andContent:simRun.standingWater];
                 wd.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
-                [waterDisplays addObject:wd];
+                [waterDisplaysSocial addObject:wd];
             } else {
-                wd = [waterDisplays objectAtIndex:currentProfileIndex];
+                wd = [waterDisplaysSocial objectAtIndex:currentProfileIndex];
                 wd.frame = CGRectMake(width + 10, 60, 115, 125);
             }
             
@@ -1014,12 +1014,12 @@ NSMutableArray *slicesInfo;
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
             //display window for maxHeights
             FebTestWaterDisplay * mwd;
-            if(maxWaterDisplays.count <= currentProfileIndex){
+            if(maxwaterDisplaysSocial.count <= currentProfileIndex){
                 mwd  = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, 60, 115, 125) andContent:simRun.maxWaterHeights];
                 mwd.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
-                [maxWaterDisplays addObject:mwd];
+                [maxwaterDisplaysSocial addObject:mwd];
             } else {
-                mwd = [maxWaterDisplays objectAtIndex:currentProfileIndex];
+                mwd = [maxwaterDisplaysSocial objectAtIndex:currentProfileIndex];
                 mwd.frame = CGRectMake(width + 10, 60, 115, 125);
             }
             mwd.thresholdValue = thresh_social;
@@ -1029,15 +1029,15 @@ NSMutableArray *slicesInfo;
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
             AprilTestEfficiencyView *ev;
-            if( efficiency.count <= currentProfileIndex){
+            if( efficiencySocial.count <= currentProfileIndex){
                 //NSLog(@"Drawing efficiency display for first time");
                 ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, 60, 130, 150) withContent: simRun.efficiency];
                 ev.trialNum = trial;
                 ev.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
-                [efficiency addObject:ev];
+                [efficiencySocial addObject:ev];
             } else {
                 //NSLog(@"Repositioning efficiency display");
-                ev = [efficiency objectAtIndex:currentProfileIndex];
+                ev = [efficiencySocial objectAtIndex:currentProfileIndex];
                 ev.frame = CGRectMake(width, 60, 130, 150);
             }
             
@@ -1057,6 +1057,16 @@ NSMutableArray *slicesInfo;
         width+= currentVar.widthOfVisualization;
         if (currentVar.widthOfVisualization > 0) visibleIndex++;
     }
+    for(int i = 0; i < waterDisplaysSocial.count; i++){
+        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplaysSocial objectAtIndex:i];
+        AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiencySocial objectAtIndex:i];
+        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxwaterDisplaysSocial objectAtIndex: i];
+        [temp2 updateViewForHour:hoursAfterStorm_social];
+        //[temp updateView:hoursAfterStorm];
+        [temp fastUpdateView:hoursAfterStorm_social];
+        [tempHeights updateView:48];
+    }
+    
     
     //border around component score
     UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, 78,  114, 26)];
@@ -1142,9 +1152,9 @@ NSMutableArray *slicesInfo;
     
     
     
-    [maxWaterDisplays removeAllObjects];
-    [waterDisplays removeAllObjects];
-    [efficiency removeAllObjects];
+    [maxwaterDisplaysSocial removeAllObjects];
+    [waterDisplaysSocial removeAllObjects];
+    [efficiencySocial removeAllObjects];
     
     // create subviews in _usernamesWindow
     // nameLabel.tag == 1
@@ -1305,14 +1315,14 @@ NSMutableArray *slicesInfo;
             [scoreVisNames addObject: currentVar.name];
         } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
             FebTestWaterDisplay * wd;
-            //NSLog(@"%d, %d", waterDisplays.count, i);
-            if(waterDisplays.count <= currentProfileIndex){
+            //NSLog(@"%d, %d", waterDisplaysSocial.count, i);
+            if(waterDisplaysSocial.count <= currentProfileIndex){
                 //NSLog(@"Drawing water display for first time");
                 wd = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, 60, 115, 125) andContent:simRun.standingWater];
                 wd.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
-                [waterDisplays addObject:wd];
+                [waterDisplaysSocial addObject:wd];
             } else {
-                wd = [waterDisplays objectAtIndex:currentProfileIndex];
+                wd = [waterDisplaysSocial objectAtIndex:currentProfileIndex];
                 wd.frame = CGRectMake(width + 10, 60, 115, 125);
             }
             
@@ -1327,12 +1337,12 @@ NSMutableArray *slicesInfo;
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
             //display window for maxHeights
             FebTestWaterDisplay * mwd;
-            if(maxWaterDisplays.count <= currentProfileIndex){
+            if(maxwaterDisplaysSocial.count <= currentProfileIndex){
                 mwd  = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, 60, 115, 125) andContent:simRun.maxWaterHeights];
                 mwd.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
-                [maxWaterDisplays addObject:mwd];
+                [maxwaterDisplaysSocial addObject:mwd];
             } else {
-                mwd = [maxWaterDisplays objectAtIndex:currentProfileIndex];
+                mwd = [maxwaterDisplaysSocial objectAtIndex:currentProfileIndex];
                 mwd.frame = CGRectMake(width + 10, 60, 115, 125);
             }
             mwd.thresholdValue = thresh_social;
@@ -1342,15 +1352,15 @@ NSMutableArray *slicesInfo;
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
             AprilTestEfficiencyView *ev;
-            if( efficiency.count <= currentProfileIndex){
+            if( efficiencySocial.count <= currentProfileIndex){
                 //NSLog(@"Drawing efficiency display for first time");
                 ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, 60, 130, 150) withContent: simRun.efficiency];
                 ev.trialNum = trial;
                 ev.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
-                [efficiency addObject:ev];
+                [efficiencySocial addObject:ev];
             } else {
                 //NSLog(@"Repositioning efficiency display");
-                ev = [efficiency objectAtIndex:currentProfileIndex];
+                ev = [efficiencySocial objectAtIndex:currentProfileIndex];
                 ev.frame = CGRectMake(width, 60, 130, 150);
             }
             
@@ -1599,10 +1609,10 @@ NSMutableArray *slicesInfo;
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     
     NSMutableString * content = [NSMutableString alloc];
-    for(int i = 0; i < waterDisplays.count; i++){
-        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
-        AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
-        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxWaterDisplays objectAtIndex: i];
+    for(int i = 0; i < waterDisplaysSocial.count; i++){
+        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplaysSocial objectAtIndex:i];
+        AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiencySocial objectAtIndex:i];
+        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxwaterDisplaysSocial objectAtIndex: i];
         [temp2 updateViewForHour:hoursAfterStorm_social];
         //[temp updateView:hoursAfterStorm];
         [temp fastUpdateView:hoursAfterStorm_social];
