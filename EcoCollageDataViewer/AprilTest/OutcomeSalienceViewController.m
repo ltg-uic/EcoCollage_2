@@ -148,16 +148,13 @@ float maxPublicInstallNorm;
     _SortPickerTextField.delegate = self;
     
     if (SortType == nil){
-        float pickerXPos = _SortPickerTextField.frame.origin.x;
-        float pickerYPos = _SortPickerTextField.frame.origin.x + _SortPickerTextField.frame.size.height;
-        SortType = [[UIPickerView alloc] initWithFrame:CGRectMake(pickerXPos, pickerYPos, _SortPickerTextField.frame.size.width, 100)];
-        
+        SortType = [[UIPickerView alloc] initWithFrame:CGRectMake(80, 120, 300, 100)];
+        SortType.backgroundColor = [UIColor lightTextColor];
+        SortType.layer.borderWidth = 1;
         [SortType setDataSource:self];
         [SortType setDelegate:self];
         [SortType setShowsSelectionIndicator:YES];
-        _SortPickerTextField.selectedTextRange = nil;
-        [_SortPickerTextField setInputView:SortType];
-        
+        //[_SortPickerTextField setInputView:SortType];
     }
     
     scoreColors = [[NSMutableDictionary alloc] initWithObjects:
@@ -177,6 +174,18 @@ float maxPublicInstallNorm;
                      [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
                     [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
+}
+
+- (BOOL) textFieldShouldBeginEditing:(UITextView *)textView
+{
+    SortType.frame = CGRectMake(80, 120, 300, SortType.frame.size.height);
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:.50];
+    [UIView setAnimationDelegate:self];
+    SortType.frame = CGRectMake(80, 120, 300, SortType.frame.size.height);
+    [self.view addSubview:SortType];
+    [UIView commitAnimations];
+    return NO;
 }
 
 - (void) viewWillAppear:(BOOL)animated{
@@ -1597,7 +1606,6 @@ float maxPublicInstallNorm;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
-    \
     if([scrollView isEqual:_dataWindow]) {
         CGPoint offset = _mapWindow.contentOffset;
         offset.y = _dataWindow.contentOffset.y;
@@ -1916,7 +1924,8 @@ float maxPublicInstallNorm;
     _SortPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus[row]];
     sortChosen = (int)row;
 
-    [[self view] endEditing:YES];
+    //[[self view] endEditing:YES];
+    [SortType removeFromSuperview];
     
     //Handle the sort afterwards
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
