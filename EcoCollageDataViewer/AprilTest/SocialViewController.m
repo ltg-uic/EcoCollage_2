@@ -38,6 +38,8 @@ NSMutableArray *OverBudgetLabels;
 NSMutableArray * waterDisplays;
 NSMutableArray *maxWaterDisplays;
 NSMutableArray *efficiency;
+NSMutableArray *personalFavorites;
+NSMutableArray *personalFavoriteUISwitches;
 int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
 int dynamic_cd_width = 0;
@@ -58,7 +60,7 @@ UIPickerView *SortType_social;
 int smallSizeOfMapWindow = 50;
 int largeSizeOfMapWindow = 220;
 UIView *topOfMapWindow;
-UIView *bottomOfMapWindow;
+UIScrollView *bottomOfMapWindow;
 NSArray *sliceColors;
 NSMutableArray *slices;
 NSMutableDictionary *sliceNumbers;
@@ -152,6 +154,8 @@ NSMutableArray *slicesInfo;
     maxWaterDisplays = [[NSMutableArray alloc]init];
     efficiency = [[NSMutableArray alloc]init];
     slices = [[NSMutableArray alloc]init];
+    personalFavorites = [[NSMutableArray alloc]init];
+    personalFavoriteUISwitches = [[NSMutableArray alloc]init];
     
     for (int i = 0; i < 8; i++) {
         [slices addObject:[NSNumber numberWithInt:1]];
@@ -192,7 +196,7 @@ NSMutableArray *slicesInfo;
     topOfMapWindow.frame = CGRectMake(0, 0, _mapWindow.frame.size.width, smallSizeOfMapWindow);
     [_mapWindow addSubview:topOfMapWindow];
     
-    bottomOfMapWindow = [[UIView alloc]init];
+    bottomOfMapWindow = [[UIScrollView alloc]init];
     bottomOfMapWindow.frame = CGRectMake(0, smallSizeOfMapWindow, _mapWindow.frame.size.width, largeSizeOfMapWindow - smallSizeOfMapWindow);
     [_mapWindow addSubview:bottomOfMapWindow];
     
@@ -250,7 +254,7 @@ NSMutableArray *slicesInfo;
     lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height, self.view.frame.size.width, 1);
     lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
     lineBelowData.layer.borderWidth = 1.0;
-    lineBelowData.tag = 9000;
+    lineBelowData.tag = 9001;
     [self.view addSubview:lineBelowData];
     
 }
@@ -267,7 +271,7 @@ NSMutableArray *slicesInfo;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"usernameUpdate" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateSingleProfile" object:nil];
     
-    UIView *line = [self.view viewWithTag:9000];
+    UIView *line = [self.view viewWithTag:9001];
     [line removeFromSuperview];
     /*
     // empty _usernamesWindow and _profilesWindow to free memory
@@ -339,15 +343,20 @@ NSMutableArray *slicesInfo;
         return;
     }
     
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    // Handle the selection
-    if (row == tabControl.trialNum)
-        _trialNumber.text = @"Favorite Trials";
-    else
-        _trialNumber.text = [NSString stringWithFormat:@"Trial %d", row];
     sortChosen_social = (int)row;
     
-    [[self view] endEditing:YES];
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    // Handle the selection
+    if (row == tabControl.trialNum) {
+        _trialNumber.text = @"Favorite Trials";
+        [self loadVisualizationForFavorites];
+        [[self view] endEditing:YES];
+        return;
+    }
+    else
+        _trialNumber.text = [NSString stringWithFormat:@"Trial %d", row];
+    
+    [[self view]endEditing:YES];
 
     // trial number was changed, so reset arrays which are filled with info for previous trial loaded
     [maxWaterDisplays removeAllObjects];
@@ -487,6 +496,44 @@ NSMutableArray *slicesInfo;
         [[_usernamesWindow viewWithTag:i + 1] addSubview:nameLabel];
     }
     
+    // load personal favorite label
+    UILabel *personalFavoriteLabel = [[UILabel alloc]init];
+    personalFavoriteLabel.text = [NSString stringWithFormat:@"Personal Favorite?"];
+    personalFavoriteLabel.font = [UIFont systemFontOfSize:15.0];
+    [personalFavoriteLabel sizeToFit];
+    personalFavoriteLabel.frame = CGRectMake(148, 112, personalFavoriteLabel.frame.size.width, personalFavoriteLabel.frame.size.height);
+    [[_usernamesWindow viewWithTag:i + 1] addSubview:personalFavoriteLabel];
+    
+    // load personal favorite switch
+    UISwitch *personalFavoriteSwitch = [[UISwitch alloc] init];
+    personalFavoriteSwitch.frame = CGRectMake(148, 112 + personalFavoriteLabel.frame.size.height + 2, 50, 20);
+    personalFavoriteSwitch.tag = 100 + i;
+    [[_usernamesWindow viewWithTag:i + 1] addSubview:personalFavoriteSwitch];
+    [personalFavoriteUISwitches addObject:personalFavoriteSwitch];
+    
+    NSString *username = [[tabControl.profiles objectAtIndex:i] objectAtIndex:1];
+    NSNumber *trial = [NSNumber numberWithInt:sortChosen_social];
+    for (NSArray *favorite in personalFavorites) {
+        if ([[[favorite objectAtIndex:0] objectAtIndex:1] isEqualToString:username ]) {
+            if ([[favorite objectAtIndex:1] isEqualToNumber:trial]) {
+                // check if concern profile is a match
+                NSArray *profileOfFavorite = [[NSArray alloc]initWithArray:[favorite objectAtIndex:0]];
+                NSArray *concernsOfFavorite = [[NSArray alloc]initWithObjects:[profileOfFavorite objectAtIndex:3], [profileOfFavorite objectAtIndex:4], [profileOfFavorite objectAtIndex:5], [profileOfFavorite objectAtIndex:6], [profileOfFavorite objectAtIndex:7], [profileOfFavorite objectAtIndex:8], [profileOfFavorite objectAtIndex:9], [profileOfFavorite objectAtIndex:10], nil];
+                NSArray *currentProfile = [tabControl.profiles objectAtIndex:i];
+                NSArray *concernsOfCurrent = [[NSArray alloc]initWithObjects:[currentProfile objectAtIndex:3], [currentProfile objectAtIndex:4], [currentProfile objectAtIndex:5], [currentProfile objectAtIndex:6], [currentProfile objectAtIndex:7], [currentProfile objectAtIndex:8], [currentProfile objectAtIndex:9], [currentProfile objectAtIndex:10], nil];
+                
+                if ([concernsOfFavorite isEqualToArray:concernsOfCurrent]) {
+                    [personalFavoriteSwitch setOn:YES];
+                    break;
+                }
+            }
+                
+        }
+    }
+    
+    [personalFavoriteSwitch addTarget:self action:@selector(personalFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
+
+    
     // draw pie chart
     // draw profile pie charts
     XYPieChart *pie = [[XYPieChart alloc]initWithFrame:CGRectMake(-5, 5, 120, 120) Center:CGPointMake(80, 100) Radius:60.0];
@@ -508,6 +555,114 @@ NSMutableArray *slicesInfo;
     [pie reloadData];
     
     [[_usernamesWindow viewWithTag:i + 1] addSubview:pie];
+}
+
+
+- (void)personalFavoriteSwitchChanged:(id)sender {
+    UISwitch *personalFavoriteSwitch = (UISwitch *)sender;
+    
+    int profileIndex = personalFavoriteSwitch.tag - 100;
+    
+    if (personalFavoriteSwitch.isOn) {
+        [self addPersonalFavoriteWithProfileIndex:profileIndex andTrialNumber:sortChosen_social];
+    }
+    else
+        [self removePersonalFavoriteWithProfileIndex:profileIndex andTrialNumber:sortChosen_social];
+    
+}
+
+// data needed : trial number, profile (device name, username, concern profile)
+- (void)addPersonalFavoriteWithProfileIndex:(int) profileIndex andTrialNumber:(int) trial {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    NSMutableArray *favoriteTrialWithProfile = [[NSMutableArray alloc]init];
+    // add the profile
+    [favoriteTrialWithProfile addObject:[tabControl.profiles objectAtIndex:profileIndex]];
+    
+    // add the trial number
+    NSNumber *trialInt = [NSNumber numberWithInt:trial];
+    [favoriteTrialWithProfile addObject:trialInt];
+    
+    [personalFavorites addObject:favoriteTrialWithProfile];
+}
+
+- (void)loadVisualizationForFavorites {
+    if ([personalFavorites count] == 0)
+        return;
+    
+    NSLog(@"loading favorites");
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    int numberOfFavorites = [personalFavorites count];
+    
+    // first, remove all current subviews from the 3 visualization scrollViews
+    for (UIView *subview in [_profilesWindow subviews])
+        [subview removeFromSuperview];
+    for (UIView *subview in [_usernamesWindow subviews])
+        [subview removeFromSuperview];
+    for (UIView *subview in [bottomOfMapWindow subviews])
+        [subview removeFromSuperview];
+    
+    // find out how many trial maps will need to be shown
+    // loop through all the favorites and add any trial number not yet added to the "uniqueTrialNumbers" array
+    NSMutableArray *uniqueTrialNumbers = [[NSMutableArray alloc]init];
+    
+    for (NSArray *profile in personalFavorites) {
+        NSNumber *trialOfCurrentProfile = [profile objectAtIndex:1];
+        
+        BOOL isARepeat = NO;
+        for (NSNumber *trialNum in uniqueTrialNumbers) {
+            if ([trialNum isEqualToNumber:trialOfCurrentProfile])
+                isARepeat = YES;
+        }
+        
+        if (!isARepeat)
+            [uniqueTrialNumbers addObject:trialOfCurrentProfile];
+    }
+    
+    // load the maps for the trial numbers in uniqueTrialNumbers
+    for (int i = 0; i < [uniqueTrialNumbers count]; i++) {
+        int trialNum = [[uniqueTrialNumbers objectAtIndex:i] integerValue];
+        
+        UILabel *mapWindowLabel = [[UILabel alloc]init];
+        mapWindowLabel.text = [NSString stringWithFormat:@"  Trial %d", trialNum];
+        mapWindowLabel.font = [UIFont systemFontOfSize:15.0];
+        [mapWindowLabel sizeToFit];
+        mapWindowLabel.frame = CGRectMake(200 * i, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
+        [bottomOfMapWindow addSubview:mapWindowLabel];
+        
+        [bottomOfMapWindow setContentSize:CGSizeMake(mapWindowLabel.frame.origin.x + 250, bottomOfMapWindow.frame.size.height)];
+        
+        AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trialNum];
+        
+        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, mapWindowLabel.frame.size.height + 5, 115, 125))];
+        interventionView.view = mapWindowLabel;
+        [interventionView updateView];
+    }
+    
+    
+}
+
+
+// find the device name of the profile to remove
+- (void)removePersonalFavoriteWithProfileIndex:(int) profileIndex andTrialNumber:(int) trial {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    NSString *deviceNameToRemove = [[tabControl.profiles objectAtIndex:profileIndex]objectAtIndex:1];
+    
+    for (NSArray *favorite in personalFavorites) {
+        // get device name for the saved favorite
+        NSString *deviceNameOfFavorite = [[favorite objectAtIndex:0] objectAtIndex:1];
+        
+        // if names match, remove that favorite from personalFavorites, check if the trial is the same
+        // also check if concernProfile matches
+        if ([deviceNameToRemove isEqualToString:deviceNameOfFavorite]) {
+            NSNumber *trialToRemove = [NSNumber numberWithInt:trial];
+            if ([[favorite objectAtIndex:1] isEqualToNumber: trialToRemove]) {
+                [personalFavorites removeObject:favorite];
+                return;
+            }
+        }
+    }
 }
 
 
