@@ -96,8 +96,8 @@ int hoursAfterStorm;
 NSString *minBudgetLabel;
 NSString *maxBudgetLabel;
 float maxBudgetLimit   = 150000;        //max budget set by user
-float min_budget_limit = 100000;
-float max_budget_limit = 700000;
+float min_budget_limit = 0;
+float max_budget_limit = 5000000;
 
 
 //length of the budget bars set by the change in the budget slider
