@@ -415,6 +415,9 @@ float maxPublicInstallNorm;
     if (returnLocation == 0){
         return 1;
     }
+    else if(returnLocation > 160){
+        return 160;
+    }
     else
         return returnLocation;
 }
@@ -863,7 +866,7 @@ float maxPublicInstallNorm;
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
-        if (scoreWidth < 0) scoreWidth = 0.0;
+        //if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
         UILabel * componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 90, floor(scoreWidth), 22)];
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
@@ -1238,7 +1241,7 @@ float maxPublicInstallNorm;
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
-        if (scoreWidth < 0) scoreWidth = 0.0;
+        //if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
            componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 90, floor(scoreWidth), 22)];
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
