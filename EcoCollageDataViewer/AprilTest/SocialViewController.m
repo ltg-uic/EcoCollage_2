@@ -16,6 +16,7 @@
 #import "AprilTestCostDisplay.h"
 #import "AprilTestNormalizedVariable.h"
 #import "XYPieChart.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface SocialViewController ()
 @end
@@ -265,6 +266,7 @@ NSMutableArray *slicesInfo;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updatePicker" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"usernameUpdate" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateSingleProfile" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawNewProfile" object:nil];
     
     UIView *line = [self.view viewWithTag:9001];
     [line removeFromSuperview];
@@ -384,6 +386,18 @@ NSMutableArray *slicesInfo;
 // tell the picker how many components it will have
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     return 1;
+}
+
+- (UIImage *) imageWithView:(UIView *)view
+{
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0);
+    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    
+    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return img;
 }
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view{
