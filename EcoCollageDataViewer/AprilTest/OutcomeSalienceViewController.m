@@ -54,9 +54,6 @@ Value  *efficiency_val    = NULL;
 NSArray *sortedArray;
 
 NSMutableArray * trialRunSubViews;      //contains all subviews/visualizations added to UIview per trial
-NSMutableArray * trialRuns;             //contains list of simulation data from trials pulled
-NSMutableArray * trialRunsNormalized;   //contains list of simulation data from trials pulled in normalized STATIC  form
-NSMutableArray * trialRunsDynNorm;      //contains list of simulation data from trials pulled in normalized DYNAMIC form
 NSMutableArray * waterDisplays;
 NSMutableArray * maxWaterDisplays;
 NSMutableArray * efficiency;
@@ -111,6 +108,8 @@ float maxPublicInstallNorm;
 // necessary in case currentSession changes, i.e. is disconnected and reconnected again
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    [self drawMultipleTrials];
 }
 
 - (void)viewDidLoad
@@ -121,9 +120,6 @@ float maxPublicInstallNorm;
     _studyNum = tabControl.studyNum;
     _url = tabControl.url;
     trialRunSubViews    = [[NSMutableArray alloc] init];
-    trialRuns           = [[NSMutableArray alloc] init];
-    trialRunsNormalized = [[NSMutableArray alloc] init];
-    trialRunsDynNorm    = [[NSMutableArray alloc] init];
     waterDisplays       = [[NSMutableArray alloc] init];
     maxWaterDisplays    = [[NSMutableArray alloc] init];
     efficiency          = [[NSMutableArray alloc] init];
@@ -213,23 +209,6 @@ float maxPublicInstallNorm;
         [view removeFromSuperview];
     }
     
-    for (int i =0; i < trialNum; i++){
-        [self drawTrial:i];
-    }
-    
-    //determine depending on min and max budget limits what is to be drawn on UILabels under le BudgetSlider
-    minBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((min_budget_limit/1000000 < 1) ? (min_budget_limit/1000) : (min_budget_limit/1000000)), (min_budget_limit/1000000 < 1) ? 'K' : 'M'];
-    maxBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((max_budget_limit/1000000 < 1) ? (max_budget_limit/1000) : (max_budget_limit/1000000)), (max_budget_limit/1000000 < 1) ? 'K' : 'M'];
-    
-    [self drawTitles];
-    [self drawSliders];
-    
-    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
-    
-    [_dataWindow setContentOffset:CGPointMake(0, 0)];
-    [_mapWindow setContentOffset:CGPointMake(0,0 )];
-    [_dataWindow flashScrollIndicators];
-    
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow)
@@ -240,6 +219,22 @@ float maxPublicInstallNorm;
                                              selector:@selector(keyboardWillHide)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(drawSingleTrial)
+                                                 name:@"drawSingleTrial"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(drawMultipleTrials)
+                                                 name:@"drawMultipleTrials"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(budgetUpdated)
+                                                 name:@"budgetChanged"
+                                               object:nil];
+    
   
     [super viewWillAppear:animated];
 }
@@ -247,6 +242,10 @@ float maxPublicInstallNorm;
 - (void) viewWillDisappear:(BOOL)animated {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawSingleTrial" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawMultipleTrials" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
+    
     
     [super viewWillDisappear:animated];
 }
@@ -420,6 +419,10 @@ float maxPublicInstallNorm;
     }
     else
         return returnLocation;
+}
+
+- (void)budgetUpdated {
+    // method called when budget is updated from Momma
 }
 
 //selector method that handles a change in value when budget changes (slider under titles)
@@ -884,6 +887,7 @@ float maxPublicInstallNorm;
 }
 
 - (void)loadNextSimulationRun{
+    /*
     
     //pull content from the server that is said to be from le trial with real vals
     NSString * urlPlusFile = [NSString stringWithFormat:@"%@/%@", _url, @"simOutput.php"];
@@ -955,6 +959,30 @@ float maxPublicInstallNorm;
                                                               target:self selector:@selector(autoscrollTimerFired:) userInfo:nil repeats:NO];
         }
     }
+    */
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    if ([tabControl.trialRuns count] > trialNum) {
+        [self drawTrial:trialNum];
+        trialNum++;
+        
+        //chooses between static/dynamic normalization of trial data
+        if (_DynamicNormalization.isOn)
+            [self normalizeAllandUpdateDynamically];
+        else
+            [self normalizeStatically];
+        
+        //update with the current sort chosen after a new trial is drawn
+        [self handleSort: sortChosen];
+        
+        //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
+        if (trialNum > 3){
+            scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
+                                                              target:self selector:@selector(autoscrollTimerFired:) userInfo:nil repeats:NO];
+        }
+    }
+    else
+        NSLog(@"Trial %d not yet loaded", trialNum);
     
     [_loadingIndicator stopAnimating];
     
@@ -989,15 +1017,18 @@ float maxPublicInstallNorm;
     UILabel *gw_infiltration;
     UILabel *efficiencyOfIntervention;
     
-    AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([trialRuns objectAtIndex:trial]);
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([tabControl.trialRuns objectAtIndex:trial]);
     AprilTestNormalizedVariable *simRunNormal;
     
     //determines via UIswitch what type of normalization is being drawn
     if (_DynamicNormalization.isOn){
-        simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialDynamic"])  : ([trialRunsDynNorm objectAtIndex:trial]);
+        simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialDynamic"])  : ([tabControl.trialRunsDynNorm objectAtIndex:trial]);
     }
     else{
-        simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialStatic"]) :([trialRunsNormalized objectAtIndex:trial]);
+        simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialStatic"]) :([tabControl.trialRunsNormalized objectAtIndex:trial]);
     }
 
     FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
@@ -1275,9 +1306,9 @@ float maxPublicInstallNorm;
     //NSLog(@"Trial: %d\nScore: %@ / 100\n\n", simRun.trialNum, [NSNumber numberWithInt: totalScore]);
     
     NSDictionary *trialRunInfo = @{@"TrialNum"          : [NSNumber numberWithInt:simRun.trialNum],
-                                   @"TrialRun"          : [trialRuns objectAtIndex:simRun.trialNum],
-                                   @"TrialStatic"       : [trialRunsNormalized objectAtIndex:simRun.trialNum],
-                                   @"TrialDynamic"      : [trialRunsDynNorm objectAtIndex:simRun.trialNum],
+                                   @"TrialRun"          : [tabControl.trialRuns objectAtIndex:simRun.trialNum],
+                                   @"TrialStatic"       : [tabControl.trialRunsNormalized objectAtIndex:simRun.trialNum],
+                                   @"TrialDynamic"      : [tabControl.trialRunsDynNorm objectAtIndex:simRun.trialNum],
                                    @"TrialTxTBox"       : tx,
                                    @"PerformanceScore"  : [NSNumber numberWithInt: totalScore],
                                    @"WaterDisplay"      : wd,
@@ -1304,6 +1335,61 @@ float maxPublicInstallNorm;
    
     [_dataWindow flashScrollIndicators];          
     
+}
+
+- (void)drawSingleTrial {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    if ([tabControl.trialRuns count] > trialNum) {
+        [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+
+        [self drawTrial:trialNum];
+        trialNum++;
+        
+        //chooses between static/dynamic normalization of trial data
+        if (_DynamicNormalization.isOn)
+            [self normalizeAllandUpdateDynamically];
+        else
+            [self normalizeStatically];
+        
+        //update with the current sort chosen after a new trial is drawn
+        [self handleSort: sortChosen];
+        
+        //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
+        if (trialNum > 3){
+            scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
+                                                              target:self selector:@selector(autoscrollTimerFired:) userInfo:nil repeats:NO];
+        }
+        
+        [_loadingIndicator stopAnimating];
+    }
+    else
+        NSLog(@"Trial %d not yet loaded", trialNum);
+}
+
+- (void)drawMultipleTrials {
+    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    for (int i =0; i < tabControl.trialNum; i++){
+        [self drawTrial:i];
+        trialNum++;
+    }
+    
+    //determine depending on min and max budget limits what is to be drawn on UILabels under le BudgetSlider
+    minBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((min_budget_limit/1000000 < 1) ? (min_budget_limit/1000) : (min_budget_limit/1000000)), (min_budget_limit/1000000 < 1) ? 'K' : 'M'];
+    maxBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((max_budget_limit/1000000 < 1) ? (max_budget_limit/1000) : (max_budget_limit/1000000)), (max_budget_limit/1000000 < 1) ? 'K' : 'M'];
+    
+    [self drawTitles];
+    [self drawSliders];
+    
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
+    
+    [_dataWindow setContentOffset:CGPointMake(0, 0)];
+    [_mapWindow setContentOffset:CGPointMake(0,0 )];
+    [_dataWindow flashScrollIndicators];
+    
+    [_loadingIndicator stopAnimating];
 }
 
 -(void)keyboardWillShow {

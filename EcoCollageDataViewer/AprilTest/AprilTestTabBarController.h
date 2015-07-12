@@ -22,4 +22,5 @@
 @property (nonatomic, strong) GKSession * session;
 @property NSString * peerIDForMomma;
 @property int showProfile;
+@property int budget;
 @end

@@ -28,6 +28,7 @@
 @synthesize trialRuns = _trialRuns;
 @synthesize trialRunsNormalized = _trialRunsNormalized;
 @synthesize trialRunsDynNorm = _trialRunsDynNorm;
+@synthesize budget = _budget;
 
 static NSTimeInterval const kConnectionTimeout = 15.0;
 
@@ -78,7 +79,9 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     _trialRunsDynNorm = [[NSMutableArray alloc]init];
     _profiles = [[NSMutableArray alloc]init];
     _ownProfile = [[NSMutableArray alloc]init];
-
+    
+    
+    _budget = 150000;
     
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     
@@ -243,6 +246,9 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     else if([dataArray[0] isEqualToString:@"multipleTrialsData"]) {
         [self receiveMultipleTrials:dataArray];
     }
+    else if([dataArray[0] isEqualToString:@"budgetChange"]) {
+        [self updateBudget:dataArray];
+    }
 }
 
 
@@ -366,6 +372,8 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     
     if (_trialNum == 1)
         [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"drawSingleTrial" object:self userInfo:nil];
 }
 
 
@@ -396,6 +404,15 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updatePicker" object:self];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
     
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"drawMultipleTrials" object:self userInfo:nil];
+    
+}
+
+- (void)updateBudget:(NSArray *)dataArray {
+    _budget = [[dataArray objectAtIndex:1]integerValue];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateBudget" object:self];
 }
 
 

@@ -26,13 +26,17 @@
 @synthesize macMiniTextView = _macMiniTextView;
 @synthesize myCentralManager = _myCentralManager;
 @synthesize discoveredPeripheral = _discoveredPeripheral;
+@synthesize BudgetSlider = _BudgetSlider;
 
 static NSTimeInterval const kConnectionTimeout = 15.0;
 NSMutableArray *profiles;
 NSMutableArray * trialRuns;             // array of strings, not yet analyzed as trial data, to be passed to babies
 NSMutableArray * trialRunsNormalized;   // same as above, but this contains normalized raw data
 NSMutableArray *dataFromMacMini;
+UILabel *budgetLabel;
 int trialNum;
+int maxBudget = 5000000;
+int currentBudget;
 
 
 #define SEPARATOR_FOR_TRIAL_DATA        @"$(TRIAL_DATA)$"
@@ -75,6 +79,15 @@ int trialNum;
     // setup core bluetooth connection to mac mini
     self.data = [[NSMutableData alloc]init];
     //self.myCentralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
+    
+    _BudgetSlider.minimumValue = 0;
+    _BudgetSlider.maximumValue = maxBudget;
+    currentBudget = 150000;
+    
+    [_BudgetSlider addTarget:self action:@selector(budgetChanged) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
+    
+    budgetLabel = [[UILabel alloc]init];
+    [self drawBudgetLabels];
 
 }
 
@@ -145,6 +158,8 @@ int trialNum;
         case GKPeerStateConnected:
         {
             NSLog(@"didChangeState: peer %@ connected", peerName);
+            
+            [self sendBudgetToSpecificBaby:peerID];
             // when a baby is connected, send it all of the profiles loaded
             if ([profiles count] != 0) {
                 [self sendAllProfilesToNewBaby:peerID];
@@ -694,5 +709,89 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     }
 }
 
+
+- (IBAction)BudgetSlider:(UISlider *)sender {
+    UISlider *slider = (UISlider*)sender;
+    int value = slider.value;
+    //-- Do further actions
+    
+    value = 1000.0 * floor((value/1000.0)+0.5);
+    
+    currentBudget = value;
+    [self changeBudgetLabel:(int)currentBudget];
+}
+
+- (void)drawBudgetLabels {
+    NSNumberFormatter *formatter = [NSNumberFormatter new];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
+    
+    // draw current budget label
+    budgetLabel.text = [NSString stringWithFormat:@"Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:currentBudget]]];
+    [budgetLabel sizeToFit];
+    budgetLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x + (_BudgetSlider.frame.size.width - budgetLabel.frame.size.width) / 2, _BudgetSlider.frame.origin.y - budgetLabel.frame.size.height - 10, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
+    [self.view addSubview:budgetLabel];
+    
+    // draw min budget label
+    UILabel *minBudgetLabel = [[UILabel alloc]init];
+    minBudgetLabel.text = @"Minimum budget: $0";
+    [minBudgetLabel sizeToFit];
+    minBudgetLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x - minBudgetLabel.frame.size.width - 10, _BudgetSlider.frame.origin.y, minBudgetLabel.frame.size.width, _BudgetSlider.frame.size.height);
+    [self.view addSubview:minBudgetLabel];
+    
+    // draw max budget label
+    UILabel *maxBudgetLabel = [[UILabel alloc]init];
+    maxBudgetLabel.text = [NSString stringWithFormat:@"Maximum budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:maxBudget]]];
+    [maxBudgetLabel sizeToFit];
+    maxBudgetLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x + _BudgetSlider.frame.size.width + 10, _BudgetSlider.frame.origin.y, maxBudgetLabel.frame.size.width, _BudgetSlider.frame.size.height);
+    [self.view addSubview:maxBudgetLabel];
+}
+
+- (void)changeBudgetLabel:(int)budget {
+    NSNumberFormatter *formatter = [NSNumberFormatter new];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
+    
+    budgetLabel.text = [NSString stringWithFormat:@"Set Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:budget]]];
+    [budgetLabel sizeToFit];
+}
+
+- (void)budgetChanged {
+    NSMutableArray *dataArray = [[NSMutableArray alloc]init];
+    
+    // add the type of data that is being sent
+    [dataArray addObject:@"budgetChange"];
+    
+    // add trial content
+    [dataArray addObject:[NSNumber numberWithInteger:currentBudget]];
+    
+    
+    NSDictionary *budgetToSendToBaby = [NSDictionary dictionaryWithObject:dataArray forKey:@"data"];
+    
+    // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
+    if(budgetToSendToBaby != nil) {
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:budgetToSendToBaby];
+        [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+    }
+}
+
+- (void)sendBudgetToSpecificBaby:(NSString *)peerID {
+    NSMutableArray *dataArray = [[NSMutableArray alloc]init];
+    
+    // add the type of data that is being sent
+    [dataArray addObject:@"budgetChange"];
+    
+    // add trial content
+    [dataArray addObject:[NSNumber numberWithInteger:currentBudget]];
+    
+    
+    NSDictionary *budgetToSendToBaby = [NSDictionary dictionaryWithObject:dataArray forKey:@"data"];
+    
+    // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
+    if(budgetToSendToBaby != nil) {
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:budgetToSendToBaby];
+        [_session sendData:data toPeers:@[peerID] withDataMode:GKSendDataReliable error:nil];
+    }
+}
 
 @end

@@ -47,9 +47,6 @@ int dynamic_cd_width = 0;
 float thresh_social = 6;
 float hours_social = 0;
 int hoursAfterStorm_social;
-int maxBudget;
-float min_budget = 0;
-float max_budget = 5000000;
 UILabel *budgetLabel;
 UILabel *hoursAfterStormLabel;
 UILabel *mapWindowStatusLabel;
@@ -157,13 +154,10 @@ NSMutableArray *slicesInfo;
         [slices addObject:[NSNumber numberWithInt:1]];
     }
     
-    
+    _BudgetSlider = [[UISlider alloc]init];
+    _BudgetSlider.maximumValue = 5000000;
+    _BudgetSlider.value = tabControl.budget;
     [self drawMinMaxSliderLabels];
-    _BudgetSlider.minimumValue = min_budget;
-    _BudgetSlider.maximumValue = max_budget;
-    [_BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
-    [_BudgetSlider addTarget:self action:@selector(BudgetValueChanged:) forControlEvents:UIControlEventValueChanged];
-    [self BudgetChanged:_BudgetSlider];
     
     _StormPlayBack.minimumValue = 0;
     _StormPlayBack.maximumValue = 48;
@@ -245,6 +239,11 @@ NSMutableArray *slicesInfo;
                                                  name:@"drawNewProfile"
                                                object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(BudgetChanged)
+                                                 name:@"updateBudget"
+                                               object:nil];
+    
     // line below data viewers
     UIView *lineBelowData = [[UIView alloc]init];
     lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height, self.view.frame.size.width, 1);
@@ -267,6 +266,8 @@ NSMutableArray *slicesInfo;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"usernameUpdate" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateSingleProfile" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawNewProfile" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
+
     
     UIView *line = [self.view viewWithTag:9001];
     [line removeFromSuperview];
@@ -430,6 +431,7 @@ NSMutableArray *slicesInfo;
     [_loadingIndicator stopAnimating];
     
     [self performSelector:@selector(loadPies) withObject:nil afterDelay:1.0];
+    NSLog(@"Updated profile");
 }
 
 - (void)loadPies {
@@ -448,7 +450,7 @@ NSMutableArray *slicesInfo;
     
     
         [pie setDataSource:self];
-        [pie setStartPieAngle:M_PI_2];
+        [pie setStartPieAngle:M_2_PI];
         [pie setAnimationSpeed:1.0];
         [pie setPieBackgroundColor:[UIColor colorWithWhite:0.95 alpha:1]];
         [pie setUserInteractionEnabled:NO];
@@ -921,7 +923,7 @@ NSMutableArray *slicesInfo;
             float investmentMaintain = simRun.publicMaintenanceCost;
             float investmentInstallN = simRunNormal.publicInstallCost;
             float investmentMaintainN = simRunNormal.publicMaintenanceCost;
-            dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
+            dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             CGRect frame = CGRectMake(width + 25, 60, dynamic_cd_width, 30);
             
             
@@ -930,18 +932,18 @@ NSMutableArray *slicesInfo;
             //cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, profileIndex*heightOfVisualization + 60, dynamic_cd_width, 30)];
             
             float costWidth = [self getWidthFromSlider:_BudgetSlider toValue:simRun.publicInstallCost];
-            float maxBudgetWidth = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
+            float maxBudgetWidth = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             
             cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
             
             [[_profilesWindow viewWithTag:currentProfileIndex + 1] addSubview: cd];
             
             //checks if over budget, if so, prints warning message
-            if (simRun.publicInstallCost > maxBudget){
+            if (simRun.publicInstallCost > tabControl.budget){
                 //store update labels for further use (updating over budget when using absolute val)
                 
                 UILabel *valueLabel;
-                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudget)]] ] withConcernPosition:width+25 andyValue:100 andColor:[UIColor redColor] to:&valueLabel withIndex:currentProfileIndex];
+                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-tabControl.budget)]] ] withConcernPosition:width+25 andyValue:100 andColor:[UIColor redColor] to:&valueLabel withIndex:currentProfileIndex];
             }
             
             
@@ -1244,7 +1246,7 @@ NSMutableArray *slicesInfo;
             float investmentMaintain = simRun.publicMaintenanceCost;
             float investmentInstallN = simRunNormal.publicInstallCost;
             float investmentMaintainN = simRunNormal.publicMaintenanceCost;
-            dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
+            dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             CGRect frame = CGRectMake(width + 25, 60, dynamic_cd_width, 30);
             
             
@@ -1253,18 +1255,18 @@ NSMutableArray *slicesInfo;
             //cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, profileIndex*heightOfVisualization + 60, dynamic_cd_width, 30)];
             
             float costWidth = [self getWidthFromSlider:_BudgetSlider toValue:simRun.publicInstallCost];
-            float maxBudgetWidth = [self getWidthFromSlider:_BudgetSlider toValue:maxBudget];
+            float maxBudgetWidth = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             
             cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
             
             [[_profilesWindow viewWithTag:currentProfileIndex + 1] addSubview: cd];
             
             //checks if over budget, if so, prints warning message
-            if (simRun.publicInstallCost > maxBudget){
+            if (simRun.publicInstallCost > tabControl.budget){
                 //store update labels for further use (updating over budget when using absolute val)
                 
                 UILabel *valueLabel;
-                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudget)]] ] withConcernPosition:width+25 andyValue:100 andColor:[UIColor redColor] to:&valueLabel withIndex:currentProfileIndex];
+                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-tabControl.budget)]] ] withConcernPosition:width+25 andyValue:100 andColor:[UIColor redColor] to:&valueLabel withIndex:currentProfileIndex];
             }
             
             
@@ -1484,18 +1486,14 @@ NSMutableArray *slicesInfo;
 }
 
 //selector method that handles a change in value when budget changes (slider under titles)
--(void)BudgetChanged:(id)sender {
-    UISlider *slider = (UISlider*)sender;
-    int value = slider.value;
-    //-- Do further actions
-    
-    value = 1000.0 * floor((value/1000.0)+0.5);
-    
-    maxBudget = value;
-    [self changeBudgetLabel:(int)maxBudget];
-    
-    
+-(void)BudgetChanged{
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+
+    _BudgetSlider.value = tabControl.budget;
+    
+    [self changeBudgetLabel:tabControl.budget];
+    
+    
     if (tabControl.trialNum == sortChosen_social)
         [self loadFavorites];
     else {
@@ -1503,17 +1501,6 @@ NSMutableArray *slicesInfo;
         [self profileUpdate];
     }
 }
-
-     
-- (void)BudgetValueChanged:(id)sender {
-    UISlider *slider = (UISlider*)sender;
-    int value = slider.value;
-    
-    value = 1000.0 * floor((value/1000.0)+0.5);
-    maxBudget = value;
-    [self changeBudgetLabel:(int)maxBudget];
-}
-
 
 // synchronizes vertical scrolling between usersnamesWindow and profilesWindow
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -1537,31 +1524,17 @@ NSMutableArray *slicesInfo;
 
 
 - (void)drawMinMaxSliderLabels {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
     NSNumberFormatter *formatter = [NSNumberFormatter new];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
     
-    UILabel *minLabelBudget = [[UILabel alloc]init];
-    minLabelBudget.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:min_budget]]];
-    minLabelBudget.font = [UIFont systemFontOfSize:15.0];
-    [minLabelBudget sizeToFit];
-    minLabelBudget.frame = CGRectMake(_BudgetSlider.frame.origin.x - (minLabelBudget.frame.size.width + 10), _BudgetSlider.frame.origin.y + 6, minLabelBudget.frame.size.width, minLabelBudget.frame.size.height);
-    [minLabelBudget setBackgroundColor:[UIColor clearColor]];
-    [self.view addSubview:minLabelBudget];
-    
-    UILabel *maxLabelBudget = [[UILabel alloc]init];
-    maxLabelBudget.text = [NSString stringWithFormat:@"$%@", [formatter stringFromNumber:[NSNumber numberWithInt:max_budget]]];
-    maxLabelBudget.font = [UIFont systemFontOfSize:15.0];
-    [maxLabelBudget sizeToFit];
-    maxLabelBudget.frame = CGRectMake(_BudgetSlider.frame.origin.x + (_BudgetSlider.frame.size.width + 10), _BudgetSlider.frame.origin.y + 6, maxLabelBudget.frame.size.width, maxLabelBudget.frame.size.height);
-    [maxLabelBudget setBackgroundColor:[UIColor clearColor]];
-    [self.view addSubview:maxLabelBudget];
-    
     budgetLabel = [[UILabel alloc]init];
-    budgetLabel.text = [NSString stringWithFormat:@"Set Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:min_budget]]];
+    budgetLabel.text = [NSString stringWithFormat:@"Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:tabControl.budget]]];
     budgetLabel.font = [UIFont systemFontOfSize:15.0];
     [budgetLabel sizeToFit];
-    budgetLabel.frame = CGRectMake(minLabelBudget.frame.origin.x - (_BudgetSlider.frame.size.width + 10) , _BudgetSlider.frame.origin.y + 6, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
+    budgetLabel.frame = CGRectMake(_StormPlayBack.frame.origin.x, _StormPlayBack.frame.origin.y - budgetLabel.frame.size.height - 4, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
     [budgetLabel setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:budgetLabel];
     
@@ -1569,7 +1542,7 @@ NSMutableArray *slicesInfo;
     minLabelStorm.text = @"0 hrs";
     minLabelStorm.font = [UIFont systemFontOfSize:15.0];
     [minLabelStorm sizeToFit];
-    minLabelStorm.frame = (CGRectMake(_StormPlayBack.frame.origin.x - (minLabelStorm.frame.size.width + 10), _StormPlayBack.frame.origin.y + 6, minLabelStorm.frame.size.width, minLabelStorm.frame.size.height));
+    minLabelStorm.frame = (CGRectMake(_StormPlayBack.frame.origin.x - (minLabelStorm.frame.size.width + 10), _StormPlayBack.frame.origin.y, minLabelStorm.frame.size.width, _StormPlayBack.frame.size.height));
     [minLabelStorm setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:minLabelStorm];
     
@@ -1577,15 +1550,15 @@ NSMutableArray *slicesInfo;
     maxLabelStorm.text = @"48 hrs";
     maxLabelStorm.font = [UIFont systemFontOfSize: 15.0];
     [maxLabelStorm sizeToFit];
-    maxLabelStorm.frame = CGRectMake(_StormPlayBack.frame.origin.x + (_StormPlayBack.frame.size.width + 10), _StormPlayBack.frame.origin.y + 6, maxLabelStorm.frame.size.width, maxLabelStorm.frame.size.height);
+    maxLabelStorm.frame = CGRectMake(_StormPlayBack.frame.origin.x + (_StormPlayBack.frame.size.width + 10), _StormPlayBack.frame.origin.y, maxLabelStorm.frame.size.width, _StormPlayBack.frame.size.height);
     [maxLabelStorm setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:maxLabelStorm];
     
     hoursAfterStormLabel = [[UILabel alloc]init];
-    hoursAfterStormLabel.text = [NSString stringWithFormat:@"Storm Playback %d hours", (int)hours_social];
+    hoursAfterStormLabel.text = [NSString stringWithFormat:@"Storm Playback: %d hours", (int)hours_social];
     hoursAfterStormLabel.font = [UIFont systemFontOfSize:15.0];
     [hoursAfterStormLabel sizeToFit];
-    hoursAfterStormLabel.frame = CGRectMake(budgetLabel.frame.origin.x, _StormPlayBack.frame.origin.y + 6, hoursAfterStormLabel.frame.size.width, hoursAfterStormLabel.frame.size.height);
+    hoursAfterStormLabel.frame = CGRectMake(minLabelStorm.frame.origin.x - hoursAfterStormLabel.frame.size.width - 25, _StormPlayBack.frame.origin.y, hoursAfterStormLabel.frame.size.width, _StormPlayBack.frame.size.height);
     [hoursAfterStormLabel setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:hoursAfterStormLabel];
 }
@@ -1596,14 +1569,14 @@ NSMutableArray *slicesInfo;
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
     
-    budgetLabel.text = [NSString stringWithFormat:@"Set Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:budget]]];
+    budgetLabel.text = [NSString stringWithFormat:@"Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:budget]]];
     [budgetLabel sizeToFit];
 }
 
 - (void)changeHoursLabel {
-    hoursAfterStormLabel.text = [NSString stringWithFormat:@"Storm Playback %d hours", (int)_StormPlayBack.value];
+    hoursAfterStormLabel.text = [NSString stringWithFormat:@"Storm Playback: %d hours", (int)_StormPlayBack.value];
     [hoursAfterStormLabel sizeToFit];
-    hoursAfterStormLabel.frame = CGRectMake(budgetLabel.frame.origin.x, _StormPlayBack.frame.origin.y + 6, hoursAfterStormLabel.frame.size.width, hoursAfterStormLabel.frame.size.height);
+    hoursAfterStormLabel.frame = CGRectMake(hoursAfterStormLabel.frame.origin.x, _StormPlayBack.frame.origin.y, hoursAfterStormLabel.frame.size.width, _StormPlayBack.frame.size.height);
     hours_social = (int)_StormPlayBack.value;
 }
 

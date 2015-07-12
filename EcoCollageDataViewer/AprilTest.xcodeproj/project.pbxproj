@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		5711E1621B190CE3005FF2F1 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5711E1611B190CE3005FF2F1 /* CoreBluetooth.framework */; };
 		574737081B14E52C00D5EED8 /* MommaBirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 574737071B14E52C00D5EED8 /* MommaBirdViewController.m */; };
-		575D6C731B39B7C5000A235D /* UIViewWithTitle.m in Sources */ = {isa = PBXBuildFile; fileRef = 575D6C721B39B7C5000A235D /* UIViewWithTitle.m */; };
 		579A157C1B1CE7D4009FBBD0 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579A15781B1CE4F4009FBBD0 /* GameKit.framework */; };
 		57EEF5541B1E452200BECE7F /* SocialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 57EEF5531B1E452200BECE7F /* SocialViewController.m */; };
 		841C0A1F1A16744500ED7A2E /* PeprViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 841C0A1C1A16744500ED7A2E /* PeprViewController.m */; };
@@ -82,8 +81,6 @@
 		5711E1611B190CE3005FF2F1 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		574737061B14E52C00D5EED8 /* MommaBirdViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MommaBirdViewController.h; path = ../MommaBirdViewController.h; sourceTree = "<group>"; };
 		574737071B14E52C00D5EED8 /* MommaBirdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MommaBirdViewController.m; path = ../MommaBirdViewController.m; sourceTree = "<group>"; };
-		575D6C711B39B7C5000A235D /* UIViewWithTitle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIViewWithTitle.h; sourceTree = "<group>"; };
-		575D6C721B39B7C5000A235D /* UIViewWithTitle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIViewWithTitle.m; sourceTree = "<group>"; };
 		579A15781B1CE4F4009FBBD0 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		579A157A1B1CE591009FBBD0 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
 		57EEF5521B1E452200BECE7F /* SocialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocialViewController.h; sourceTree = "<group>"; };
@@ -286,8 +283,6 @@
 				846B971E18FE0B1F0008BD59 /* rainbarrel.png */,
 				841C0A1E1A16744500ED7A2E /* questions2.txt */,
 				846B971F18FE0B1F0008BD59 /* sewer.png */,
-				575D6C711B39B7C5000A235D /* UIViewWithTitle.h */,
-				575D6C721B39B7C5000A235D /* UIViewWithTitle.m */,
 				8453FA5918F2FC8F0010D12F /* Supporting Files */,
 				846B972018FE0B1F0008BD59 /* swale.png */,
 			);
@@ -471,7 +466,6 @@
 				8453FA5F18F2FC8F0010D12F /* main.m in Sources */,
 				84DE92EB1993D0B4006525F4 /* AprilTestGuidebookViewController.m in Sources */,
 				8423FC931AC9C4C600BC16E8 /* AprilTestCostDisplay.m in Sources */,
-				575D6C731B39B7C5000A235D /* UIViewWithTitle.m in Sources */,
 				848479D818F71D7600BAD981 /* AprilTestTabBarController.m in Sources */,
 				8453FA6318F2FC8F0010D12F /* AprilTestAppDelegate.m in Sources */,
 				846B972D1904ABC20008BD59 /* AprilTestNormalizedVariable.m in Sources */,

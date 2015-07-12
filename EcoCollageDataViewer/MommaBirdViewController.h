@@ -19,5 +19,7 @@
 
 @property (strong, nonatomic) IBOutlet UILabel *studyNumberLabel;
 @property (strong, nonatomic) IBOutlet UILabel *trialNumberLabel;
+- (IBAction)BudgetSlider:(UISlider *)sender;
+@property (strong, nonatomic) IBOutlet UISlider *BudgetSlider;
 
 @end
