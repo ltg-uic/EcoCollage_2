@@ -193,6 +193,28 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     }
 }
 
+- (void)session:(GKSession *)session didReceiveConnectionRequestFromPeer:(NSString *)peerID
+{
+    NSLog(@"didReceiveConnectionRequestFromPeer: %@", [session displayNameForPeer:peerID]);
+    
+    NSError *error;
+    
+    BOOL connectionEstablished = FALSE;
+    NSString *peerName = [session displayNameForPeer:peerID];
+    
+    if([peerName isEqualToString:[NSString stringWithFormat:@"Momma%d", _studyNum]])
+        connectionEstablished = [session acceptConnectionFromPeer:peerID error:&error];
+    else {
+        [session denyConnectionFromPeer:peerID];
+        NSLog(@"Denied connection");
+    }
+    
+    if (!connectionEstablished)
+    {
+        NSLog(@"error = %@", error);
+    }
+}
+
 
 - (void)session:(GKSession *)session connectionWithPeerFailed:(NSString *)peerID withError:(NSError *)error
 {

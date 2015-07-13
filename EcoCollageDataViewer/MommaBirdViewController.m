@@ -143,8 +143,18 @@ int currentBudget;
         case GKPeerStateAvailable:
         {
             NSLog(@"didChangeState: peer %@ available", peerName);
-
-            NSLog(@"Not inviting %@", peerID);
+            
+            BOOL shouldInvite = ([peerName isEqualToString:[NSString stringWithFormat:@"Baby%d", _studyNum]]);
+            
+            if (shouldInvite)
+            {
+                NSLog(@"Inviting %@", peerID);
+                [session connectToPeer:peerID withTimeout:kConnectionTimeout];
+            }
+            else
+            {
+                NSLog(@"Not inviting %@", peerID);
+            }
             
             break;
         }
@@ -471,6 +481,7 @@ int currentBudget;
 
 
 # pragma mark CoreBluetooth Methods
+/*
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
 {
@@ -521,15 +532,15 @@ didDiscoverPeripheral:(CBPeripheral *)peripheral
 
 
 
-/** If the connection fails for whatever reason, we need to deal with it.
- */
+// If the connection fails for whatever reason, we need to deal with it.
+ 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
 {
     NSLog(@"Failed to connect to %@. (%@)", peripheral, [error localizedDescription]);
 }
 
-/** We've connected to the peripheral, now we need to discover the services and characteristics to find the 'transfer' characteristic.
- */
+// We've connected to the peripheral, now we need to discover the services and characteristics to find the 'transfer' characteristic.
+ 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
 {
     NSLog(@"Peripheral Connected");
@@ -542,8 +553,8 @@ didDiscoverPeripheral:(CBPeripheral *)peripheral
 }
 
 
-/** The Service was discovered
- */
+// The Service was discovered
+ 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error
 {
     if (error) {
@@ -559,9 +570,9 @@ didDiscoverPeripheral:(CBPeripheral *)peripheral
     }
 }
 
-/** The characteristic was discovered.
- *  Once this has been found, we want to subscribe to it, which lets the peripheral know we want the data it contains
- */
+//The characteristic was discovered.
+ // Once this has been found, we want to subscribe to it, which lets the peripheral know we want the data it contains
+ 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error
 {
     NSLog(@"Discovering characteristics");
@@ -637,7 +648,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     // Log it
     NSLog(@"Received: %@", stringFromData);
 }
-
+*/
 
 - (void) updateMacMiniTextView {
     NSMutableString *stringForMacMiniTextView = [[NSMutableString alloc]initWithString:@""];
@@ -746,6 +757,8 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     [maxBudgetLabel sizeToFit];
     maxBudgetLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x + _BudgetSlider.frame.size.width + 10, _BudgetSlider.frame.origin.y, maxBudgetLabel.frame.size.width, _BudgetSlider.frame.size.height);
     [self.view addSubview:maxBudgetLabel];
+    
+    _BudgetSlider.value = currentBudget;
 }
 
 - (void)changeBudgetLabel:(int)budget {
