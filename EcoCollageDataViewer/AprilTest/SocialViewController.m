@@ -450,7 +450,7 @@ NSMutableArray *slicesInfo;
     
     
         [pie setDataSource:self];
-        [pie setStartPieAngle:M_2_PI];
+        [pie setStartPieAngle:M_PI_2];
         [pie setAnimationSpeed:1.0];
         [pie setPieBackgroundColor:[UIColor colorWithWhite:0.95 alpha:1]];
         [pie setUserInteractionEnabled:NO];
