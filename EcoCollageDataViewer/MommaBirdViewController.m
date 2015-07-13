@@ -718,6 +718,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     value = 1000.0 * floor((value/1000.0)+0.5);
     
     currentBudget = value;
+    
     [self changeBudgetLabel:(int)currentBudget];
 }
 

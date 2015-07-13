@@ -423,6 +423,16 @@ float maxPublicInstallNorm;
 
 - (void)budgetUpdated {
     // method called when budget is updated from Momma
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    [self updateBudgetSliderTo:tabControl.budget];
+    
+    //update the width of the public install cost bars (make sure it isn't 0)
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
+    
+    //only update all labels/bars if Static normalization is switched on
+    if (!_DynamicNormalization.isOn){
+        [self normalizaAllandUpdateStatically];
+    }
 }
 
 //selector method that handles a change in value when budget changes (slider under titles)
@@ -869,7 +879,7 @@ float maxPublicInstallNorm;
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
-        //if (scoreWidth < 0) scoreWidth = 0.0;
+        if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
         UILabel * componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 90, floor(scoreWidth), 22)];
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
@@ -1056,7 +1066,7 @@ float maxPublicInstallNorm;
         tx.clearButtonMode = UITextFieldViewModeWhileEditing;
         tx.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         tx.delegate = self;
-        tx.text = [NSString stringWithFormat:  @"Trial %d", simRunNormal.trialNum + 1];
+        tx.text = [NSString stringWithFormat:  @"Trial %d", simRunNormal.trialNum];
         [_mapWindow addSubview:tx];
         [_scenarioNames addObject:tx];
     //} else {
@@ -1272,7 +1282,7 @@ float maxPublicInstallNorm;
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
-        //if (scoreWidth < 0) scoreWidth = 0.0;
+        if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
            componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 90, floor(scoreWidth), 22)];
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
@@ -1342,8 +1352,7 @@ float maxPublicInstallNorm;
     if ([tabControl.trialRuns count] > trialNum) {
         [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
 
-        [self drawTrial:trialNum];
-        trialNum++;
+        [self drawTrial:tabControl.trialNum-1];
         
         //chooses between static/dynamic normalization of trial data
         if (_DynamicNormalization.isOn)
@@ -1373,7 +1382,6 @@ float maxPublicInstallNorm;
     
     for (int i =0; i < tabControl.trialNum; i++){
         [self drawTrial:i];
-        trialNum++;
     }
     
     //determine depending on min and max budget limits what is to be drawn on UILabels under le BudgetSlider
