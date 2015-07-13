@@ -232,7 +232,7 @@ float maxPublicInstallNorm;
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(budgetUpdated)
-                                                 name:@"budgetChanged"
+                                                 name:@"updateBudget"
                                                object:nil];
     
   
