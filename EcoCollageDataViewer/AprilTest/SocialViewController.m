@@ -271,13 +271,15 @@ NSMutableArray *slicesInfo;
     
     UIView *line = [self.view viewWithTag:9001];
     [line removeFromSuperview];
-    /*
+    
     // empty _usernamesWindow and _profilesWindow to free memory
     for (UIView *view in [_usernamesWindow subviews])
         [view removeFromSuperview];
     for (UIView *view in [_profilesWindow subviews])
         [view removeFromSuperview];
-    */
+    for (UIView *view in [_mapWindow subviews])
+        [view removeFromSuperview];
+    
 }
 
 - (void)usernameUpdate:(NSNotification *)note {
