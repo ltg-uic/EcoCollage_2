@@ -150,7 +150,17 @@ float maxPublicInstallNorm;
         [SortType setDataSource:self];
         [SortType setDelegate:self];
         [SortType setShowsSelectionIndicator:YES];
-        //[_SortPickerTextField setInputView:SortType];
+       
+        
+        UIToolbar *toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 300, 40)];
+        toolBar.barStyle = UIBarStyleDefault;
+        toolBar.layer.borderWidth = 1;
+        
+        UIBarButtonItem *flexibleSpaceLeft = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneTouched:)];
+        
+        [toolBar setItems:[NSArray arrayWithObjects:flexibleSpaceLeft,doneButton, nil]];
+        [SortType addSubview:toolBar];
     }
     
     scoreColors = [[NSMutableDictionary alloc] initWithObjects:
@@ -172,6 +182,7 @@ float maxPublicInstallNorm;
     
 }
 
+
 - (BOOL) textFieldShouldBeginEditing:(UITextView *)textView
 {
     SortType.frame = CGRectMake(80, 120, 300, SortType.frame.size.height);
@@ -182,6 +193,20 @@ float maxPublicInstallNorm;
     [self.view addSubview:SortType];
     [UIView commitAnimations];
     return NO;
+}
+
+- (void)doneTouched:(UIBarButtonItem *)sender
+{
+    // hide the picker view
+    UIAlertView *alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
+    [alert show];
+    [SortType resignFirstResponder];
+    
+    // perform some action
+    //Handle the sort afterwards
+    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+    [self handleSort:(int)sortChosen];
+    [_loadingIndicator stopAnimating];
 }
 
 - (void) viewWillAppear:(BOOL)animated{
