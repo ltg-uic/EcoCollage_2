@@ -40,13 +40,10 @@ NSMutableArray *maxwaterDisplaysSocial;
 NSMutableArray *efficiencySocial;
 FebTestWaterDisplay *waterDisplay;
 FebTestWaterDisplay *maxWaterDisplay;
-AprilTestEfficiencyView *efficiencyDisplay;
 UIView* viewForWaterDisplay;
 UIView* viewForMaxWateDisplay;
-UIView* viewForEfficiencyDisplay;
 UIImage *waterDisplayImage;
 UIImage *maxWaterDisplayImage;
-UIImage *efficiencyDisplayImage;
 
 NSMutableArray *personalFavorites;
 int widthOfTitleVisualization = 220;
@@ -210,11 +207,25 @@ NSMutableArray *slicesInfo;
     
     waterDisplayImage = [[UIImage alloc]init];
     maxWaterDisplayImage = [[UIImage alloc]init];
-    efficiencyDisplayImage = [[UIImage alloc]init];
     
     viewForWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
     viewForMaxWateDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
-    viewForEfficiencyDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 130, 150)];
+    
+    // line below data viewers
+    UIView *lineBelowData = [[UIView alloc]init];
+    lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height, self.view.frame.size.width, 1);
+    lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    lineBelowData.layer.borderWidth = 1.0;
+    lineBelowData.tag = 9001;
+    [self.view addSubview:lineBelowData];
+    
+    // line inbetween usernamesWindow and profilesWindow
+    UIView *lineBetweenViews = [[UIView alloc]init];
+    lineBetweenViews.frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
+    lineBetweenViews.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    lineBetweenViews.layer.borderWidth = 1.0;
+    lineBetweenViews.tag = 9002;
+    [self.view addSubview:lineBetweenViews];
     
 }
 
@@ -263,13 +274,6 @@ NSMutableArray *slicesInfo;
                                                  name:@"updateBudget"
                                                object:nil];
     
-    // line below data viewers
-    UIView *lineBelowData = [[UIView alloc]init];
-    lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height, self.view.frame.size.width, 1);
-    lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
-    lineBelowData.layer.borderWidth = 1.0;
-    lineBelowData.tag = 9001;
-    [self.view addSubview:lineBelowData];
     
 }
 
@@ -287,9 +291,6 @@ NSMutableArray *slicesInfo;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawNewProfile" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
 
-    
-    UIView *line = [self.view viewWithTag:9001];
-    [line removeFromSuperview];
     
     // empty _usernamesWindow and _profilesWindow to free memory
     for (UIView *view in [_usernamesWindow subviews])
@@ -395,37 +396,24 @@ NSMutableArray *slicesInfo;
     maxWaterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.maxWaterHeights];
     maxWaterDisplay.view = viewForMaxWateDisplay;
     
-    efficiencyDisplay = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(0, 0, 130, 150) withContent: simRun.efficiency];
-    efficiencyDisplay.trialNum = trialChosen;
-    efficiencyDisplay.view = viewForEfficiencyDisplay;
-    
-    
     waterDisplay.thresholdValue = thresh_social;
     [waterDisplay fastUpdateView: _StormPlayBack.value];
     
     maxWaterDisplay.thresholdValue = thresh_social;
     [maxWaterDisplay updateView:48];
     
-    [efficiencyDisplay updateViewForHour: _StormPlayBack.value];
     
     
     // draw displays to their images
     UIGraphicsBeginImageContextWithOptions(waterDisplay.bounds.size, YES, 0.0f);
-    [waterDisplay.view drawViewHierarchyInRect:waterDisplay.bounds afterScreenUpdates:YES];
+    [waterDisplay.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     waterDisplayImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
     UIGraphicsBeginImageContextWithOptions(maxWaterDisplay.bounds.size, YES, 0.0f);
-    [maxWaterDisplay.view drawViewHierarchyInRect:maxWaterDisplay.bounds afterScreenUpdates:YES];
+    [maxWaterDisplay.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     maxWaterDisplayImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-
-    
-    UIGraphicsBeginImageContextWithOptions(efficiencyDisplay.bounds.size, YES, 0.0f);
-    [efficiencyDisplay.view drawViewHierarchyInRect:efficiencyDisplay.bounds afterScreenUpdates:YES];
-    efficiencyDisplayImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-
     
     [self profileUpdate];
 
@@ -466,6 +454,7 @@ NSMutableArray *slicesInfo;
     return tView;
 }
 
+
 - (void)profileUpdate {
     // do nothing if favorites are currently loaded
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -483,11 +472,7 @@ NSMutableArray *slicesInfo;
         maxWaterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.maxWaterHeights];
         maxWaterDisplay.view = viewForMaxWateDisplay;
     }
-    if (efficiencyDisplay == nil) {
-        efficiencyDisplay = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(0, 0, 130, 150) withContent: simRun.efficiency];
-        efficiencyDisplay.trialNum = trialChosen;
-        efficiencyDisplay.view = viewForEfficiencyDisplay;
-    }
+
     
     
     waterDisplay.thresholdValue = thresh_social;
@@ -496,25 +481,18 @@ NSMutableArray *slicesInfo;
     maxWaterDisplay.thresholdValue = thresh_social;
     [maxWaterDisplay updateView:48];
     
-    [efficiencyDisplay updateViewForHour: _StormPlayBack.value];
-    
     
     // draw displays to their images
     UIGraphicsBeginImageContextWithOptions(waterDisplay.bounds.size, YES, 0.0f);
-    [waterDisplay.view drawViewHierarchyInRect:waterDisplay.bounds afterScreenUpdates:YES];
+    [waterDisplay.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     waterDisplayImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
     UIGraphicsBeginImageContextWithOptions(maxWaterDisplay.bounds.size, YES, 0.0f);
-    [maxWaterDisplay.view drawViewHierarchyInRect:maxWaterDisplay.bounds afterScreenUpdates:YES];
+    [maxWaterDisplay.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     maxWaterDisplayImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    
-    UIGraphicsBeginImageContextWithOptions(efficiencyDisplay.bounds.size, YES, 0.0f);
-    [efficiencyDisplay.view drawViewHierarchyInRect:efficiencyDisplay.bounds afterScreenUpdates:YES];
-    efficiencyDisplayImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
 
     if (tabControl.trialNum == 0)
         return;
@@ -522,8 +500,7 @@ NSMutableArray *slicesInfo;
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     [self loadVisualizationForNewTrial];
     [_loadingIndicator stopAnimating];
-    
-    [self performSelector:@selector(loadPies) withObject:nil afterDelay:1.0];
+
     NSLog(@"Updated profile");
 }
 
@@ -594,12 +571,16 @@ NSMutableArray *slicesInfo;
         _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y + sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height - sizeOfChange);
         _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y + sizeOfChange, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height - sizeOfChange);
         _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, largeSizeOfMapWindow);
+        UIView *lineView = [self.view viewWithTag:9002];
+        lineView.frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
     }
     else {
         mapWindowStatusLabel.text = @"Tap to view map(s)";
         _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y - sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height + sizeOfChange);
         _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y - sizeOfChange, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height + sizeOfChange);
         _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, smallSizeOfMapWindow);
+        UIView *lineView = [self.view viewWithTag:9002];
+        lineView.frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
     }
     [UIView commitAnimations];
 }
@@ -621,7 +602,7 @@ NSMutableArray *slicesInfo;
         
         UILabel *currentLabel = [[UILabel alloc]init];
         currentLabel.backgroundColor = [concernColors objectForKey:[profileArray objectAtIndex:j]];
-        currentLabel.frame = CGRectMake(width, 2, widthOfTitleVisualization, 40);
+        currentLabel.frame = CGRectMake(width, 0, widthOfTitleVisualization, 40);
         currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
         
         if([[profileArray objectAtIndex:j] isEqualToString:@"Investment"])
@@ -1241,6 +1222,7 @@ NSMutableArray *slicesInfo;
     for (UIView *subview in [bottomOfMapWindow subviews])
         [subview removeFromSuperview];
     
+    
     // load map visualization
     if ([tabControl.trialRuns count] > trialChosen) {
         UILabel *mapWindowLabel = [[UILabel alloc]init];
@@ -1259,10 +1241,6 @@ NSMutableArray *slicesInfo;
         [interventionView updateView];
     }
     
-    
-    
-    [maxwaterDisplaysSocial removeAllObjects];
-    [waterDisplaysSocial removeAllObjects];
     [efficiencySocial removeAllObjects];
     
     // create subviews in _usernamesWindow
@@ -1273,7 +1251,9 @@ NSMutableArray *slicesInfo;
     
     for (int i = 0; i < numberOfProfiles; i++) {
         [self createSubviewsForProfilesWindow:i];
-
+    }
+    
+    for (int i = 0; i < numberOfProfiles; i++) {
         // draw trial for each profile
         [self drawTrialForSpecificProfile:trialChosen forProfile:i];
     }
@@ -1476,7 +1456,7 @@ NSMutableArray *slicesInfo;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
-            /*
+            
             AprilTestEfficiencyView *ev;
             if( efficiencySocial.count <= currentProfileIndex){
                 //NSLog(@"Drawing efficiency display for first time");
@@ -1489,18 +1469,14 @@ NSMutableArray *slicesInfo;
                 ev = [efficiencySocial objectAtIndex:currentProfileIndex];
                 ev.frame = CGRectMake(width, 60, 130, 150);
             }
-             */
-            
-            UIImageView *efficiencyDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, 60, 115, 125)];
-            efficiencyDisplayView.image = efficiencyDisplayImage;
-            [[_profilesWindow viewWithTag:currentProfileIndex + 1]addSubview:efficiencyDisplayView];
+             
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
             //NSLog(@"%@", NSStringFromCGRect(ev.frame));
             [scoreVisNames addObject: currentVar.name];
             
-            //[ev updateViewForHour: _StormPlayBack.value];
+            [ev updateViewForHour: hoursAfterStorm_social];
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: 60 andColor: [UIColor blackColor] to:nil withIndex:currentProfileIndex];
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
@@ -1708,22 +1684,12 @@ NSMutableArray *slicesInfo;
 
 - (void)StormHoursChosen:(NSNotification *)notification {
     
-    /*
-    NSMutableString * content = [NSMutableString alloc];
-    for(int i = 0; i < waterDisplaysSocial.count; i++){
-        FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplaysSocial objectAtIndex:i];
-        AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiencySocial objectAtIndex:i];
-        FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxwaterDisplaysSocial objectAtIndex: i];
-        [temp2 updateViewForHour:hoursAfterStorm_social];
-        //[temp updateView:hoursAfterStorm];
-        [temp fastUpdateView:hoursAfterStorm_social];
-        [tempHeights updateView:48];
-    }
-     */
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
-
-    
-    [self profileUpdate];
+    if (tabControl.trialNum == trialChosen)
+        [self loadFavorites];
+    else
+        [self profileUpdate];
 
     
     
