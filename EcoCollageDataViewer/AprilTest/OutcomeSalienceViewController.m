@@ -240,7 +240,6 @@ float maxPublicInstallNorm;
         [view removeFromSuperview];
     }
     
-
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow)
                                                  name:UIKeyboardWillShowNotification
@@ -461,6 +460,30 @@ float maxPublicInstallNorm;
     }
 }
 
+//selector method that handles a change in value when budget changes (slider under titles)
+-(void)BudgetChanged:(id)sender
+{
+    UISlider *slider = (UISlider*)sender;
+    int value = slider.value;
+    //-- Do further actions
+    
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
+    
+    value = 1000.0 * floor((value/1000.0)+0.5);
+    
+    investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
+    maxBudgetLimit = value;
+    
+    //update the width of the public install cost bars (make sure it isn't 0)
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
+    
+    //only update all labels/bars if Static normalization is switched on
+    if (!_DynamicNormalization.isOn){
+        [self normalizaAllandUpdateStatically];
+    }
+}
 
 //method that updates Budget slider with animation and writes the new value to a label WITHOUT making a change to the max set by the User
 -(void) updateBudgetSliderTo: (float) newValue
@@ -878,12 +901,13 @@ float maxPublicInstallNorm;
     float maxX = 150;
     float totalScore = 0;
     
+    UILabel * componentScore;
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
-        UILabel * componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 90, floor(scoreWidth), 22)];
+        componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 90, floor(scoreWidth), 22)];
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
         [_mapWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
@@ -1014,9 +1038,12 @@ float maxPublicInstallNorm;
 
 -(void) OffsetView: (UIView*) view toX:(int)x andY:(int)y{
     ///GENERAL FORMULA FOR TRANSLATING A FRAME
-    CGRect frame = view.frame;
+    /*CGRect frame = view.frame;
     frame.origin.x = x;
     frame.origin.y = y;
+    [view setFrame: frame];*/
+    
+    CGRect frame = CGRectMake(x, y, view.frame.size.width, view.frame.size.height);
     [view setFrame: frame];
 }
 
@@ -1280,7 +1307,7 @@ float maxPublicInstallNorm;
     //NSLog(@" %@", scoreVisVals);
     float maxX = 150;
     float totalScore = 0;
-    UILabel * componentScore;
+    UILabel *componentScore;
     
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
@@ -1950,7 +1977,7 @@ float maxPublicInstallNorm;
         //Offset the "Trial #" label
         [self OffsetView:newTxt      toX:newTxt.frame.origin.x     andY:175*(i)+5];
     }
-    
+
     (_DynamicNormalization.isOn) ? ([self normalizeAllandUpdateDynamically]) : ([self normalizaAllandUpdateStatically]);
 }
 
