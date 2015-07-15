@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <GameKit/GameKit.h>
 
-@interface OutcomeSalienceViewController : UIViewController <UIScrollViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate>
+@interface OutcomeSalienceViewController : UIViewController <UIScrollViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate,UIGestureRecognizerDelegate>
 @property NSMutableArray * currentConcernRanking;
 @property int studyNum;
 @property float maxBudget;
@@ -27,10 +27,6 @@
 
 @property (strong, nonatomic) IBOutlet UISwitch *DynamicNormalization;
 - (IBAction)NormTypeSwitched:(UISwitch *)sender;
-
-//change the orientation of the sort (low to high? high to low?)
-- (IBAction)SortOrientationChanged:(UISwitch *)sender;
-@property (strong, nonatomic) IBOutlet UISwitch *SortLowToHigh;
 
 
 @property (strong, nonatomic) IBOutlet UITextField *SortPickerTextField;

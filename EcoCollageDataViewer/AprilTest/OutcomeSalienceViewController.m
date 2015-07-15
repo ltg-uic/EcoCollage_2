@@ -32,7 +32,6 @@
 @synthesize scenarioNames = _scenarioNames;
 @synthesize SortPickerTextField = _SortPickerTextField;
 @synthesize maxBudget = _maxBudget;
-@synthesize SortLowToHigh = _SortLowToHigh;
 
 //structs that will keep track of the highest and lowest costs of Installation and maintenance (for convenience)
 typedef struct Value
@@ -82,6 +81,7 @@ UISlider *BudgetSlider;
 UISlider *StormPlayBack;
 UISlider *StormPlayBack2;
 UIPickerView *SortType;
+UITapGestureRecognizer *tapGestureRecognizer;
 
 //Important values that change elements of objects
 float thresh = 6;
@@ -108,7 +108,6 @@ float maxPublicInstallNorm;
 // necessary in case currentSession changes, i.e. is disconnected and reconnected again
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
     [self drawMultipleTrials];
 }
 
@@ -151,16 +150,6 @@ float maxPublicInstallNorm;
         [SortType setDelegate:self];
         [SortType setShowsSelectionIndicator:YES];
        
-        
-        UIToolbar *toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 300, 40)];
-        toolBar.barStyle = UIBarStyleDefault;
-        toolBar.layer.borderWidth = 1;
-        
-        UIBarButtonItem *flexibleSpaceLeft = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneTouched:)];
-        
-        [toolBar setItems:[NSArray arrayWithObjects:flexibleSpaceLeft,doneButton, nil]];
-        [SortType addSubview:toolBar];
     }
     
     scoreColors = [[NSMutableDictionary alloc] initWithObjects:
@@ -180,6 +169,12 @@ float maxPublicInstallNorm;
                      [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
                     [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
+    tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
+    tapGestureRecognizer.numberOfTapsRequired = 1;
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+    
+    [self budgetUpdated];
+
 }
 
 
@@ -193,6 +188,17 @@ float maxPublicInstallNorm;
     [self.view addSubview:SortType];
     [UIView commitAnimations];
     return NO;
+}
+
+- (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
+{
+    //Code to handle the gesture
+    if ([SortType isHidden]){
+        NSLog(@"View Doesn't Exist");
+    }
+    else{
+        [SortType removeFromSuperview];
+    }
 }
 
 - (void)doneTouched:(UIBarButtonItem *)sender
@@ -303,11 +309,6 @@ float maxPublicInstallNorm;
         [self handleSort:sortChosen];
     }
   
-}
-
-- (IBAction)SortOrientationChanged:(UISwitch *)sender{
-    
-    [self handleSort:sortChosen];
 }
 
 
@@ -460,30 +461,6 @@ float maxPublicInstallNorm;
     }
 }
 
-//selector method that handles a change in value when budget changes (slider under titles)
--(void)BudgetChanged:(id)sender
-{
-    UISlider *slider = (UISlider*)sender;
-    int value = slider.value;
-    //-- Do further actions
-    
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    [formatter setGroupingSeparator:@","];
-    
-    value = 1000.0 * floor((value/1000.0)+0.5);
-    
-    investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
-    maxBudgetLimit = value;
-    
-    //update the width of the public install cost bars (make sure it isn't 0)
-    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
-    
-    //only update all labels/bars if Static normalization is switched on
-    if (!_DynamicNormalization.isOn){
-        [self normalizaAllandUpdateStatically];
-    }
-}
 
 //method that updates Budget slider with animation and writes the new value to a label WITHOUT making a change to the max set by the User
 -(void) updateBudgetSliderTo: (float) newValue
@@ -1044,7 +1021,7 @@ float maxPublicInstallNorm;
 }
 
 -(void) drawTrial: (int) trial{
-    UILabel *maintenance;
+    //UILabel *maintenance;
     UILabel *damage;
     UILabel *damageReduced;
     UILabel *sewerLoad;
@@ -1129,7 +1106,7 @@ float maxPublicInstallNorm;
         //laziness: this is just the investment costs
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
             float investmentInstall = simRun.publicInstallCost;
-            float investmentMaintain = simRun.publicMaintenanceCost;
+            //float investmentMaintain = simRun.publicMaintenanceCost;
             float investmentInstallN = simRunNormal.publicInstallCost;
             float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             CGRect frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
@@ -1164,8 +1141,9 @@ float maxPublicInstallNorm;
                 [OverBudgetLabels addObject:valueLabel];
             }
             
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (trial * 175) +100 andColor:[UIColor blackColor] to:&maintenance];
+            //removing maintenance component
+            /*
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (trial * 175) +100 andColor:[UIColor blackColor] to:&maintenance];*/
             
             
             scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
@@ -1349,7 +1327,7 @@ float maxPublicInstallNorm;
                                    @"WaterDisplay"      : wd,
                                    @"MWaterDisplay"     : mwd,
                                    @"EfficiencyView"    : ev,
-                                   @"Maintenance"       : maintenance,
+                                   //@"Maintenance"       : maintenance,
                                    @"Damage"            : damage,
                                    @"DamageReduced"     : damageReduced,
                                    @"SewerLoad"         : sewerLoad,
@@ -1366,7 +1344,7 @@ float maxPublicInstallNorm;
     else
         [trialRunSubViews addObject:trialRunInfo];
     
-    NSLog(@"Just drew trial %d\n", simRun.trialNum+1);
+    NSLog(@"Just drew trial %d\n", simRun.trialNum);
    
     [_dataWindow flashScrollIndicators];          
     
@@ -1606,7 +1584,7 @@ float maxPublicInstallNorm;
             BudgetSlider.maximumValue = max_budget_limit;
             BudgetSlider.continuous = YES;
             [BudgetSlider setValue:maxBudgetLimit animated:YES];
-            [_SliderWindow addSubview:BudgetSlider];
+            //[_SliderWindow addSubview:BudgetSlider];
             
             //draw min/max cost labels under slider
             CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/3, 15);
@@ -1791,7 +1769,7 @@ float maxPublicInstallNorm;
         [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"TrialNum" ascending:YES]]];
     }
     else if ([arrStatus[row] isEqual: @"Best Score"]){
-        (_SortLowToHigh.isOn) ? ([trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"PerformanceScore" ascending:YES]]]) : ([trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"PerformanceScore" ascending:NO]]]);
+        [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"PerformanceScore" ascending:NO]]];
     }
     
     else if ([arrStatus[row] isEqual: @"Investment"]){
@@ -1799,20 +1777,12 @@ float maxPublicInstallNorm;
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
-            if (_SortLowToHigh.isOn){
-                if (first.publicInstallCost < second.publicInstallCost)
-                    return NSOrderedAscending;
-                else if (second.publicInstallCost < first.publicInstallCost)
-                    return NSOrderedDescending;
-                return NSOrderedSame;
-            }
-            else{
+        
                 if (first.publicInstallCost > second.publicInstallCost)
                     return NSOrderedAscending;
                 else if (second.publicInstallCost > first.publicInstallCost)
                     return NSOrderedDescending;
                 return NSOrderedSame;
-            }
                 
         }];
     }
@@ -1821,20 +1791,12 @@ float maxPublicInstallNorm;
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
-            if (_SortLowToHigh.isOn){
-                if (first.privateDamages < second.privateDamages)
-                    return NSOrderedAscending;
-                else if (second.privateDamages < first.privateDamages)
-                    return NSOrderedDescending;
-                return NSOrderedSame;
-            }
-            else{
+
                 if (first.privateDamages > second.privateDamages)
                     return NSOrderedAscending;
                 else if (second.privateDamages > first.privateDamages)
                     return NSOrderedDescending;
                 return NSOrderedSame;
-            }
             
         }];
     }
@@ -1844,20 +1806,12 @@ float maxPublicInstallNorm;
             AprilTestSimRun *first  = (AprilTestSimRun*)[obj1 valueForKey:@"TrialRun"];
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
-            if (_SortLowToHigh.isOn){
-                if (first.impactNeighbors < second.impactNeighbors)
-                    return NSOrderedAscending;
-                else if (second.impactNeighbors < first.impactNeighbors)
-                    return NSOrderedDescending;
-                return NSOrderedSame;
-            }
-            else{
+
                 if (first.impactNeighbors > second.impactNeighbors)
                     return NSOrderedAscending;
                 else if (second.impactNeighbors > first.impactNeighbors)
                     return NSOrderedDescending;
                 return NSOrderedSame;
-            }
             
             
         }];
@@ -1870,20 +1824,12 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *first  = (AprilTestNormalizedVariable*)[obj1 valueForKey: key];
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
-            if (_SortLowToHigh.isOn){
-                if (first.efficiency < second.efficiency)
-                    return NSOrderedAscending;
-                else if (second.efficiency < first.efficiency)
-                    return NSOrderedDescending;
-                return NSOrderedSame;
-            }
-            else{
+
                 if (first.efficiency > second.efficiency)
                     return NSOrderedAscending;
                 else if (second.efficiency > first.efficiency)
                     return NSOrderedDescending;
                 return NSOrderedSame;
-            }
             
         }];
     }
@@ -1896,20 +1842,11 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
             
-            if (_SortLowToHigh.isOn){
-                if (first.floodedStreets < second.floodedStreets)
-                    return NSOrderedAscending;
-                else if (second.floodedStreets < first.floodedStreets)
-                    return NSOrderedDescending;
-                return NSOrderedSame;
-            }
-            else{
                 if (first.floodedStreets > second.floodedStreets)
                     return NSOrderedAscending;
                 else if (second.floodedStreets > first.floodedStreets)
                     return NSOrderedDescending;
                 return NSOrderedSame;
-            }
             
         }];
     }
@@ -1921,20 +1858,12 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *first  = (AprilTestNormalizedVariable*)[obj1 valueForKey: key];
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
-            if (_SortLowToHigh.isOn){
-                if (first.standingWater < second.standingWater)
-                    return NSOrderedAscending;
-                else if (second.standingWater < first.standingWater)
-                    return NSOrderedDescending;
-                return NSOrderedSame;
-            }
-            else{
+
                 if (first.standingWater > second.standingWater)
                     return NSOrderedAscending;
                 else if (second.standingWater > first.standingWater)
                     return NSOrderedDescending;
                 return NSOrderedSame;
-            }
             
         }];
     }
@@ -1945,20 +1874,11 @@ float maxPublicInstallNorm;
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
             
-            if (_SortLowToHigh.isOn){
-                if (first.dollarsGallons < second.dollarsGallons)
-                    return NSOrderedAscending;
-                else if (second.dollarsGallons < first.dollarsGallons)
-                    return NSOrderedDescending;
-                return NSOrderedSame;
-            }
-            else{
                 if (first.dollarsGallons > second.dollarsGallons)
                     return NSOrderedAscending;
                 else if (second.dollarsGallons > first.dollarsGallons)
                     return NSOrderedDescending;
                 return NSOrderedSame;
-            }
             
         }];
     }
@@ -1969,20 +1889,11 @@ float maxPublicInstallNorm;
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
             
-            if (_SortLowToHigh.isOn){
-                if (first.infiltration < second.infiltration)
-                    return NSOrderedAscending;
-                else if (second.infiltration < first.infiltration)
-                    return NSOrderedDescending;
-                return NSOrderedSame;
-            }
-            else{
                 if (first.infiltration > second.infiltration)
                     return NSOrderedAscending;
                 else if (second.infiltration > first.infiltration)
                     return NSOrderedDescending;
                 return NSOrderedSame;
-            }
             
         }];
     }
@@ -1996,7 +1907,7 @@ float maxPublicInstallNorm;
         UILabel *SewerLoad                    = [[trialRunSubViews objectAtIndex:i] valueForKey:@"SewerLoad"];
         UILabel *gw_infiltration              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterInfiltration"];
         UILabel *EfficiencyOfIntervention     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Efficiency_Interv"];
-        UILabel *maintenance                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
+        //UILabel *maintenance                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
         UILabel *impactNeighbor               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"ImpactNeighbor"];
         FebTestWaterDisplay *wd               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDisplay"];
         FebTestWaterDisplay *mwd              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDisplay"];
@@ -2031,8 +1942,10 @@ float maxPublicInstallNorm;
         //move over efficiency of intervention
         [self OffsetView:EfficiencyOfIntervention toX:EfficiencyOfIntervention.frame.origin.x andY:(i*175) + 40];
         
-        //move over maintenance
+        /*
+        //move over maintenance ==> remove maintenance component
         [self OffsetView:maintenance toX:maintenance.frame.origin.x andY:(i*175) + 100];
+        */
         
         //Offset the "Trial #" label
         [self OffsetView:newTxt      toX:newTxt.frame.origin.x     andY:175*(i)+5];
