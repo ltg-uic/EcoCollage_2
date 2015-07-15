@@ -29,8 +29,12 @@
 @synthesize trialRunsNormalized = _trialRunsNormalized;
 @synthesize trialRunsDynNorm = _trialRunsDynNorm;
 @synthesize budget = _budget;
+@synthesize waterDisplaysInTab = _waterDisplaysInTab;
+@synthesize maxWaterDisplaysInTab = _maxWaterDisplaysInTab;
 
 static NSTimeInterval const kConnectionTimeout = 15.0;
+NSMutableArray *viewsForWaterDisplays;
+NSMutableArray *viewsForMaxWaterDisplays;
 
 
 
@@ -79,7 +83,10 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     _trialRunsDynNorm = [[NSMutableArray alloc]init];
     _profiles = [[NSMutableArray alloc]init];
     _ownProfile = [[NSMutableArray alloc]init];
-    
+    _waterDisplaysInTab = [[NSMutableArray alloc]init];
+    _maxWaterDisplaysInTab = [[NSMutableArray alloc]init];
+    viewsForWaterDisplays = [[NSMutableArray alloc]init];
+    viewsForMaxWaterDisplays = [[NSMutableArray alloc]init];
     
     _budget = 150000;
     
@@ -402,22 +409,45 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
 - (void) receiveMultipleTrials:(NSArray *)dataArray {
     NSLog(@"Received multiple trials");
     
-    // empty trials arrays to prepare to receive all from Momma
-    [_trialRuns removeAllObjects];
-    [_trialRunsNormalized removeAllObjects];
-    [_trialRunsDynNorm removeAllObjects];
+    // check if we already have all of the trials being sent over
+    // count of objects in dataArray = (2 * number of trials being sent) + 1
+    if ([dataArray count] <= _trialNum * 2 + 1) {
+        NSLog(@"Not updating all trials");
+        return;
+    }
     
-    _trialNum = 0;
+    NSMutableArray *temp = [[NSMutableArray alloc]init];
     
-    for (int i = 1; i < dataArray.count; i += 2) {
+    // grab any new trials
+    for (int i = _trialNum * 2 + 1; i < [dataArray count] - 1; i+=2) {
+        [temp addObject:[dataArray objectAtIndex:i]];
+        [temp addObject:[dataArray objectAtIndex:i+1]];
+    }
+    
+    for (int i = 0; i < temp.count - 1; i += 2) {
         
-        AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:[dataArray objectAtIndex:i] withTrialNum:_trialNum];
-        AprilTestNormalizedVariable *simRunNormal = [[AprilTestNormalizedVariable alloc] init: [dataArray objectAtIndex:i+1] withTrialNum:_trialNum];
-        AprilTestNormalizedVariable *simRunDyn    = [[AprilTestNormalizedVariable alloc] init: [dataArray objectAtIndex:i+1] withTrialNum:_trialNum];
+        AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:[temp objectAtIndex:i] withTrialNum:_trialNum];
+        AprilTestNormalizedVariable *simRunNormal = [[AprilTestNormalizedVariable alloc] init: [temp objectAtIndex:i+1] withTrialNum:_trialNum];
+        AprilTestNormalizedVariable *simRunDyn    = [[AprilTestNormalizedVariable alloc] init: [temp objectAtIndex:i+1] withTrialNum:_trialNum];
         
         [_trialRuns addObject:simRun];
         [_trialRunsNormalized addObject:simRunNormal];
         [_trialRunsDynNorm addObject:simRunDyn];
+        
+        
+        FebTestWaterDisplay *waterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.standingWater];
+        
+        [_waterDisplaysInTab addObject:waterDisplay];
+        UIView *viewForWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
+        [viewsForWaterDisplays addObject:viewForWaterDisplay];
+        waterDisplay.view = viewForWaterDisplay;
+        
+        FebTestWaterDisplay *maxWaterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.maxWaterHeights];
+        
+        UIView *viewForMaxWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
+        [viewsForMaxWaterDisplays addObject:viewForMaxWaterDisplay];
+        maxWaterDisplay.view = [viewsForMaxWaterDisplays objectAtIndex:_trialNum];
+        [_maxWaterDisplaysInTab addObject:maxWaterDisplay];
         
         _trialNum++;
     }
@@ -437,6 +467,10 @@ static NSTimeInterval const kConnectionTimeout = 15.0;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updateBudget" object:self];
 }
 
+
+- (UIImage *)viewToImageForWaterDisplay:(FebTestWaterDisplay *)waterDisplay {
+    return [waterDisplay viewToImage];
+}
 
 
 - (void)didReceiveMemoryWarning

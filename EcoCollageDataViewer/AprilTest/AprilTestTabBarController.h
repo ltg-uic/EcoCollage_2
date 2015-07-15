@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <GameKit/GameKit.h>
+#import "FebTestWaterDisplay.h"
 
 @interface AprilTestTabBarController : UITabBarController <GKSessionDelegate>
 @property NSMutableArray * currentConcernRanking;
@@ -23,4 +24,7 @@
 @property NSString * peerIDForMomma;
 @property int showProfile;
 @property int budget;
+@property NSMutableArray *waterDisplaysInTab;
+@property NSMutableArray *maxWaterDisplaysInTab;
+- (UIImage *)viewToImageForWaterDisplay:(FebTestWaterDisplay *)waterDisplay;
 @end

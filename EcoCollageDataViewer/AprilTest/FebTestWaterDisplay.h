@@ -17,4 +17,5 @@
 - (id)initWithFrame:(CGRect)frame andContent: (NSString *)content;
 - (void) updateView: (int) hoursAfterStorm;
 - (void) fastUpdateView: (int) hoursAfterStorm;
+- (UIImage*)viewToImage;
 @end
