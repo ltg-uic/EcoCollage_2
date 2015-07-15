@@ -67,7 +67,35 @@ NSMutableArray *slices;
 NSMutableDictionary *sliceNumbers;
 NSMutableArray *slicesInfo;
 NSMutableArray *imageViewsToRemove;
+int widthOfUsernamesWindowWhenOpen;
 
+
+- (IBAction)hideOrShow:(UIButton *)sender {
+    int sizeOfChange = largeSizeOfMapWindow - smallSizeOfMapWindow;
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    if (_usernamesWindow.frame.origin.x < 0) { // show it
+        if (_mapWindow.frame.size.height <= smallSizeOfMapWindow) {
+            _usernamesWindow.frame = CGRectMake(0, 108, 283, 540);
+            _profilesWindow.frame = CGRectMake(283, 108, 769, 540);
+            [self.view viewWithTag:9002].frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
+        }
+        else {
+            _usernamesWindow.frame = CGRectMake(0, 108 + sizeOfChange, 283, 540 - sizeOfChange);
+            _profilesWindow.frame = CGRectMake(283, 108 + sizeOfChange, 769, 540 - sizeOfChange);
+            [self.view viewWithTag:9002].frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
+        }
+    }
+    else { // hide it
+        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
+        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _profilesWindow.frame.size.width, _usernamesWindow.frame.size.height);
+        [self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
+    }
+    [UIView commitAnimations];
+}
 
 
 
@@ -224,6 +252,8 @@ NSMutableArray *imageViewsToRemove;
     lineBetweenViews.layer.borderWidth = 1.0;
     lineBetweenViews.tag = 9002;
     [self.view addSubview:lineBetweenViews];
+    
+    widthOfUsernamesWindowWhenOpen = _usernamesWindow.frame.size.width;
     
 }
 
@@ -589,7 +619,7 @@ NSMutableArray *imageViewsToRemove;
     UILabel *nameLabel = [[UILabel alloc]init];
     nameLabel.tag = 1;
     nameLabel.backgroundColor = [UIColor whiteColor];
-    nameLabel.frame = CGRectMake(0, 2, _usernamesWindow.frame.size.width, 40);
+    nameLabel.frame = CGRectMake(0, 2, widthOfUsernamesWindowWhenOpen, 40);
     nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
     if ([[tabControl.profiles objectAtIndex:i] isEqual:tabControl.ownProfile])
         nameLabel.text = [NSString stringWithFormat:@"  %@ (You)", [[tabControl.profiles objectAtIndex:i] objectAtIndex:2]];
@@ -1588,14 +1618,6 @@ NSMutableArray *imageViewsToRemove;
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
     
-    budgetLabel = [[UILabel alloc]init];
-    budgetLabel.text = [NSString stringWithFormat:@"Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:tabControl.budget]]];
-    budgetLabel.font = [UIFont systemFontOfSize:15.0];
-    [budgetLabel sizeToFit];
-    budgetLabel.frame = CGRectMake(_StormPlayBack.frame.origin.x, _StormPlayBack.frame.origin.y - budgetLabel.frame.size.height - 4, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
-    [budgetLabel setBackgroundColor:[UIColor clearColor]];
-    [self.view addSubview:budgetLabel];
-    
     UILabel *minLabelStorm = [[UILabel alloc]init];
     minLabelStorm.text = @"0 hrs";
     minLabelStorm.font = [UIFont systemFontOfSize:15.0];
@@ -1619,6 +1641,14 @@ NSMutableArray *imageViewsToRemove;
     hoursAfterStormLabel.frame = CGRectMake(minLabelStorm.frame.origin.x - hoursAfterStormLabel.frame.size.width - 25, _StormPlayBack.frame.origin.y, hoursAfterStormLabel.frame.size.width, _StormPlayBack.frame.size.height);
     [hoursAfterStormLabel setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:hoursAfterStormLabel];
+    
+    budgetLabel = [[UILabel alloc]init];
+    budgetLabel.text = [NSString stringWithFormat:@"Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:tabControl.budget]]];
+    budgetLabel.font = [UIFont systemFontOfSize:15.0];
+    [budgetLabel sizeToFit];
+    budgetLabel.frame = CGRectMake(hoursAfterStormLabel.frame.origin.x, hoursAfterStormLabel.frame.origin.y - budgetLabel.frame.size.height - 4, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
+    [budgetLabel setBackgroundColor:[UIColor clearColor]];
+    [self.view addSubview:budgetLabel];
 }
 
 

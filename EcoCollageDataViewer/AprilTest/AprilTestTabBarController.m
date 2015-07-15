@@ -396,13 +396,37 @@ NSMutableArray *viewsForMaxWaterDisplays;
     [_trialRunsNormalized addObject:simRunNormal];
     [_trialRunsDynNorm addObject:simRunDyn];
     
+    
+    for (int i = 0; i < _trialNum; i++) {
+        if ([((AprilTestSimRun*)[_trialRuns objectAtIndex:i]).map isEqualToString:simRun.map]) {
+            [_trialRuns removeObject:simRun];
+            [_trialRunsNormalized removeObject:simRunNormal];
+            [_trialRunsDynNorm removeObject:simRunDyn];
+            return;
+        }
+    }
+    
+    FebTestWaterDisplay *waterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.standingWater];
+    
+    [_waterDisplaysInTab addObject:waterDisplay];
+    UIView *viewForWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
+    [viewsForWaterDisplays addObject:viewForWaterDisplay];
+    waterDisplay.view = viewForWaterDisplay;
+    
+    FebTestWaterDisplay *maxWaterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.maxWaterHeights];
+    
+    UIView *viewForMaxWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
+    [viewsForMaxWaterDisplays addObject:viewForMaxWaterDisplay];
+    maxWaterDisplay.view = [viewsForMaxWaterDisplays objectAtIndex:_trialNum];
+    [_maxWaterDisplaysInTab addObject:maxWaterDisplay];
+    
     _trialNum++;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updatePicker" object:self];
     
     if (_trialNum == 1)
         [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"drawSingleTrial" object:self userInfo:nil];
+    else
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"drawSingleTrial" object:self userInfo:nil];
 }
 
 
