@@ -200,28 +200,6 @@ NSMutableArray *viewsForMaxWaterDisplays;
     }
 }
 
-- (void)session:(GKSession *)session didReceiveConnectionRequestFromPeer:(NSString *)peerID
-{
-    NSLog(@"didReceiveConnectionRequestFromPeer: %@", [session displayNameForPeer:peerID]);
-    
-    NSError *error;
-    
-    BOOL connectionEstablished = FALSE;
-    NSString *peerName = [session displayNameForPeer:peerID];
-    
-    if([peerName isEqualToString:[NSString stringWithFormat:@"Momma%d", _studyNum]])
-        connectionEstablished = [session acceptConnectionFromPeer:peerID error:&error];
-    else {
-        [session denyConnectionFromPeer:peerID];
-        NSLog(@"Denied connection");
-    }
-    
-    if (!connectionEstablished)
-    {
-        NSLog(@"error = %@", error);
-    }
-}
-
 
 - (void)session:(GKSession *)session connectionWithPeerFailed:(NSString *)peerID withError:(NSError *)error
 {
@@ -308,6 +286,10 @@ NSMutableArray *viewsForMaxWaterDisplays;
     for (int i = 0; i < _profiles.count; i++) {
         // if device names match, change username
         if([_profiles[i][1] isEqualToString:dataArray[1]]) {
+            /*
+            if ([[[_profiles objectAtIndex:i] objectAtIndex:2] isEqualToString:[dataArray objectAtIndex:2]])
+                return;
+             */
             _profiles[i][2] = dataArray[2];
             index = i;
         }
@@ -318,11 +300,17 @@ NSMutableArray *viewsForMaxWaterDisplays;
         NSDictionary *dict = [NSDictionary dictionaryWithObject:numIndex forKey:@"data"];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"usernameUpdate" object:nil userInfo:dict];
     }
+    
 }
 
 
-- (void) receiveAllProfilesFromMomma:(NSArray *)dataArray {    
+- (void) receiveAllProfilesFromMomma:(NSArray *)dataArray {
+    
     // empty current profiles mutableArray if there is anything in there
+    if (_profiles.count >= ([dataArray count] - 1))
+        return;
+    
+     
     if (_profiles.count != 0)
         [_profiles removeAllObjects];
     
@@ -363,6 +351,10 @@ NSMutableArray *viewsForMaxWaterDisplays;
     // and if so update it and send update to babies
     for (int i = 0; i < _profiles.count; i++) {
         if([_profiles[i][1] isEqualToString:dataArray[1]]) {
+            /*
+            if([[_profiles objectAtIndex:i] isEqual: dataArray])
+                return;
+             */
             _profiles[i] = dataArray;
             oldProfile = 1;
             // grab the index of the profile changed so social view visualization can reload that profile
@@ -397,6 +389,7 @@ NSMutableArray *viewsForMaxWaterDisplays;
     [_trialRunsDynNorm addObject:simRunDyn];
     
     
+    // check if we already have this trial
     for (int i = 0; i < _trialNum; i++) {
         if ([((AprilTestSimRun*)[_trialRuns objectAtIndex:i]).map isEqualToString:simRun.map]) {
             [_trialRuns removeObject:simRun];
@@ -405,6 +398,7 @@ NSMutableArray *viewsForMaxWaterDisplays;
             return;
         }
     }
+    
     
     FebTestWaterDisplay *waterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.standingWater];
     
@@ -423,8 +417,9 @@ NSMutableArray *viewsForMaxWaterDisplays;
     _trialNum++;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updatePicker" object:self];
     
-    if (_trialNum == 1)
+    if (_trialNum == 1) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
+    }
     else
         [[NSNotificationCenter defaultCenter] postNotificationName:@"drawSingleTrial" object:self userInfo:nil];
 }
@@ -433,12 +428,14 @@ NSMutableArray *viewsForMaxWaterDisplays;
 - (void) receiveMultipleTrials:(NSArray *)dataArray {
     NSLog(@"Received multiple trials");
     
+    
     // check if we already have all of the trials being sent over
     // count of objects in dataArray = (2 * number of trials being sent) + 1
     if ([dataArray count] <= _trialNum * 2 + 1) {
         NSLog(@"Not updating all trials");
         return;
     }
+     
     
     NSMutableArray *temp = [[NSMutableArray alloc]init];
     
@@ -486,6 +483,7 @@ NSMutableArray *viewsForMaxWaterDisplays;
 }
 
 - (void)updateBudget:(NSArray *)dataArray {
+
     _budget = [[dataArray objectAtIndex:1]integerValue];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updateBudget" object:self];

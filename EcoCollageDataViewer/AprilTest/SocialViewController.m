@@ -165,6 +165,7 @@ int widthOfUsernamesWindowWhenOpen;
     _loadingIndicator.center = CGPointMake(512, 300);
     _loadingIndicator.color = [UIColor blueColor];
     [self.view addSubview:_loadingIndicator];
+    [_loadingIndicator stopAnimating];
     
     
     arrStatus_social = [[NSArray alloc] initWithObjects:@"Trial 0", @"Favorite trials", nil];
@@ -259,6 +260,7 @@ int widthOfUsernamesWindowWhenOpen;
 
 
 -(void) dealloc {
+    NSLog(@"Deallocing...");
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -301,6 +303,8 @@ int widthOfUsernamesWindowWhenOpen;
                                              selector:@selector(BudgetChanged)
                                                  name:@"updateBudget"
                                                object:nil];
+    
+    [self updatePicker];
     
     
 }
@@ -412,7 +416,8 @@ int widthOfUsernamesWindowWhenOpen;
     // Handle the selection
     if (row == tabControl.trialNum) {
         _trialNumber.text = @"Favorite Trials";
-        [self loadFavorites];
+        if (tabControl.trialNum > 0)
+            [self loadFavorites];
         [[self view] endEditing:YES];
         return;
     }
@@ -466,7 +471,8 @@ int widthOfUsernamesWindowWhenOpen;
     // check to see if we should load the favorites
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     if (tabControl.trialNum == trialChosen) {
-        [self loadFavorites];
+        if (tabControl.trialNum > 0)
+            [self loadFavorites];
         return;
     }
 
@@ -477,7 +483,7 @@ int widthOfUsernamesWindowWhenOpen;
     [self loadVisualizationForNewTrial];
     [_loadingIndicator stopAnimating];
 
-    NSLog(@"Updated profile");
+    NSLog(@"Updated profile in Social View");
 }
 
 - (void)loadPies {
@@ -581,22 +587,30 @@ int widthOfUsernamesWindowWhenOpen;
         currentLabel.frame = CGRectMake(width, 0, widthOfTitleVisualization, 40);
         currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
         
-        if([[profileArray objectAtIndex:j] isEqualToString:@"Investment"])
+        if([[profileArray objectAtIndex:j] isEqualToString:@"Investment"]) {
             currentLabel.text = @"  Investment";
-        else if([[profileArray objectAtIndex:j] isEqualToString:@"Damage Reduction"])
+        }
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Damage Reduction"]) {
             currentLabel.text = @"  Damage Reduction";
-        else if([[profileArray objectAtIndex:j] isEqualToString:@"Efficiency of Intervention ($/Gallon)"])
+        }
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Efficiency of Intervention ($/Gallon)"]) {
             currentLabel.text = @"  Efficiency of Intervention";
-        else if([[profileArray objectAtIndex:j] isEqualToString:@"Capacity Used"])
+        }
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Capacity Used"]) {
             currentLabel.text = @"  Intervention Capacity";
-        else if([[profileArray objectAtIndex:j] isEqualToString:@"Water Depth Over Time"])
+        }
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
             currentLabel.text = @"  Water Depth Over Storm";
-        else if([[profileArray objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"])
+        }
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
             currentLabel.text = @"  Maximum Flooded Area";
-        else if([[profileArray objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"])
+        }
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"]) {
             currentLabel.text = @"  Groundwater Infiltration";
-        else if([[profileArray objectAtIndex:j] isEqualToString:@"Impact on my Neighbors"])
+        }
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Impact on my Neighbors"]) {
             currentLabel.text = @"  Impact on my Neighbors";
+        }
         else {
             currentLabel = NULL;
         }
@@ -621,10 +635,12 @@ int widthOfUsernamesWindowWhenOpen;
     nameLabel.backgroundColor = [UIColor whiteColor];
     nameLabel.frame = CGRectMake(0, 2, widthOfUsernamesWindowWhenOpen, 40);
     nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
-    if ([[tabControl.profiles objectAtIndex:i] isEqual:tabControl.ownProfile])
+    if ([[tabControl.profiles objectAtIndex:i] isEqual:tabControl.ownProfile]) {
         nameLabel.text = [NSString stringWithFormat:@"  %@ (You)", [[tabControl.profiles objectAtIndex:i] objectAtIndex:2]];
-    else
+    }
+    else {
         nameLabel.text = [NSString stringWithFormat:@"  %@", [[tabControl.profiles objectAtIndex:i] objectAtIndex:2]];
+    }
     if(nameLabel != NULL) {
         [[_usernamesWindow viewWithTag:i + 1] addSubview:nameLabel];
     }
@@ -754,8 +770,10 @@ int widthOfUsernamesWindowWhenOpen;
 }
 
 - (void)loadVisualizationForFavorites {
-    if ([personalFavorites count] == 0)
+    if ([personalFavorites count] == 0) {
+        [_loadingIndicator stopAnimating];
         return;
+    }
 
     
     NSLog(@"loading favorites");
@@ -858,8 +876,9 @@ int widthOfUsernamesWindowWhenOpen;
     nameLabel.backgroundColor = [UIColor whiteColor];
     nameLabel.frame = CGRectMake(0, 2, _usernamesWindow.frame.size.width, 40);
     nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
-    if ([profile isEqual:tabControl.ownProfile])
+    if ([profile isEqual:tabControl.ownProfile]) {
         nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], [[[personalFavorites objectAtIndex:i] objectAtIndex:1]integerValue]];
+    }
     else
         nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], [[[personalFavorites objectAtIndex:i] objectAtIndex:1]integerValue]];
     if(nameLabel != NULL) {
@@ -908,22 +927,30 @@ int widthOfUsernamesWindowWhenOpen;
         currentLabel.frame = CGRectMake(width, 2, widthOfTitleVisualization, 40);
         currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
         
-        if([[profile objectAtIndex:j] isEqualToString:@"Investment"])
+        if([[profile objectAtIndex:j] isEqualToString:@"Investment"]){
             currentLabel.text = @"  Investment";
-        else if([[profile objectAtIndex:j] isEqualToString:@"Damage Reduction"])
+        }
+        else if([[profile objectAtIndex:j] isEqualToString:@"Damage Reduction"]) {
             currentLabel.text = @"  Damage Reduction";
-        else if([[profile objectAtIndex:j] isEqualToString:@"Efficiency of Intervention ($/Gallon)"])
+        }
+        else if([[profile objectAtIndex:j] isEqualToString:@"Efficiency of Intervention ($/Gallon)"]) {
             currentLabel.text = @"  Efficiency of Intervention";
-        else if([[profile objectAtIndex:j] isEqualToString:@"Capacity Used"])
+        }
+        else if([[profile objectAtIndex:j] isEqualToString:@"Capacity Used"]) {
             currentLabel.text = @"  Intervention Capacity";
-        else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"])
+        }
+        else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
             currentLabel.text = @"  Water Depth Over Storm";
-        else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"])
+        }
+        else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
             currentLabel.text = @"  Maximum Flooded Area";
-        else if([[profile objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"])
+        }
+        else if([[profile objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"]) {
             currentLabel.text = @"  Groundwater Infiltration";
-        else if([[profile objectAtIndex:j] isEqualToString:@"Impact on my Neighbors"])
+        }
+        else if([[profile objectAtIndex:j] isEqualToString:@"Impact on my Neighbors"]) {
             currentLabel.text = @"  Impact on my Neighbors";
+        }
         else {
             currentLabel = NULL;
         }
@@ -1582,8 +1609,10 @@ int widthOfUsernamesWindowWhenOpen;
     [self changeBudgetLabel:tabControl.budget];
     
     
-    if (tabControl.trialNum == trialChosen)
-        [self loadFavorites];
+    if (tabControl.trialNum == trialChosen) {
+        if (tabControl.trialNum > 0)
+            [self loadFavorites];
+    }
     else {
         //only update all labels/bars if Static normalization is switched on
         [self profileUpdate];
@@ -1683,8 +1712,10 @@ int widthOfUsernamesWindowWhenOpen;
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
-    if (tabControl.trialNum == trialChosen)
-        [self loadFavorites];
+    if (tabControl.trialNum == trialChosen) {
+        if (tabControl.trialNum > 0)
+            [self loadFavorites];
+    }
     else
         [self profileUpdate];
 

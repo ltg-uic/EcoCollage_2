@@ -144,17 +144,7 @@ int currentBudget;
         {
             NSLog(@"didChangeState: peer %@ available", peerName);
             
-            BOOL shouldInvite = ([peerName isEqualToString:[NSString stringWithFormat:@"Baby%d", _studyNum]]);
-            
-            if (shouldInvite)
-            {
-                NSLog(@"Inviting %@", peerID);
-                [session connectToPeer:peerID withTimeout:kConnectionTimeout];
-            }
-            else
-            {
-                NSLog(@"Not inviting %@", peerID);
-            }
+            NSLog(@"Not inviting");
             
             break;
         }
@@ -416,6 +406,7 @@ int currentBudget;
     if(trialToSendToBaby != nil) {
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:trialToSendToBaby];
         [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+        NSLog(@"Sent single trial to all babies");
     }
 }
 
@@ -437,7 +428,8 @@ int currentBudget;
     // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
     if(trialToSendToBaby != nil) {
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:trialToSendToBaby];
-        [_session sendData:data toPeers:@[peerID] withDataMode:GKSendDataReliable error:nil];
+        [_session sendData:data toPeers:@[peerID] withDataMode:GKSendDataReliable error:nil];\
+        NSLog(@"Sent single trial to %@", peerID);
     }
 }
 
@@ -474,6 +466,7 @@ int currentBudget;
     if(trialsToSendToBaby != nil) {
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:trialsToSendToBaby];
         [_session sendData:data toPeers:@[peerID] withDataMode:GKSendDataReliable error:nil];
+        NSLog(@"Sent all trials to %@", peerID);
     }
 }
 
@@ -481,7 +474,7 @@ int currentBudget;
 
 
 # pragma mark CoreBluetooth Methods
-/*
+
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
 {
@@ -648,7 +641,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     // Log it
     NSLog(@"Received: %@", stringFromData);
 }
-*/
+
 
 - (void) updateMacMiniTextView {
     NSMutableString *stringForMacMiniTextView = [[NSMutableString alloc]initWithString:@""];
