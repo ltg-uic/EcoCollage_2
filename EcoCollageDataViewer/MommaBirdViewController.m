@@ -28,7 +28,7 @@
 @synthesize discoveredPeripheral = _discoveredPeripheral;
 @synthesize BudgetSlider = _BudgetSlider;
 
-static NSTimeInterval const kConnectionTimeout = 15.0;
+static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *profiles;
 NSMutableArray * trialRuns;             // array of strings, not yet analyzed as trial data, to be passed to babies
 NSMutableArray * trialRunsNormalized;   // same as above, but this contains normalized raw data
@@ -37,6 +37,7 @@ UILabel *budgetLabel;
 int trialNum;
 int maxBudget = 5000000;
 int currentBudget;
+NSData *ping;
 
 
 #define SEPARATOR_FOR_TRIAL_DATA        @"$(TRIAL_DATA)$"
@@ -88,9 +89,21 @@ int currentBudget;
     
     budgetLabel = [[UILabel alloc]init];
     [self drawBudgetLabels];
+    
+    NSDictionary *pingDict = [NSDictionary dictionaryWithObject:@"ping" forKey:@"ping"];
+    ping = [NSKeyedArchiver archivedDataWithRootObject:pingDict];
+    
+    
+    [NSTimer scheduledTimerWithTimeInterval:10.0f
+                                     target:self selector:@selector(pingPeers) userInfo:nil repeats:YES];
 
 }
 
+- (void)pingPeers {
+    if ([[_session peersWithConnectionState:GKPeerStateConnected] count] > 0) {
+        [_session sendDataToAllPeers:ping withDataMode:GKSendDataReliable error:nil];
+    }
+}
 
 
 - (void)viewWillDisappear:(BOOL)animated

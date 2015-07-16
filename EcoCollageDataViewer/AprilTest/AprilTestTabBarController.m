@@ -32,9 +32,10 @@
 @synthesize waterDisplaysInTab = _waterDisplaysInTab;
 @synthesize maxWaterDisplaysInTab = _maxWaterDisplaysInTab;
 
-static NSTimeInterval const kConnectionTimeout = 15.0;
+static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *viewsForWaterDisplays;
 NSMutableArray *viewsForMaxWaterDisplays;
+NSDictionary *dataDictionary;
 
 
 
@@ -92,6 +93,8 @@ NSMutableArray *viewsForMaxWaterDisplays;
     
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     
+    dataDictionary = [[NSDictionary alloc]init];
+    
     
     
     // Register for notifications
@@ -108,9 +111,20 @@ NSMutableArray *viewsForMaxWaterDisplays;
     
     [self setupSession];
     
+    [NSTimer scheduledTimerWithTimeInterval:10.0f
+                                     target:self selector:@selector(checkConnection) userInfo:nil repeats:YES];
+    
 }
 
 #pragma mark - Memory management
+
+- (void)checkConnection {
+    if ([[_session peersWithConnectionState:GKPeerStateConnected] count] == 0) {
+        NSLog(@"Attempting reconnection");
+        self.session.available = NO;
+        self.session.available = YES;
+    }
+}
 
 - (void)dealloc
 {
@@ -187,8 +201,10 @@ NSMutableArray *viewsForMaxWaterDisplays;
         case GKPeerStateDisconnected:
         {
             NSLog(@"didChangeState: peer %@ disconnected", peerName);
+            /*
             [self teardownSession];
             [self setupSession];
+             */
             break;
         }
             
@@ -204,17 +220,21 @@ NSMutableArray *viewsForMaxWaterDisplays;
 - (void)session:(GKSession *)session connectionWithPeerFailed:(NSString *)peerID withError:(NSError *)error
 {
     NSLog(@"connectionWithPeerFailed: peer: %@, error: %@", [session displayNameForPeer:peerID], error);
+    /*
     [self teardownSession];
     [self setupSession];
+     */
 }
 
 - (void)session:(GKSession *)session didFailWithError:(NSError *)error
 {
     NSLog(@"didFailWithError: error: %@", error);
     
+    /*
     [session disconnectPeerFromAllPeers:session.peerID];
     [self teardownSession];
     [self setupSession];
+     */
 }
 
 
@@ -222,7 +242,13 @@ NSMutableArray *viewsForMaxWaterDisplays;
 
 - (void) receiveData:(NSData *)data fromPeer:(NSString *)peer inSession:(GKSession *)session context:(void *)context {
     // convert NSData to NSDictionary
-    NSDictionary *dataDictionary = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    dataDictionary = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    
+    if ([[dataDictionary objectForKey:@"ping"] isEqualToString:@"ping"]) {
+        // received ping to keep connection alive
+        //NSLog(@"Received ping");
+        return;
+    }
     
     // convert NSDictionary to NSArray
     NSArray *dataArray = [dataDictionary objectForKey:@"data"];
@@ -255,6 +281,9 @@ NSMutableArray *viewsForMaxWaterDisplays;
     }
     else if([dataArray[0] isEqualToString:@"budgetChange"]) {
         [self updateBudget:dataArray];
+    }
+    else {
+        NSLog(@"Received unknown data");
     }
 }
 
@@ -305,6 +334,7 @@ NSMutableArray *viewsForMaxWaterDisplays;
 
 
 - (void) receiveAllProfilesFromMomma:(NSArray *)dataArray {
+    NSLog(@"AprilTestTabBar: receiveAllProfilesFromMomma: Received all profiles from Momma");
     
     // empty current profiles mutableArray if there is anything in there
     if (_profiles.count >= ([dataArray count] - 1))
@@ -324,9 +354,9 @@ NSMutableArray *viewsForMaxWaterDisplays;
     }
     
     
-    NSLog(@"Received all profiles from Momma");
+    NSLog(@"AprilTestTabBar: receiveAllProfilesFromMomma: Processed all profiles from Momma");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
-    NSLog(@"test");
+    NSLog(@"AprilTestTabBar: receiveAllProfilesFromMomma: Sent notification for all profiles from Momma to listening channels");
 }
 
 
@@ -337,7 +367,7 @@ NSMutableArray *viewsForMaxWaterDisplays;
 // 3 - 10 : concerns in order of most important to least important
 
 - (void) receiveProfileFromMomma:(NSArray *)dataArray {
-    NSLog(@"Received single profile from Momma");
+    NSLog(@"AprilTestTabBar: receiveProfileFromMomma: Received single profile from Momma");
     
     // if profile belongs to us, don't do anything
     if ([[dataArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]])
@@ -366,6 +396,9 @@ NSMutableArray *viewsForMaxWaterDisplays;
     if (!oldProfile) {
         [_profiles addObject:dataArray];
     }
+    
+    
+    NSLog(@"AprilTestTabBar: receiveProfileFromMomma: Processed single profile from Momma");
 
     if (oldProfile) {
         NSNumber *numIndex = [NSNumber numberWithInt:index];
@@ -374,11 +407,14 @@ NSMutableArray *viewsForMaxWaterDisplays;
     }
     else
         [[NSNotificationCenter defaultCenter] postNotificationName:@"drawNewProfile" object:self userInfo:nil];
+    
+    
+    NSLog(@"AprilTestTabBar: receiveProfileFromMomma: Sent notification for single profile from Momma to listening channels");
 }
 
 
 - (void) receiveSingleTrial:(NSArray *)dataArray {
-    NSLog(@"Received single trial");
+    NSLog(@"AprilTestTabBar: receiveSingleTrial: Received single trial");
     
     AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:[dataArray objectAtIndex:1] withTrialNum:_trialNum];
     AprilTestNormalizedVariable *simRunNormal = [[AprilTestNormalizedVariable alloc] init: [dataArray objectAtIndex:2] withTrialNum:_trialNum];
@@ -392,9 +428,9 @@ NSMutableArray *viewsForMaxWaterDisplays;
     // check if we already have this trial
     for (int i = 0; i < _trialNum; i++) {
         if ([((AprilTestSimRun*)[_trialRuns objectAtIndex:i]).map isEqualToString:simRun.map]) {
-            [_trialRuns removeObject:simRun];
-            [_trialRunsNormalized removeObject:simRunNormal];
-            [_trialRunsDynNorm removeObject:simRunDyn];
+            [_trialRuns objectAtIndex:i];
+            [_trialRunsNormalized objectAtIndex:i];
+            [_trialRunsDynNorm objectAtIndex:i];
             return;
         }
     }
@@ -415,24 +451,29 @@ NSMutableArray *viewsForMaxWaterDisplays;
     [_maxWaterDisplaysInTab addObject:maxWaterDisplay];
     
     _trialNum++;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"updatePicker" object:self];
     
-    if (_trialNum == 1) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
-    }
-    else
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"drawSingleTrial" object:self userInfo:nil];
+    
+    NSLog(@"AprilTestTabBar: receiveSingleTrial: Processed single trial");
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"updatePicker" object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self];
+    
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"drawSingleTrial" object:self userInfo:nil];
+    
+    
+    NSLog(@"AprilTestTabBar: receiveSingleTrial: Sent notification to listening channels");
 }
 
 
 - (void) receiveMultipleTrials:(NSArray *)dataArray {
-    NSLog(@"Received multiple trials");
+    NSLog(@"AprilTestTabBar: receiveMultipleTrials: Received multiple trials");
     
     
     // check if we already have all of the trials being sent over
     // count of objects in dataArray = (2 * number of trials being sent) + 1
     if ([dataArray count] <= _trialNum * 2 + 1) {
-        NSLog(@"Not updating all trials");
+        NSLog(@"AprilTestTabBar: receiveMultipleTrials: Not updating all trials");
         return;
     }
      
@@ -473,6 +514,8 @@ NSMutableArray *viewsForMaxWaterDisplays;
         _trialNum++;
     }
     
+    NSLog(@"AprilTestTabBar: receiveMultipleTrials: Processed multiple trials");
+    
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updatePicker" object:self];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
@@ -480,9 +523,13 @@ NSMutableArray *viewsForMaxWaterDisplays;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"drawMultipleTrials" object:self userInfo:nil];
     
+    NSLog(@"AprilTestTabBar: receiveMultipleTrials: Sent updates to listening views for multiple trials");
+    
 }
 
 - (void)updateBudget:(NSArray *)dataArray {
+    if (_budget == [[dataArray objectAtIndex:1]integerValue])
+        return;
 
     _budget = [[dataArray objectAtIndex:1]integerValue];
     
