@@ -323,7 +323,6 @@ int widthOfUsernamesWindowWhenOpen;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawNewProfile" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
 
-    
     // empty _usernamesWindow and _profilesWindow to free memory
     for (UIView *view in [_usernamesWindow subviews]) {
         for (UIView *subsubview in [view subviews])
