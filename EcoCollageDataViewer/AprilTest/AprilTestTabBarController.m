@@ -31,6 +31,7 @@
 @synthesize budget = _budget;
 @synthesize waterDisplaysInTab = _waterDisplaysInTab;
 @synthesize maxWaterDisplaysInTab = _maxWaterDisplaysInTab;
+@synthesize pieCharts = _pieCharts;
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *viewsForWaterDisplays;
@@ -88,6 +89,7 @@ NSDictionary *dataDictionary;
     _maxWaterDisplaysInTab = [[NSMutableArray alloc]init];
     viewsForWaterDisplays = [[NSMutableArray alloc]init];
     viewsForMaxWaterDisplays = [[NSMutableArray alloc]init];
+    _pieCharts = [[NSMutableArray alloc]init];
     
     _budget = 150000;
     
@@ -121,7 +123,7 @@ NSDictionary *dataDictionary;
 - (void)checkConnection {
     if ([[_session peersWithConnectionState:GKPeerStateConnected] count] == 0) {
         NSLog(@"Attempting reconnection");
-        [self teardownSession];
+        [self shutdownBluetooth];
         [self setupSession];
     }
 }
@@ -135,6 +137,14 @@ NSDictionary *dataDictionary;
     
     // Nil out delegate
     _session.delegate = nil;
+}
+
+- (void) shutdownBluetooth {
+    [self.session disconnectFromAllPeers];
+    self.session.available = NO;
+    [self.session setDataReceiveHandler:nil withContext:nil];
+    self.session.delegate = nil;
+    self.session = nil;
 }
 
 #pragma mark - GKSession setup and teardown
@@ -343,16 +353,21 @@ NSDictionary *dataDictionary;
         return;
     
      
-    if (_profiles.count != 0)
+    if (_profiles.count != 0) {
         [_profiles removeAllObjects];
+        [_pieCharts removeAllObjects];
+    }
     
     [_profiles addObject:_ownProfile];
+    [self addPieChartAtIndex:0 forProfile:_ownProfile];
     
     // add all profiles sent from momma to local profile list in baby
     for (int i = 1; i < dataArray.count; i++) {
         // only add the profile if it is not our own
-        if (![[[dataArray objectAtIndex:i]objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name] ])
+        if (![[[dataArray objectAtIndex:i]objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name] ]) {
             [_profiles addObject:[dataArray objectAtIndex:i]];
+            [self addPieChartAtIndex:i forProfile:[dataArray objectAtIndex:i]];
+        }
     }
     
     
@@ -361,6 +376,15 @@ NSDictionary *dataDictionary;
     NSLog(@"AprilTestTabBar: receiveAllProfilesFromMomma: Sent notification for all profiles from Momma to listening channels");
 }
 
+- (void) addPieChartAtIndex:(int)index forProfile:(NSArray *)profile {
+    // write code for adding pie charts
+}
+
+- (void) updatePieChartAtIndex:(int)index {
+    
+    
+    // make a notification to social view that a pie chart was reloaded
+}
 
 // profile data setup by indexes of mutablearray
 // 0 : type of data being sent (profileToBaby)
@@ -395,8 +419,10 @@ NSDictionary *dataDictionary;
     }
     
     // otherwise, the profile is new and should be added to the mutableArray 'profiles'
+    // a pie chart should also be loaded for the profile
     if (!oldProfile) {
         [_profiles addObject:dataArray];
+        [self addPieChartAtIndex:(int)[_pieCharts count] forProfile:dataArray];
     }
     
     
@@ -406,6 +432,7 @@ NSDictionary *dataDictionary;
         NSNumber *numIndex = [NSNumber numberWithInt:index];
         NSDictionary *dict = [NSDictionary dictionaryWithObject:numIndex forKey:@"data"];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"updateSingleProfile" object:self   userInfo:dict];
+        [self updatePieChartAtIndex:index];
     }
     else
         [[NSNotificationCenter defaultCenter] postNotificationName:@"drawNewProfile" object:self userInfo:nil];

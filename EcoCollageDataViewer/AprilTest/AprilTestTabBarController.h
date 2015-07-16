@@ -26,5 +26,7 @@
 @property int budget;
 @property NSMutableArray *waterDisplaysInTab;
 @property NSMutableArray *maxWaterDisplaysInTab;
+@property NSMutableArray *pieCharts;
 - (UIImage *)viewToImageForWaterDisplay:(FebTestWaterDisplay *)waterDisplay;
++ (void) shutdownBluetooth;
 @end
