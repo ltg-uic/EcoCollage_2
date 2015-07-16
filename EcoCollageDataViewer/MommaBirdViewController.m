@@ -94,7 +94,7 @@ NSData *ping;
     ping = [NSKeyedArchiver archivedDataWithRootObject:pingDict];
     
     
-    [NSTimer scheduledTimerWithTimeInterval:10.0f
+    [NSTimer scheduledTimerWithTimeInterval:20.0f
                                      target:self selector:@selector(pingPeers) userInfo:nil repeats:YES];
 
 }

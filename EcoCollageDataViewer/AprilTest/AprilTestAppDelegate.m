@@ -7,8 +7,10 @@
 //
 
 #import "AprilTestAppDelegate.h"
+#import "AprilTestTabBarController.h"
 
 @implementation AprilTestAppDelegate
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

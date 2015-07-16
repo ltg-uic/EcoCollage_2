@@ -121,10 +121,12 @@ NSDictionary *dataDictionary;
 - (void)checkConnection {
     if ([[_session peersWithConnectionState:GKPeerStateConnected] count] == 0) {
         NSLog(@"Attempting reconnection");
-        self.session.available = NO;
-        self.session.available = YES;
+        [self teardownSession];
+        [self setupSession];
     }
 }
+
+
 
 - (void)dealloc
 {
