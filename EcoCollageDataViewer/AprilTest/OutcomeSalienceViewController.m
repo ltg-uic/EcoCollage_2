@@ -78,8 +78,8 @@ UILabel  *investmentBudget;
 UILabel  *interventionCap;
 UILabel  *WaterDepthOverStorm;
 UISlider *BudgetSlider;
-UISlider *StormPlayBack;
-UISlider *StormPlayBack2;
+UISlider *StormPlaybackWater;
+UISlider *StormPlaybackInterv;
 UIPickerView *SortType;
 UITapGestureRecognizer *tapGestureRecognizer;
 
@@ -355,8 +355,8 @@ float maxPublicInstallNorm;
 -(void)StormHoursChangedOutcome:(id)sender{
     UISlider *slider = (UISlider*)sender;
     hours= slider.value;
-    StormPlayBack.value = hours;
-    StormPlayBack2.value = hours;
+    StormPlaybackWater.value = hours;
+    StormPlaybackInterv.value = hours;
     //-- Do further actions
     
     hoursAfterStorm = floorf(hours);
@@ -371,6 +371,7 @@ float maxPublicInstallNorm;
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     
     NSMutableString * content = [NSMutableString alloc];
+    /*
     for(int i = 0; i < trialRunSubViews.count; i++){
         //FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
         //AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
@@ -384,6 +385,25 @@ float maxPublicInstallNorm;
         //[temp updateView:hoursAfterStorm];
         [temp fastUpdateView:hoursAfterStorm];
         [tempHeights updateView:48];
+    }*/
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    for (int i = 0; i < [trialRunSubViews count]; i++){
+        AprilTestSimRun *simRun = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
+        
+        //update intervention capacity
+        AprilTestEfficiencyView * temp2 = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
+        [temp2 updateViewForHour:hoursAfterStorm];
+        
+        /* update water display */
+        //Access the map from the tab controller and update with the newest hours on water depth
+        ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]).thresholdValue = thresh;
+        [[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum] fastUpdateView:hoursAfterStorm];
+        
+        //Update water depth image from the current trial
+        UIImageView *waterDepthView = [[trialRunSubViews objectAtIndex:simRun.trialNum] valueForKey:@"WaterDepthView"];
+        UIImage *newWaterDepth = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]];
+        [waterDepthView setImage:newWaterDepth];
     }
     
     [_mapWindow setScrollEnabled:TRUE];
@@ -1038,13 +1058,13 @@ float maxPublicInstallNorm;
 
 -(void) OffsetView: (UIView*) view toX:(int)x andY:(int)y{
     ///GENERAL FORMULA FOR TRANSLATING A FRAME
-    /*CGRect frame = view.frame;
+    CGRect frame = view.frame;
     frame.origin.x = x;
     frame.origin.y = y;
-    [view setFrame: frame];*/
-    
-    CGRect frame = CGRectMake(x, y, view.frame.size.width, view.frame.size.height);
     [view setFrame: frame];
+    /*
+    CGRect frame = CGRectMake(x, y, view.frame.size.width, view.frame.size.height);
+    [view setFrame: frame];*/
 }
 
 -(void) drawTrial: (int) trial{
@@ -1099,9 +1119,9 @@ float maxPublicInstallNorm;
         [_mapWindow addSubview:tx];
         [_scenarioNames addObject:tx];
     //} else {
-    //    tx = [_scenarioNames objectAtIndex:trial];
-    //    tx.frame = CGRectMake(20, 175*(trial)+5, 245, 30);
-    //    [_mapWindow addSubview:tx];
+        //tx = [_scenarioNames objectAtIndex:simRun.trialNum];
+        //tx.frame = CGRectMake(20, 175*(trial)+5, 245, 30);
+        //[_mapWindow addSubview:tx];
     //}
     
     int width = 0;
@@ -1112,8 +1132,10 @@ float maxPublicInstallNorm;
     NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
     NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
     AprilTestCostDisplay *cd;
-    FebTestWaterDisplay * wd;
-    FebTestWaterDisplay * mwd;
+    //FebTestWaterDisplay * wd;
+    //FebTestWaterDisplay * mwd;
+    UIImageView *waterDepthView;
+    UIImageView *MaxWaterDepthView;
     AprilTestEfficiencyView *ev;
     int visibleIndex = 0;
     
@@ -1231,6 +1253,17 @@ float maxPublicInstallNorm;
             [scoreVisNames addObject: currentVar.name];
         } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
             
+            AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+        
+            //Moved to creating UIImageViews... to minimize lag in scrolling
+            ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]).thresholdValue = thresh;
+            [[tabControl.waterDisplaysInTab objectAtIndex:trial] fastUpdateView:hoursAfterStorm];
+            
+            waterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
+            waterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]];
+            [_dataWindow addSubview:waterDepthView];
+            
+            /*
             //NSLog(@"%d, %d", waterDisplays.count, i);
             if(waterDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
@@ -1242,7 +1275,7 @@ float maxPublicInstallNorm;
                 wd.frame = CGRectMake(width + 10, (trial)*175 + 40, 115, 125);
             }
             wd.thresholdValue = thresh;
-            [wd fastUpdateView: StormPlayBack.value];
+            [wd fastUpdateView: StormPlaybackWater.value];*/
             
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
@@ -1251,6 +1284,15 @@ float maxPublicInstallNorm;
             
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
             
+            AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+            ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh;
+            [[tabControl.maxWaterDisplaysInTab objectAtIndex:trial] updateView:48];
+            
+            MaxWaterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
+            MaxWaterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:simRun.trialNum]];
+            [_dataWindow addSubview:MaxWaterDepthView];
+            
+            /*
             //display window for maxHeights
             if(maxWaterDisplays.count <= trial){
                 mwd  = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125) andContent:simRun.maxWaterHeights];
@@ -1261,7 +1303,7 @@ float maxPublicInstallNorm;
                 mwd.frame = CGRectMake(width + 10, (trial)*175 + 40, 115, 125);
             }
             mwd.thresholdValue = thresh;
-            [mwd updateView:48];
+            [mwd updateView:48];*/
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
@@ -1286,7 +1328,7 @@ float maxPublicInstallNorm;
             //NSLog(@"%@", NSStringFromCGRect(ev.frame));
             [scoreVisNames addObject: currentVar.name];
             
-            [ev updateViewForHour: StormPlayBack.value];
+            [ev updateViewForHour: StormPlaybackInterv.value];
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (trial * 175) + 40 andColor: [UIColor blackColor] to:&efficiencyOfIntervention];
@@ -1352,11 +1394,13 @@ float maxPublicInstallNorm;
                                    @"TrialDynamic"      : [tabControl.trialRunsDynNorm objectAtIndex:simRun.trialNum],
                                    @"TrialTxTBox"       : tx,
                                    @"PerformanceScore"  : [NSNumber numberWithInt: totalScore],
-                                   @"WaterDisplay"      : wd,
-                                   @"MWaterDisplay"     : mwd,
-                                   @"EfficiencyView"    : ev,
-                                   @"InterventionView"  : interventionView,
+                                   //@"WaterDisplay"      : wd,
+                                   //@"MWaterDisplay"     : mwd,
                                    //@"Maintenance"       : maintenance,
+                                   //@"InterventionView"  : interventionView,
+                                   @"WaterDepthView"    : waterDepthView,
+                                   @"MWaterDepthView"   : MaxWaterDepthView,
+                                   @"EfficiencyView"    : ev,
                                    @"Damage"            : damage,
                                    @"DamageReduced"     : damageReduced,
                                    @"SewerLoad"         : sewerLoad,
@@ -1638,18 +1682,18 @@ float maxPublicInstallNorm;
         }
         else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
             CGRect frame = CGRectMake(width, 16, currentVar.widthOfVisualization, 40);
-            StormPlayBack = [[UISlider alloc] initWithFrame:frame];
-            [StormPlayBack addTarget:self action:@selector(StormHoursChangedOutcome:) forControlEvents:UIControlEventValueChanged];
-            [StormPlayBack addTarget:self
+            StormPlaybackWater = [[UISlider alloc] initWithFrame:frame];
+            [StormPlaybackWater addTarget:self action:@selector(StormHoursChangedOutcome:) forControlEvents:UIControlEventValueChanged];
+            [StormPlaybackWater addTarget:self
                               action:@selector(StormHoursChosenOutcome:)
                     forControlEvents:(UIControlEventTouchUpInside | UIControlEventTouchUpOutside)];
-            [StormPlayBack setBackgroundColor:[UIColor clearColor]];
-            StormPlayBack.minimumValue = 0.0;
-            StormPlayBack.maximumValue = 48;
-            StormPlayBack.continuous = YES;
-            StormPlayBack.value = hours;
+            [StormPlaybackWater setBackgroundColor:[UIColor clearColor]];
+            StormPlaybackWater.minimumValue = 0.0;
+            StormPlaybackWater.maximumValue = 48;
+            StormPlaybackWater.continuous = YES;
+            StormPlaybackWater.value = hours;
 
-            [_SliderWindow addSubview:StormPlayBack];
+            [_SliderWindow addSubview:StormPlaybackWater];
             
             //draw labels for range of hours
             CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/5, 15);
@@ -1673,17 +1717,18 @@ float maxPublicInstallNorm;
         }
         else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
             CGRect frame = CGRectMake(width, 16, currentVar.widthOfVisualization, 40);
-            StormPlayBack2 = [[UISlider alloc] initWithFrame:frame];
-            [StormPlayBack2 addTarget:self action:@selector(StormHoursChangedOutcome:) forControlEvents:UIControlEventValueChanged];
-            [StormPlayBack2 addTarget:self
+            StormPlaybackInterv = [[UISlider alloc] initWithFrame:frame];
+            StormPlaybackInterv.minimumValue = 0.0;
+            StormPlaybackInterv.maximumValue = 48;
+            StormPlaybackInterv.continuous = YES;
+            StormPlaybackInterv.value = hours;
+            [StormPlaybackInterv setBackgroundColor:[UIColor clearColor]];
+            [StormPlaybackInterv addTarget:self action:@selector(StormHoursChangedOutcome:) forControlEvents:UIControlEventValueChanged];
+            [StormPlaybackInterv addTarget:self
                                action:@selector(StormHoursChosenOutcome:)
                      forControlEvents:(UIControlEventTouchUpInside| UIControlEventTouchUpOutside)];
-            [StormPlayBack2 setBackgroundColor:[UIColor clearColor]];
-            StormPlayBack2.minimumValue = 0.0;
-            StormPlayBack2.maximumValue = 48;
-            StormPlayBack2.continuous = YES;
-            StormPlayBack2.value = hours;
-            [_SliderWindow addSubview:StormPlayBack2];
+            
+            [_SliderWindow addSubview:StormPlaybackInterv];
             
             //draw labels for range of hours
             CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/5, 15);
@@ -1929,31 +1974,40 @@ float maxPublicInstallNorm;
     
     //loop through all entries (in sorted order) and update its frame to its new position
     for (int i = 0; i < trialRunSubViews.count; i++) {
+        //UILabel *maintenance                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
+        //FebTestWaterDisplay *wd               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDisplay"];
+        //FebTestWaterDisplay *mwd              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDisplay"];
+        //FebTestIntervention *intervView       = [[trialRunSubViews objectAtIndex:i] objectForKey:@"InterventionView"];
+        AprilTestSimRun *simRun               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
+        AprilTestEfficiencyView *ev           = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
         UILabel *newTxt                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
         UILabel *Damage                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Damage"];
         UILabel *DamageReduced                = [[trialRunSubViews objectAtIndex:i] valueForKey:@"DamageReduced"];
         UILabel *SewerLoad                    = [[trialRunSubViews objectAtIndex:i] valueForKey:@"SewerLoad"];
         UILabel *gw_infiltration              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterInfiltration"];
         UILabel *EfficiencyOfIntervention     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Efficiency_Interv"];
-        //UILabel *maintenance                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
         UILabel *impactNeighbor               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"ImpactNeighbor"];
-        FebTestWaterDisplay *wd               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDisplay"];
-        FebTestWaterDisplay *mwd              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDisplay"];
-        AprilTestEfficiencyView *ev           = [[trialRunSubViews objectAtIndex:i] valueForKey:@"EfficiencyView"];
-        FebTestIntervention *intervView       = [[trialRunSubViews objectAtIndex:i] objectForKey:@"InterventionView"];
+        UIImageView *wd                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDepthView"];
+        UIImageView *mwd                      = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDepthView"];
         
+        
+        //for the time... redraw the intervention map (dirty fix)
+        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (i) + 40, 115, 125))];
+        interventionView.view = _mapWindow;
+        [interventionView updateView];
+        /*
         //move over the febtestIntervention view (map under the trial run number label)
-        [self OffsetView:intervView toX:intervView.frame.origin.x andY:175*i + 40];
-        [intervView updateView];
+        [self OffsetView:intervView toX:intervView.view.frame.origin.x andY:175*i + 40];
+        [intervView updateView];*/
         
         [self OffsetView:ev toX:ev.frame.origin.x andY:175*i + 40];
-        [ev updateViewForHour: StormPlayBack.value];
+        [ev updateViewForHour: StormPlaybackInterv.value];
         
         [self OffsetView:wd toX:wd.frame.origin.x andY:175*i + 40];
-        [wd fastUpdateView: StormPlayBack.value];
+        //[wd fastUpdateView: StormPlaybackWater.value];
         
         [self OffsetView:mwd toX:mwd.frame.origin.x andY:175*i + 40];
-        [mwd updateView:48];
+        //[mwd updateView:48];
         
         //move over the private damage labels
         [self OffsetView:Damage toX:Damage.frame.origin.x andY:(i*175) +40 ];
