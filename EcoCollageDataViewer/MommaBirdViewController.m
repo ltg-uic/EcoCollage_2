@@ -180,7 +180,7 @@ NSData *ping;
             
             // when a baby is connected, send it all of the trials loaded
             if ([trialRuns count] != 0 && [trialRunsNormalized count] != 0) {
-                [self sendAllTrialsToSpecificBaby:peerID];
+                [self sendTrialRequestToBaby:peerID];
             }
             break;
         }
@@ -188,6 +188,7 @@ NSData *ping;
         case GKPeerStateDisconnected:
         {
             NSLog(@"didChangeState: peer %@ disconnected", peerName);
+            session.available = YES;
             break;
         }
             
@@ -254,6 +255,9 @@ NSData *ping;
     else if([dataArray[0] isEqualToString:@"removeProfile"]) {
         [self removeProfile:dataArray];
     }
+    else if([dataArray[0] isEqualToString:@"requestForTrial"]) {
+        [self sendTrialsForRequest:dataArray toPeer:(NSString *)peer];
+    }
 }
 
 
@@ -297,6 +301,19 @@ NSData *ping;
 }
 
 
+- (void)sendTrialsForRequest:(NSArray *)dataArray toPeer:(NSString*)peerID{
+    NSLog(@"Received request from Baby for trials %d - %d", [[dataArray objectAtIndex:1] integerValue], trialNum);
+    
+    if ([[dataArray objectAtIndex:1] integerValue] == 0) {
+        [self sendAllTrialsToSpecificBaby:peerID];
+        return;
+    }
+    
+    for (int i = [[dataArray objectAtIndex:1]integerValue]; i < trialNum; i++) {
+        NSLog(@"Sent baby trial %d", i);
+        [self sendSingleTrialToSpecificBaby:[trialRuns objectAtIndex:i] normalizedData:[trialRunsNormalized objectAtIndex:i] peerID:peerID];
+    }
+}
 
 
 /* how data is setup in "profiles"
@@ -397,6 +414,25 @@ NSData *ping;
     if(profileToSendToBaby != nil) {
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:profileToSendToBaby];
         [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+    }
+}
+
+
+- (void)sendTrialRequestToBaby:(NSString *)peerID {
+    NSMutableArray *dataArray = [[NSMutableArray alloc]init];
+    
+    // add the type of data that is being sent
+    [dataArray addObject:@"trialRequestToBaby"];
+    
+    [dataArray addObject:[NSNumber numberWithInt:trialNum]];
+    
+    NSDictionary *trialRequestToSendToBaby = [NSDictionary dictionaryWithObject:dataArray forKey:@"data"];
+    
+    // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
+    if(trialRequestToSendToBaby != nil) {
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:trialRequestToSendToBaby];
+        [_session sendData:data toPeers:@[peerID] withDataMode:GKSendDataReliable error:nil];
+        NSLog(@"Sent Trial Request to Baby");
     }
 }
 

@@ -27,6 +27,11 @@
 @property NSMutableArray *waterDisplaysInTab;
 @property NSMutableArray *maxWaterDisplaysInTab;
 @property NSMutableArray *pieCharts;
+@property NSMutableArray *slices;
+@property int pieIndex;
 - (UIImage *)viewToImageForWaterDisplay:(FebTestWaterDisplay *)waterDisplay;
 + (void) shutdownBluetooth;
+- (void) addPieChartAtIndex:(int)index forProfile:(NSArray *)profile;
+- (void) updatePieChartAtIndex:(int)index forProfile:(NSArray *)profile;
+- (void)reloadDataForPieChartAtIndex:(int)index;
 @end

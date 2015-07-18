@@ -63,9 +63,6 @@ int largeSizeOfMapWindow = 220;
 UIView *topOfMapWindow;
 UIScrollView *bottomOfMapWindow;
 NSArray *sliceColors;
-NSMutableArray *slices;
-NSMutableDictionary *sliceNumbers;
-NSMutableArray *slicesInfo;
 NSMutableArray *imageViewsToRemove;
 int widthOfUsernamesWindowWhenOpen;
 
@@ -145,7 +142,6 @@ int widthOfUsernamesWindowWhenOpen;
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
                     [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
-    sliceNumbers = [[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects: [NSNumber numberWithInt:8], [NSNumber numberWithInt:7],[NSNumber numberWithInt:6],[NSNumber numberWithInt:5],[NSNumber numberWithInt:4],[NSNumber numberWithInt:3],[NSNumber numberWithInt:2],[NSNumber numberWithInt:1], nil] forKeys: [NSArray arrayWithObjects: [NSNumber numberWithInt:1], [NSNumber numberWithInt:2],[NSNumber numberWithInt:3],[NSNumber numberWithInt:4],[NSNumber numberWithInt:5],[NSNumber numberWithInt:6],[NSNumber numberWithInt:7],[NSNumber numberWithInt:8], nil]];
     
     sliceColors =[NSArray arrayWithObjects:
                        [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.5],
@@ -158,8 +154,7 @@ int widthOfUsernamesWindowWhenOpen;
                        [UIColor colorWithHue:.65 saturation:.0 brightness:.9 alpha: 0.5],
                        [UIColor colorWithHue:.7 saturation: 0.6 brightness:.3 alpha: 0.5],
                        [UIColor colorWithHue:.75 saturation: 0.6 brightness:.6 alpha: 0.5], nil];
-    
-    slicesInfo = [[NSMutableArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Depth Over Time", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", nil];
+
     
     _loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _loadingIndicator.center = CGPointMake(512, 300);
@@ -181,13 +176,10 @@ int widthOfUsernamesWindowWhenOpen;
     }
     
     efficiencySocial = [[NSMutableArray alloc]init];
-    slices = [[NSMutableArray alloc]init];
     personalFavorites = [[NSMutableArray alloc]init];
     imageViewsToRemove = [[NSMutableArray alloc]init];
     
-    for (int i = 0; i < 8; i++) {
-        [slices addObject:[NSNumber numberWithInt:1]];
-    }
+
     
     _BudgetSlider = [[UISlider alloc]init];
     _BudgetSlider.maximumValue = 5000000;
@@ -489,31 +481,14 @@ int widthOfUsernamesWindowWhenOpen;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     for (int i = 0; i < [tabControl.profiles count]; i++) {
-    
-        // draw pie chart
-        // draw profile pie charts
-        XYPieChart *pie = [[XYPieChart alloc]initWithFrame:CGRectMake(-5, 5, 120, 120) Center:CGPointMake(80, 100) Radius:60.0];
-    
-        for (int j = 0; j < 8; j++) {
-            int index = [[tabControl.profiles objectAtIndex:i] indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
-            [slices replaceObjectAtIndex:j withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:index]]];
-        }
-    
-    
-        [pie setDataSource:self];
-        [pie setStartPieAngle:M_PI_2];
-        [pie setAnimationSpeed:1.0];
-        [pie setPieBackgroundColor:[UIColor colorWithWhite:0.95 alpha:1]];
-        [pie setUserInteractionEnabled:NO];
-        pie.showLabel = false;
-        [pie setLabelShadowColor:[UIColor blackColor]];
-    
-        [pie reloadData];
-    
-        [[_usernamesWindow viewWithTag:i + 1] addSubview:pie];
+        
+        [tabControl reloadDataForPieChartAtIndex:i];
+        [[tabControl.pieCharts objectAtIndex:i] reloadData];
+        [[_usernamesWindow viewWithTag:i + 1] addSubview:[tabControl.pieCharts objectAtIndex:i]];
     }
 }
 
+/*
 - (void)loadFavoritePies {
     for (int i = 0; i < [personalFavorites count]; i++) {
         NSArray *profile = [[personalFavorites objectAtIndex:i] objectAtIndex:0];
@@ -540,6 +515,7 @@ int widthOfUsernamesWindowWhenOpen;
         [[_usernamesWindow viewWithTag:i + 1] addSubview:pie];
     }
 }
+ */
 
 - (void)tapOnMapWindowRecognized {
     int sizeOfChange = largeSizeOfMapWindow - smallSizeOfMapWindow;
@@ -679,36 +655,18 @@ int widthOfUsernamesWindowWhenOpen;
     }
     
     [personalFavoriteSwitch addTarget:self action:@selector(personalFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
-
-    
-    // draw pie chart
-    // draw profile pie charts
-    XYPieChart *pie = [[XYPieChart alloc]initWithFrame:CGRectMake(-5, 5, 120, 120) Center:CGPointMake(80, 100) Radius:60.0];
-    
-    for (int j = 0; j < 8; j++) {
-        int index = [[tabControl.profiles objectAtIndex:i] indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
-        [slices replaceObjectAtIndex:j withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:index]]];
-    }
     
     
-    [pie setDataSource:self];
-    [pie setStartPieAngle:M_PI_2];
-    [pie setAnimationSpeed:1.0];
-    [pie setPieBackgroundColor:[UIColor colorWithWhite:0.95 alpha:1]];
-    [pie setUserInteractionEnabled:NO];
-    pie.showLabel = false;
-    [pie setLabelShadowColor:[UIColor blackColor]];
-    
-    [pie reloadData];
-    
-    [[_usernamesWindow viewWithTag:i + 1] addSubview:pie];
+    [tabControl reloadDataForPieChartAtIndex:i];
+    [[tabControl.pieCharts objectAtIndex:i] reloadData];
+    [[_usernamesWindow viewWithTag:i + 1] addSubview:[tabControl.pieCharts objectAtIndex:i]];
 }
 
 
 - (void)personalFavoriteSwitchChanged:(id)sender {
     UISwitch *personalFavoriteSwitch = (UISwitch *)sender;
     
-    int profileIndex = personalFavoriteSwitch.tag - 100;
+    int profileIndex = (int)personalFavoriteSwitch.tag - 100;
     
     if (personalFavoriteSwitch.isOn) {
         [self addPersonalFavoriteWithProfileIndex:profileIndex andTrialNumber:trialChosen];
@@ -765,7 +723,7 @@ int widthOfUsernamesWindowWhenOpen;
     [_loadingIndicator stopAnimating];
     
     
-    [self performSelector:@selector(loadFavoritePies) withObject:nil afterDelay:1.0];
+    //[self performSelector:@selector(loadFavoritePies) withObject:nil afterDelay:1.0];
 }
 
 - (void)loadVisualizationForFavorites {
@@ -883,28 +841,10 @@ int widthOfUsernamesWindowWhenOpen;
     if(nameLabel != NULL) {
         [[_usernamesWindow viewWithTag:i + 1] addSubview:nameLabel];
     }
-
-    // draw pie chart
-    // draw profile pie charts
-    XYPieChart *pie = [[XYPieChart alloc]initWithFrame:CGRectMake(-5, 5, 120, 120) Center:CGPointMake(80, 100) Radius:60.0];
     
-    for (int j = 0; j < 8; j++) {
-        int index = [profile indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
-        [slices replaceObjectAtIndex:j withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:index]]];
-    }
-    
-    
-    [pie setDataSource:self];
-    [pie setStartPieAngle:M_PI_2];
-    [pie setAnimationSpeed:1.0];
-    [pie setPieBackgroundColor:[UIColor colorWithWhite:0.95 alpha:1]];
-    [pie setUserInteractionEnabled:NO];
-    pie.showLabel = false;
-    [pie setLabelShadowColor:[UIColor blackColor]];
-    
-    [pie reloadData];
-    
-    [[_usernamesWindow viewWithTag:i + 1] addSubview:pie];
+    [tabControl reloadDataForPieChartAtIndex:i];
+    [[tabControl.pieCharts objectAtIndex:i] reloadData];
+    [[_usernamesWindow viewWithTag:i + 1] addSubview:[tabControl.pieCharts objectAtIndex:i]];
 
 }
 
@@ -1102,8 +1042,8 @@ int widthOfUsernamesWindowWhenOpen;
             waterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:trial]];
             [[_profilesWindow viewWithTag:currentProfileIndex + 1]addSubview:waterDisplayView];
 
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
+            scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.floodedStreets);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking + 1)/priorityTotal * (1- simRunNormal.floodedStreets)]];
             [scoreVisNames addObject: currentVar.name];
             
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
@@ -1442,8 +1382,8 @@ int widthOfUsernamesWindowWhenOpen;
             [wd fastUpdateView: _StormPlayBack.value];
             */
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
+            scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.floodedStreets);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking + 1)/priorityTotal * (1- simRunNormal.floodedStreets)]];
             [scoreVisNames addObject: currentVar.name];
             
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
@@ -1489,6 +1429,7 @@ int widthOfUsernamesWindowWhenOpen;
             } else {
                 //NSLog(@"Repositioning efficiency display");
                 ev = [efficiencySocial objectAtIndex:currentProfileIndex];
+                ev.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
                 ev.frame = CGRectMake(width, 60, 130, 150);
             }
              
@@ -1745,65 +1686,28 @@ int widthOfUsernamesWindowWhenOpen;
      */
 }
 
-- (NSUInteger)numberOfSlicesInPieChart:(XYPieChart *)pieChart
-{
-    return 8;
-}
-
-- (CGFloat) pieChart:(XYPieChart *)pieChart valueForSliceAtIndex:(NSUInteger)index
-{
-    return [[slices objectAtIndex:index] intValue];
-}
-- (UIColor *)pieChart:(XYPieChart *)pieChart colorForSliceAtIndex:(NSUInteger)index
-{
-    return [sliceColors objectAtIndex:(index % sliceColors.count)];
-}
-
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
 
+ - (NSUInteger)numberOfSlicesInPieChart:(XYPieChart *)pieChart
+ {
+ return 8;
+ }
+ 
+ - (CGFloat) pieChart:(XYPieChart *)pieChart valueForSliceAtIndex:(NSUInteger)index
+ {
+     
+ AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+ return [[[tabControl.slices objectAtIndex:tabControl.pieIndex]objectAtIndex:index] intValue];
+ }
+ - (UIColor *)pieChart:(XYPieChart *)pieChart colorForSliceAtIndex:(NSUInteger)index
+ {
+ return [sliceColors objectAtIndex:(index % sliceColors.count)];
+ }
 
-/* code for splitting up a view into subviews
-- (IBAction)button:(UIButton *)sender {
-    for (UIView *view in [_usernamesWindow subviews])
-        [view removeFromSuperview];
-    
-    for (int i = 0; i < 3; i++) {
-        UIView *subview = [[UIView alloc]init];
-        subview.frame = CGRectMake(0, heightOfVisualization * i, _usernamesWindow.frame.size.width, heightOfVisualization);
-        // 0 tag goes to the _usernameWindow view itself
-        subview.tag = i + 1;
-        [_usernamesWindow addSubview:subview];
-        
-        UILabel *label = [[UILabel alloc]init];
-        label.frame = CGRectMake(5, 5, 100, 25);
-        label.text = [NSString stringWithFormat:@"%d", i];
-        label.tag = 0;
-        [subview addSubview:label];
-    }
-}
 
-- (IBAction)button2:(UIButton *)sender {
-    UIView *subview = [[UIView alloc]init];
-    subview = [[UIView alloc]init];
-    subview = [_usernamesWindow viewWithTag:1];
-    [subview removeFromSuperview];
-    
-    
-    for (int i = 2; i < [[_usernamesWindow subviews] count] + 2; i++) {
-        UIView *subview = [_usernamesWindow viewWithTag:i];
-        if (subview != nil)
-        {
-        subview.frame = CGRectMake(0, subview.frame.origin.y - heightOfVisualization, subview.frame.size.width, subview.frame.size.height);
-        subview.tag--;
-        }
-    }
-    
-    
-}
- */
+
 @end

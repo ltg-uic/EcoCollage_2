@@ -10,6 +10,7 @@
 #import "AprilTestVariable.h"
 #import "AprilTestNormalizedVariable.h"
 #import "AprilTestSimRun.h"
+#import "XYPieChart.h"
 
 @interface AprilTestTabBarController ()
 
@@ -32,11 +33,16 @@
 @synthesize waterDisplaysInTab = _waterDisplaysInTab;
 @synthesize maxWaterDisplaysInTab = _maxWaterDisplaysInTab;
 @synthesize pieCharts = _pieCharts;
+@synthesize slices = _slices;
+@synthesize pieIndex = _pieIndex;
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *viewsForWaterDisplays;
 NSMutableArray *viewsForMaxWaterDisplays;
 NSDictionary *dataDictionary;
+NSArray *sliceColors;
+NSMutableDictionary *sliceNumbers;
+NSMutableArray *slicesInfo;
 
 
 
@@ -97,6 +103,8 @@ NSDictionary *dataDictionary;
     
     dataDictionary = [[NSDictionary alloc]init];
     
+    _pieIndex = 0;
+    
     
     
     // Register for notifications
@@ -113,13 +121,34 @@ NSDictionary *dataDictionary;
     
     [self setupSession];
     
+    /*
     [NSTimer scheduledTimerWithTimeInterval:10.0f
                                      target:self selector:@selector(checkConnection) userInfo:nil repeats:YES];
+     */
+    
+    _slices = [[NSMutableArray alloc]init];
+    
+    sliceNumbers = [[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects: [NSNumber numberWithInt:8], [NSNumber numberWithInt:7],[NSNumber numberWithInt:6],[NSNumber numberWithInt:5],[NSNumber numberWithInt:4],[NSNumber numberWithInt:3],[NSNumber numberWithInt:2],[NSNumber numberWithInt:1], nil] forKeys: [NSArray arrayWithObjects: [NSNumber numberWithInt:1], [NSNumber numberWithInt:2],[NSNumber numberWithInt:3],[NSNumber numberWithInt:4],[NSNumber numberWithInt:5],[NSNumber numberWithInt:6],[NSNumber numberWithInt:7],[NSNumber numberWithInt:8], nil]];
+    
+    sliceColors =[NSArray arrayWithObjects:
+                  [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.5],
+                  [UIColor colorWithHue:.35 saturation:.8 brightness:.6 alpha: 0.5],
+                  [UIColor colorWithHue:.4 saturation:.8 brightness:.3 alpha: 0.5],
+                  [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5],
+                  [UIColor colorWithHue:.65 saturation:.8 brightness:.6 alpha: 0.5],
+                  [UIColor colorWithHue:.6 saturation:.8 brightness:.6 alpha: 0.5],
+                  [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
+                  [UIColor colorWithHue:.65 saturation:.0 brightness:.9 alpha: 0.5],
+                  [UIColor colorWithHue:.7 saturation: 0.6 brightness:.3 alpha: 0.5],
+                  [UIColor colorWithHue:.75 saturation: 0.6 brightness:.6 alpha: 0.5], nil];
+    
+    slicesInfo = [[NSMutableArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Depth Over Time", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", nil];
     
 }
 
 #pragma mark - Memory management
 
+/*
 - (void)checkConnection {
     if ([[_session peersWithConnectionState:GKPeerStateConnected] count] == 0) {
         NSLog(@"Attempting reconnection");
@@ -127,7 +156,7 @@ NSDictionary *dataDictionary;
         [self setupSession];
     }
 }
-
+*/
 
 
 - (void)dealloc
@@ -139,6 +168,7 @@ NSDictionary *dataDictionary;
     _session.delegate = nil;
 }
 
+
 - (void) shutdownBluetooth {
     [self.session disconnectFromAllPeers];
     self.session.available = NO;
@@ -146,6 +176,7 @@ NSDictionary *dataDictionary;
     self.session.delegate = nil;
     self.session = nil;
 }
+
 
 #pragma mark - GKSession setup and teardown
 
@@ -213,10 +244,10 @@ NSDictionary *dataDictionary;
         case GKPeerStateDisconnected:
         {
             NSLog(@"didChangeState: peer %@ disconnected", peerName);
-            /*
-            [self teardownSession];
+            
+            [self shutdownBluetooth];
             [self setupSession];
-             */
+            
             break;
         }
             
@@ -294,11 +325,36 @@ NSDictionary *dataDictionary;
     else if([dataArray[0] isEqualToString:@"budgetChange"]) {
         [self updateBudget:dataArray];
     }
+    else if ([dataArray[0] isEqualToString:@"trialRequestToBaby"]) {
+        [self sendTrialRequestToMomma:dataArray];
+    }
     else {
         NSLog(@"Received unknown data");
     }
 }
 
+- (void)sendTrialRequestToMomma:(NSArray*)dataArray {
+    int trialUpdate = [[dataArray objectAtIndex:1] integerValue];
+    
+    // if Momma has new trials for us, send her a request
+    if (trialUpdate > _trialNum) {
+        NSMutableArray *trialRequest = [[NSMutableArray alloc]init];
+        // add type of data
+        [trialRequest addObject:@"requestForTrial"];
+        
+        [trialRequest addObject:[NSNumber numberWithInt:_trialNum]];
+
+        
+        NSDictionary *trialRequestToSendToMomma = [NSDictionary dictionaryWithObject:trialRequest
+                                                                         forKey:@"data"];
+        
+        if(trialRequestToSendToMomma != nil) {
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:trialRequestToSendToMomma];
+            if(_peerIDForMomma != nil)
+                [_session sendData:data toPeers:@[_peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+        }
+    }
+}
 
 - (void)removeProfile:(NSArray *)dataArray {
     // if profile belongs to us, don't do anything
@@ -356,6 +412,7 @@ NSDictionary *dataDictionary;
     if (_profiles.count != 0) {
         [_profiles removeAllObjects];
         [_pieCharts removeAllObjects];
+        [_slices removeAllObjects];
     }
     
     [_profiles addObject:_ownProfile];
@@ -376,14 +433,72 @@ NSDictionary *dataDictionary;
     NSLog(@"AprilTestTabBar: receiveAllProfilesFromMomma: Sent notification for all profiles from Momma to listening channels");
 }
 
+// when a new profile is received, add the a new pie object to _pieCharts
 - (void) addPieChartAtIndex:(int)index forProfile:(NSArray *)profile {
     // write code for adding pie charts
+    
+    // draw pie chart
+    // draw profile pie charts
+    XYPieChart *pie = [[XYPieChart alloc]initWithFrame:CGRectMake(-5, 5, 120, 120) Center:CGPointMake(80, 100) Radius:60.0];
+    
+    NSMutableArray *newSlices = [[NSMutableArray alloc]init];
+    for (int i = 0; i < 8; i++) {
+        [newSlices addObject:[NSNumber numberWithInt:1]];
+    }
+    
+    for (int j = 0; j < 8; j++) {
+        int indexS = (int)[profile indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
+        [newSlices replaceObjectAtIndex:j withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:indexS]]];
+    }
+    
+    _pieIndex = [_slices count];
+    [_slices addObject:newSlices];
+    
+    [pie setDataSource:self];
+    [pie setStartPieAngle:M_PI_2];
+    [pie setAnimationSpeed:1.0];
+    [pie setPieBackgroundColor:[UIColor colorWithWhite:0.95 alpha:1]];
+    [pie setUserInteractionEnabled:NO];
+    pie.showLabel = false;
+    [pie setLabelShadowColor:[UIColor blackColor]];
+    
+    [pie reloadData];
+    
+    [_pieCharts addObject:pie];
 }
 
-- (void) updatePieChartAtIndex:(int)index {
+- (void) updatePieChartAtIndex:(int)index forProfile:(NSArray *)profile{
+    XYPieChart *pie = [_pieCharts objectAtIndex:index];
     
+    for (int j = 0; j < 8; j++) {
+        int indexS = (int)[profile indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
+        [[_slices objectAtIndex:index] replaceObjectAtIndex:j withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:indexS]]];
+    }
+    
+    _pieIndex = index;
+    
+    [pie reloadData];
     
     // make a notification to social view that a pie chart was reloaded
+}
+
+- (void)reloadDataForPieChartAtIndex:(int)index {
+    _pieIndex = index;
+}
+
+
+- (NSUInteger)numberOfSlicesInPieChart:(XYPieChart *)pieChart
+{
+    return 8;
+}
+
+- (CGFloat) pieChart:(XYPieChart *)pieChart valueForSliceAtIndex:(NSUInteger)index
+{
+    return [[[_slices objectAtIndex:_pieIndex] objectAtIndex:index] intValue];
+}
+- (UIColor *)pieChart:(XYPieChart *)pieChart colorForSliceAtIndex:(NSUInteger)index
+{
+    return [sliceColors objectAtIndex:(index % sliceColors.count)];
 }
 
 // profile data setup by indexes of mutablearray
@@ -396,8 +511,11 @@ NSDictionary *dataDictionary;
     NSLog(@"AprilTestTabBar: receiveProfileFromMomma: Received single profile from Momma");
     
     // if profile belongs to us, don't do anything
-    if ([[dataArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]])
+    if ([[dataArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]]) {
+        [self addPieChartAtIndex:0 forProfile:_ownProfile];
+        
         return;
+    }
     
     
     BOOL oldProfile = 0;
@@ -432,7 +550,7 @@ NSDictionary *dataDictionary;
         NSNumber *numIndex = [NSNumber numberWithInt:index];
         NSDictionary *dict = [NSDictionary dictionaryWithObject:numIndex forKey:@"data"];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"updateSingleProfile" object:self   userInfo:dict];
-        [self updatePieChartAtIndex:index];
+        [self updatePieChartAtIndex:index forProfile:dataArray];
     }
     else
         [[NSNotificationCenter defaultCenter] postNotificationName:@"drawNewProfile" object:self userInfo:nil];

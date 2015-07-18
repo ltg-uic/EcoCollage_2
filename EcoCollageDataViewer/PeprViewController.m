@@ -281,10 +281,14 @@ NSArray * importQuestions;
         [tabControl.ownProfile addObject:[[[surveyItems objectAtIndex:i]text] stringByReplacingOccurrencesOfString:@"\t" withString:@""]];
     }
     
-    if([tabControl.profiles count] < 1)
+    if([tabControl.profiles count] < 1) {
         [tabControl.profiles addObject:tabControl.ownProfile];
-    else
+        [tabControl addPieChartAtIndex:0 forProfile:tabControl.ownProfile];
+    }
+    else {
         [tabControl.profiles replaceObjectAtIndex:0 withObject:tabControl.ownProfile];
+        [tabControl updatePieChartAtIndex:0 forProfile:tabControl.ownProfile];
+    }
 }
 
 
