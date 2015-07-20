@@ -637,7 +637,7 @@ int widthOfUsernamesWindowWhenOpen;
 }
 
 - (void)drawFavorite:(int)index {
-    
+
 }
 
 /*

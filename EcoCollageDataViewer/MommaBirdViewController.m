@@ -85,6 +85,7 @@ NSData *ping;
     
     _BudgetSlider.minimumValue = 0;
     _BudgetSlider.maximumValue = maxBudget;
+    _BudgetSlider.continuous = YES;
     currentBudget = 150000;
     
     [_BudgetSlider addTarget:self action:@selector(budgetChanged) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];

@@ -1083,8 +1083,8 @@ float maxPublicInstallNorm;
     
     
     AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([tabControl.trialRuns objectAtIndex:trial]);
-    AprilTestNormalizedVariable *simRunNormal;
     
+    AprilTestNormalizedVariable *simRunNormal;
     //determines via UIswitch what type of normalization is being drawn
     if (_DynamicNormalization.isOn){
         simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialDynamic"])  : ([tabControl.trialRunsDynNorm objectAtIndex:trial]);
@@ -1093,9 +1093,23 @@ float maxPublicInstallNorm;
         simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialStatic"]) :([tabControl.trialRunsNormalized objectAtIndex:trial]);
     }
 
-    FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
-    interventionView.view = _mapWindow;
-    [interventionView updateView];
+    //creates a UIImageview of the intervention map OR finds it in the stored trials already loaded
+    UIImageView *interventionImageView;
+    if (trial >= [trialRunSubViews count]){
+        UIView *tempView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 115, 125)];
+        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:tempView.frame];
+        interventionView.view = tempView;
+        [interventionView updateView];
+        
+        interventionImageView = [[UIImageView alloc] initWithFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
+        interventionImageView.image = [interventionView viewToImage];
+        [_mapWindow addSubview:interventionImageView];
+    }
+    else{
+        interventionImageView = [[trialRunSubViews objectAtIndex:simRun.trialNum] objectForKey:@"InterventionImgView"];
+        interventionImageView.frame = CGRectMake(20, 175 * (trial) + 40, 115, 125);
+        [_mapWindow addSubview:interventionImageView];
+    }
     [_mapWindow setContentSize: CGSizeMake(_mapWindow.contentSize.width, (trial+1)*200)];
     
     //int scoreBar=0;
@@ -1426,28 +1440,28 @@ float maxPublicInstallNorm;
 
     //NSLog(@"Trial: %d\nScore: %@ / 100\n\n", simRun.trialNum, [NSNumber numberWithInt: totalScore]);
     
-    NSDictionary *trialRunInfo = @{@"TrialNum"          : [NSNumber numberWithInt:simRun.trialNum],
-                                   @"TrialRun"          : [tabControl.trialRuns objectAtIndex:simRun.trialNum],
-                                   @"TrialStatic"       : [tabControl.trialRunsNormalized objectAtIndex:simRun.trialNum],
-                                   @"TrialDynamic"      : [tabControl.trialRunsDynNorm objectAtIndex:simRun.trialNum],
-                                   @"TrialTxTBox"       : tx,
-                                   @"PerformanceScore"  : [NSNumber numberWithInt: totalScore],
+    NSDictionary *trialRunInfo = @{@"TrialNum"            : [NSNumber numberWithInt:simRun.trialNum],
+                                   @"TrialRun"            : [tabControl.trialRuns objectAtIndex:simRun.trialNum],
+                                   @"TrialStatic"         : [tabControl.trialRunsNormalized objectAtIndex:simRun.trialNum],
+                                   @"TrialDynamic"        : [tabControl.trialRunsDynNorm objectAtIndex:simRun.trialNum],
+                                   @"TrialTxTBox"         : tx,
+                                   @"PerformanceScore"    : [NSNumber numberWithInt: totalScore],
                                    //@"WaterDisplay"      : wd,
                                    //@"MWaterDisplay"     : mwd,
                                    //@"Maintenance"       : maintenance,
-                                   //@"InterventionView"  : interventionView,
-                                   @"WaterDepthView"    : waterDepthView,
-                                   @"MWaterDepthView"   : MaxWaterDepthView,
-                                   @"EfficiencyView"    : ev,
-                                   @"Damage"            : damage,
-                                   @"DamageReduced"     : damageReduced,
-                                   @"SewerLoad"         : sewerLoad,
-                                   @"WaterInfiltration" : gw_infiltration,
-                                   @"Efficiency_Interv" : efficiencyOfIntervention,
-                                   @"ImpactNeighbor"    : impactNeighbor,
-                                   @"CostDisplay"       : cd,
-                                   @"FavoriteSwitch"    : favoriteSwitch,
-                                   @"FavoriteLabel"     : favoriteLabel
+                                   @"InterventionImgView" : interventionImageView,
+                                   @"WaterDepthView"      : waterDepthView,
+                                   @"MWaterDepthView"     : MaxWaterDepthView,
+                                   @"EfficiencyView"      : ev,
+                                   @"Damage"              : damage,
+                                   @"DamageReduced"       : damageReduced,
+                                   @"SewerLoad"           : sewerLoad,
+                                   @"WaterInfiltration"   : gw_infiltration,
+                                   @"Efficiency_Interv"   : efficiencyOfIntervention,
+                                   @"ImpactNeighbor"      : impactNeighbor,
+                                   @"CostDisplay"         : cd,
+                                   @"FavoriteSwitch"      : favoriteSwitch,
+                                   @"FavoriteLabel"       : favoriteLabel
                                    };
    
     //Right now contains the contents of the map window scrollview
@@ -2056,8 +2070,6 @@ float maxPublicInstallNorm;
         //UILabel *maintenance                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
         //FebTestWaterDisplay *wd               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDisplay"];
         //FebTestWaterDisplay *mwd              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDisplay"];
-        //FebTestIntervention *intervView       = [[trialRunSubViews objectAtIndex:i] objectForKey:@"InterventionView"];
-        AprilTestSimRun *simRun               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
         AprilTestEfficiencyView *ev           = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
         UILabel *newTxt                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
         UILabel *Damage                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Damage"];
@@ -2068,6 +2080,7 @@ float maxPublicInstallNorm;
         UILabel *impactNeighbor               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"ImpactNeighbor"];
         UIImageView *wd                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDepthView"];
         UIImageView *mwd                      = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDepthView"];
+        UIImageView *InterventionImageView    = [[trialRunSubViews objectAtIndex:i] valueForKey:@"InterventionImgView"];
         UISwitch *favoriteSwitch              = [[trialRunSubViews objectAtIndex:i] objectForKey:@"FavoriteSwitch"];
         UILabel *favoriteLabel                = [[trialRunSubViews objectAtIndex:i] objectForKey:@"FavoriteLabel"];
         
@@ -2075,15 +2088,7 @@ float maxPublicInstallNorm;
         favoriteSwitch.frame = CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, i * 175 + 125, 50, 20);
         
         
-        //for the time... redraw the intervention map (dirty fix)
-        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (i) + 40, 115, 125))];
-        interventionView.view = _mapWindow;
-        [interventionView updateView];
-         
-        /*
-        //move over the febtestIntervention view (map under the trial run number label)
-        [self OffsetView:intervView toX:intervView.view.frame.origin.x andY:175*i + 40];
-        [intervView updateView];*/
+        [self OffsetView:InterventionImageView toX:InterventionImageView.frame.origin.x andY:175 * (i) + 40];
         
         [self OffsetView:ev toX:ev.frame.origin.x andY:175*i + 40];
         [ev updateViewForHour: StormPlaybackInterv.value];

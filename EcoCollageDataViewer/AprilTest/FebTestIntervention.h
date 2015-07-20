@@ -13,5 +13,5 @@
 @property bool whole;
 - (id) initWithPositionArray: (NSString *) content andFrame: (CGRect) frame;
 - (void) updateView;
-
+- (UIImage *)viewToImage;
 @end

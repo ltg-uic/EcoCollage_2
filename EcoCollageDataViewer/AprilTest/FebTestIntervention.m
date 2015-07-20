@@ -103,4 +103,14 @@ NSMutableArray *imageViews;
     
 }
 
+- (UIImage *)viewToImage {
+    UIImage *img = [[UIImage alloc]init];
+    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, YES, 0.0f);
+    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return img;
+}
+
 @end
