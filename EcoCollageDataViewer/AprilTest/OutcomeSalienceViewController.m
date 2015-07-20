@@ -1390,22 +1390,38 @@ float maxPublicInstallNorm;
     
     
 #pragma mark ryan trial favoriting
+    UILabel *favoriteLabel;
+    UISwitch *favoriteSwitch;
     
-    // load personal favorite label
-    UILabel *favoriteLabel = [[UILabel alloc]init];
-    favoriteLabel.text = [NSString stringWithFormat:@"Favorite"];
-    favoriteLabel.font = [UIFont systemFontOfSize:15.0];
-    [favoriteLabel sizeToFit];
-    favoriteLabel.frame = CGRectMake(148, trial * 175 + 131, favoriteLabel.frame.size.width, favoriteLabel.frame.size.height);
-    [_mapWindow addSubview:favoriteLabel];
-    
-    // draw UISwitch for favoriting a trial
-    // add the uiswitch for favoriting functionality
-    UISwitch *favoriteSwitch = [[UISwitch alloc]init];
-    favoriteSwitch.tag = 100 + trial;
-    [favoriteSwitch addTarget:self action:@selector(personalFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
-    favoriteSwitch.frame = CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, trial * 175 + 125, 50, 20);
-    [_mapWindow addSubview:favoriteSwitch];
+    //if its a new trial... draw a new label and uiswitch
+    //else retrieve it from the current views kept track of
+    if (trial >= [trialRunSubViews count]){
+        // load personal favorite label
+        favoriteLabel = [[UILabel alloc]init];
+        favoriteLabel.text = [NSString stringWithFormat:@"Favorite"];
+        favoriteLabel.font = [UIFont systemFontOfSize:15.0];
+        [favoriteLabel sizeToFit];
+        favoriteLabel.frame = CGRectMake(148, trial * 175 + 131, favoriteLabel.frame.size.width, favoriteLabel.frame.size.height);
+        [_mapWindow addSubview:favoriteLabel];
+        
+        // draw UISwitch for favoriting a trial
+        // add the uiswitch for favoriting functionality
+        favoriteSwitch = [[UISwitch alloc]init];
+        favoriteSwitch.tag = 100 + trial;
+        [favoriteSwitch addTarget:self action:@selector(personalFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
+        favoriteSwitch.frame = CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, trial * 175 + 125, 50, 20);
+        [_mapWindow addSubview:favoriteSwitch];
+    }
+    else{
+        favoriteLabel = [[trialRunSubViews objectAtIndex:simRun.trialNum] objectForKey:@"FavoriteLabel"];
+        favoriteLabel.frame = CGRectMake(148, trial * 175 + 131, favoriteLabel.frame.size.width, favoriteLabel.frame.size.height);
+        [_mapWindow addSubview:favoriteLabel];
+        
+        favoriteSwitch = [[trialRunSubViews objectAtIndex:simRun.trialNum] objectForKey:@"FavoriteSwitch"];
+        [favoriteSwitch addTarget:self action:@selector(personalFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
+        favoriteSwitch.frame = CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, trial * 175 + 125, 50, 20);
+        [_mapWindow addSubview:favoriteSwitch];
+    }
 
 
     //NSLog(@"Trial: %d\nScore: %@ / 100\n\n", simRun.trialNum, [NSNumber numberWithInt: totalScore]);
