@@ -61,6 +61,7 @@ NSMutableArray * bgCols;
 NSMutableArray * publicCostDisplays;
 NSMutableArray * OverBudgetLabels;
 NSMutableArray * favoriteSwitches;
+NSMutableArray * interventionViews;
 
 UILabel *redThreshold;
 NSArray *arrStatus;
@@ -127,7 +128,8 @@ float maxPublicInstallNorm;
     publicCostDisplays  = [[NSMutableArray alloc] init];
     OverBudgetLabels    = [[NSMutableArray alloc] init];
     favoriteSwitches    = [[NSMutableArray alloc] init];
-
+    interventionViews   = [[NSMutableArray alloc] init];
+    
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
     _titleWindow.delegate = self;
@@ -180,16 +182,21 @@ float maxPublicInstallNorm;
 }
 
 
-- (BOOL) textFieldShouldBeginEditing:(UITextView *)textView
+- (BOOL) textFieldShouldBeginEditing:(UITextField *)textView
 {
-    SortType.frame = CGRectMake(80, 120, 300, SortType.frame.size.height);
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:.50];
-    [UIView setAnimationDelegate:self];
-    SortType.frame = CGRectMake(80, 120, 300, SortType.frame.size.height);
-    [self.view addSubview:SortType];
-    [UIView commitAnimations];
-    return NO;
+    if (textView == _SortPickerTextField){
+        SortType.frame = CGRectMake(80, 120, 300, SortType.frame.size.height);
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:.50];
+        [UIView setAnimationDelegate:self];
+        SortType.frame = CGRectMake(80, 120, 300, SortType.frame.size.height);
+        [self.view addSubview:SortType];
+        [UIView commitAnimations];
+        return NO;
+    }
+    else{
+        return YES;
+    }
 }
 
 - (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
@@ -1103,10 +1110,11 @@ float maxPublicInstallNorm;
         
         interventionImageView = [[UIImageView alloc] initWithFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
         interventionImageView.image = [interventionView viewToImage];
+        [interventionViews addObject:interventionImageView];
         [_mapWindow addSubview:interventionImageView];
     }
     else{
-        interventionImageView = [[trialRunSubViews objectAtIndex:simRun.trialNum] objectForKey:@"InterventionImgView"];
+        interventionImageView = [interventionViews objectAtIndex:simRun.trialNum];
         interventionImageView.frame = CGRectMake(20, 175 * (trial) + 40, 115, 125);
         [_mapWindow addSubview:interventionImageView];
     }
@@ -1121,7 +1129,7 @@ float maxPublicInstallNorm;
     }
     
     UITextField *tx;
-    //if(trial >= _scenarioNames.count){
+    if(trial >= [trialRunSubViews count]){
         tx = [[UITextField alloc] initWithFrame:CGRectMake(20, 175*(trial)+5, 245, 30)];
         tx.borderStyle = UITextBorderStyleRoundedRect;
         tx.font = [UIFont systemFontOfSize:15];
@@ -1135,11 +1143,11 @@ float maxPublicInstallNorm;
         tx.text = [NSString stringWithFormat:  @"Trial %d", simRunNormal.trialNum];
         [_mapWindow addSubview:tx];
         [_scenarioNames addObject:tx];
-    //} else {
-        //tx = [_scenarioNames objectAtIndex:simRun.trialNum];
-        //tx.frame = CGRectMake(20, 175*(trial)+5, 245, 30);
-        //[_mapWindow addSubview:tx];
-    //}
+    } else {
+        tx = [_scenarioNames objectAtIndex:simRun.trialNum];
+        tx.frame = CGRectMake(20, 175*(trial)+5, 245, 30);
+        [_mapWindow addSubview:tx];
+    }
     
     int width = 0;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
@@ -1424,14 +1432,18 @@ float maxPublicInstallNorm;
         favoriteSwitch.tag = 100 + trial;
         [favoriteSwitch addTarget:self action:@selector(personalFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
         favoriteSwitch.frame = CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, trial * 175 + 125, 50, 20);
+        [favoriteSwitches addObject:favoriteSwitch];
         [_mapWindow addSubview:favoriteSwitch];
     }
     else{
-        favoriteLabel = [[trialRunSubViews objectAtIndex:simRun.trialNum] objectForKey:@"FavoriteLabel"];
+        favoriteLabel = [[UILabel alloc]init];
+        favoriteLabel.text = [NSString stringWithFormat:@"Favorite"];
+        favoriteLabel.font = [UIFont systemFontOfSize:15.0];
+        [favoriteLabel sizeToFit];
         favoriteLabel.frame = CGRectMake(148, trial * 175 + 131, favoriteLabel.frame.size.width, favoriteLabel.frame.size.height);
         [_mapWindow addSubview:favoriteLabel];
         
-        favoriteSwitch = [[trialRunSubViews objectAtIndex:simRun.trialNum] objectForKey:@"FavoriteSwitch"];
+        favoriteSwitch = [favoriteSwitches objectAtIndex:simRun.trialNum];
         [favoriteSwitch addTarget:self action:@selector(personalFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
         favoriteSwitch.frame = CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, trial * 175 + 125, 50, 20);
         [_mapWindow addSubview:favoriteSwitch];
@@ -2071,7 +2083,7 @@ float maxPublicInstallNorm;
         //FebTestWaterDisplay *wd               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDisplay"];
         //FebTestWaterDisplay *mwd              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDisplay"];
         AprilTestEfficiencyView *ev           = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
-        UILabel *newTxt                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
+        UITextField *newTxt                   = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
         UILabel *Damage                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Damage"];
         UILabel *DamageReduced                = [[trialRunSubViews objectAtIndex:i] valueForKey:@"DamageReduced"];
         UILabel *SewerLoad                    = [[trialRunSubViews objectAtIndex:i] valueForKey:@"SewerLoad"];
