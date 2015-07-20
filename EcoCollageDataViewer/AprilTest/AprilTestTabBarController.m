@@ -35,6 +35,7 @@
 @synthesize pieCharts = _pieCharts;
 @synthesize slices = _slices;
 @synthesize pieIndex = _pieIndex;
+@synthesize favorites = _favorites;
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *viewsForWaterDisplays;
@@ -96,6 +97,8 @@ NSMutableArray *slicesInfo;
     viewsForWaterDisplays = [[NSMutableArray alloc]init];
     viewsForMaxWaterDisplays = [[NSMutableArray alloc]init];
     _pieCharts = [[NSMutableArray alloc]init];
+    _favorites = [[NSMutableArray alloc]init];
+    
     
     _budget = 150000;
     
@@ -328,8 +331,28 @@ NSMutableArray *slicesInfo;
     else if ([dataArray[0] isEqualToString:@"trialRequestToBaby"]) {
         [self sendTrialRequestToMomma:dataArray];
     }
+    else if([dataArray[0] isEqualToString:@"favoriteForBabies"]) {
+        [self updateFavorites:dataArray];
+    }
     else {
         NSLog(@"Received unknown data");
+    }
+}
+
+- (void)updateFavorites:(NSArray*)dataArray {
+    BOOL favoriteIsAnUpdate = NO;
+    
+    for (int i = 0; i < _favorites.count; i++) {
+        NSArray *favorite = [_favorites objectAtIndex:i];
+        
+        if ([[favorite objectAtIndex:1] isEqualToString:[dataArray objectAtIndex:1]]) {
+            favoriteIsAnUpdate = YES;
+            [_favorites replaceObjectAtIndex:i withObject:dataArray];
+        }
+    }
+    
+    if (!favoriteIsAnUpdate) {
+        [_favorites addObject:dataArray];
     }
 }
 

@@ -60,6 +60,7 @@ NSMutableArray * lastKnownConcernProfile;
 NSMutableArray * bgCols;
 NSMutableArray * publicCostDisplays;
 NSMutableArray * OverBudgetLabels;
+NSMutableArray * favoriteSwitches;
 
 UILabel *redThreshold;
 NSArray *arrStatus;
@@ -125,6 +126,7 @@ float maxPublicInstallNorm;
     _scenarioNames      = [[NSMutableArray alloc] init];
     publicCostDisplays  = [[NSMutableArray alloc] init];
     OverBudgetLabels    = [[NSMutableArray alloc] init];
+    favoriteSwitches    = [[NSMutableArray alloc] init];
 
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
@@ -1079,6 +1081,7 @@ float maxPublicInstallNorm;
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
+    
     AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([tabControl.trialRuns objectAtIndex:trial]);
     AprilTestNormalizedVariable *simRunNormal;
     
@@ -1386,6 +1389,25 @@ float maxPublicInstallNorm;
     [_mapWindow addSubview:scoreLabel2];
     
     
+#pragma mark ryan trial favoriting
+    
+    // load personal favorite label
+    UILabel *favoriteLabel = [[UILabel alloc]init];
+    favoriteLabel.text = [NSString stringWithFormat:@"Favorite"];
+    favoriteLabel.font = [UIFont systemFontOfSize:15.0];
+    [favoriteLabel sizeToFit];
+    favoriteLabel.frame = CGRectMake(148, trial * 175 + 131, favoriteLabel.frame.size.width, favoriteLabel.frame.size.height);
+    [_mapWindow addSubview:favoriteLabel];
+    
+    // draw UISwitch for favoriting a trial
+    // add the uiswitch for favoriting functionality
+    UISwitch *favoriteSwitch = [[UISwitch alloc]init];
+    favoriteSwitch.tag = 100 + trial;
+    [favoriteSwitch addTarget:self action:@selector(personalFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
+    favoriteSwitch.frame = CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, trial * 175 + 125, 50, 20);
+    [_mapWindow addSubview:favoriteSwitch];
+
+
     //NSLog(@"Trial: %d\nScore: %@ / 100\n\n", simRun.trialNum, [NSNumber numberWithInt: totalScore]);
     
     NSDictionary *trialRunInfo = @{@"TrialNum"          : [NSNumber numberWithInt:simRun.trialNum],
@@ -1407,7 +1429,9 @@ float maxPublicInstallNorm;
                                    @"WaterInfiltration" : gw_infiltration,
                                    @"Efficiency_Interv" : efficiencyOfIntervention,
                                    @"ImpactNeighbor"    : impactNeighbor,
-                                   @"CostDisplay"       : cd
+                                   @"CostDisplay"       : cd,
+                                   @"FavoriteSwitch"    : favoriteSwitch,
+                                   @"FavoriteLabel"     : favoriteLabel
                                    };
    
     //Right now contains the contents of the map window scrollview
@@ -1421,6 +1445,44 @@ float maxPublicInstallNorm;
    
     [_dataWindow flashScrollIndicators];          
     
+}
+
+- (void)personalFavoriteSwitchChanged:(id)sender {
+    UISwitch *favoriteSwitch = (UISwitch*)sender;
+    
+    int trial = (int)favoriteSwitch.tag - 100;
+    
+    BOOL turnedOn = (favoriteSwitch.isOn) ? YES:NO;
+
+    
+    // loop thru all switches and turn them off
+    for (NSDictionary *trialRunInfo in trialRunSubViews) {
+        if (![[trialRunInfo objectForKey:@"FavoriteSwitch"] isEqual:favoriteSwitch] && [[trialRunInfo objectForKey:@"FavoriteSwitch"] isOn])
+            [[trialRunInfo objectForKey:@"FavoriteSwitch"] setOn:NO animated:YES];
+    }
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    if(tabControl.session) {
+        NSMutableArray *favorite = [[NSMutableArray alloc]init];
+        
+        [favorite addObject:@"favoriteForMomma"];
+        [favorite addObject:[[UIDevice currentDevice]name]];
+        
+        if (turnedOn)
+            [favorite addObject:[NSNumber numberWithInt:trial]];
+        else
+            [favorite addObject:[NSNumber numberWithInt:-1]];
+        
+        NSDictionary *favoriteToSendToMomma = [NSDictionary dictionaryWithObject:favorite
+                                                                         forKey:@"data"];
+        
+        if(favoriteToSendToMomma != nil) {
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:favoriteToSendToMomma];
+            if(tabControl.peerIDForMomma != nil)
+                [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+        }
+    }
 }
 
 - (void)drawSingleTrial {
@@ -1972,6 +2034,7 @@ float maxPublicInstallNorm;
         }];
     }
     
+    
     //loop through all entries (in sorted order) and update its frame to its new position
     for (int i = 0; i < trialRunSubViews.count; i++) {
         //UILabel *maintenance                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
@@ -1989,12 +2052,18 @@ float maxPublicInstallNorm;
         UILabel *impactNeighbor               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"ImpactNeighbor"];
         UIImageView *wd                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDepthView"];
         UIImageView *mwd                      = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDepthView"];
+        UISwitch *favoriteSwitch              = [[trialRunSubViews objectAtIndex:i] objectForKey:@"FavoriteSwitch"];
+        UILabel *favoriteLabel                = [[trialRunSubViews objectAtIndex:i] objectForKey:@"FavoriteLabel"];
+        
+        favoriteLabel.frame = CGRectMake(148, i * 175 + 131, favoriteLabel.frame.size.width, favoriteLabel.frame.size.height);
+        favoriteSwitch.frame = CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, i * 175 + 125, 50, 20);
         
         
         //for the time... redraw the intervention map (dirty fix)
         FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, 175 * (i) + 40, 115, 125))];
         interventionView.view = _mapWindow;
         [interventionView updateView];
+         
         /*
         //move over the febtestIntervention view (map under the trial run number label)
         [self OffsetView:intervView toX:intervView.view.frame.origin.x andY:175*i + 40];

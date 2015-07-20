@@ -37,6 +37,7 @@ UILabel *budgetLabel;
 int trialNum;
 int maxBudget = 5000000;
 int currentBudget;
+NSMutableArray *favorites;
 NSData *ping;
 
 
@@ -73,6 +74,7 @@ NSData *ping;
     dataFromMacMini = [[NSMutableArray alloc]init];
     trialRuns = [[NSMutableArray alloc]init];
     trialRunsNormalized = [[NSMutableArray alloc]init];
+    favorites = [[NSMutableArray alloc]init];
     
     self.studyNumberLabel.text = [NSString stringWithFormat:@"Study Number %d", _studyNum];
     self.trialNumberLabel.text = [NSString stringWithFormat:@"Trial Number %d", trialNum];
@@ -258,8 +260,48 @@ NSData *ping;
     else if([dataArray[0] isEqualToString:@"requestForTrial"]) {
         [self sendTrialsForRequest:dataArray toPeer:(NSString *)peer];
     }
+    else if([dataArray[0] isEqualToString:@"favoriteForMomma"]) {
+        [self updateFavoriteTrials:dataArray];
+    }
 }
 
+
+- (void)updateFavoriteTrials:(NSArray *)dataArray {
+    BOOL profileHasAFavorite = NO;
+    
+    for (NSArray *favorite in favorites) {
+        if ([[dataArray objectAtIndex:1] isEqualToString:[favorite objectAtIndex:1]]) {
+            profileHasAFavorite = YES;
+        }
+    }
+    
+    for (int i = 0; i < favorites.count; i++) {
+        NSArray *favorite = [favorites objectAtIndex:i];
+        if ([[dataArray objectAtIndex:1] isEqualToString:[favorite objectAtIndex:1]]) {
+            profileHasAFavorite = YES;
+            [favorites replaceObjectAtIndex:i withObject:dataArray];
+        }
+    }
+    
+    if(!profileHasAFavorite)
+        [favorites addObject:dataArray];
+    
+    if (_session) {
+        // send update to all baby birds
+        NSMutableArray* favoriteUpdateForBabies = [[NSMutableArray alloc]init];
+        [favoriteUpdateForBabies addObject:@"favoriteForBabies"];
+        [favoriteUpdateForBabies addObject:[dataArray objectAtIndex:1]];
+        [favoriteUpdateForBabies addObject:[dataArray objectAtIndex:2]];
+    
+        NSDictionary *favoriteToSendToBabies = [NSDictionary dictionaryWithObject:favoriteUpdateForBabies
+                                                                      forKey:@"data"];
+    
+        if(favoriteToSendToBabies != nil) {
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:favoriteToSendToBabies];
+            [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+        }
+    }
+}
 
 - (void)removeProfile:(NSArray *)dataArray {
     // check if profile sent from baby is an update on an already existing one and if so update it
