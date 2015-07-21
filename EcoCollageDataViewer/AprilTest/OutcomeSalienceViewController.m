@@ -405,10 +405,16 @@ float maxPublicInstallNorm;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     for (int i = 0; i < [trialRunSubViews count]; i++){
         AprilTestSimRun *simRun = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
-        
+        /*
         //update intervention capacity
         AprilTestEfficiencyView * temp2 = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
-        [temp2 updateViewForHour:hoursAfterStorm];
+        [temp2 updateViewForHour:hoursAfterStorm];*/
+        
+        /* Update Intervention Capacity */
+        [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] updateViewForHour:hoursAfterStorm];
+        UIImageView *EfficiencyView = [[trialRunSubViews objectAtIndex:simRun.trialNum] valueForKey:@"EfficiencyView"];
+        UIImage *newEfficiencyViewImage  = [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] viewforEfficiencyToImage];
+        [EfficiencyView setImage:newEfficiencyViewImage];
         
         /* update water display */
         //Access the map from the tab controller and update with the newest hours on water depth
@@ -1066,9 +1072,6 @@ float maxPublicInstallNorm;
     CGPoint bottomOffset = CGPointMake(0, _mapWindow.contentSize.height - _mapWindow.bounds.size.height);
     [_mapWindow setContentOffset:bottomOffset animated:YES];
     
-    //UITextField *lastDrawnTrial = [[trialRunSubViews objectAtIndex:trialNum-1] objectForKey:@"TrialTxTBox"];
-    //[_mapWindow setBounds:CGRectMake(lastDrawnTrial.bounds.origin.x, lastDrawnTrial.bounds.origin.y, _mapWindow.bounds.size.width, _mapWindow.bounds.size.height)];
-    
 }
 
 -(void) OffsetView: (UIView*) view toX:(int)x andY:(int)y{
@@ -1093,8 +1096,6 @@ float maxPublicInstallNorm;
     
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    
-    
     AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([tabControl.trialRuns objectAtIndex:trial]);
     
     AprilTestNormalizedVariable *simRunNormal;
@@ -1165,9 +1166,10 @@ float maxPublicInstallNorm;
     AprilTestCostDisplay *cd;
     //FebTestWaterDisplay * wd;
     //FebTestWaterDisplay * mwd;
+    //AprilTestEfficiencyView *ev;
     UIImageView *waterDepthView;
     UIImageView *MaxWaterDepthView;
-    AprilTestEfficiencyView *ev;
+    UIImageView *efficiencyImageView;
     int visibleIndex = 0;
     
     for(int i = 0 ; i <_currentConcernRanking.count ; i++){
@@ -1194,8 +1196,6 @@ float maxPublicInstallNorm;
             
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
-                /*cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30)];*/
-                
                 float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.publicInstallCost];
                 float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
                 
@@ -1342,6 +1342,7 @@ float maxPublicInstallNorm;
 
         } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
             
+            /*
             if( efficiency.count <= trial){
                 //NSLog(@"Drawing efficiency display for first time");
             ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, (trial )*175 + 40, 130, 150) withContent: simRun.efficiency];
@@ -1353,13 +1354,27 @@ float maxPublicInstallNorm;
                 ev = [efficiency objectAtIndex:simRun.trialNum];
                 ev.frame = CGRectMake(width, (trial )*175 + 40, 130, 150);
             }
+            [ev updateViewForHour: StormPlaybackInterv.value];*/
+            
+            if (trial >= [trialRunSubViews count]){
+                AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+                ((AprilTestEfficiencyView*)[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum]).trialNum = i;
+                [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] updateViewForHour:StormPlaybackInterv.value];
+                
+                efficiencyImageView         = [[UIImageView alloc] initWithFrame:CGRectMake(width, (trial )*175 + 40, 180, 150)];
+                efficiencyImageView.image   = [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] viewforEfficiencyToImage];
+                [_dataWindow addSubview:efficiencyImageView];
+            }
+            else{
+                efficiencyImageView         = [[UIImageView alloc] initWithFrame:CGRectMake(width, (trial )*175 + 40, 180, 150)];
+                efficiencyImageView.image   = [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] viewforEfficiencyToImage];
+                [_dataWindow addSubview:efficiencyImageView];
+            }
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
             //NSLog(@"%@", NSStringFromCGRect(ev.frame));
             [scoreVisNames addObject: currentVar.name];
-            
-            [ev updateViewForHour: StormPlaybackInterv.value];
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (trial * 175) + 40 andColor: [UIColor blackColor] to:&efficiencyOfIntervention];
@@ -1470,7 +1485,8 @@ float maxPublicInstallNorm;
                                    @"InterventionImgView" : interventionImageView,
                                    @"WaterDepthView"      : waterDepthView,
                                    @"MWaterDepthView"     : MaxWaterDepthView,
-                                   @"EfficiencyView"      : ev,
+                                   @"EfficiencyView"      : efficiencyImageView,
+                                   //@"EfficiencyView"      : ev,
                                    @"Damage"              : damage,
                                    @"DamageReduced"       : damageReduced,
                                    @"SewerLoad"           : sewerLoad,
@@ -2120,7 +2136,7 @@ float maxPublicInstallNorm;
         //UILabel *maintenance                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
         //FebTestWaterDisplay *wd               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDisplay"];
         //FebTestWaterDisplay *mwd              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDisplay"];
-        AprilTestEfficiencyView *ev           = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
+        //AprilTestEfficiencyView *ev           = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
         UITextField *newTxt                   = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
         UILabel *Damage                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Damage"];
         UILabel *DamageReduced                = [[trialRunSubViews objectAtIndex:i] valueForKey:@"DamageReduced"];
@@ -2130,6 +2146,7 @@ float maxPublicInstallNorm;
         UILabel *impactNeighbor               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"ImpactNeighbor"];
         UIImageView *wd                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDepthView"];
         UIImageView *mwd                      = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDepthView"];
+        UIImageView *ev                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"EfficiencyView"];
         UIImageView *InterventionImageView    = [[trialRunSubViews objectAtIndex:i] valueForKey:@"InterventionImgView"];
         UISwitch *favoriteSwitch              = [[trialRunSubViews objectAtIndex:i] objectForKey:@"FavoriteSwitch"];
         UILabel *favoriteLabel                = [[trialRunSubViews objectAtIndex:i] objectForKey:@"FavoriteLabel"];
@@ -2140,8 +2157,9 @@ float maxPublicInstallNorm;
         
         [self OffsetView:InterventionImageView toX:InterventionImageView.frame.origin.x andY:175 * (i) + 40];
         
+        
         [self OffsetView:ev toX:ev.frame.origin.x andY:175*i + 40];
-        [ev updateViewForHour: StormPlaybackInterv.value];
+        //[ev updateViewForHour: StormPlaybackInterv.value];
         
         [self OffsetView:wd toX:wd.frame.origin.x andY:175*i + 40];
         //[wd fastUpdateView: StormPlaybackWater.value];

@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 
 @interface AprilTestEfficiencyView : UIView
 @property NSArray * efficiencyLevels;
@@ -17,4 +18,5 @@
 
 -(id) initWithFrame: (CGRect) frame withContent: (NSString *) content;
 -(void) updateViewForHour: (int) hoursAfterStorm;
+- (UIImage *)viewforEfficiencyToImage;
 @end

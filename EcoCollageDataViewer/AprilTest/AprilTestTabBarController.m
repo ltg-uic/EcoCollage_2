@@ -32,14 +32,17 @@
 @synthesize budget = _budget;
 @synthesize waterDisplaysInTab = _waterDisplaysInTab;
 @synthesize maxWaterDisplaysInTab = _maxWaterDisplaysInTab;
+@synthesize efficiencyViewsInTab = _efficiencyViewsInTab;
 @synthesize pieCharts = _pieCharts;
 @synthesize slices = _slices;
 @synthesize pieIndex = _pieIndex;
 @synthesize favorites = _favorites;
 
+
 static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *viewsForWaterDisplays;
 NSMutableArray *viewsForMaxWaterDisplays;
+NSMutableArray *viewsForEfficiencyViews;
 NSDictionary *dataDictionary;
 NSArray *sliceColors;
 NSMutableDictionary *sliceNumbers;
@@ -94,8 +97,10 @@ NSMutableArray *slicesInfo;
     _ownProfile = [[NSMutableArray alloc]init];
     _waterDisplaysInTab = [[NSMutableArray alloc]init];
     _maxWaterDisplaysInTab = [[NSMutableArray alloc]init];
+    _efficiencyViewsInTab  = [[NSMutableArray alloc] init];
     viewsForWaterDisplays = [[NSMutableArray alloc]init];
     viewsForMaxWaterDisplays = [[NSMutableArray alloc]init];
+    viewsForEfficiencyViews  = [[NSMutableArray alloc] init];
     _pieCharts = [[NSMutableArray alloc]init];
     _favorites = [[NSMutableArray alloc]init];
     
@@ -616,20 +621,27 @@ NSMutableArray *slicesInfo;
         }
     }
     
-    
+    //keeping track of water display views
     FebTestWaterDisplay *waterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.standingWater];
-    
     [_waterDisplaysInTab addObject:waterDisplay];
     UIView *viewForWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
     [viewsForWaterDisplays addObject:viewForWaterDisplay];
     waterDisplay.view = viewForWaterDisplay;
     
+    //keeping track of max water display views
     FebTestWaterDisplay *maxWaterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.maxWaterHeights];
-    
     UIView *viewForMaxWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
     [viewsForMaxWaterDisplays addObject:viewForMaxWaterDisplay];
     maxWaterDisplay.view = [viewsForMaxWaterDisplays objectAtIndex:_trialNum];
     [_maxWaterDisplaysInTab addObject:maxWaterDisplay];
+    
+    //keeping track of intervention capacity views
+    AprilTestEfficiencyView *ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(0, 0, 130, 150) withContent: simRun.efficiency];
+    [_efficiencyViewsInTab addObject:ev];
+    UIView *viewforEfficiency = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 130, 150)];
+    [viewsForEfficiencyViews addObject:viewforEfficiency];
+    ev.trialNum = _trialNum;
+    ev.view = [viewsForEfficiencyViews objectAtIndex:_trialNum];
     
     _trialNum++;
     
@@ -679,18 +691,24 @@ NSMutableArray *slicesInfo;
         
         
         FebTestWaterDisplay *waterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.standingWater];
-        
         [_waterDisplaysInTab addObject:waterDisplay];
         UIView *viewForWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
         [viewsForWaterDisplays addObject:viewForWaterDisplay];
         waterDisplay.view = viewForWaterDisplay;
         
         FebTestWaterDisplay *maxWaterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.maxWaterHeights];
-        
         UIView *viewForMaxWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
         [viewsForMaxWaterDisplays addObject:viewForMaxWaterDisplay];
         maxWaterDisplay.view = [viewsForMaxWaterDisplays objectAtIndex:_trialNum];
         [_maxWaterDisplaysInTab addObject:maxWaterDisplay];
+        
+        //keeping track of intervention capacity views
+        AprilTestEfficiencyView *ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(0, 0, 130, 150) withContent: simRun.efficiency];
+        [_efficiencyViewsInTab addObject:ev];
+        UIView *viewforEfficiency = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 130, 150)];
+        [viewsForEfficiencyViews addObject:viewforEfficiency];
+        ev.trialNum = _trialNum;
+        ev.view = [viewsForEfficiencyViews objectAtIndex:_trialNum];
         
         _trialNum++;
     }

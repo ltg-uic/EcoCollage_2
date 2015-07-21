@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <GameKit/GameKit.h>
 #import "FebTestWaterDisplay.h"
+#import "AprilTestEfficiencyView.h"
 
 @interface AprilTestTabBarController : UITabBarController <GKSessionDelegate>
 @property NSMutableArray * currentConcernRanking;
@@ -26,6 +27,7 @@
 @property int budget;
 @property NSMutableArray *waterDisplaysInTab;
 @property NSMutableArray *maxWaterDisplaysInTab;
+@property NSMutableArray *efficiencyViewsInTab;
 @property NSMutableArray *pieCharts;
 @property NSMutableArray *slices;
 @property int pieIndex;
