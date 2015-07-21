@@ -370,7 +370,7 @@ int widthOfUsernamesWindowWhenOpen;
     
     [self createSubviewsForUsernamesWindow:index];
     [self createSubviewsForProfilesWindow:index];
-    [self drawTrialForSpecificProfile:trialChosen forProfile:index];
+    [self drawTrialForSpecificTrial:trialChosen forProfile:index];
 }
 
 - (void)drawNewProfile {
@@ -383,7 +383,7 @@ int widthOfUsernamesWindowWhenOpen;
     
     [self createSubviewsForUsernamesWindow:index];
     [self createSubviewsForProfilesWindow:index];
-    [self drawTrialForSpecificProfile:trialChosen forProfile:index];
+    [self drawTrialForSpecificTrial:trialChosen forProfile:index];
 }
 
 - (void)updatePicker {
@@ -405,8 +405,11 @@ int widthOfUsernamesWindowWhenOpen;
     // Handle the selection
     if (row == tabControl.trialNum) {
         _trialNumber.text = @"Favorite Trials";
-        if (tabControl.trialNum > 0)
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
             [self loadFavorites];
+            [_loadingIndicator stopAnimating];
+        }
         [[self view] endEditing:YES];
         return;
     }
@@ -460,8 +463,11 @@ int widthOfUsernamesWindowWhenOpen;
     // check to see if we should load the favorites
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     if (tabControl.trialNum == trialChosen) {
-        if (tabControl.trialNum > 0)
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
             [self loadFavorites];
+            [_loadingIndicator stopAnimating];
+        }
         return;
     }
 
@@ -629,15 +635,212 @@ int widthOfUsernamesWindowWhenOpen;
 - (void)loadFavorites {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
+    // first, remove all current subviews from the 3 visualization scrollViews
+    for (UIView *subview in [_profilesWindow subviews]) {
+        for (UIView *subsubview in [subview subviews])
+            [subsubview removeFromSuperview];
+        [subview removeFromSuperview];
+    }
+    for (UIView *subview in [_usernamesWindow subviews]) {
+        for (UIView *subsubview in [subview subviews])
+            [subsubview removeFromSuperview];
+        [subview removeFromSuperview];
+    }
+    for (UIView *subview in [bottomOfMapWindow subviews]) {
+        for (UIView *subsubview in [subview subviews])
+            [subsubview removeFromSuperview];
+        [subview removeFromSuperview];
+    }
+    for (int i = 0; i < [imageViewsToRemove count]; i++) {
+        [[imageViewsToRemove objectAtIndex:i] removeFromSuperview];
+    }
+    
+    // if there are no favorites, load a message telling the user this
+    if (tabControl.favorites.count == 0) {
+        UIAlertView *alert= [[UIAlertView alloc] initWithTitle:@"No favorites loaded" message:@"Wait for other users to select their favorite trial" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+        [alert show];
+        return;
+    }
+    
+    [efficiencySocial removeAllObjects];
+    
+    int indexOfProfileInTabControlProfiles = -1;
+    
     for (int i = 0; i < tabControl.favorites.count; i++) {
-        [self drawFavorite:i];
+        NSArray *profile = [[NSArray alloc]init];
+        
+        // find the profile for this user
+        for(int j = 0; j < tabControl.favorites.count; j++) {
+            if ([[[tabControl.favorites objectAtIndex:i] objectAtIndex:1] isEqualToString:[[tabControl.profiles objectAtIndex:j] objectAtIndex:1]]) {
+                profile = [tabControl.profiles objectAtIndex:j];
+                indexOfProfileInTabControlProfiles = j;
+            }
+        }
+        
+        //exit if profile is not found
+        if (indexOfProfileInTabControlProfiles == -1) {
+            NSLog(@"Exiting from drawing views in _usernamesWindow for favorite trials");
+            return;
+        }
+        
+        // draw views in _usernamesWindow
+        // tag for each view is 1+(index of device name in tabControl.favorites)
+        UIView *usernameSubview = [[UIView alloc]init];
+        usernameSubview.frame = CGRectMake(0, i * heightOfVisualization, _usernamesWindow.frame.size.width, heightOfVisualization);
+        // tag == i + 1 since 0 tag goes to the superview
+        usernameSubview.tag = i + 1;
+        [_usernamesWindow addSubview:usernameSubview];
+        
+        UILabel *nameLabel = [[UILabel alloc]init];
+        nameLabel.tag = 1;
+        nameLabel.backgroundColor = [UIColor whiteColor];
+        nameLabel.frame = CGRectMake(0, 2, widthOfUsernamesWindowWhenOpen, 40);
+        nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
+        if ([profile isEqual:tabControl.ownProfile]) {
+            nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:i] objectAtIndex:2] integerValue]];
+        }
+        else {
+            nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:i] objectAtIndex:2] integerValue]];
+        }
+        if(nameLabel != NULL) {
+            [[_usernamesWindow viewWithTag:i + 1] addSubview:nameLabel];
+        }
+        
+        
+        [tabControl reloadDataForPieChartAtIndex:i];
+        [[tabControl.pieCharts objectAtIndex:i] reloadData];
+        [[_usernamesWindow viewWithTag:i + 1] addSubview:[tabControl.pieCharts objectAtIndex:indexOfProfileInTabControlProfiles]];
     }
     
     
-}
+    
+    // draw views in _profilesWindow
+    // tag for each view is 1+(index of device name in tabControl.favorites)
+    for (int i = 0; i < tabControl.favorites.count; i++) {
+        NSArray *profile = [[NSArray alloc]init];
+        
+        // find the profile for this user
+        for(int j = 0; j < tabControl.favorites.count; j++) {
+            if ([[[tabControl.favorites objectAtIndex:i] objectAtIndex:1] isEqualToString:[[tabControl.profiles objectAtIndex:j] objectAtIndex:1]]) {
+                profile = [tabControl.profiles objectAtIndex:j];
+                indexOfProfileInTabControlProfiles = j;
+            }
+        }
+        
+        UIView *profileSubview = [[UIView alloc]init];
+        profileSubview.frame = CGRectMake(0, i * heightOfVisualization, widthOfTitleVisualization * 8, heightOfVisualization);
+        // tag == i + 1 since 0 tag goes to the superview
+        profileSubview.tag = i + 1;
+        [_profilesWindow addSubview:profileSubview];
+        
+        
+        // draw profile concerns in order
+        int width = 0;
+        for (int j = 3; j < profile.count; j++) {
+            
+            UILabel *currentLabel = [[UILabel alloc]init];
+            currentLabel.backgroundColor = [concernColors objectForKey:[profile objectAtIndex:j]];
+            currentLabel.frame = CGRectMake(width, 0, widthOfTitleVisualization, 40);
+            currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
+            
+            if([[profile objectAtIndex:j] isEqualToString:@"Investment"]) {
+                currentLabel.text = @"  Investment";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Damage Reduction"]) {
+                currentLabel.text = @"  Damage Reduction";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Efficiency of Intervention ($/Gallon)"]) {
+                currentLabel.text = @"  Efficiency of Intervention";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Capacity Used"]) {
+                currentLabel.text = @"  Intervention Capacity";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
+                currentLabel.text = @"  Water Depth Over Storm";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
+                currentLabel.text = @"  Maximum Flooded Area";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"]) {
+                currentLabel.text = @"  Groundwater Infiltration";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Impact on my Neighbors"]) {
+                currentLabel.text = @"  Impact on my Neighbors";
+            }
+            else {
+                currentLabel = NULL;
+            }
+            
+            if(currentLabel != NULL){
+                [profileSubview addSubview:currentLabel];
+                width += widthOfTitleVisualization;
+            }
+        }
+    }
+    
+    // draw maps in _mapWindow
+    // loop through tabControl.favorites and see which maps we need to draw
+    // loop through all the favorites and add any trial number not yet added to the "uniqueTrialNumbers" array
+    NSMutableArray *uniqueTrialNumbers = [[NSMutableArray alloc]init];
+    
+    for (NSArray *favorite in tabControl.favorites) {
+        NSNumber *trialOfCurrentProfile = [favorite objectAtIndex:2];
+        
+        BOOL isARepeat = NO;
+        for (NSNumber *trialNum in uniqueTrialNumbers) {
+            if ([trialNum isEqualToNumber:trialOfCurrentProfile])
+                isARepeat = YES;
+        }
+        
+        if (!isARepeat)
+            [uniqueTrialNumbers addObject:trialOfCurrentProfile];
+    }
+    
+    // sort uniqueTrialNumbers in ascending order
+    for (int i = 0; i < uniqueTrialNumbers.count - 1; i++) {
+        if ([[uniqueTrialNumbers objectAtIndex:i] integerValue] > [[uniqueTrialNumbers objectAtIndex:i+1] integerValue]) {
+            int temp = [[uniqueTrialNumbers objectAtIndex:i] integerValue];
+            [uniqueTrialNumbers replaceObjectAtIndex:i withObject:[uniqueTrialNumbers objectAtIndex:i+1]];
+            [uniqueTrialNumbers replaceObjectAtIndex:i+1 withObject:[NSNumber numberWithInt:temp]];
+        }
+    }
+    
+    // load the maps for the trial numbers in uniqueTrialNumbers
+    for (int i = 0; i < [uniqueTrialNumbers count]; i++) {
+        int trialNum = [[uniqueTrialNumbers objectAtIndex:i] integerValue];
+        
+        UILabel *mapWindowLabel = [[UILabel alloc]init];
+        mapWindowLabel.text = [NSString stringWithFormat:@"  Trial %d", trialNum];
+        mapWindowLabel.font = [UIFont systemFontOfSize:15.0];
+        [mapWindowLabel sizeToFit];
+        mapWindowLabel.frame = CGRectMake(200 * i, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
+        [bottomOfMapWindow addSubview:mapWindowLabel];
+        
+        [bottomOfMapWindow setContentSize:CGSizeMake(mapWindowLabel.frame.origin.x + 250, bottomOfMapWindow.frame.size.height)];
+        
+        AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trialNum];
+        
+        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, mapWindowLabel.frame.size.height + 5, 115, 125))];
+        interventionView.view = mapWindowLabel;
+        [interventionView updateView];
+    }
+    
+    
+    
+    for (int i = 0; i < tabControl.favorites.count; i++) {
+        int trialNum = [[[tabControl.favorites objectAtIndex:i] objectAtIndex:2]integerValue];
+        
+        // find the profile for this user
+        for(int j = 0; j < tabControl.favorites.count; j++) {
+            if ([[[tabControl.favorites objectAtIndex:i] objectAtIndex:1] isEqualToString:[[tabControl.profiles objectAtIndex:j] objectAtIndex:1]]) {
+                indexOfProfileInTabControlProfiles = j;
+            }
+        }
+        
+        [self drawTrialForSpecificTrial:trialNum forFavoriteProfile:indexOfProfileInTabControlProfiles withViewIndex:i];
+    }
 
-- (void)drawFavorite:(int)index {
-
+    
 }
 
 /*
@@ -1130,7 +1333,7 @@ int widthOfUsernamesWindowWhenOpen;
     
     for (int i = 0; i < numberOfProfiles; i++) {
         // draw trial for each profile
-        [self drawTrialForSpecificProfile:trialChosen forProfile:i];
+        [self drawTrialForSpecificTrial:trialChosen forProfile:i];
     }
     
     
@@ -1139,7 +1342,281 @@ int widthOfUsernamesWindowWhenOpen;
 }
 
 
-- (void) drawTrialForSpecificProfile:(int)trial forProfile:(int)currentProfileIndex {
+- (void) drawTrialForSpecificTrial:(int)trial forFavoriteProfile:(int)currentProfileIndex withViewIndex:(int)viewIndex {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    // error checking
+    if ([tabControl.profiles count] < currentProfileIndex + 1)
+        return;
+    
+    // make sure trial asked for is loaded
+    if ([tabControl.trialRuns count] < trial + 1)
+        return;
+    
+    
+    AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trial];
+    AprilTestNormalizedVariable *simRunNormal = [tabControl.trialRunsNormalized objectAtIndex:trial];
+    
+    NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
+    NSArray *currentProfile = [[NSArray alloc]init];
+    currentProfile = [tabControl.profiles objectAtIndex:currentProfileIndex];
+    
+    for (int i = 3; i < [currentProfile count]; i++) {
+        [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:i]] withDisplayName:[currentProfile objectAtIndex: i] withNumVar:1 withWidth:widthOfTitleVisualization withRank:9-i]];
+    }
+    
+    float priorityTotal= 0;
+    float scoreTotal = 0;
+    for(int i = 0; i < currentConcernRanking.count; i++){
+        
+        priorityTotal += [(AprilTestVariable *)[currentConcernRanking objectAtIndex:i] currentConcernRanking];
+    }
+    
+    int width = 0;
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
+    
+    NSArray *sortedArray = [currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+        if(first > second) return NSOrderedAscending;
+        else return NSOrderedDescending;
+    }];
+    NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
+    NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
+    AprilTestCostDisplay *cd;
+    int visibleIndex = 0;
+    
+    for(int i = 0 ; i < currentConcernRanking.count ; i++){
+        
+        AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
+        
+        //laziness: this is just the investment costs
+        if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
+            float investmentInstall = simRun.publicInstallCost;
+            float investmentMaintain = simRun.publicMaintenanceCost;
+            float investmentInstallN = simRunNormal.publicInstallCost;
+            float investmentMaintainN = simRunNormal.publicMaintenanceCost;
+            dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
+            CGRect frame = CGRectMake(width + 25, 60, dynamic_cd_width, 30);
+            
+            
+            //NSLog(@"Drawing water display for first time");
+            
+            //cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, profileIndex*heightOfVisualization + 60, dynamic_cd_width, 30)];
+            
+            float costWidth = [self getWidthFromSlider:_BudgetSlider toValue:simRun.publicInstallCost];
+            float maxBudgetWidth = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
+            
+            cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
+            
+            [[_profilesWindow viewWithTag:viewIndex + 1] addSubview: cd];
+            
+            //checks if over budget, if so, prints warning message
+            if (simRun.publicInstallCost > tabControl.budget){
+                //store update labels for further use (updating over budget when using absolute val)
+                
+                UILabel *valueLabel;
+                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-tabControl.budget)]] ] withConcernPosition:width+25 andyValue:100 andColor:[UIColor redColor] to:&valueLabel withIndex:viewIndex];
+            }
+            
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            
+            
+            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
+            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
+            //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
+            
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN))]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
+            //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
+            [scoreVisNames addObject: @"publicCostI"];
+            [scoreVisNames addObject: @"publicCostM"];
+            //[scoreVisNames addObject: @"publicCostD"];
+            
+            
+            //just damages now
+        } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
+            
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            
+            
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
+            
+            //add values for the score visualization
+            
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2]];
+            //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
+            //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
+            [scoreVisNames addObject: @"privateCostD"];
+            
+        } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
+            
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" run-off to neighbors"] withConcernPosition:width + 30 andyValue: 75 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
+            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
+            [scoreVisNames addObject: currentVar.name];
+        }  else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
+            
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe)]];
+            [scoreVisNames addObject: currentVar.name];
+        } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
+            
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater was", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" infiltrated by the swales"] withConcernPosition:width + 30 andyValue:75  andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
+            [scoreVisNames addObject: currentVar.name];
+        } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+            /*
+             FebTestWaterDisplay * wd;
+             //NSLog(@"%d, %d", waterDisplaysSocial.count, i);
+             if(waterDisplaysSocial.count <= currentProfileIndex){
+             //NSLog(@"Drawing water display for first time");
+             wd = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, 60, 115, 125) andContent:simRun.standingWater];
+             wd.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
+             [waterDisplaysSocial addObject:wd];
+             } else {
+             wd = [waterDisplaysSocial objectAtIndex:currentProfileIndex];
+             wd.frame = CGRectMake(width + 10, 60, 115, 125);
+             }
+             */
+            
+            ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh_social;
+            [[tabControl.waterDisplaysInTab objectAtIndex:trial] fastUpdateView:hoursAfterStorm_social];
+            
+            UIImageView *waterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, 60, 115, 125)];
+            waterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:trial]];
+            [[_profilesWindow viewWithTag:viewIndex + 1]addSubview:waterDisplayView];
+            
+            [imageViewsToRemove addObject:waterDisplayView];
+            
+            /*
+             wd.thresholdValue = thresh_social;
+             [wd fastUpdateView: _StormPlayBack.value];
+             */
+            
+            scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.floodedStreets);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking + 1)/priorityTotal * (1- simRunNormal.floodedStreets)]];
+            [scoreVisNames addObject: currentVar.name];
+            
+        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+            //display window for maxHeights
+            /*
+             FebTestWaterDisplay * mwd;
+             if(maxwaterDisplaysSocial.count <= currentProfileIndex){
+             mwd  = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, 60, 115, 125) andContent:simRun.maxWaterHeights];
+             mwd.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
+             [maxwaterDisplaysSocial addObject:mwd];
+             } else {
+             mwd = [maxwaterDisplaysSocial objectAtIndex:currentProfileIndex];
+             mwd.frame = CGRectMake(width + 10, 60, 115, 125);
+             }
+             */
+            
+            ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh_social;
+            [[tabControl.maxWaterDisplaysInTab objectAtIndex:trial] updateView:48];
+            
+            UIImageView *maxWaterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, 60, 115, 125)];
+            maxWaterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]];
+            [[_profilesWindow viewWithTag:viewIndex + 1]addSubview:maxWaterDisplayView];
+            
+            [imageViewsToRemove addObject:maxWaterDisplayView];
+            
+            /*
+             mwd.thresholdValue = thresh_social;
+             [mwd updateView:48];
+             */
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
+            [scoreVisNames addObject: currentVar.name];
+        } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
+            
+            
+            AprilTestEfficiencyView *ev;
+
+            //NSLog(@"Drawing efficiency display for first time");
+            ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, 60, 130, 150) withContent: simRun.efficiency];
+            ev.trialNum = trial;
+            ev.view = [_profilesWindow viewWithTag:viewIndex + 1];
+            [efficiencySocial addObject:ev];
+
+            
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
+            //NSLog(@"%@", NSStringFromCGRect(ev.frame));
+            [scoreVisNames addObject: currentVar.name];
+            
+            [ev updateViewForHour: hoursAfterStorm_social];
+            
+        } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
+            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: 60 andColor: [UIColor blackColor] to:nil withIndex:viewIndex];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * 0]];
+            [scoreVisNames addObject:currentVar.name];
+        }
+        
+        width+= currentVar.widthOfVisualization;
+        if (currentVar.widthOfVisualization > 0) visibleIndex++;
+    }
+    
+    //border around component score
+    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, 78,  114, 26)];
+    fullValueBorder.backgroundColor = [UIColor grayColor];
+    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 80,  110, 22)];
+    fullValue.backgroundColor = [UIColor whiteColor];
+    [[_usernamesWindow viewWithTag:viewIndex + 1] addSubview:fullValueBorder];
+    [[_usernamesWindow viewWithTag:viewIndex + 1] addSubview:fullValue];
+    //NSLog(@" %@", scoreVisVals);
+    float maxX = 150;
+    float totalScore = 0;
+    UILabel * componentScore;
+    
+    //computing and drawing the final component score
+    for(int i =  0; i < scoreVisVals.count; i++){
+        float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
+        if (scoreWidth < 0) scoreWidth = 0.0;
+        totalScore += scoreWidth;
+        componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, 80, floor(scoreWidth), 22)];
+        componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
+        [[_usernamesWindow viewWithTag:viewIndex + 1] addSubview:componentScore];
+        maxX+=floor(scoreWidth);
+    }
+    
+    [_profilesWindow setContentSize:CGSizeMake(width+=20, (viewIndex+1)*200)];
+    
+    UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 40, 0, 0)];
+    //scoreLabel.text = [NSString stringWithFormat:  @"Score: %.0f / 100", totalScore];
+    scoreLabel.text = @"Performance:";
+    scoreLabel.font = [UIFont systemFontOfSize:14.0];
+    [scoreLabel sizeToFit];
+    scoreLabel.textColor = [UIColor blackColor];
+    [[_usernamesWindow viewWithTag:viewIndex + 1] addSubview:scoreLabel];
+    UILabel *scoreLabel2 = [[UILabel alloc] initWithFrame:CGRectMake(150, 65, 0, 0)];
+    scoreLabel2.text = [NSString stringWithFormat:  @"Broken down by source:"];
+    scoreLabel2.font = [UIFont systemFontOfSize:10.0];
+    [scoreLabel2 sizeToFit];
+    scoreLabel2.textColor = [UIColor blackColor];
+    [[_usernamesWindow viewWithTag:viewIndex + 1] addSubview:scoreLabel2];
+}
+
+
+- (void) drawTrialForSpecificTrial:(int)trial forProfile:(int)currentProfileIndex {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     // error checking
@@ -1475,8 +1952,11 @@ int widthOfUsernamesWindowWhenOpen;
     
     
     if (tabControl.trialNum == trialChosen) {
-        if (tabControl.trialNum > 0)
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
             [self loadFavorites];
+            [_loadingIndicator stopAnimating];
+        }
     }
     else {
         //only update all labels/bars if Static normalization is switched on
@@ -1578,8 +2058,11 @@ int widthOfUsernamesWindowWhenOpen;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     if (tabControl.trialNum == trialChosen) {
-        if (tabControl.trialNum > 0)
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
             [self loadFavorites];
+            [_loadingIndicator stopAnimating];
+        }
     }
     else
         [self profileUpdate];

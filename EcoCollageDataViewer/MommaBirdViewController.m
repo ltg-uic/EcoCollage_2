@@ -185,13 +185,17 @@ NSData *ping;
             if ([trialRuns count] != 0 && [trialRunsNormalized count] != 0) {
                 [self sendTrialRequestToBaby:peerID];
             }
+            
+            // when a baby is connected, send it all the favorites loaded
+            if ([favorites count] != 0) {
+                [self sendAllFavoritesToBaby:peerID];
+            }
             break;
         }
             
         case GKPeerStateDisconnected:
         {
             NSLog(@"didChangeState: peer %@ disconnected", peerName);
-            session.available = YES;
             break;
         }
             
@@ -266,9 +270,30 @@ NSData *ping;
     }
 }
 
+- (void)sendAllFavoritesToBaby:(NSString *)peerID {
+    NSMutableArray *favoritesForBaby = [[NSMutableArray alloc]init];
+    
+    [favoritesForBaby addObject:@"multipleFavoritesForBaby"];
+    
+    for (int i = 0; i < favorites.count; i++) {
+        [favoritesForBaby addObject:[favorites objectAtIndex:i]];
+    }
+    
+    if(_session) {
+        NSDictionary *favoritesToSendToBabies = [NSDictionary dictionaryWithObject:favoritesForBaby
+                                                                           forKey:@"data"];
+        
+        if(favoritesToSendToBabies != nil) {
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:favoritesToSendToBabies];
+            [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+        }
+    }
+}
 
 - (void)updateFavoriteTrials:(NSArray *)dataArray {
     BOOL profileHasAFavorite = NO;
+    
+    NSLog(@"Received favorite information for %@", dataArray[1]);
     
     for (NSArray *favorite in favorites) {
         if ([[dataArray objectAtIndex:1] isEqualToString:[favorite objectAtIndex:1]]) {

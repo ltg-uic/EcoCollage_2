@@ -179,6 +179,12 @@ float maxPublicInstallNorm;
     
     [self budgetUpdated];
 
+    // automatically send Momma the favorited trial when connection begins
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sendFavorite)
+                                                 name:@"sendFavorite"
+                                               object:nil];
+    
 }
 
 
@@ -1487,6 +1493,38 @@ float maxPublicInstallNorm;
    
     [_dataWindow flashScrollIndicators];          
     
+}
+
+- (void)sendFavorite {
+    int favorite = -1;
+    
+    for (NSDictionary *trialRunInfo in trialRunSubViews) {
+        if([[trialRunInfo objectForKey:@"FavoriteSwitch"] isOn])
+            favorite = (int)(((UISwitch*)[trialRunInfo objectForKey:@"FavoriteSwitch"]).tag) - 100;
+    }
+    
+    if (favorite != -1) {
+        AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+        
+        if(tabControl.session) {
+            NSMutableArray *favoriteTrial = [[NSMutableArray alloc]init];
+            
+            [favoriteTrial addObject:@"favoriteForMomma"];
+            [favoriteTrial addObject:[[UIDevice currentDevice]name]];
+            
+            [favoriteTrial addObject:[NSNumber numberWithInt:favorite]];
+            
+            NSDictionary *favoriteToSendToMomma = [NSDictionary dictionaryWithObject:favoriteTrial
+                                                                              forKey:@"data"];
+            
+            if(favoriteToSendToMomma != nil) {
+                NSData *data = [NSKeyedArchiver archivedDataWithRootObject:favoriteToSendToMomma];
+                if(tabControl.peerIDForMomma != nil)
+                    [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+            }
+        }
+
+    }
 }
 
 - (void)personalFavoriteSwitchChanged:(id)sender {

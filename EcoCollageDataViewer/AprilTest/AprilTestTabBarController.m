@@ -334,8 +334,17 @@ NSMutableArray *slicesInfo;
     else if([dataArray[0] isEqualToString:@"favoriteForBabies"]) {
         [self updateFavorites:dataArray];
     }
+    else if([dataArray[0] isEqualToString:@"multipleFavoritesForBaby"]) {
+        [self updateAllFavorites:dataArray];
+    }
     else {
         NSLog(@"Received unknown data");
+    }
+}
+
+- (void)updateAllFavorites:(NSArray *)dataArray {
+    for (int i = 1; i < [dataArray count]; i++) {
+        [self updateFavorites:[dataArray objectAtIndex:i]];
     }
 }
 
@@ -348,11 +357,13 @@ NSMutableArray *slicesInfo;
         if ([[favorite objectAtIndex:1] isEqualToString:[dataArray objectAtIndex:1]]) {
             favoriteIsAnUpdate = YES;
             [_favorites replaceObjectAtIndex:i withObject:dataArray];
+            NSLog(@"Replaced favorite for device %@", [dataArray objectAtIndex:1]);
         }
     }
     
     if (!favoriteIsAnUpdate) {
         [_favorites addObject:dataArray];
+        NSLog(@"Added favorite for device %@", [dataArray objectAtIndex:1]);
     }
 }
 
