@@ -253,8 +253,11 @@ NSMutableArray *slicesInfo;
         {
             NSLog(@"didChangeState: peer %@ disconnected", peerName);
             
-            [self shutdownBluetooth];
-            [self setupSession];
+            // if momma was disconnected, allow for reconnection
+            if ([peerName isEqualToString:[NSString stringWithFormat:@"Momma%d", _studyNum]]) {
+                self.session.delegate = nil;
+                self.session = nil;
+            }
             
             break;
         }

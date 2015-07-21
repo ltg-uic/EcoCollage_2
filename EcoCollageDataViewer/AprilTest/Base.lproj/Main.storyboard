@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="q8p-ax-VWt">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="q8p-ax-VWt">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
     </dependencies>
     <scenes>
         <!--Concern Profile Builder-->
@@ -375,12 +375,6 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="oZq-hV-kbH">
-                                <rect key="frame" x="869" y="26" width="139" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You can revise your profile be returning to the &quot;Your Survey&quot; tab below" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="siI-V9-84M">
                                 <rect key="frame" x="3" y="688" width="522" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -398,6 +392,12 @@
                                     <action selector="hideOrShow:" destination="Xor-Qe-PFj" eventType="touchUpInside" id="8Nd-KX-3GM"/>
                                 </connections>
                             </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="8Qk-of-IHh">
+                                <rect key="frame" x="869" y="26" width="139" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -407,13 +407,13 @@
                         <outlet property="StormPlayBack" destination="lAH-2v-pHo" id="VYn-CQ-mWd"/>
                         <outlet property="mapWindow" destination="7Hg-Ai-r1h" id="Pn0-Sz-Hw8"/>
                         <outlet property="profilesWindow" destination="uay-AJ-gq5" id="Hcn-ad-Bmf"/>
-                        <outlet property="trialNumber" destination="oZq-hV-kbH" id="v5m-lg-el8"/>
+                        <outlet property="trialPickerTextField" destination="8Qk-of-IHh" id="D7T-TP-MR8"/>
                         <outlet property="usernamesWindow" destination="JaZ-ep-sEQ" id="aSi-33-HKH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VNS-9k-UPm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="394" y="2630"/>
+            <point key="canvasLocation" x="373" y="2626"/>
         </scene>
         <!--April Test Intro View Controller-->
         <scene sceneID="tyK-Bo-XQe">

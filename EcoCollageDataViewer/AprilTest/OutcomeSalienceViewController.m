@@ -1432,7 +1432,6 @@ float maxPublicInstallNorm;
     [_mapWindow addSubview:scoreLabel2];
     
     
-#pragma mark ryan trial favoriting
     UILabel *favoriteLabel;
     UISwitch *favoriteSwitch;
     

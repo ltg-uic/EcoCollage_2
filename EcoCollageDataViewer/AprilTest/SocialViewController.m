@@ -26,11 +26,11 @@
 @synthesize studyNum = _studyNum;
 @synthesize profilesWindow = _profilesWindow;
 @synthesize usernamesWindow = _usernamesWindow;
-@synthesize trialNumber = _trialNumber;
 @synthesize BudgetSlider = _BudgetSlider;
 @synthesize StormPlayBack = _StormPlayBack;
 @synthesize loadingIndicator = _loadingIndicator;
 @synthesize mapWindow = _mapWindow;
+@synthesize trialPickerTextField = _trialPickerTextField;
 
 NSMutableDictionary *concernColors;
 NSMutableDictionary *concernNames;
@@ -42,6 +42,7 @@ UIView* viewForWaterDisplay;
 UIView* viewForMaxWateDisplay;
 UIImage *waterDisplayImage;
 UIImage *maxWaterDisplayImage;
+UITapGestureRecognizer *tapGestureRecognizer_social;
 
 int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
@@ -54,7 +55,7 @@ int hoursAfterStorm_social;
 UILabel *budgetLabel;
 UILabel *hoursAfterStormLabel;
 UILabel *mapWindowStatusLabel;
-NSArray *arrStatus_social;
+NSMutableArray *arrStatus_social;
 int trialChosen= 0;
 UIPickerView *SortType_social;
 int smallSizeOfMapWindow = 50;
@@ -98,8 +99,6 @@ int widthOfUsernamesWindowWhenOpen;
 - (void)viewDidLoad {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _studyNum = tabControl.studyNum;
-    
-    self.trialNumber.delegate = self;
     
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -162,17 +161,23 @@ int widthOfUsernamesWindowWhenOpen;
     [_loadingIndicator stopAnimating];
     
     
-    arrStatus_social = [[NSArray alloc] initWithObjects:@"Trial 0", @"Favorite trials", nil];
-    _trialNumber.text = [NSString stringWithFormat:@"%@", arrStatus_social[trialChosen]];
-    _trialNumber.delegate = self;
+    arrStatus_social = [[NSMutableArray alloc] initWithObjects:@"Trial 0", @"Favorite trials", nil];
+    
+    _trialPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus_social[trialChosen]];
+    _trialPickerTextField.delegate = self;
+    
     if (SortType_social == nil){
-        SortType_social = [[UIPickerView alloc]init];
+        SortType_social = [[UIPickerView alloc] initWithFrame:CGRectMake(_trialPickerTextField.frame.origin.x - 250, _trialPickerTextField.frame.origin.y + _trialPickerTextField.frame.size.height, 250, 100)];
+        SortType_social.backgroundColor = [UIColor whiteColor];
+        SortType_social.layer.borderWidth = 1;
         [SortType_social setDataSource:self];
         [SortType_social setDelegate:self];
         [SortType_social setShowsSelectionIndicator:YES];
-        _trialNumber.selectedTextRange = nil;
-        [_trialNumber setInputView:SortType_social];
     }
+    
+    tapGestureRecognizer_social = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
+    tapGestureRecognizer_social.numberOfTapsRequired = 1;
+    [self.view addGestureRecognizer:tapGestureRecognizer_social];
     
     efficiencySocial = [[NSMutableArray alloc]init];
     imageViewsToRemove = [[NSMutableArray alloc]init];
@@ -246,6 +251,32 @@ int widthOfUsernamesWindowWhenOpen;
     
     widthOfUsernamesWindowWhenOpen = _usernamesWindow.frame.size.width;
     
+}
+
+- (BOOL) textFieldShouldBeginEditing:(UITextField *)textView
+{
+    if (textView == _trialPickerTextField){
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:.50];
+        [UIView setAnimationDelegate:self];
+        [self.view addSubview:SortType_social];
+        [UIView commitAnimations];
+        return NO;
+    }
+    else{
+        return YES;
+    }
+}
+
+- (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
+{
+    //Code to handle the gesture
+    if ([SortType_social isHidden]){
+        NSLog(@"View Doesn't Exist");
+    }
+    else{
+        [SortType_social removeFromSuperview];
+    }
 }
 
 
@@ -389,13 +420,22 @@ int widthOfUsernamesWindowWhenOpen;
 - (void)updatePicker {
     [self pickerView:SortType_social numberOfRowsInComponent:0];
     
+    [arrStatus_social removeAllObjects];
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    for (int i = 0; i < tabControl.trialNum; i++) {
+        [arrStatus_social addObject:[NSString stringWithFormat:@"Trial %d", i]];
+    }
+    
+    [arrStatus_social addObject:@"Favorite Trials"];
+    
     [SortType_social reloadAllComponents];
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
     // if the chosen trial is already loaded, return
     if (trialChosen == row) {
-        [[self view] endEditing:YES];
+        [SortType_social removeFromSuperview];
         return;
     }
     
@@ -404,19 +444,19 @@ int widthOfUsernamesWindowWhenOpen;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     // Handle the selection
     if (row == tabControl.trialNum) {
-        _trialNumber.text = @"Favorite Trials";
+        _trialPickerTextField.text = @"Favorite Trials";
         if (tabControl.trialNum > 0) {
             [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
             [self loadFavorites];
             [_loadingIndicator stopAnimating];
         }
-        [[self view] endEditing:YES];
+        [SortType_social removeFromSuperview];
         return;
     }
     else
-        _trialNumber.text = [NSString stringWithFormat:@"Trial %d", row];
+        _trialPickerTextField.text = [NSString stringWithFormat:@"Trial %d", row];
     
-    [[self view]endEditing:YES];
+    [SortType_social removeFromSuperview];
 
     
     [self profileUpdate];
@@ -425,12 +465,8 @@ int widthOfUsernamesWindowWhenOpen;
 
 // tell the picker how many rows are available for a given component
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
-    // add an extra row for "favorite trials"
-    NSUInteger numRows = tabControl.trialNum + 1;
-    
-    return numRows;
+    return [arrStatus_social count];
 }
 
 // tell the picker how many components it will have
@@ -449,10 +485,12 @@ int widthOfUsernamesWindowWhenOpen;
         
     }
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    if (row == tabControl.trialNum)
+    if (row == tabControl.trialNum && tabControl.trialNum != 0)
         tView.text = @"Favorite Trials";
-    else
+    else if (row != tabControl.trialNum && tabControl.trialNum != 0)
         tView.text = [NSString stringWithFormat:@"Trial %d", (int)row];
+    else
+        tView.text = @"Favorite Trials";
     // Fill the label text here
     
     return tView;
@@ -1698,7 +1736,7 @@ int widthOfUsernamesWindowWhenOpen;
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
             
-            
+
             scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
             scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
             //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
@@ -2115,7 +2153,5 @@ int widthOfUsernamesWindowWhenOpen;
  {
  return [sliceColors objectAtIndex:(index % sliceColors.count)];
  }
-
-
 
 @end
