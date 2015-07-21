@@ -111,7 +111,7 @@
 - (UIImage *)viewforEfficiencyToImage {
 
     UIImage *img;
-    UIGraphicsBeginImageContext(CGSizeMake(self.frame.size.width+55, self.frame.size.height));
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(self.frame.size.width+55, self.frame.size.height), NO, 0.0f);
     [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     img = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
