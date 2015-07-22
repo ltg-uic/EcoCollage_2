@@ -300,10 +300,11 @@ float maxPublicInstallNorm;
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+/*
 - (IBAction)pullNextRun:(id)sender {
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     [self loadNextSimulationRun];
-}
+}*/
 
 - (IBAction)NormTypeSwitched:(UISwitch *)sender {
     /**
@@ -963,8 +964,8 @@ float maxPublicInstallNorm;
     [trialRunSubViews replaceObjectAtIndex:trial withObject:newDict];
 }
 
+/*
 - (void)loadNextSimulationRun{
-    /*
     
     //pull content from the server that is said to be from le trial with real vals
     NSString * urlPlusFile = [NSString stringWithFormat:@"%@/%@", _url, @"simOutput.php"];
@@ -1036,40 +1037,20 @@ float maxPublicInstallNorm;
                                                               target:self selector:@selector(autoscrollTimerFired:) userInfo:nil repeats:NO];
         }
     }
-    */
-    
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    if ([tabControl.trialRuns count] > trialNum) {
-        [self drawTrial:trialNum];
-        trialNum++;
-        
-        //chooses between static/dynamic normalization of trial data
-        if (_DynamicNormalization.isOn)
-            [self normalizeAllandUpdateDynamically];
-        else
-            [self normalizeStatically];
-        
-        //update with the current sort chosen after a new trial is drawn
-        [self handleSort: sortChosen];
-        
-        //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
-        if (trialNum > 3){
-            scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
-                                                              target:self selector:@selector(autoscrollTimerFired:) userInfo:nil repeats:NO];
-        }
-    }
-    else
-        NSLog(@"Trial %d not yet loaded", trialNum);
-    
-    [_loadingIndicator stopAnimating];
-    
-}
+ 
+}*/
 
 
 //autoscroll to the bottom of the mapwindow (trial and component score) scrollview
-- (void) autoscrollTimerFired: (NSTimer*)theTimer
+- (void) autoscrollTimerFired: (NSTimer*)Timer
 {
-    CGPoint bottomOffset = CGPointMake(0, _mapWindow.contentSize.height - _mapWindow.bounds.size.height);
+    NSNumber *trial = ((NSNumber*)[Timer userInfo]);
+    int trialInt = [trial integerValue];
+    
+    trialOffset = (trialInt - 3 < 0) ? 0 : (175 * (trialInt-3) + 35);
+    
+    //CGPoint bottomOffset = CGPointMake(0, _mapWindow.contentSize.height - _mapWindow.bounds.size.height);
+    CGPoint bottomOffset = CGPointMake(0, trialOffset);
     [_mapWindow setContentOffset:bottomOffset animated:YES];
     
 }
@@ -1596,11 +1577,21 @@ float maxPublicInstallNorm;
         //update with the current sort chosen after a new trial is drawn
         [self handleSort: sortChosen];
         
-        //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
-        if (trialNum > 3){
-            scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
-                                                              target:self selector:@selector(autoscrollTimerFired:) userInfo:nil repeats:NO];
+        
+        //find the index (offset of trial drawn) of the recently drawn trial
+        NSInteger index = [trialRunSubViews indexOfObjectPassingTest:
+                            ^BOOL(NSDictionary *dict, NSUInteger idx, BOOL *stop)
+                            {
+                                return [[dict objectForKey:@"TrialNum"] isEqual:[NSNumber numberWithInt:tabControl.trialNum-1]];
+                            }
+                            ];
+        
+        //NSLog(@"Trial %@ drawn at index %d\n", trialDrawn,index);
+        if (index == NSNotFound){
+            index = trialNum;
         }
+        scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
+                                                              target:self selector:@selector(autoscrollTimerFired:) userInfo:[NSNumber numberWithInt:index+1] repeats:NO];
         
         [_loadingIndicator stopAnimating];
     }
