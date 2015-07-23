@@ -43,6 +43,7 @@ UIView* viewForMaxWateDisplay;
 UIImage *waterDisplayImage;
 UIImage *maxWaterDisplayImage;
 UITapGestureRecognizer *tapGestureRecognizer_social;
+UIScrollView *scoreBarView;
 
 int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
@@ -65,31 +66,32 @@ UIScrollView *bottomOfMapWindow;
 NSArray *sliceColors;
 NSMutableArray *imageViewsToRemove;
 int widthOfUsernamesWindowWhenOpen;
+NSMutableArray *scoreBars;
+NSMutableArray *scoreBarViews;
 
 
 - (IBAction)hideOrShow:(UIButton *)sender {
-    int sizeOfChange = largeSizeOfMapWindow - smallSizeOfMapWindow;
-    
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
-    if (_usernamesWindow.frame.origin.x < 0) { // show it
-        if (_mapWindow.frame.size.height <= smallSizeOfMapWindow) {
-            _usernamesWindow.frame = CGRectMake(0, 108, 283, 540);
-            _profilesWindow.frame = CGRectMake(283, 108, 769, 540);
-            [self.view viewWithTag:9002].frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
-        }
-        else {
-            _usernamesWindow.frame = CGRectMake(0, 108 + sizeOfChange, 283, 540 - sizeOfChange);
-            _profilesWindow.frame = CGRectMake(283, 108 + sizeOfChange, 769, 540 - sizeOfChange);
-            [self.view viewWithTag:9002].frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
-        }
+    if (_usernamesWindow.frame.origin.x < 0) { // show profile visualization
+        // show profile visualization
+        _usernamesWindow.frame = CGRectMake(0, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
+        _profilesWindow.frame = CGRectMake(283, _profilesWindow.frame.origin.y, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height);
+        [self.view viewWithTag:9002].frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
+        
+        // hide scorebar visualization
+        scoreBarView.frame = CGRectMake(1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
     }
-    else { // hide it
+    else {
+        // hide profile visualization
         _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
         _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _profilesWindow.frame.size.width, _usernamesWindow.frame.size.height);
         [self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
+        
+        // show scorebar visualization
+        scoreBarView.frame = CGRectMake(0, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
     }
     [UIView commitAnimations];
 }
@@ -102,6 +104,20 @@ int widthOfUsernamesWindowWhenOpen;
     
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    // make scorebar visualization
+    scoreBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 108, 283 + 769, 540)];
+    [self.view addSubview:scoreBarView];
+    
+    // move profile visualization over
+    _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
+    _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _profilesWindow.frame.size.width, _usernamesWindow.frame.size.height);
+    [self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
+    
+    scoreBars = [[NSMutableArray alloc]init];
+    scoreBarViews = [[NSMutableArray alloc]init];
+
+    
     
     
     concernColors = [[NSMutableDictionary alloc] initWithObjects:
@@ -251,6 +267,8 @@ int widthOfUsernamesWindowWhenOpen;
     
     widthOfUsernamesWindowWhenOpen = _usernamesWindow.frame.size.width;
     
+    [self drawScoreBarVisualization];
+    
 }
 
 - (BOOL) textFieldShouldBeginEditing:(UITextField *)textView
@@ -364,6 +382,150 @@ int widthOfUsernamesWindowWhenOpen;
     [super viewWillDisappear:animated];
 }
 
+- (void)drawScoreBarVisualization {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    //find how many score bars will be needed
+    int numberOfScoreBarsToDraw = 6;
+    
+    
+    
+    // create any new scorebar views that are needed
+    for (int i = 0; i < numberOfScoreBarsToDraw; i++) {
+        // only create a new view if we do not yet have one in the scoreBarViews array
+        if (i >= [scoreBarViews count]) {
+            UIView  *newScoreBarView =  [[UIView alloc]initWithFrame:CGRectMake((i/2) * 400, (i % 2) * 270, 400, 180)];
+            UILabel *fullValueBorder =  [[UILabel alloc] initWithFrame:CGRectMake(86, 90,  228, 52)];
+            UILabel *fullValue =        [[UILabel alloc] initWithFrame:CGRectMake(88, 92,  224, 48)];
+            UILabel *profileName =      [[UILabel alloc]initWithFrame:CGRectMake(0, 150, 400, 20)];
+            UILabel *trialNumber =      [[UILabel alloc]initWithFrame:CGRectMake(0, 180, 400, 20)];
+            UILabel *impact =           [[UILabel alloc]init];
+            UILabel *groundwater =      [[UILabel alloc]init];
+            UILabel *maxFlood =         [[UILabel alloc]init];
+            UILabel *waterDepth =       [[UILabel alloc]init];
+            UILabel *interventionCap =  [[UILabel alloc]init];
+            UILabel *efficiency =       [[UILabel alloc]init];
+            UILabel *damageReduc =      [[UILabel alloc]init];
+            UILabel *investment =       [[UILabel alloc]init];
+            UILabel *scoreName =        [[UILabel alloc]init];
+            UILabel *scoreNumber =      [[UILabel alloc]init];
+            
+            impact.userInteractionEnabled = YES;
+            groundwater.userInteractionEnabled = YES;
+            maxFlood.userInteractionEnabled = YES;
+            waterDepth.userInteractionEnabled = YES;
+            interventionCap.userInteractionEnabled = YES;
+            efficiency.userInteractionEnabled = YES;
+            damageReduc.userInteractionEnabled = YES;
+            investment.userInteractionEnabled = YES;
+            
+            
+            UITapGestureRecognizer *impactRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
+            impactRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *groundwaterRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(groundwaterTapped)];
+            groundwaterRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *maxFloodRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(maxFloodTapped)];
+            maxFloodRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *waterDepthRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
+            waterDepthRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *interventionCapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(interventionCapTapped)];
+            interventionCapRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *efficiencyRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(efficiencyTapped)];
+            efficiencyRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *damageReducRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(damageReducTapped)];
+            damageReducRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *investmentRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(investmentTapped)];
+            investmentRecognizer.numberOfTapsRequired = 1;
+            
+
+            [impact addGestureRecognizer:impactRecognizer];
+            [groundwater addGestureRecognizer:groundwaterRecognizer];
+            [maxFlood addGestureRecognizer:maxFloodRecognizer];
+            [waterDepth addGestureRecognizer:waterDepthRecognizer];
+            [interventionCap addGestureRecognizer:interventionCapRecognizer];
+            [efficiency addGestureRecognizer:efficiencyRecognizer];
+            [damageReduc addGestureRecognizer:damageReducRecognizer];
+            [investment addGestureRecognizer:investmentRecognizer];
+        
+        
+            NSMutableDictionary *scoreBar = [[NSMutableDictionary alloc]initWithObjects:[NSArray arrayWithObjects:newScoreBarView, fullValueBorder, fullValue, profileName, trialNumber, impact, groundwater, maxFlood, waterDepth, interventionCap, efficiency, damageReduc, investment, scoreName, scoreNumber, nil] forKeys:[NSArray arrayWithObjects:@"scoreBar", @"valueBorder", @"value", @"profileName", @"trialNumber", @"impact", @"groundwater", @"maxFlood", @"waterDepth", @"interventionCap", @"efficiency", @"damageReduc", @"investment", @"scoreName", @"scoreNumber", nil]];
+        
+            [scoreBars addObject:scoreBar];
+
+            [scoreBarView addSubview:newScoreBarView];
+            
+            fullValueBorder.backgroundColor = [UIColor grayColor];
+            [newScoreBarView addSubview:fullValueBorder];
+        
+            fullValue.backgroundColor = [UIColor whiteColor];
+            [newScoreBarView addSubview:fullValue];
+            
+            [newScoreBarView addSubview:profileName];
+            [newScoreBarView addSubview:trialNumber];
+            [newScoreBarView addSubview:impact];
+            [newScoreBarView addSubview:groundwater];
+            [newScoreBarView addSubview:maxFlood];
+            [newScoreBarView addSubview:waterDepth];
+            [newScoreBarView addSubview:interventionCap];
+            [newScoreBarView addSubview:efficiency];
+            [newScoreBarView addSubview:damageReduc];
+            [newScoreBarView addSubview:investment];
+            [newScoreBarView addSubview:scoreName];
+            [newScoreBarView addSubview:scoreNumber];
+            
+        }
+        
+        int widthOfScoreBarView = (numberOfScoreBarsToDraw % 2 == 0) ? (numberOfScoreBarsToDraw / 2 * 400) : ((numberOfScoreBarsToDraw + 1) / 2 * 400);
+        [scoreBarView setContentSize:CGSizeMake(widthOfScoreBarView + 50, scoreBarView.frame.size.height)];
+    }
+    
+    // update info for each scoreBarView
+    for (int i = 0; i < numberOfScoreBarsToDraw; i++) {
+        NSMutableDictionary *scoreBarDict = [scoreBars objectAtIndex:i];
+        UILabel *profileName = (UILabel*)[scoreBarDict objectForKey:@"profileName"];
+        UILabel *trialNumber = (UILabel*)[scoreBarDict objectForKey:@"trialNumber"];
+        
+        profileName.text = @"User: Ryan Fogarty";
+        [profileName setTextAlignment:NSTextAlignmentCenter];
+        trialNumber.text = [NSString stringWithFormat:@"Trial %d", 1];
+        [trialNumber setTextAlignment:NSTextAlignmentCenter];
+    }
+    
+}
+
+- (void)impactTapped {
+    
+}
+
+- (void)groundwaterTapped {
+    NSLog(@"Tapped groundwater label");
+}
+
+- (void)maxFloodTapped {
+    
+}
+
+- (void)waterDepthTapped {
+    
+}
+
+- (void)interventionCapTapped {
+    
+}
+
+- (void)efficiencyTapped {
+    
+}
+
+- (void)damageReducTapped {
+    
+}
+
+- (void)investmentTapped {
+    
+}
+
+
 - (void)usernameUpdate:(NSNotification *)note {
     // do nothing if favorites are currently loaded
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -401,7 +563,7 @@ int widthOfUsernamesWindowWhenOpen;
     
     [self createSubviewsForUsernamesWindow:index];
     [self createSubviewsForProfilesWindow:index];
-    [self drawTrialForSpecificTrial:trialChosen forProfile:index];
+    [self drawTrialForSpecificTrial:trialChosen forProfile:index withViewIndex:index];
 }
 
 - (void)drawNewProfile {
@@ -414,7 +576,7 @@ int widthOfUsernamesWindowWhenOpen;
     
     [self createSubviewsForUsernamesWindow:index];
     [self createSubviewsForProfilesWindow:index];
-    [self drawTrialForSpecificTrial:trialChosen forProfile:index];
+    [self drawTrialForSpecificTrial:trialChosen forProfile:index withViewIndex:index];
 }
 
 - (void)updatePicker {
@@ -572,6 +734,9 @@ int widthOfUsernamesWindowWhenOpen;
         _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, largeSizeOfMapWindow);
         UIView *lineView = [self.view viewWithTag:9002];
         lineView.frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
+        
+        
+        scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y + sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height - sizeOfChange);
     }
     else {
         mapWindowStatusLabel.text = @"Tap to view map(s)";
@@ -580,6 +745,8 @@ int widthOfUsernamesWindowWhenOpen;
         _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, smallSizeOfMapWindow);
         UIView *lineView = [self.view viewWithTag:9002];
         lineView.frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
+        
+        scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y - sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height + sizeOfChange);
     }
     [UIView commitAnimations];
 }
@@ -875,7 +1042,7 @@ int widthOfUsernamesWindowWhenOpen;
             }
         }
         
-        [self drawTrialForSpecificTrial:trialNum forFavoriteProfile:indexOfProfileInTabControlProfiles withViewIndex:i];
+        [self drawTrialForSpecificTrial:trialNum forProfile:indexOfProfileInTabControlProfiles withViewIndex:i];
     }
 
     
@@ -1371,7 +1538,7 @@ int widthOfUsernamesWindowWhenOpen;
     
     for (int i = 0; i < numberOfProfiles; i++) {
         // draw trial for each profile
-        [self drawTrialForSpecificTrial:trialChosen forProfile:i];
+        [self drawTrialForSpecificTrial:trialChosen forProfile:i withViewIndex:i];
     }
     
     
@@ -1380,7 +1547,7 @@ int widthOfUsernamesWindowWhenOpen;
 }
 
 
-- (void) drawTrialForSpecificTrial:(int)trial forFavoriteProfile:(int)currentProfileIndex withViewIndex:(int)viewIndex {
+- (void) drawTrialForSpecificTrial:(int)trial forProfile:(int)currentProfileIndex withViewIndex:(int)viewIndex {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     // error checking
@@ -1651,285 +1818,6 @@ int widthOfUsernamesWindowWhenOpen;
     [scoreLabel2 sizeToFit];
     scoreLabel2.textColor = [UIColor blackColor];
     [[_usernamesWindow viewWithTag:viewIndex + 1] addSubview:scoreLabel2];
-}
-
-
-- (void) drawTrialForSpecificTrial:(int)trial forProfile:(int)currentProfileIndex {
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    
-    // error checking
-    if ([tabControl.profiles count] < currentProfileIndex + 1)
-        return;
-    
-    // make sure trial asked for is loaded
-    if ([tabControl.trialRuns count] < trial + 1)
-        return;
-    
-    
-    AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trial];
-    AprilTestNormalizedVariable *simRunNormal = [tabControl.trialRunsNormalized objectAtIndex:trial];
-    
-    NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
-    NSArray *currentProfile = [[NSArray alloc]init];
-    currentProfile = [tabControl.profiles objectAtIndex:currentProfileIndex];
-    
-    for (int i = 3; i < [currentProfile count]; i++) {
-        [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:i]] withDisplayName:[currentProfile objectAtIndex: i] withNumVar:1 withWidth:widthOfTitleVisualization withRank:9-i]];
-    }
-    
-    float priorityTotal= 0;
-    float scoreTotal = 0;
-    for(int i = 0; i < currentConcernRanking.count; i++){
-        
-        priorityTotal += [(AprilTestVariable *)[currentConcernRanking objectAtIndex:i] currentConcernRanking];
-    }
-    
-    int width = 0;
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    [formatter setGroupingSeparator:@","];
-    
-    NSArray *sortedArray = [currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
-        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
-        if(first > second) return NSOrderedAscending;
-        else return NSOrderedDescending;
-    }];
-    NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
-    NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
-    AprilTestCostDisplay *cd;
-    int visibleIndex = 0;
-    
-    for(int i = 0 ; i < currentConcernRanking.count ; i++){
-        
-        AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
-        
-        //laziness: this is just the investment costs
-        if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            float investmentInstall = simRun.publicInstallCost;
-            float investmentMaintain = simRun.publicMaintenanceCost;
-            float investmentInstallN = simRunNormal.publicInstallCost;
-            float investmentMaintainN = simRunNormal.publicMaintenanceCost;
-            dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
-            CGRect frame = CGRectMake(width + 25, 60, dynamic_cd_width, 30);
-            
-            
-            //NSLog(@"Drawing water display for first time");
-            
-            //cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall andMaxBudget:maxBudget andbudgetLimit:max_budget_limit  andScore:investmentInstallN andFrame:CGRectMake(width + 25, profileIndex*heightOfVisualization + 60, dynamic_cd_width, 30)];
-            
-            float costWidth = [self getWidthFromSlider:_BudgetSlider toValue:simRun.publicInstallCost];
-            float maxBudgetWidth = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
-            
-            cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
-            
-            [[_profilesWindow viewWithTag:currentProfileIndex + 1] addSubview: cd];
-            
-            //checks if over budget, if so, prints warning message
-            if (simRun.publicInstallCost > tabControl.budget){
-                //store update labels for further use (updating over budget when using absolute val)
-                
-                UILabel *valueLabel;
-                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-tabControl.budget)]] ] withConcernPosition:width+25 andyValue:100 andColor:[UIColor redColor] to:&valueLabel withIndex:currentProfileIndex];
-            }
-            
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
-            
-
-            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
-            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
-            //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
-            
-            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN))]];
-            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
-            //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
-            [scoreVisNames addObject: @"publicCostI"];
-            [scoreVisNames addObject: @"publicCostM"];
-            //[scoreVisNames addObject: @"publicCostD"];
-            
-            
-            //just damages now
-        } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
-            
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
-            
-            
-            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
-            
-            //add values for the score visualization
-            
-            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2]];
-            //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
-            //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
-            [scoreVisNames addObject: @"privateCostD"];
-            
-        } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
-            
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@" run-off to neighbors"] withConcernPosition:width + 30 andyValue: 75 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
-            
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
-            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
-            [scoreVisNames addObject: currentVar.name];
-        }  else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
-            
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
-            
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe)]];
-            [scoreVisNames addObject: currentVar.name];
-        } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
-            
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater was", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@" infiltrated by the swales"] withConcernPosition:width + 30 andyValue:75  andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
-            
-            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
-            [scoreVisNames addObject: currentVar.name];
-        } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
-            /*
-            FebTestWaterDisplay * wd;
-            //NSLog(@"%d, %d", waterDisplaysSocial.count, i);
-            if(waterDisplaysSocial.count <= currentProfileIndex){
-                //NSLog(@"Drawing water display for first time");
-                wd = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, 60, 115, 125) andContent:simRun.standingWater];
-                wd.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
-                [waterDisplaysSocial addObject:wd];
-            } else {
-                wd = [waterDisplaysSocial objectAtIndex:currentProfileIndex];
-                wd.frame = CGRectMake(width + 10, 60, 115, 125);
-            }
-            */
-            
-            ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh_social;
-            [[tabControl.waterDisplaysInTab objectAtIndex:trial] fastUpdateView:hoursAfterStorm_social];
-            
-            UIImageView *waterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, 60, 115, 125)];
-            waterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:trial]];
-            [[_profilesWindow viewWithTag:currentProfileIndex + 1]addSubview:waterDisplayView];
-            
-            [imageViewsToRemove addObject:waterDisplayView];
-            
-            /*
-            wd.thresholdValue = thresh_social;
-            [wd fastUpdateView: _StormPlayBack.value];
-            */
-            
-            scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.floodedStreets);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking + 1)/priorityTotal * (1- simRunNormal.floodedStreets)]];
-            [scoreVisNames addObject: currentVar.name];
-            
-        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
-            //display window for maxHeights
-            /*
-            FebTestWaterDisplay * mwd;
-            if(maxwaterDisplaysSocial.count <= currentProfileIndex){
-                mwd  = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, 60, 115, 125) andContent:simRun.maxWaterHeights];
-                mwd.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
-                [maxwaterDisplaysSocial addObject:mwd];
-            } else {
-                mwd = [maxwaterDisplaysSocial objectAtIndex:currentProfileIndex];
-                mwd.frame = CGRectMake(width + 10, 60, 115, 125);
-            }
-            */
-            
-            ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh_social;
-            [[tabControl.maxWaterDisplaysInTab objectAtIndex:trial] updateView:48];
-            
-            UIImageView *maxWaterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, 60, 115, 125)];
-            maxWaterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]];
-            [[_profilesWindow viewWithTag:currentProfileIndex + 1]addSubview:maxWaterDisplayView];
-            
-            [imageViewsToRemove addObject:maxWaterDisplayView];
-            
-            /*
-            mwd.thresholdValue = thresh_social;
-            [mwd updateView:48];
-             */
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
-            [scoreVisNames addObject: currentVar.name];
-        } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
-            
-            
-            AprilTestEfficiencyView *ev;
-            if( efficiencySocial.count <= currentProfileIndex){
-                //NSLog(@"Drawing efficiency display for first time");
-                ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, 60, 130, 150) withContent: simRun.efficiency];
-                ev.trialNum = trial;
-                ev.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
-                [efficiencySocial addObject:ev];
-            } else {
-                //NSLog(@"Repositioning efficiency display");
-                ev = [efficiencySocial objectAtIndex:currentProfileIndex];
-                ev.view = [_profilesWindow viewWithTag:currentProfileIndex + 1];
-                ev.frame = CGRectMake(width, 60, 130, 150);
-            }
-             
-            
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
-            //NSLog(@"%@", NSStringFromCGRect(ev.frame));
-            [scoreVisNames addObject: currentVar.name];
-            
-            [ev updateViewForHour: hoursAfterStorm_social];
-             
-        } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: 60 andColor: [UIColor blackColor] to:nil withIndex:currentProfileIndex];
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * 0]];
-            [scoreVisNames addObject:currentVar.name];
-        }
-        
-        width+= currentVar.widthOfVisualization;
-        if (currentVar.widthOfVisualization > 0) visibleIndex++;
-    }
-    
-    //border around component score
-    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, 78,  114, 26)];
-    fullValueBorder.backgroundColor = [UIColor grayColor];
-    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 80,  110, 22)];
-    fullValue.backgroundColor = [UIColor whiteColor];
-    [[_usernamesWindow viewWithTag:currentProfileIndex + 1] addSubview:fullValueBorder];
-    [[_usernamesWindow viewWithTag:currentProfileIndex + 1] addSubview:fullValue];
-    //NSLog(@" %@", scoreVisVals);
-    float maxX = 150;
-    float totalScore = 0;
-    UILabel * componentScore;
-    
-    //computing and drawing the final component score
-    for(int i =  0; i < scoreVisVals.count; i++){
-        float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
-        if (scoreWidth < 0) scoreWidth = 0.0;
-        totalScore += scoreWidth;
-        componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, 80, floor(scoreWidth), 22)];
-        componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
-        [[_usernamesWindow viewWithTag:currentProfileIndex + 1] addSubview:componentScore];
-        maxX+=floor(scoreWidth);
-    }
-    
-    [_profilesWindow setContentSize:CGSizeMake(width+=20, (currentProfileIndex+1)*200)];
-    
-    UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 40, 0, 0)];
-    //scoreLabel.text = [NSString stringWithFormat:  @"Score: %.0f / 100", totalScore];
-    scoreLabel.text = @"Performance:";
-    scoreLabel.font = [UIFont systemFontOfSize:14.0];
-    [scoreLabel sizeToFit];
-    scoreLabel.textColor = [UIColor blackColor];
-    [[_usernamesWindow viewWithTag:currentProfileIndex + 1] addSubview:scoreLabel];
-    UILabel *scoreLabel2 = [[UILabel alloc] initWithFrame:CGRectMake(150, 65, 0, 0)];
-    scoreLabel2.text = [NSString stringWithFormat:  @"Broken down by source:"];
-    scoreLabel2.font = [UIFont systemFontOfSize:10.0];
-    [scoreLabel2 sizeToFit];
-    scoreLabel2.textColor = [UIColor blackColor];
-    [[_usernamesWindow viewWithTag:currentProfileIndex + 1] addSubview:scoreLabel2];
 }
 
 
