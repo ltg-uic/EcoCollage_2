@@ -31,46 +31,58 @@
 @synthesize loadingIndicator = _loadingIndicator;
 @synthesize mapWindow = _mapWindow;
 @synthesize trialPickerTextField = _trialPickerTextField;
+@synthesize viewSwitchButton = _viewSwitchButton;
 
-NSMutableDictionary *concernColors;
-NSMutableDictionary *concernNames;
-NSMutableDictionary *scoreColors;
-NSMutableArray *efficiencySocial;
-FebTestWaterDisplay *waterDisplay;
-FebTestWaterDisplay *maxWaterDisplay;
-UIView* viewForWaterDisplay;
-UIView* viewForMaxWateDisplay;
-UIImage *waterDisplayImage;
-UIImage *maxWaterDisplayImage;
-UITapGestureRecognizer *tapGestureRecognizer_social;
-UIScrollView *scoreBarView;
+NSMutableDictionary         *concernColors;
+NSMutableDictionary         *concernNames;
+NSMutableDictionary         *scoreColors;
 
+NSMutableArray              *arrStatus_social;
+NSMutableArray              *efficiencySocial;
+NSMutableArray              *imageViewsToRemove;
+NSMutableArray              *scoreBars;
+
+NSArray                     *sliceColors;
+
+FebTestWaterDisplay         *waterDisplay;
+FebTestWaterDisplay         *maxWaterDisplay;
+
+UIView                      *viewForWaterDisplay;
+UIView                      *viewForMaxWateDisplay;
+
+UIImage                     *waterDisplayImage;
+UIImage                     *maxWaterDisplayImage;
+
+UITapGestureRecognizer      *tapGestureRecognizer_social;
+
+UIScrollView                *scoreBarView;
+UIScrollView                *bottomOfMapWindow;
+
+UIView                      *topOfMapWindow;
+
+UILabel                     *budgetLabel;
+UILabel                     *hoursAfterStormLabel;
+UILabel                     *mapWindowStatusLabel;
+UILabel                     *lastLabelTapped;
+
+UIPickerView                *SortType_social;
+
+
+float thresh_social = 6;
+float hours_social = 0;
+int hoursAfterStorm_social = 0;
+int trialChosen= 0;
+int smallSizeOfMapWindow = 50;
+int largeSizeOfMapWindow = 220;
+int widthOfUsernamesWindowWhenOpen;
 int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
 int dynamic_cd_width = 0;
 
-//Important values that change elements of objects
-float thresh_social = 6;
-float hours_social = 0;
-int hoursAfterStorm_social;
-UILabel *budgetLabel;
-UILabel *hoursAfterStormLabel;
-UILabel *mapWindowStatusLabel;
-NSMutableArray *arrStatus_social;
-int trialChosen= 0;
-UIPickerView *SortType_social;
-int smallSizeOfMapWindow = 50;
-int largeSizeOfMapWindow = 220;
-UIView *topOfMapWindow;
-UIScrollView *bottomOfMapWindow;
-NSArray *sliceColors;
-NSMutableArray *imageViewsToRemove;
-int widthOfUsernamesWindowWhenOpen;
-NSMutableArray *scoreBars;
-NSMutableArray *scoreBarViews;
 
 
 - (IBAction)hideOrShow:(UIButton *)sender {
+    
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:1.0];
@@ -83,6 +95,9 @@ NSMutableArray *scoreBarViews;
         
         // hide scorebar visualization
         scoreBarView.frame = CGRectMake(1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
+        
+        [_viewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
+        //[_viewSwitchButton sizeToFit];
     }
     else {
         // hide profile visualization
@@ -92,8 +107,13 @@ NSMutableArray *scoreBarViews;
         
         // show scorebar visualization
         scoreBarView.frame = CGRectMake(0, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
+        
+        
+        [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
+        //[_viewSwitchButton sizeToFit];
     }
     [UIView commitAnimations];
+    [_viewSwitchButton sizeToFit];
 }
 
 
@@ -101,6 +121,10 @@ NSMutableArray *scoreBarViews;
 - (void)viewDidLoad {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _studyNum = tabControl.studyNum;
+    
+    [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
+    [_viewSwitchButton sizeToFit];
+    _viewSwitchButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -115,7 +139,6 @@ NSMutableArray *scoreBarViews;
     [self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
     
     scoreBars = [[NSMutableArray alloc]init];
-    scoreBarViews = [[NSMutableArray alloc]init];
 
     
     
@@ -251,9 +274,9 @@ NSMutableArray *scoreBarViews;
     
     // line below data viewers
     UIView *lineBelowData = [[UIView alloc]init];
-    lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height, 5000, 1);
+    lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height - 1, 5000, 1);
     lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
-    lineBelowData.layer.borderWidth = 1.0;
+    lineBelowData.layer.borderWidth = 0.5;
     lineBelowData.tag = 9001;
     [self.view addSubview:lineBelowData];
     
@@ -314,7 +337,7 @@ NSMutableArray *scoreBarViews;
 
 - (void)viewWillAppear:(BOOL)animated {
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(profileUpdate)
+                                             selector:@selector(profileUpdateHelper)
                                                  name:@"profileUpdate"
                                                object:nil];
     
@@ -324,17 +347,17 @@ NSMutableArray *scoreBarViews;
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(usernameUpdate:)
+                                             selector:@selector(usernameUpdateHelper:)
                                                  name:@"usernameUpdate"
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateSingleProfile:)
+                                             selector:@selector(updateSingleProfileHelper:)
                                                  name:@"updateSingleProfile"
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(drawNewProfile)
+                                             selector:@selector(drawNewProfileHelper)
                                                  name:@"drawNewProfile"
                                                object:nil];
     
@@ -348,8 +371,29 @@ NSMutableArray *scoreBarViews;
     
 }
 
+- (void)profileUpdateHelper {
+    [self profileUpdate];
+    [self drawScoreBarVisualization];
+}
+
+- (void)usernameUpdateHelper:(NSNotification*)note {
+    [self usernameUpdate:note];
+    [self drawScoreBarVisualization];
+}
+
+- (void)updateSingleProfileHelper:(NSNotification*)note {
+    [self updateSingleProfile:note];
+    [self drawScoreBarVisualization];
+}
+
+- (void)drawNewProfileHelper {
+    [self drawNewProfile];
+    [self drawScoreBarVisualization];
+}
+
 - (void)viewDidAppear:(BOOL)animated {
     [self profileUpdate];
+    [self drawScoreBarVisualization];
 }
 
 
@@ -360,7 +404,7 @@ NSMutableArray *scoreBarViews;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"usernameUpdate" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateSingleProfile" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawNewProfile" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateBudget" object:nil];
 
     // empty _usernamesWindow and _profilesWindow to free memory
     for (UIView *view in [_usernamesWindow subviews]) {
@@ -381,24 +425,28 @@ NSMutableArray *scoreBarViews;
     
     [super viewWillDisappear:animated];
 }
+- (IBAction)loadScoreBars:(UIButton *)sender {
+    [self drawScoreBarVisualization];
+}
 
 - (void)drawScoreBarVisualization {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
+    if ([tabControl.trialRuns count] <= trialChosen)
+        return;
+    
     //find how many score bars will be needed
-    int numberOfScoreBarsToDraw = 6;
-    
-    
+    int numberOfScoreBarsToDraw = [tabControl.profiles count];
     
     // create any new scorebar views that are needed
     for (int i = 0; i < numberOfScoreBarsToDraw; i++) {
-        // only create a new view if we do not yet have one in the scoreBarViews array
-        if (i >= [scoreBarViews count]) {
-            UIView  *newScoreBarView =  [[UIView alloc]initWithFrame:CGRectMake((i/2) * 400, (i % 2) * 270, 400, 180)];
-            UILabel *fullValueBorder =  [[UILabel alloc] initWithFrame:CGRectMake(86, 90,  228, 52)];
-            UILabel *fullValue =        [[UILabel alloc] initWithFrame:CGRectMake(88, 92,  224, 48)];
-            UILabel *profileName =      [[UILabel alloc]initWithFrame:CGRectMake(0, 150, 400, 20)];
-            UILabel *trialNumber =      [[UILabel alloc]initWithFrame:CGRectMake(0, 180, 400, 20)];
+        // only create a new view if we do not yet have one in the scoreBars array
+        if (i >= [scoreBars count]) {
+            UIView  *newScoreBarView =  [[UIView alloc]initWithFrame:CGRectMake((i/2) * 500, (i % 2) * 270, 500, 270)];
+            UILabel *fullValueBorder =  [[UILabel alloc] initWithFrame:CGRectMake(256, 60,  228, 52)];
+            UILabel *fullValue =        [[UILabel alloc] initWithFrame:CGRectMake(258, 62,  224, 48)];
+            UILabel *profileName =      [[UILabel alloc]initWithFrame:CGRectMake(256, 150, 228, 20)];
+            UILabel *trialNumber =      [[UILabel alloc]initWithFrame:CGRectMake(256, 180, 228, 20)];
             UILabel *impact =           [[UILabel alloc]init];
             UILabel *groundwater =      [[UILabel alloc]init];
             UILabel *maxFlood =         [[UILabel alloc]init];
@@ -409,6 +457,15 @@ NSMutableArray *scoreBarViews;
             UILabel *investment =       [[UILabel alloc]init];
             UILabel *scoreName =        [[UILabel alloc]init];
             UILabel *scoreNumber =      [[UILabel alloc]init];
+            
+            newScoreBarView.layer.borderColor = [UIColor lightGrayColor].CGColor;
+            newScoreBarView.layer.borderWidth = 0.5;
+            
+            scoreName.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+            scoreNumber.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+            
+            [scoreName setTextAlignment:NSTextAlignmentCenter];
+            [scoreNumber setTextAlignment:NSTextAlignmentCenter];
             
             impact.userInteractionEnabled = YES;
             groundwater.userInteractionEnabled = YES;
@@ -448,7 +505,7 @@ NSMutableArray *scoreBarViews;
             [investment addGestureRecognizer:investmentRecognizer];
         
         
-            NSMutableDictionary *scoreBar = [[NSMutableDictionary alloc]initWithObjects:[NSArray arrayWithObjects:newScoreBarView, fullValueBorder, fullValue, profileName, trialNumber, impact, groundwater, maxFlood, waterDepth, interventionCap, efficiency, damageReduc, investment, scoreName, scoreNumber, nil] forKeys:[NSArray arrayWithObjects:@"scoreBar", @"valueBorder", @"value", @"profileName", @"trialNumber", @"impact", @"groundwater", @"maxFlood", @"waterDepth", @"interventionCap", @"efficiency", @"damageReduc", @"investment", @"scoreName", @"scoreNumber", nil]];
+            NSMutableDictionary *scoreBar = [[NSMutableDictionary alloc]initWithObjects:[NSArray arrayWithObjects:newScoreBarView, fullValueBorder, fullValue, profileName, trialNumber, impact, groundwater, maxFlood, waterDepth, interventionCap, efficiency, damageReduc, investment, scoreName, scoreNumber, nil] forKeys:[NSArray arrayWithObjects:@"scoreBar", @"valueBorder", @"value", @"profileName", @"trialNumber", @"impactingMyNeighbors", @"groundwaterInfiltration", @"puddleMax", @"puddleTime", @"capacity", @"efficiencyOfIntervention", @"privateCostD", @"publicCost", @"scoreName", @"scoreNumber", nil]];
         
             [scoreBars addObject:scoreBar];
 
@@ -476,7 +533,7 @@ NSMutableArray *scoreBarViews;
         }
         
         int widthOfScoreBarView = (numberOfScoreBarsToDraw % 2 == 0) ? (numberOfScoreBarsToDraw / 2 * 400) : ((numberOfScoreBarsToDraw + 1) / 2 * 400);
-        [scoreBarView setContentSize:CGSizeMake(widthOfScoreBarView + 50, scoreBarView.frame.size.height)];
+        [scoreBarView setContentSize:CGSizeMake(widthOfScoreBarView + 50, 540)];
     }
     
     // update info for each scoreBarView
@@ -485,43 +542,344 @@ NSMutableArray *scoreBarViews;
         UILabel *profileName = (UILabel*)[scoreBarDict objectForKey:@"profileName"];
         UILabel *trialNumber = (UILabel*)[scoreBarDict objectForKey:@"trialNumber"];
         
-        profileName.text = @"User: Ryan Fogarty";
+        profileName.text = [[tabControl.profiles objectAtIndex:i] objectAtIndex:2];
         [profileName setTextAlignment:NSTextAlignmentCenter];
-        trialNumber.text = [NSString stringWithFormat:@"Trial %d", 1];
+        trialNumber.text = [arrStatus_social objectAtIndex:trialChosen];
         [trialNumber setTextAlignment:NSTextAlignmentCenter];
+        
+        // empty the text for all scoreBars scoreNumber and scoreName
+        UILabel *scoreNumber = (UILabel*)[scoreBarDict objectForKey:@"scoreNumber"];
+        UILabel *scoreName = (UILabel*)[scoreBarDict objectForKey:@"scoreName"];
+        
+        scoreNumber.text = @"";
+        scoreName.text = @"";
     }
     
+    
+    AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trialChosen];
+    AprilTestNormalizedVariable *simRunNormal = [tabControl.trialRunsNormalized objectAtIndex:trialChosen];
+    
+
+    
+    // draw labels for each grading
+    for (int i = 0; i < numberOfScoreBarsToDraw; i++) {
+        NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
+        NSArray *currentProfile = [[NSArray alloc]init];
+        currentProfile = [tabControl.profiles objectAtIndex:i];
+        
+        for (int j = 3; j < [currentProfile count]; j++) {
+            [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:j]] withDisplayName:[currentProfile objectAtIndex: j] withNumVar:1 withWidth:widthOfTitleVisualization withRank:9-j]];
+        }
+        
+        float priorityTotal= 0;
+        float scoreTotal = 0;
+        for(int j = 0; j < currentConcernRanking.count; j++){
+            
+            priorityTotal += [(AprilTestVariable *)[currentConcernRanking objectAtIndex:j] currentConcernRanking];
+        }
+        
+        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+        [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+        [formatter setGroupingSeparator:@","];
+        
+        NSArray *sortedArray = [currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+            NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+            NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+            if(first > second) return NSOrderedAscending;
+            else return NSOrderedDescending;
+        }];
+        NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
+        NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
+        
+        for(int j = 0 ; j < currentConcernRanking.count ; j++){
+            
+            AprilTestVariable * currentVar =[sortedArray objectAtIndex:j];
+            
+            //laziness: this is just the investment costs
+            if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
+                float investmentInstallN = simRunNormal.publicInstallCost;
+                float investmentMaintainN = simRunNormal.publicMaintenanceCost;
+                
+                scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
+                scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
+                //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
+                
+                [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN)) + ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
+                //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
+                [scoreVisNames addObject: @"publicCost"];
+                //[scoreVisNames addObject: @"publicCostD"];
+                
+                
+                //just damages now
+            } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
+                
+                scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
+                
+                //add values for the score visualization
+                
+                [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2]];
+                //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
+                //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
+                [scoreVisNames addObject: @"privateCostD"];
+                
+            } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
+                
+                scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
+                [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
+                [scoreVisNames addObject: currentVar.name];
+                
+            } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
+
+                
+                scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
+                [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
+                [scoreVisNames addObject: currentVar.name];
+            } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+
+                
+                scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.floodedStreets);
+                [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking + 1)/priorityTotal * (1- simRunNormal.floodedStreets)]];
+                [scoreVisNames addObject: currentVar.name];
+                
+            } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+
+                scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
+                [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
+                [scoreVisNames addObject: currentVar.name];
+            } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
+                
+                scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
+                [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
+                //NSLog(@"%@", NSStringFromCGRect(ev.frame));
+                [scoreVisNames addObject: currentVar.name];
+                
+            } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
+                scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
+                [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * 0]];
+                [scoreVisNames addObject:currentVar.name];
+            }
+        }
+    
+        //NSLog(@" %@", scoreVisVals);
+        float x = 0;
+        float totalScore = 0;
+        UILabel * componentScore;
+        UILabel * scoreBar = [[scoreBars objectAtIndex:0] objectForKey:@"value"];
+        
+        //computing and drawing the final component score
+        for(int j =  0; j < scoreVisVals.count; j++){
+            componentScore = [[scoreBars objectAtIndex:i] objectForKey:[scoreVisNames objectAtIndex:j]];
+            
+            float scoreWidth = [[scoreVisVals objectAtIndex: j] floatValue] * 100 * 2;
+            if (scoreWidth < 0) scoreWidth = 0.0;
+            totalScore += scoreWidth;
+            componentScore.frame = CGRectMake(scoreBar.frame.origin.x + x, scoreBar.frame.origin.y, floor(scoreWidth), 48);
+            componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:j]];
+            x+=floor(scoreWidth);
+        }
+    }
+ 
 }
 
 - (void)impactTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
     
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"impactingMyNeighbors"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
+        [scoreNumber sizeToFit];
+        
+        BOOL widthOfLabelToSmall = NO;
+        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
+            widthOfLabelToSmall = YES;
+        
+        if (widthOfLabelToSmall) {
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        }
+        else
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"impactingMyNeighbors"];
 }
 
 - (void)groundwaterTapped {
-    NSLog(@"Tapped groundwater label");
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
+    
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"groundwaterInfiltration"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
+        [scoreNumber sizeToFit];
+        
+        BOOL widthOfLabelToSmall = NO;
+        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
+            widthOfLabelToSmall = YES;
+        
+        if (widthOfLabelToSmall) {
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        }
+        else
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+        
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"groundwaterInfiltration"];
 }
 
 - (void)maxFloodTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
     
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleMax"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
+        [scoreNumber sizeToFit];
+        
+        BOOL widthOfLabelToSmall = NO;
+        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
+            widthOfLabelToSmall = YES;
+        
+        if (widthOfLabelToSmall) {
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        }
+        else
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleMax"];
 }
 
 - (void)waterDepthTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
     
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleTime"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
+        [scoreNumber sizeToFit];
+        
+        BOOL widthOfLabelToSmall = NO;
+        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
+            widthOfLabelToSmall = YES;
+        
+        if (widthOfLabelToSmall) {
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        }
+        else
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleTime"];
 }
 
 - (void)interventionCapTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
     
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"capacity"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
+        [scoreNumber sizeToFit];
+        
+        BOOL widthOfLabelToSmall = NO;
+        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
+            widthOfLabelToSmall = YES;
+        
+        if (widthOfLabelToSmall) {
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        }
+        else
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"capacity"];
 }
 
 - (void)efficiencyTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
     
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"efficiencyOfIntervention"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
+        [scoreNumber sizeToFit];
+        
+        BOOL widthOfLabelToSmall = NO;
+        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
+            widthOfLabelToSmall = YES;
+        
+        if (widthOfLabelToSmall) {
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        }
+        else
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"efficiencyOfIntervention"];
 }
 
 - (void)damageReducTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
     
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"privateCostD"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
+        [scoreNumber sizeToFit];
+        
+        BOOL widthOfLabelToSmall = NO;
+        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
+            widthOfLabelToSmall = YES;
+        
+        if (widthOfLabelToSmall) {
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        }
+        else
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"privateCostD"];
 }
 
 - (void)investmentTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
+    
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"publicCost"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
+        [scoreNumber sizeToFit];
+        
+        BOOL widthOfLabelToSmall = NO;
+        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
+            widthOfLabelToSmall = YES;
+        
+        if (widthOfLabelToSmall) {
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        }
+        else
+            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"publicCost"];
     
 }
 
@@ -622,6 +980,7 @@ NSMutableArray *scoreBarViews;
 
     
     [self profileUpdate];
+    [self drawScoreBarVisualization];
 
 }
 
@@ -1887,6 +2246,7 @@ NSMutableArray *scoreBarViews;
     else {
         //only update all labels/bars if Static normalization is switched on
         [self profileUpdate];
+        [self drawScoreBarVisualization];
     }
 }
 

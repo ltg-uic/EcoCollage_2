@@ -16,6 +16,7 @@
 @property (strong, nonatomic) IBOutlet UIScrollView *mapWindow;
 @property (strong, nonatomic) IBOutlet UISlider *BudgetSlider;
 @property (strong, nonatomic) IBOutlet UISlider *StormPlayBack;
+@property (strong, nonatomic) IBOutlet UIButton *viewSwitchButton;
 
 
 @property (strong, nonatomic) IBOutlet UITextField *trialPickerTextField;
