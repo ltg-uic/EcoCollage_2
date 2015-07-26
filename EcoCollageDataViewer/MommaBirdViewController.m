@@ -38,6 +38,7 @@ int trialNum;
 int maxBudget = 5000000;
 int currentBudget;
 NSMutableArray *favorites;
+NSMutableArray *leastFavorites;
 NSData *ping;
 
 
@@ -75,6 +76,7 @@ NSData *ping;
     trialRuns = [[NSMutableArray alloc]init];
     trialRunsNormalized = [[NSMutableArray alloc]init];
     favorites = [[NSMutableArray alloc]init];
+    leastFavorites = [[NSMutableArray alloc]init];
     
     self.studyNumberLabel.text = [NSString stringWithFormat:@"Study Number %d", _studyNum];
     self.trialNumberLabel.text = [NSString stringWithFormat:@"Trial Number %d", trialNum];
@@ -190,6 +192,10 @@ NSData *ping;
             if ([favorites count] != 0) {
                 [self sendAllFavoritesToBaby:peerID];
             }
+            
+            if ([leastFavorites count] != 0) {
+                [self sendAllLeastFavoritesToBaby:peerID];
+            }
             break;
         }
             
@@ -268,6 +274,9 @@ NSData *ping;
     else if([dataArray[0] isEqualToString:@"favoriteForMomma"]) {
         [self updateFavoriteTrials:dataArray];
     }
+    else if([dataArray[0] isEqualToString:@"leastFavoriteForMomma"]) {
+        [self updateLeastFavoriteTrials:dataArray];
+    }
 }
 
 - (void)sendAllFavoritesToBaby:(NSString *)peerID {
@@ -285,6 +294,26 @@ NSData *ping;
         
         if(favoritesToSendToBabies != nil) {
             NSData *data = [NSKeyedArchiver archivedDataWithRootObject:favoritesToSendToBabies];
+            [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+        }
+    }
+}
+
+- (void)sendAllLeastFavoritesToBaby:(NSString *)peerID {
+    NSMutableArray *leastFavoritesForBaby = [[NSMutableArray alloc]init];
+    
+    [leastFavoritesForBaby addObject:@"multipleLeastFavoritesForBaby"];
+    
+    for (int i = 0; i < leastFavorites.count; i++) {
+        [leastFavoritesForBaby addObject:[leastFavorites objectAtIndex:i]];
+    }
+    
+    if(_session) {
+        NSDictionary *leastFavoritesToSendToBabies = [NSDictionary dictionaryWithObject:leastFavoritesForBaby
+                                                                            forKey:@"data"];
+        
+        if(leastFavoritesToSendToBabies != nil) {
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:leastFavoritesToSendToBabies];
             [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
         }
     }
@@ -324,6 +353,46 @@ NSData *ping;
     
         if(favoriteToSendToBabies != nil) {
             NSData *data = [NSKeyedArchiver archivedDataWithRootObject:favoriteToSendToBabies];
+            [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+        }
+    }
+}
+
+- (void)updateLeastFavoriteTrials:(NSArray*)dataArray {
+    BOOL profileHasALeastFavorite = NO;
+    
+    NSLog(@"Received least favorite information for %@", dataArray[1]);
+    
+    for (NSArray *leastFavorite in leastFavorites) {
+        if ([[dataArray objectAtIndex:1] isEqualToString:[leastFavorite objectAtIndex:1]]) {
+            profileHasALeastFavorite = YES;
+        }
+    }
+    
+    for (int i = 0; i < leastFavorites.count; i++) {
+        NSArray *leastFavorite = [leastFavorites objectAtIndex:i];
+        if ([[dataArray objectAtIndex:1] isEqualToString:[leastFavorite objectAtIndex:1]]) {
+            profileHasALeastFavorite = YES;
+            [leastFavorites replaceObjectAtIndex:i withObject:dataArray];
+        }
+    }
+    
+    
+    if(!profileHasALeastFavorite)
+        [leastFavorites addObject:dataArray];
+    
+    if (_session) {
+        // send update to all baby birds
+        NSMutableArray* leastFavoriteUpdateForBabies = [[NSMutableArray alloc]init];
+        [leastFavoriteUpdateForBabies addObject:@"leastFavoriteForBabies"];
+        [leastFavoriteUpdateForBabies addObject:[dataArray objectAtIndex:1]];
+        [leastFavoriteUpdateForBabies addObject:[dataArray objectAtIndex:2]];
+        
+        NSDictionary *leastFavoriteToSendToBabies = [NSDictionary dictionaryWithObject:leastFavoriteUpdateForBabies
+                                                                           forKey:@"data"];
+        
+        if(leastFavoriteToSendToBabies != nil) {
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:leastFavoriteToSendToBabies];
             [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
         }
     }

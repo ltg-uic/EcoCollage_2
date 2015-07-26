@@ -37,6 +37,7 @@
 @synthesize slices = _slices;
 @synthesize pieIndex = _pieIndex;
 @synthesize favorites = _favorites;
+@synthesize leastFavorites = _leastFavorites;
 
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
@@ -103,6 +104,7 @@ NSMutableArray *slicesInfo;
     viewsForEfficiencyViews  = [[NSMutableArray alloc] init];
     _pieCharts = [[NSMutableArray alloc]init];
     _favorites = [[NSMutableArray alloc]init];
+    _leastFavorites = [[NSMutableArray alloc]init];
     
     
     _budget = 150000;
@@ -345,6 +347,12 @@ NSMutableArray *slicesInfo;
     else if([dataArray[0] isEqualToString:@"multipleFavoritesForBaby"]) {
         [self updateAllFavorites:dataArray];
     }
+    else if([dataArray[0] isEqualToString:@"leastFavoriteForBabies"]) {
+        [self updateLeastFavorites:dataArray];
+    }
+    else if([dataArray[0] isEqualToString:@"multipleLeastFavoritesForBaby"]) {
+        [self updateAllLeastFavorites:dataArray];
+    }
     else {
         NSLog(@"Received unknown data");
     }
@@ -353,6 +361,12 @@ NSMutableArray *slicesInfo;
 - (void)updateAllFavorites:(NSArray *)dataArray {
     for (int i = 1; i < [dataArray count]; i++) {
         [self updateFavorites:[dataArray objectAtIndex:i]];
+    }
+}
+
+- (void)updateAllLeastFavorites:(NSArray *)dataArray {
+    for (int i = 1; i < [dataArray count]; i++) {
+        [self updateLeastFavorites:[dataArray objectAtIndex:i]];
     }
 }
 
@@ -372,6 +386,25 @@ NSMutableArray *slicesInfo;
     if (!favoriteIsAnUpdate) {
         [_favorites addObject:dataArray];
         NSLog(@"Added favorite for device %@", [dataArray objectAtIndex:1]);
+    }
+}
+
+- (void)updateLeastFavorites:(NSArray *)dataArray {
+    BOOL leastFavoriteIsAnUpdate = NO;
+    
+    for (int i = 0; i < _leastFavorites.count; i++) {
+        NSArray *leastFavorite = [_leastFavorites objectAtIndex:i];
+        
+        if ([[leastFavorite objectAtIndex:1] isEqualToString:[dataArray objectAtIndex:1]]) {
+            leastFavoriteIsAnUpdate = YES;
+            [_leastFavorites replaceObjectAtIndex:i withObject:dataArray];
+            NSLog(@"Replaced least favorite for device %@", [dataArray objectAtIndex:1]);
+        }
+    }
+    
+    if (!leastFavoriteIsAnUpdate) {
+        [_leastFavorites addObject:dataArray];
+        NSLog(@"Added least favorite for device %@", [dataArray objectAtIndex:1]);
     }
 }
 

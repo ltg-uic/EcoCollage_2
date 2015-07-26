@@ -32,6 +32,7 @@
 @property NSMutableArray *slices;
 @property int pieIndex;
 @property NSMutableArray *favorites;
+@property NSMutableArray *leastFavorites;
 - (UIImage *)viewToImageForWaterDisplay:(FebTestWaterDisplay *)waterDisplay;
 + (void) shutdownBluetooth;
 - (void) addPieChartAtIndex:(int)index forProfile:(NSArray *)profile;

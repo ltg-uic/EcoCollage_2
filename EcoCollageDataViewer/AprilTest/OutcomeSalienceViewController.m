@@ -61,6 +61,7 @@ NSMutableArray * bgCols;
 NSMutableArray * publicCostDisplays;
 NSMutableArray * OverBudgetLabels;
 NSMutableArray * favoriteSwitches;
+NSMutableArray * leastFavoriteSwitches;
 NSMutableArray * interventionViews;
 
 UILabel *redThreshold;
@@ -120,15 +121,16 @@ float maxPublicInstallNorm;
     _currentConcernRanking = tabControl.currentConcernRanking;
     _studyNum = tabControl.studyNum;
     _url = tabControl.url;
-    trialRunSubViews    = [[NSMutableArray alloc] init];
-    waterDisplays       = [[NSMutableArray alloc] init];
-    maxWaterDisplays    = [[NSMutableArray alloc] init];
-    efficiency          = [[NSMutableArray alloc] init];
-    _scenarioNames      = [[NSMutableArray alloc] init];
-    publicCostDisplays  = [[NSMutableArray alloc] init];
-    OverBudgetLabels    = [[NSMutableArray alloc] init];
-    favoriteSwitches    = [[NSMutableArray alloc] init];
-    interventionViews   = [[NSMutableArray alloc] init];
+    trialRunSubViews        = [[NSMutableArray alloc] init];
+    waterDisplays           = [[NSMutableArray alloc] init];
+    maxWaterDisplays        = [[NSMutableArray alloc] init];
+    efficiency              = [[NSMutableArray alloc] init];
+    _scenarioNames          = [[NSMutableArray alloc] init];
+    publicCostDisplays      = [[NSMutableArray alloc] init];
+    OverBudgetLabels        = [[NSMutableArray alloc] init];
+    favoriteSwitches        = [[NSMutableArray alloc] init];
+    leastFavoriteSwitches   = [[NSMutableArray alloc] init];
+    interventionViews       = [[NSMutableArray alloc] init];
     
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
@@ -183,6 +185,11 @@ float maxPublicInstallNorm;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(sendFavorite)
                                                  name:@"sendFavorite"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sendLeastFavorite)
+                                                 name:@"sendLeastFavorite"
                                                object:nil];
     
 }
@@ -933,9 +940,9 @@ float maxPublicInstallNorm;
     }
 
     //border around component score
-    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (trial)*175 + 88,  114, 26)];
+    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (trial)*175 + 73,  114, 26)];
     fullValueBorder.backgroundColor = [UIColor grayColor];
-    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (trial)*175 + 90,  110, 22)];
+    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (trial)*175 + 75,  110, 22)];
     fullValue.backgroundColor = [UIColor whiteColor];
     [_mapWindow addSubview:fullValueBorder];
     [_mapWindow addSubview:fullValue];
@@ -949,7 +956,7 @@ float maxPublicInstallNorm;
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
-        componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 90, floor(scoreWidth), 22)];
+        componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 75, floor(scoreWidth), 22)];
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
         [_mapWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
@@ -1368,9 +1375,9 @@ float maxPublicInstallNorm;
         if (currentVar.widthOfVisualization > 0) visibleIndex++;
     }
     //border around component score
-    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (trial)*175 + 88,  114, 26)];
+    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (trial)*175 + 73,  114, 26)];
     fullValueBorder.backgroundColor = [UIColor grayColor];
-    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (trial)*175 + 90,  110, 22)];
+    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (trial)*175 + 75,  110, 22)];
     fullValue.backgroundColor = [UIColor whiteColor];
     [_mapWindow addSubview:fullValueBorder];
     [_mapWindow addSubview:fullValue];
@@ -1384,7 +1391,7 @@ float maxPublicInstallNorm;
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
-           componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 90, floor(scoreWidth), 22)];
+           componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 75, floor(scoreWidth), 22)];
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
         [_mapWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
@@ -1399,13 +1406,13 @@ float maxPublicInstallNorm;
         }
     }
     
-    UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 175*(trial) + 50, 0, 0)];
+    UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 175*(trial) + 40, 0, 0)];
     scoreLabel.text = @"Performance:";
     scoreLabel.font = [UIFont systemFontOfSize:14.0];
     [scoreLabel sizeToFit];
     scoreLabel.textColor = [UIColor blackColor];
     [_mapWindow addSubview:scoreLabel];
-    UILabel *scoreLabel2 = [[UILabel alloc] initWithFrame:CGRectMake(150, 175*(trial) + 75, 0, 0)];
+    UILabel *scoreLabel2 = [[UILabel alloc] initWithFrame:CGRectMake(150, 175*(trial) + 60, 0, 0)];
     scoreLabel2.text = [NSString stringWithFormat:  @"Broken down by source:"];
     scoreLabel2.font = [UIFont systemFontOfSize:10.0];
     [scoreLabel2 sizeToFit];
@@ -1415,6 +1422,8 @@ float maxPublicInstallNorm;
     
     UILabel *favoriteLabel;
     UISwitch *favoriteSwitch;
+    UILabel *leastFavoriteLabel;
+    UISwitch *leastFavoriteSwitch;
     
     //if its a new trial... draw a new label and uiswitch
     //else retrieve it from the current views kept track of
@@ -1422,32 +1431,70 @@ float maxPublicInstallNorm;
         // load personal favorite label
         favoriteLabel = [[UILabel alloc]init];
         favoriteLabel.text = [NSString stringWithFormat:@"Favorite"];
-        favoriteLabel.font = [UIFont systemFontOfSize:15.0];
+        favoriteLabel.font = [UIFont systemFontOfSize:14.0];
+        favoriteLabel.textColor = [UIColor blackColor];
         [favoriteLabel sizeToFit];
-        favoriteLabel.frame = CGRectMake(148, trial * 175 + 131, favoriteLabel.frame.size.width, favoriteLabel.frame.size.height);
-        [_mapWindow addSubview:favoriteLabel];
+        favoriteLabel.frame = CGRectMake(148, trial * 175 + 104, favoriteLabel.frame.size.width, favoriteLabel.frame.size.height);
         
         // draw UISwitch for favoriting a trial
         // add the uiswitch for favoriting functionality
         favoriteSwitch = [[UISwitch alloc]init];
         favoriteSwitch.tag = 100 + trial;
         [favoriteSwitch addTarget:self action:@selector(personalFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
-        favoriteSwitch.frame = CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, trial * 175 + 125, 50, 20);
+        [favoriteSwitch setFrame:CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, favoriteLabel.frame.origin.y, 50, favoriteSwitch.frame.size.height)];
         [favoriteSwitches addObject:favoriteSwitch];
         [_mapWindow addSubview:favoriteSwitch];
+        
+        favoriteLabel.frame = CGRectMake(148, trial * 175 + 104, favoriteLabel.frame.size.width, favoriteSwitch.frame.size.height);
+        [_mapWindow addSubview:favoriteLabel];
+        
+        leastFavoriteLabel = [[UILabel alloc]init];
+        leastFavoriteLabel.text = @"Least";
+        leastFavoriteLabel.font = [UIFont systemFontOfSize:14.0];
+        leastFavoriteLabel.textColor = [UIColor blackColor];
+        [leastFavoriteLabel sizeToFit];
+        [leastFavoriteLabel setTextAlignment:NSTextAlignmentCenter];
+        leastFavoriteLabel.frame = CGRectMake(148, trial * 175 + 136, leastFavoriteLabel.frame.size.width, favoriteSwitch.frame.size.height);
+        [_mapWindow addSubview:leastFavoriteLabel];
+        
+        leastFavoriteSwitch = [[UISwitch alloc]init];
+        leastFavoriteSwitch.tag = 200 + trial;
+        [leastFavoriteSwitch addTarget:self action:@selector(personalLeastFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
+        [leastFavoriteSwitch setFrame:CGRectMake(favoriteSwitch.frame.origin.x, leastFavoriteLabel.frame.origin.y, 50, leastFavoriteSwitch.frame.size.height)];
+        [leastFavoriteSwitches addObject:leastFavoriteSwitch];
+        [_mapWindow addSubview:leastFavoriteSwitch];
     }
     else{
         favoriteLabel = [[UILabel alloc]init];
         favoriteLabel.text = [NSString stringWithFormat:@"Favorite"];
-        favoriteLabel.font = [UIFont systemFontOfSize:15.0];
+        favoriteLabel.font = [UIFont systemFontOfSize:14.0];
+        favoriteLabel.textColor = [UIColor blackColor];
         [favoriteLabel sizeToFit];
-        favoriteLabel.frame = CGRectMake(148, trial * 175 + 131, favoriteLabel.frame.size.width, favoriteLabel.frame.size.height);
-        [_mapWindow addSubview:favoriteLabel];
+        [favoriteLabel setTextAlignment:NSTextAlignmentCenter];
+        favoriteLabel.frame = CGRectMake(148, trial * 175 + 104, favoriteLabel.frame.size.width, 12);
         
         favoriteSwitch = [favoriteSwitches objectAtIndex:simRun.trialNum];
         [favoriteSwitch addTarget:self action:@selector(personalFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
-        favoriteSwitch.frame = CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, trial * 175 + 125, 50, 20);
+        [favoriteSwitch setFrame:CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, favoriteLabel.frame.origin.y, 50, 12)];
         [_mapWindow addSubview:favoriteSwitch];
+        
+        favoriteLabel.frame = CGRectMake(148, trial * 175 + 104, favoriteLabel.frame.size.width, favoriteSwitch.frame.size.height);
+        [_mapWindow addSubview:favoriteLabel];
+        
+        leastFavoriteLabel = [[UILabel alloc]init];
+        leastFavoriteLabel.text = @"Least";
+        leastFavoriteLabel.font = [UIFont systemFontOfSize:14.0];
+        leastFavoriteLabel.textColor = [UIColor blackColor];
+        [leastFavoriteLabel sizeToFit];
+        [leastFavoriteLabel setTextAlignment:NSTextAlignmentCenter];
+        leastFavoriteLabel.frame = CGRectMake(148, trial * 175 + 136, leastFavoriteLabel.frame.size.width, favoriteSwitch.frame.size.height);
+        [_mapWindow addSubview:leastFavoriteLabel];
+        
+        leastFavoriteSwitch = [leastFavoriteSwitches objectAtIndex:simRun.trialNum];
+        [leastFavoriteSwitch addTarget:self action:@selector(personalLeastFavoriteSwitchChanged:) forControlEvents:UIControlEventValueChanged];
+        [leastFavoriteSwitch setFrame:CGRectMake(favoriteSwitch.frame.origin.x, leastFavoriteLabel.frame.origin.y, 50, leastFavoriteSwitch.frame.size.height)];
+        [_mapWindow addSubview:leastFavoriteSwitch];
+
     }
 
 
@@ -1475,7 +1522,9 @@ float maxPublicInstallNorm;
                                    @"ImpactNeighbor"      : impactNeighbor,
                                    @"CostDisplay"         : cd,
                                    @"FavoriteSwitch"      : favoriteSwitch,
-                                   @"FavoriteLabel"       : favoriteLabel
+                                   @"FavoriteLabel"       : favoriteLabel,
+                                   @"LeastFavoriteSwitch" : leastFavoriteSwitch,
+                                   @"LeastFavoriteLabel"  : leastFavoriteLabel
                                    };
    
     //Right now contains the contents of the map window scrollview
@@ -1523,6 +1572,39 @@ float maxPublicInstallNorm;
     }
 }
 
+- (void)sendLeastFavorite {
+    int leastFavorite = -1;
+
+    for (NSDictionary *trialRunInfo in trialRunSubViews) {
+        if([[trialRunInfo objectForKey:@"LeastFavoriteSwitch"] isOn])
+            leastFavorite = (int)(((UISwitch*)[trialRunInfo objectForKey:@"LeastFavoriteSwitch"]).tag) - 200;
+    }
+    
+    if (leastFavorite != -1) {
+        AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+        
+        if(tabControl.session) {
+            NSMutableArray *leastFavoriteTrial = [[NSMutableArray alloc]init];
+            
+            [leastFavoriteTrial addObject:@"leastFavoriteForMomma"];
+            [leastFavoriteTrial addObject:[[UIDevice currentDevice]name]];
+            
+            [leastFavoriteTrial addObject:[NSNumber numberWithInt:leastFavorite]];
+            
+            NSDictionary *leastFavoriteToSendToMomma = [NSDictionary dictionaryWithObject:leastFavoriteTrial
+                                                                              forKey:@"data"];
+            
+            if(leastFavoriteToSendToMomma != nil) {
+                NSData *data = [NSKeyedArchiver archivedDataWithRootObject:leastFavoriteToSendToMomma];
+                if(tabControl.peerIDForMomma != nil)
+                    [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+            }
+        }
+        
+    }
+}
+
+
 - (void)personalFavoriteSwitchChanged:(id)sender {
     UISwitch *favoriteSwitch = (UISwitch*)sender;
     
@@ -1545,16 +1627,47 @@ float maxPublicInstallNorm;
         [favorite addObject:@"favoriteForMomma"];
         [favorite addObject:[[UIDevice currentDevice]name]];
         
-        if (turnedOn)
-            [favorite addObject:[NSNumber numberWithInt:trial]];
-        else
-            [favorite addObject:[NSNumber numberWithInt:-1]];
+        [favorite addObject:[NSNumber numberWithInt:trial]];
         
         NSDictionary *favoriteToSendToMomma = [NSDictionary dictionaryWithObject:favorite
                                                                          forKey:@"data"];
         
         if(favoriteToSendToMomma != nil) {
             NSData *data = [NSKeyedArchiver archivedDataWithRootObject:favoriteToSendToMomma];
+            if(tabControl.peerIDForMomma != nil)
+                [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+        }
+    }
+}
+
+- (void)personalLeastFavoriteSwitchChanged:(id)sender {
+    UISwitch *leastFavoriteSwitch = (UISwitch*)sender;
+    
+    int trial = (int)leastFavoriteSwitch.tag - 200;
+    
+    BOOL turnedOn = (leastFavoriteSwitch.isOn) ? YES:NO;
+    
+    // loop thru all switches and turn them off
+    for (NSDictionary *trialRunInfo in trialRunSubViews) {
+        if (![[trialRunInfo objectForKey:@"LeastFavoriteSwitch"] isEqual:leastFavoriteSwitch] && [[trialRunInfo objectForKey:@"LeastFavoriteSwitch"] isOn])
+            [[trialRunInfo objectForKey:@"LeastFavoriteSwitch"] setOn:NO animated:YES];
+    }
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    if(tabControl.session) {
+        NSMutableArray *leastFavorite = [[NSMutableArray alloc]init];
+        
+        [leastFavorite addObject:@"leastFavoriteForMomma"];
+        [leastFavorite addObject:[[UIDevice currentDevice]name]];
+        
+        [leastFavorite addObject:[NSNumber numberWithInt:trial]];
+        
+        NSDictionary *leastFavoriteToSendToMomma = [NSDictionary dictionaryWithObject:leastFavorite
+                                                                          forKey:@"data"];
+        
+        if(leastFavoriteToSendToMomma != nil) {
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:leastFavoriteToSendToMomma];
             if(tabControl.peerIDForMomma != nil)
                 [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
         }
@@ -2140,9 +2253,17 @@ float maxPublicInstallNorm;
         UIImageView *InterventionImageView    = [[trialRunSubViews objectAtIndex:i] valueForKey:@"InterventionImgView"];
         UISwitch *favoriteSwitch              = [[trialRunSubViews objectAtIndex:i] objectForKey:@"FavoriteSwitch"];
         UILabel *favoriteLabel                = [[trialRunSubViews objectAtIndex:i] objectForKey:@"FavoriteLabel"];
+        UISwitch *leastFavoriteSwitch         = [[trialRunSubViews objectAtIndex:i] objectForKey:@"LeastFavoriteSwitch"];
+        UILabel *leastFavoriteLabel           = [[trialRunSubViews objectAtIndex:i] objectForKey:@"LeastFavoriteLabel"];
         
-        favoriteLabel.frame = CGRectMake(148, i * 175 + 131, favoriteLabel.frame.size.width, favoriteLabel.frame.size.height);
-        favoriteSwitch.frame = CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, i * 175 + 125, 50, 20);
+        
+        favoriteLabel.frame = CGRectMake(148, i * 175 + 104, favoriteLabel.frame.size.width, favoriteLabel.frame.size.height);
+        [favoriteSwitch setFrame:CGRectMake(favoriteLabel.frame.origin.x + favoriteLabel.frame.size.width + 5, favoriteLabel.frame.origin.y, 50, favoriteSwitch.frame.size.height)];
+        favoriteLabel.frame = CGRectMake(148, i * 175 + 104, favoriteLabel.frame.size.width, favoriteSwitch.frame.size.height);
+        
+        leastFavoriteLabel.frame = CGRectMake(148, i * 175 + 136, leastFavoriteLabel.frame.size.width, favoriteSwitch.frame.size.height);
+        [leastFavoriteSwitch setFrame:CGRectMake(favoriteSwitch.frame.origin.x, leastFavoriteLabel.frame.origin.y, 50, leastFavoriteSwitch.frame.size.height)];
+        
         
         
         [self OffsetView:InterventionImageView toX:InterventionImageView.frame.origin.x andY:175 * (i) + 40];

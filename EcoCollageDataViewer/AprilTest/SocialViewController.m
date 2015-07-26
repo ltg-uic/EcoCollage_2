@@ -200,7 +200,7 @@ int dynamic_cd_width = 0;
     [_loadingIndicator stopAnimating];
     
     
-    arrStatus_social = [[NSMutableArray alloc] initWithObjects:@"Trial 0", @"Favorite trials", nil];
+    arrStatus_social = [[NSMutableArray alloc] initWithObjects:@"Trial 0", @"Favorite trials", @"Least Favorite Trials", nil];
     
     _trialPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus_social[trialChosen]];
     _trialPickerTextField.delegate = self;
@@ -274,7 +274,7 @@ int dynamic_cd_width = 0;
     
     // line below data viewers
     UIView *lineBelowData = [[UIView alloc]init];
-    lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height - 1, 5000, 1);
+    lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height - 1, 1100, 1);
     lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
     lineBelowData.layer.borderWidth = 0.5;
     lineBelowData.tag = 9001;
@@ -459,7 +459,7 @@ int dynamic_cd_width = 0;
             UILabel *scoreNumber =      [[UILabel alloc]init];
             
             newScoreBarView.layer.borderColor = [UIColor lightGrayColor].CGColor;
-            newScoreBarView.layer.borderWidth = 0.5;
+            newScoreBarView.layer.borderWidth = 1.0;
             
             scoreName.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
             scoreNumber.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
@@ -948,6 +948,7 @@ int dynamic_cd_width = 0;
     }
     
     [arrStatus_social addObject:@"Favorite Trials"];
+    [arrStatus_social addObject:@"Least Favorite Trials"];
     
     [SortType_social reloadAllComponents];
 }
@@ -968,6 +969,16 @@ int dynamic_cd_width = 0;
         if (tabControl.trialNum > 0) {
             [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
             [self loadFavorites];
+            [_loadingIndicator stopAnimating];
+        }
+        [SortType_social removeFromSuperview];
+        return;
+    }
+    else if(row == tabControl.trialNum + 1) {
+        _trialPickerTextField.text = @"Least Favorite Trials";
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+            [self loadLeastFavorites];
             [_loadingIndicator stopAnimating];
         }
         [SortType_social removeFromSuperview];
@@ -1008,10 +1019,12 @@ int dynamic_cd_width = 0;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     if (row == tabControl.trialNum && tabControl.trialNum != 0)
         tView.text = @"Favorite Trials";
+    else if(row == tabControl.trialNum + 1 && tabControl.trialNum != 0)
+        tView.text = @"Least Favorite Trials";
     else if (row != tabControl.trialNum && tabControl.trialNum != 0)
         tView.text = [NSString stringWithFormat:@"Trial %d", (int)row];
     else
-        tView.text = @"Favorite Trials";
+        tView.text = @"No Trials Loaded";
     // Fill the label text here
     
     return tView;
@@ -1025,6 +1038,14 @@ int dynamic_cd_width = 0;
         if (tabControl.trialNum > 0) {
             [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
             [self loadFavorites];
+            [_loadingIndicator stopAnimating];
+        }
+        return;
+    }
+    else if(tabControl.trialNum + 1 == trialChosen) {
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+            [self loadLeastFavorites];
             [_loadingIndicator stopAnimating];
         }
         return;
@@ -1226,6 +1247,21 @@ int dynamic_cd_width = 0;
         return;
     }
     
+    // sort favorites so that the user of the device is at the top
+    int indexOfCurrentDevice = -1;
+    for (int i = 0; i <tabControl.favorites.count; i++) {
+        if([[[tabControl.favorites objectAtIndex:i] objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]]) {
+            indexOfCurrentDevice = i;
+        }
+    }
+    
+    if (indexOfCurrentDevice != -1) {
+        NSArray *currentDeviceArray = [tabControl.favorites objectAtIndex:indexOfCurrentDevice];
+        
+        [tabControl.favorites replaceObjectAtIndex:indexOfCurrentDevice withObject:[tabControl.favorites objectAtIndex:0]];
+        [tabControl.favorites replaceObjectAtIndex:0 withObject:currentDeviceArray];
+    }
+    
     [efficiencySocial removeAllObjects];
     
     int indexOfProfileInTabControlProfiles = -1;
@@ -1235,6 +1271,8 @@ int dynamic_cd_width = 0;
         
         // find the profile for this user
         for(int j = 0; j < tabControl.favorites.count; j++) {
+            if(tabControl.profiles.count < j)
+                return;
             if ([[[tabControl.favorites objectAtIndex:i] objectAtIndex:1] isEqualToString:[[tabControl.profiles objectAtIndex:j] objectAtIndex:1]]) {
                 profile = [tabControl.profiles objectAtIndex:j];
                 indexOfProfileInTabControlProfiles = j;
@@ -1404,6 +1442,233 @@ int dynamic_cd_width = 0;
         [self drawTrialForSpecificTrial:trialNum forProfile:indexOfProfileInTabControlProfiles withViewIndex:i];
     }
 
+    
+}
+
+- (void)loadLeastFavorites {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    // first, remove all current subviews from the 3 visualization scrollViews
+    for (UIView *subview in [_profilesWindow subviews]) {
+        for (UIView *subsubview in [subview subviews])
+            [subsubview removeFromSuperview];
+        [subview removeFromSuperview];
+    }
+    for (UIView *subview in [_usernamesWindow subviews]) {
+        for (UIView *subsubview in [subview subviews])
+            [subsubview removeFromSuperview];
+        [subview removeFromSuperview];
+    }
+    for (UIView *subview in [bottomOfMapWindow subviews]) {
+        for (UIView *subsubview in [subview subviews])
+            [subsubview removeFromSuperview];
+        [subview removeFromSuperview];
+    }
+    for (int i = 0; i < [imageViewsToRemove count]; i++) {
+        [[imageViewsToRemove objectAtIndex:i] removeFromSuperview];
+    }
+    
+    // if there are no favorites, load a message telling the user this
+    if (tabControl.favorites.count == 0) {
+        UIAlertView *alert= [[UIAlertView alloc] initWithTitle:@"No favorites loaded" message:@"Wait for other users to select their least favorite trial" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+        [alert show];
+        return;
+    }
+    
+    [efficiencySocial removeAllObjects];
+    
+    
+    // sort favorites so that the user of the device is at the top
+    int indexOfCurrentDevice = -1;
+    for (int i = 0; i <tabControl.leastFavorites.count; i++) {
+        if([[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]]) {
+            indexOfCurrentDevice = i;
+        }
+    }
+    
+    if (indexOfCurrentDevice != -1) {
+        NSArray *currentDeviceArray = [tabControl.leastFavorites objectAtIndex:indexOfCurrentDevice];
+        
+        [tabControl.leastFavorites replaceObjectAtIndex:indexOfCurrentDevice withObject:[tabControl.leastFavorites objectAtIndex:0]];
+        [tabControl.leastFavorites replaceObjectAtIndex:0 withObject:currentDeviceArray];
+    }
+    
+    int indexOfProfileInTabControlProfiles = -1;
+    
+    for (int i = 0; i < tabControl.favorites.count; i++) {
+        NSArray *profile = [[NSArray alloc]init];
+        
+        // find the profile for this user
+        for(int j = 0; j < tabControl.leastFavorites.count; j++) {
+            if ([[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:1] isEqualToString:[[tabControl.profiles objectAtIndex:j] objectAtIndex:1]]) {
+                profile = [tabControl.profiles objectAtIndex:j];
+                indexOfProfileInTabControlProfiles = j;
+            }
+        }
+        
+        //exit if profile is not found
+        if (indexOfProfileInTabControlProfiles == -1) {
+            NSLog(@"Exiting from drawing views in _usernamesWindow for least favorite trials");
+            return;
+        }
+        
+        // draw views in _usernamesWindow
+        // tag for each view is 1+(index of device name in tabControl.favorites)
+        UIView *usernameSubview = [[UIView alloc]init];
+        usernameSubview.frame = CGRectMake(0, i * heightOfVisualization, _usernamesWindow.frame.size.width, heightOfVisualization);
+        // tag == i + 1 since 0 tag goes to the superview
+        usernameSubview.tag = i + 1;
+        [_usernamesWindow addSubview:usernameSubview];
+        
+        UILabel *nameLabel = [[UILabel alloc]init];
+        nameLabel.tag = 1;
+        nameLabel.backgroundColor = [UIColor whiteColor];
+        nameLabel.frame = CGRectMake(0, 2, widthOfUsernamesWindowWhenOpen, 40);
+        nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
+        if ([profile isEqual:tabControl.ownProfile]) {
+            nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:2] integerValue]];
+        }
+        else {
+            nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:2] integerValue]];
+        }
+        if(nameLabel != NULL) {
+            [[_usernamesWindow viewWithTag:i + 1] addSubview:nameLabel];
+        }
+        
+        
+        [tabControl reloadDataForPieChartAtIndex:i];
+        [[tabControl.pieCharts objectAtIndex:i] reloadData];
+        [[_usernamesWindow viewWithTag:i + 1] addSubview:[tabControl.pieCharts objectAtIndex:indexOfProfileInTabControlProfiles]];
+    }
+    
+    
+    
+    // draw views in _profilesWindow
+    // tag for each view is 1+(index of device name in tabControl.favorites)
+    for (int i = 0; i < tabControl.leastFavorites.count; i++) {
+        NSArray *profile = [[NSArray alloc]init];
+        
+        // find the profile for this user
+        for(int j = 0; j < tabControl.leastFavorites.count; j++) {
+            if ([[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:1] isEqualToString:[[tabControl.profiles objectAtIndex:j] objectAtIndex:1]]) {
+                profile = [tabControl.profiles objectAtIndex:j];
+                indexOfProfileInTabControlProfiles = j;
+            }
+        }
+        
+        UIView *profileSubview = [[UIView alloc]init];
+        profileSubview.frame = CGRectMake(0, i * heightOfVisualization, widthOfTitleVisualization * 8, heightOfVisualization);
+        // tag == i + 1 since 0 tag goes to the superview
+        profileSubview.tag = i + 1;
+        [_profilesWindow addSubview:profileSubview];
+        
+        
+        // draw profile concerns in order
+        int width = 0;
+        for (int j = 3; j < profile.count; j++) {
+            
+            UILabel *currentLabel = [[UILabel alloc]init];
+            currentLabel.backgroundColor = [concernColors objectForKey:[profile objectAtIndex:j]];
+            currentLabel.frame = CGRectMake(width, 0, widthOfTitleVisualization, 40);
+            currentLabel.font = [UIFont boldSystemFontOfSize:15.3];
+            
+            if([[profile objectAtIndex:j] isEqualToString:@"Investment"]) {
+                currentLabel.text = @"  Investment";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Damage Reduction"]) {
+                currentLabel.text = @"  Damage Reduction";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Efficiency of Intervention ($/Gallon)"]) {
+                currentLabel.text = @"  Efficiency of Intervention";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Capacity Used"]) {
+                currentLabel.text = @"  Intervention Capacity";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
+                currentLabel.text = @"  Water Depth Over Storm";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
+                currentLabel.text = @"  Maximum Flooded Area";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"]) {
+                currentLabel.text = @"  Groundwater Infiltration";
+            }
+            else if([[profile objectAtIndex:j] isEqualToString:@"Impact on my Neighbors"]) {
+                currentLabel.text = @"  Impact on my Neighbors";
+            }
+            else {
+                currentLabel = NULL;
+            }
+            
+            if(currentLabel != NULL){
+                [profileSubview addSubview:currentLabel];
+                width += widthOfTitleVisualization;
+            }
+        }
+    }
+    
+    // draw maps in _mapWindow
+    // loop through tabControl.favorites and see which maps we need to draw
+    // loop through all the favorites and add any trial number not yet added to the "uniqueTrialNumbers" array
+    NSMutableArray *uniqueTrialNumbers = [[NSMutableArray alloc]init];
+    
+    for (NSArray *leastFavorite in tabControl.leastFavorites) {
+        NSNumber *trialOfCurrentProfile = [leastFavorite objectAtIndex:2];
+        
+        BOOL isARepeat = NO;
+        for (NSNumber *trialNum in uniqueTrialNumbers) {
+            if ([trialNum isEqualToNumber:trialOfCurrentProfile])
+                isARepeat = YES;
+        }
+        
+        if (!isARepeat)
+            [uniqueTrialNumbers addObject:trialOfCurrentProfile];
+    }
+    
+    // sort uniqueTrialNumbers in ascending order
+    for (int i = 0; i < uniqueTrialNumbers.count - 1; i++) {
+        if ([[uniqueTrialNumbers objectAtIndex:i] integerValue] > [[uniqueTrialNumbers objectAtIndex:i+1] integerValue]) {
+            int temp = [[uniqueTrialNumbers objectAtIndex:i] integerValue];
+            [uniqueTrialNumbers replaceObjectAtIndex:i withObject:[uniqueTrialNumbers objectAtIndex:i+1]];
+            [uniqueTrialNumbers replaceObjectAtIndex:i+1 withObject:[NSNumber numberWithInt:temp]];
+        }
+    }
+    
+    // load the maps for the trial numbers in uniqueTrialNumbers
+    for (int i = 0; i < [uniqueTrialNumbers count]; i++) {
+        int trialNum = [[uniqueTrialNumbers objectAtIndex:i] integerValue];
+        
+        UILabel *mapWindowLabel = [[UILabel alloc]init];
+        mapWindowLabel.text = [NSString stringWithFormat:@"  Trial %d", trialNum];
+        mapWindowLabel.font = [UIFont systemFontOfSize:15.0];
+        [mapWindowLabel sizeToFit];
+        mapWindowLabel.frame = CGRectMake(200 * i, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
+        [bottomOfMapWindow addSubview:mapWindowLabel];
+        
+        [bottomOfMapWindow setContentSize:CGSizeMake(mapWindowLabel.frame.origin.x + 250, bottomOfMapWindow.frame.size.height)];
+        
+        AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trialNum];
+        
+        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, mapWindowLabel.frame.size.height + 5, 115, 125))];
+        interventionView.view = mapWindowLabel;
+        [interventionView updateView];
+    }
+    
+    
+    
+    for (int i = 0; i < tabControl.leastFavorites.count; i++) {
+        int trialNum = [[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:2]integerValue];
+        
+        // find the profile for this user
+        for(int j = 0; j < tabControl.leastFavorites.count; j++) {
+            if ([[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:1] isEqualToString:[[tabControl.profiles objectAtIndex:j] objectAtIndex:1]]) {
+                indexOfProfileInTabControlProfiles = j;
+            }
+        }
+        
+        [self drawTrialForSpecificTrial:trialNum forProfile:indexOfProfileInTabControlProfiles withViewIndex:i];
+    }
+    
     
 }
 
