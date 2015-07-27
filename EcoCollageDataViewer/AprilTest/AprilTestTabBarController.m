@@ -34,6 +34,7 @@
 @synthesize maxWaterDisplaysInTab = _maxWaterDisplaysInTab;
 @synthesize efficiencyViewsInTab = _efficiencyViewsInTab;
 @synthesize pieCharts = _pieCharts;
+@synthesize pieChartsForScoreBarView = _pieChartsForScoreBarView;
 @synthesize slices = _slices;
 @synthesize pieIndex = _pieIndex;
 @synthesize favorites = _favorites;
@@ -103,6 +104,7 @@ NSMutableArray *slicesInfo;
     viewsForMaxWaterDisplays = [[NSMutableArray alloc]init];
     viewsForEfficiencyViews  = [[NSMutableArray alloc] init];
     _pieCharts = [[NSMutableArray alloc]init];
+    _pieChartsForScoreBarView = [[NSMutableArray alloc]init];
     _favorites = [[NSMutableArray alloc]init];
     _leastFavorites = [[NSMutableArray alloc]init];
     
@@ -487,6 +489,7 @@ NSMutableArray *slicesInfo;
     if (_profiles.count != 0) {
         [_profiles removeAllObjects];
         [_pieCharts removeAllObjects];
+        [_pieChartsForScoreBarView removeAllObjects];
         [_slices removeAllObjects];
     }
     
@@ -515,6 +518,7 @@ NSMutableArray *slicesInfo;
     // draw pie chart
     // draw profile pie charts
     XYPieChart *pie = [[XYPieChart alloc]initWithFrame:CGRectMake(-5, 5, 120, 120) Center:CGPointMake(80, 100) Radius:60.0];
+    XYPieChart *pie2 = [[XYPieChart alloc]initWithFrame:CGRectMake(40, 30, 180, 180) Center:CGPointMake(80, 100) Radius:90.0];
     
     NSMutableArray *newSlices = [[NSMutableArray alloc]init];
     for (int i = 0; i < 8; i++) {
@@ -540,10 +544,23 @@ NSMutableArray *slicesInfo;
     [pie reloadData];
     
     [_pieCharts addObject:pie];
+    
+    [pie2 setDataSource:self];
+    [pie2 setStartPieAngle:M_PI_2];
+    [pie2 setAnimationSpeed:1.0];
+    [pie2 setPieBackgroundColor:[UIColor colorWithWhite:0.95 alpha:1]];
+    [pie2 setUserInteractionEnabled:NO];
+    pie2.showLabel = false;
+    [pie2 setLabelShadowColor:[UIColor blackColor]];
+    
+    [pie2 reloadData];
+    
+    [_pieChartsForScoreBarView addObject:pie2];
 }
 
 - (void) updatePieChartAtIndex:(int)index forProfile:(NSArray *)profile{
-    XYPieChart *pie = [_pieCharts objectAtIndex:index];
+    XYPieChart *pie1 = [_pieCharts objectAtIndex:index];
+    XYPieChart *pie2 = [_pieChartsForScoreBarView objectAtIndex:index];
     
     for (int j = 0; j < 8; j++) {
         int indexS = (int)[profile indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
@@ -552,7 +569,8 @@ NSMutableArray *slicesInfo;
     
     _pieIndex = index;
     
-    [pie reloadData];
+    [pie1 reloadData];
+    [pie2 reloadData];
     
     // make a notification to social view that a pie chart was reloaded
 }
@@ -685,7 +703,8 @@ NSMutableArray *slicesInfo;
     NSLog(@"AprilTestTabBar: receiveSingleTrial: Processed single trial");
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updatePicker" object:self];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self];
+    if (_trialNum == 1)
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self];
     
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"drawSingleTrial" object:self userInfo:nil];
@@ -705,6 +724,10 @@ NSMutableArray *slicesInfo;
         NSLog(@"AprilTestTabBar: receiveMultipleTrials: Not updating all trials");
         return;
     }
+    
+    BOOL updateSocial = 0;
+    if (_trialNum == 0)
+        updateSocial = 1;
      
     
     NSMutableArray *temp = [[NSMutableArray alloc]init];
@@ -753,7 +776,8 @@ NSMutableArray *slicesInfo;
     
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updatePicker" object:self];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
+    if (updateSocial)
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
     
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"drawMultipleTrials" object:self userInfo:nil];

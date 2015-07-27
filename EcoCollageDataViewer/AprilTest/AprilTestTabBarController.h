@@ -29,6 +29,7 @@
 @property NSMutableArray *maxWaterDisplaysInTab;
 @property NSMutableArray *efficiencyViewsInTab;
 @property NSMutableArray *pieCharts;
+@property NSMutableArray *pieChartsForScoreBarView;
 @property NSMutableArray *slices;
 @property int pieIndex;
 @property NSMutableArray *favorites;

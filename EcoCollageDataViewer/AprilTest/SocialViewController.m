@@ -290,15 +290,14 @@ int dynamic_cd_width = 0;
     
     widthOfUsernamesWindowWhenOpen = _usernamesWindow.frame.size.width;
     
+    
     UIView *lineAcrossScoreBarView = [[UIView alloc]init];
     lineAcrossScoreBarView.frame = CGRectMake(0, scoreBarView.frame.size.height / 2, scoreBarView.frame.size.width, 1);
     lineAcrossScoreBarView.layer.borderColor = [UIColor lightGrayColor].CGColor;
     lineAcrossScoreBarView.layer.borderWidth = 1.0;
     lineAcrossScoreBarView.tag = 9003;
     [scoreBarView addSubview:lineAcrossScoreBarView];
-    
-    [self drawScoreBarVisualization];
-    
+     
 }
 
 - (BOOL) textFieldShouldBeginEditing:(UITextField *)textView
@@ -380,27 +379,27 @@ int dynamic_cd_width = 0;
 
 - (void)profileUpdateHelper {
     [self profileUpdate];
-    [self drawScoreBarVisualization];
+    [self drawScoreBarVisualizationHelper];
 }
 
 - (void)usernameUpdateHelper:(NSNotification*)note {
     [self usernameUpdate:note];
-    [self drawScoreBarVisualization];
+    [self drawScoreBarVisualizationHelper];
 }
 
 - (void)updateSingleProfileHelper:(NSNotification*)note {
     [self updateSingleProfile:note];
-    [self drawScoreBarVisualization];
+    [self drawScoreBarVisualizationHelper];
 }
 
 - (void)drawNewProfileHelper {
     [self drawNewProfile];
-    [self drawScoreBarVisualization];
+    [self drawScoreBarVisualizationHelper];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [self profileUpdate];
-    [self drawScoreBarVisualization];
+    [self drawScoreBarVisualizationHelper];
 }
 
 
@@ -432,269 +431,339 @@ int dynamic_cd_width = 0;
     
     [super viewWillDisappear:animated];
 }
-- (IBAction)loadScoreBars:(UIButton *)sender {
-    [self drawScoreBarVisualization];
-}
 
-- (void)drawScoreBarVisualization {
+- (void)drawScoreBarVisualizationHelper {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
-    if ([tabControl.trialRuns count] <= trialChosen)
+    if (tabControl.trialNum > trialChosen) {
+        for (UIView *subview in [scoreBarView subviews]) {
+            if(subview.tag != 9003)
+                [subview removeFromSuperview];
+        }
+        for(int i = 0; i < tabControl.profiles.count; i++) {
+            //if ( scoreBars.count > i && [[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"]isHidden] == NO)
+               // [[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"] removeFromSuperview];
+
+            [self drawScoreBarVisualizationWithProfileIndex:i andScoreIndex:i andTrial:trialChosen];
+            if (scoreBars.count > i)
+                [scoreBarView addSubview:[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"]];
+        }
+    }
+    else if(tabControl.trialNum == trialChosen) {
+        int scoreNum = 0;
+        
+        for (UIView *subview in [scoreBarView subviews]) {
+            if(subview.tag != 9003)
+                [subview removeFromSuperview];
+        }
+        for(int i = 0; i < tabControl.profiles.count; i++) {
+            //if ( scoreBars.count > i && [[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"]isHidden] == NO)
+               // [[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"] removeFromSuperview];
+            
+            // gotta find the favorite for this profile and get the trial number for that favorite
+            int trial = -1;
+            for (int j = 0; j < tabControl.favorites.count; j++) {
+                if ([[[tabControl.favorites objectAtIndex:j] objectAtIndex:1] isEqualToString:[[tabControl.profiles objectAtIndex:i] objectAtIndex:1]])
+                    trial = [[[tabControl.favorites objectAtIndex:j]objectAtIndex:2] integerValue];
+            }
+            
+            if(trial != -1) {
+                [self drawScoreBarVisualizationWithProfileIndex:i andScoreIndex:scoreNum andTrial:trial];
+                if(scoreBars.count > i)
+                    [scoreBarView addSubview:[[scoreBars objectAtIndex:scoreNum] objectForKey:@"scoreBar"]];
+                scoreNum++;
+            }
+        }
+    }
+    else if(tabControl.trialNum + 1 == trialChosen) {
+        int scoreNum = 0;
+        
+        for (UIView *subview in [scoreBarView subviews]) {
+            if(subview.tag != 9003)
+                [subview removeFromSuperview];
+        }
+        for(int i = 0; i < tabControl.profiles.count; i++) {
+            
+            // gotta find the favorite for this profile and get the trial number for that favorite
+            int trial = -1;
+            for (int j = 0; j < tabControl.leastFavorites.count; j++) {
+                if ([[[tabControl.leastFavorites objectAtIndex:j] objectAtIndex:1] isEqualToString:[[tabControl.profiles objectAtIndex:i] objectAtIndex:1]])
+                    trial = [[[tabControl.leastFavorites objectAtIndex:j]objectAtIndex:2] integerValue];
+            }
+            
+            if(trial != -1) {
+                [self drawScoreBarVisualizationWithProfileIndex:i andScoreIndex:scoreNum andTrial:trial];
+                if(scoreBars.count > i)
+                    [scoreBarView addSubview:[[scoreBars objectAtIndex:scoreNum] objectForKey:@"scoreBar"]];
+                scoreNum++;
+            }
+        }
+    }
+}
+
+- (void)drawScoreBarVisualizationWithProfileIndex:(int)profileIndex andScoreIndex:(int)scoreIndex andTrial:(int)trialNum{
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    if ([tabControl.trialRuns count] <= trialNum)
         return;
     
     //find how many score bars will be needed
-    int numberOfScoreBarsToDraw = [tabControl.profiles count];
+    //int numberOfScoreBarsToDraw = [tabControl.profiles count];
     
     // create any new scorebar views that are needed
     // add any new line dividers needed
-    for (int i = 0; i < numberOfScoreBarsToDraw; i++) {
-        // only create a new view if we do not yet have one in the scoreBars array
-        if (i >= [scoreBars count]) {
-            UIView  *newScoreBarView =  [[UIView alloc]initWithFrame:CGRectMake((i/2) * 500, (i % 2) * 270, 500, 270)];
-            UILabel *fullValueBorder =  [[UILabel alloc] initWithFrame:CGRectMake(256, 60,  228, 52)];
-            UILabel *fullValue =        [[UILabel alloc] initWithFrame:CGRectMake(258, 62,  224, 48)];
-            UILabel *profileName =      [[UILabel alloc]initWithFrame:CGRectMake(256, 150, 228, 20)];
-            UILabel *trialNumber =      [[UILabel alloc]initWithFrame:CGRectMake(256, 180, 228, 20)];
-            UILabel *impact =           [[UILabel alloc]init];
-            UILabel *groundwater =      [[UILabel alloc]init];
-            UILabel *maxFlood =         [[UILabel alloc]init];
-            UILabel *waterDepth =       [[UILabel alloc]init];
-            UILabel *interventionCap =  [[UILabel alloc]init];
-            UILabel *efficiency =       [[UILabel alloc]init];
-            UILabel *damageReduc =      [[UILabel alloc]init];
-            UILabel *investment =       [[UILabel alloc]init];
-            UILabel *scoreName =        [[UILabel alloc]init];
-            UILabel *scoreNumber =      [[UILabel alloc]init];
-            
-            scoreName.font = [UIFont systemFontOfSize:14.0];
-            scoreNumber.font = [UIFont systemFontOfSize:14.0];
-            
-            // draw the dividers between each scoreBarView
-            if (i % 2 == 0) {
-                UIView *horizontalLine = [[UIView alloc]init];
-                horizontalLine.frame = CGRectMake(i / 2 * 500 + 500, 0, 1, scoreBarView.frame.size.height);
-                horizontalLine.layer.borderColor = [UIColor lightGrayColor].CGColor;
-                horizontalLine.layer.borderWidth = 1.0;
-                [scoreBarView addSubview:horizontalLine];
-            }
-
-            
-            [scoreName setTextAlignment:NSTextAlignmentCenter];
-            [scoreNumber setTextAlignment:NSTextAlignmentCenter];
-            
-            impact.userInteractionEnabled = YES;
-            groundwater.userInteractionEnabled = YES;
-            maxFlood.userInteractionEnabled = YES;
-            waterDepth.userInteractionEnabled = YES;
-            interventionCap.userInteractionEnabled = YES;
-            efficiency.userInteractionEnabled = YES;
-            damageReduc.userInteractionEnabled = YES;
-            investment.userInteractionEnabled = YES;
-            
-            
-            UITapGestureRecognizer *impactRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
-            impactRecognizer.numberOfTapsRequired = 1;
-            UITapGestureRecognizer *groundwaterRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(groundwaterTapped)];
-            groundwaterRecognizer.numberOfTapsRequired = 1;
-            UITapGestureRecognizer *maxFloodRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(maxFloodTapped)];
-            maxFloodRecognizer.numberOfTapsRequired = 1;
-            UITapGestureRecognizer *waterDepthRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
-            waterDepthRecognizer.numberOfTapsRequired = 1;
-            UITapGestureRecognizer *interventionCapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(interventionCapTapped)];
-            interventionCapRecognizer.numberOfTapsRequired = 1;
-            UITapGestureRecognizer *efficiencyRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(efficiencyTapped)];
-            efficiencyRecognizer.numberOfTapsRequired = 1;
-            UITapGestureRecognizer *damageReducRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(damageReducTapped)];
-            damageReducRecognizer.numberOfTapsRequired = 1;
-            UITapGestureRecognizer *investmentRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(investmentTapped)];
-            investmentRecognizer.numberOfTapsRequired = 1;
-            
-
-            [impact addGestureRecognizer:impactRecognizer];
-            [groundwater addGestureRecognizer:groundwaterRecognizer];
-            [maxFlood addGestureRecognizer:maxFloodRecognizer];
-            [waterDepth addGestureRecognizer:waterDepthRecognizer];
-            [interventionCap addGestureRecognizer:interventionCapRecognizer];
-            [efficiency addGestureRecognizer:efficiencyRecognizer];
-            [damageReduc addGestureRecognizer:damageReducRecognizer];
-            [investment addGestureRecognizer:investmentRecognizer];
+    if (scoreIndex >= [scoreBars count]) {
+        UIView  *newScoreBarView =  [[UIView alloc]initWithFrame:CGRectMake((scoreIndex/2) * 500, (scoreIndex % 2) * 270, 500, 270)];
+        UILabel *fullValueBorder =  [[UILabel alloc] initWithFrame:CGRectMake(256, 60,  228, 52)];
+        UILabel *fullValue =        [[UILabel alloc] initWithFrame:CGRectMake(258, 62,  224, 48)];
+        UILabel *profileName =      [[UILabel alloc]initWithFrame:CGRectMake(256, 150, 228, 20)];
+        UILabel *trialNumber =      [[UILabel alloc]initWithFrame:CGRectMake(256, 180, 228, 20)];
+        UILabel *impact =           [[UILabel alloc]init];
+        UILabel *groundwater =      [[UILabel alloc]init];
+        UILabel *maxFlood =         [[UILabel alloc]init];
+        UILabel *waterDepth =       [[UILabel alloc]init];
+        UILabel *interventionCap =  [[UILabel alloc]init];
+        UILabel *efficiency =       [[UILabel alloc]init];
+        UILabel *damageReduc =      [[UILabel alloc]init];
+        UILabel *investment =       [[UILabel alloc]init];
+        UILabel *scoreName =        [[UILabel alloc]init];
+        UILabel *scoreNumber =      [[UILabel alloc]init];
+        
+        scoreName.font = [UIFont systemFontOfSize:14.0];
+        scoreNumber.font = [UIFont systemFontOfSize:14.0];
+        
+        [scoreName setTextAlignment:NSTextAlignmentCenter];
+        [scoreNumber setTextAlignment:NSTextAlignmentCenter];
+        
+        impact.userInteractionEnabled = YES;
+        groundwater.userInteractionEnabled = YES;
+        maxFlood.userInteractionEnabled = YES;
+        waterDepth.userInteractionEnabled = YES;
+        interventionCap.userInteractionEnabled = YES;
+        efficiency.userInteractionEnabled = YES;
+        damageReduc.userInteractionEnabled = YES;
+        investment.userInteractionEnabled = YES;
         
         
-            NSMutableDictionary *scoreBar = [[NSMutableDictionary alloc]initWithObjects:[NSArray arrayWithObjects:newScoreBarView, fullValueBorder, fullValue, profileName, trialNumber, impact, groundwater, maxFlood, waterDepth, interventionCap, efficiency, damageReduc, investment, scoreName, scoreNumber, nil] forKeys:[NSArray arrayWithObjects:@"scoreBar", @"valueBorder", @"value", @"profileName", @"trialNumber", @"impactingMyNeighbors", @"groundwaterInfiltration", @"puddleMax", @"puddleTime", @"capacity", @"efficiencyOfIntervention", @"privateCostD", @"publicCost", @"scoreName", @"scoreNumber", nil]];
+        UITapGestureRecognizer *impactRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
+        impactRecognizer.numberOfTapsRequired = 1;
+        UITapGestureRecognizer *groundwaterRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(groundwaterTapped)];
+        groundwaterRecognizer.numberOfTapsRequired = 1;
+        UITapGestureRecognizer *maxFloodRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(maxFloodTapped)];
+        maxFloodRecognizer.numberOfTapsRequired = 1;
+        UITapGestureRecognizer *waterDepthRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
+        waterDepthRecognizer.numberOfTapsRequired = 1;
+        UITapGestureRecognizer *interventionCapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(interventionCapTapped)];
+        interventionCapRecognizer.numberOfTapsRequired = 1;
+        UITapGestureRecognizer *efficiencyRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(efficiencyTapped)];
+        efficiencyRecognizer.numberOfTapsRequired = 1;
+        UITapGestureRecognizer *damageReducRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(damageReducTapped)];
+        damageReducRecognizer.numberOfTapsRequired = 1;
+        UITapGestureRecognizer *investmentRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(investmentTapped)];
+        investmentRecognizer.numberOfTapsRequired = 1;
         
-            [scoreBars addObject:scoreBar];
-
-            [scoreBarView addSubview:newScoreBarView];
-            
-            fullValueBorder.backgroundColor = [UIColor grayColor];
-            [newScoreBarView addSubview:fullValueBorder];
         
-            fullValue.backgroundColor = [UIColor whiteColor];
-            [newScoreBarView addSubview:fullValue];
-            
-            [newScoreBarView addSubview:profileName];
-            [newScoreBarView addSubview:trialNumber];
-            [newScoreBarView addSubview:impact];
-            [newScoreBarView addSubview:groundwater];
-            [newScoreBarView addSubview:maxFlood];
-            [newScoreBarView addSubview:waterDepth];
-            [newScoreBarView addSubview:interventionCap];
-            [newScoreBarView addSubview:efficiency];
-            [newScoreBarView addSubview:damageReduc];
-            [newScoreBarView addSubview:investment];
-            [newScoreBarView addSubview:scoreName];
-            [newScoreBarView addSubview:scoreNumber];
-            
-        }
+        [impact addGestureRecognizer:impactRecognizer];
+        [groundwater addGestureRecognizer:groundwaterRecognizer];
+        [maxFlood addGestureRecognizer:maxFloodRecognizer];
+        [waterDepth addGestureRecognizer:waterDepthRecognizer];
+        [interventionCap addGestureRecognizer:interventionCapRecognizer];
+        [efficiency addGestureRecognizer:efficiencyRecognizer];
+        [damageReduc addGestureRecognizer:damageReducRecognizer];
+        [investment addGestureRecognizer:investmentRecognizer];
         
-        int widthOfScoreBarView = (numberOfScoreBarsToDraw % 2 == 0) ? (numberOfScoreBarsToDraw / 2 * 400) : ((numberOfScoreBarsToDraw + 1) / 2 * 400);
-        [scoreBarView setContentSize:CGSizeMake(widthOfScoreBarView + 50, 540)];
+        
+        NSMutableDictionary *scoreBar = [[NSMutableDictionary alloc]initWithObjects:[NSArray arrayWithObjects:newScoreBarView, fullValueBorder, fullValue, profileName, trialNumber, impact, groundwater, maxFlood, waterDepth, interventionCap, efficiency, damageReduc, investment, scoreName, scoreNumber, nil] forKeys:[NSArray arrayWithObjects:@"scoreBar", @"valueBorder", @"value", @"profileName", @"trialNumber", @"impactingMyNeighbors", @"groundwaterInfiltration", @"puddleMax", @"puddleTime", @"capacity", @"efficiencyOfIntervention", @"privateCostD", @"publicCost", @"scoreName", @"scoreNumber", nil]];
+        
+        [scoreBars addObject:scoreBar];
+        
+        [scoreBarView addSubview:newScoreBarView];
+        
+        fullValueBorder.backgroundColor = [UIColor grayColor];
+        [newScoreBarView addSubview:fullValueBorder];
+        
+        fullValue.backgroundColor = [UIColor whiteColor];
+        [newScoreBarView addSubview:fullValue];
+        
+        [newScoreBarView addSubview:profileName];
+        [newScoreBarView addSubview:trialNumber];
+        [newScoreBarView addSubview:impact];
+        [newScoreBarView addSubview:groundwater];
+        [newScoreBarView addSubview:maxFlood];
+        [newScoreBarView addSubview:waterDepth];
+        [newScoreBarView addSubview:interventionCap];
+        [newScoreBarView addSubview:efficiency];
+        [newScoreBarView addSubview:damageReduc];
+        [newScoreBarView addSubview:investment];
+        [newScoreBarView addSubview:scoreName];
+        [newScoreBarView addSubview:scoreNumber];
+        
     }
     
-    // update info for each scoreBarView
-    for (int i = 0; i < numberOfScoreBarsToDraw; i++) {
-        NSMutableDictionary *scoreBarDict = [scoreBars objectAtIndex:i];
-        UILabel *profileName = (UILabel*)[scoreBarDict objectForKey:@"profileName"];
-        UILabel *trialNumber = (UILabel*)[scoreBarDict objectForKey:@"trialNumber"];
-        
-        profileName.text = [[tabControl.profiles objectAtIndex:i] objectAtIndex:2];
-        [profileName setTextAlignment:NSTextAlignmentCenter];
-        trialNumber.text = [arrStatus_social objectAtIndex:trialChosen];
-        [trialNumber setTextAlignment:NSTextAlignmentCenter];
-        
-        // empty the text for all scoreBars scoreNumber and scoreName
-        UILabel *scoreNumber = (UILabel*)[scoreBarDict objectForKey:@"scoreNumber"];
-        UILabel *scoreName = (UILabel*)[scoreBarDict objectForKey:@"scoreName"];
-        
-        scoreNumber.text = @"";
-        scoreName.text = @"";
+    // draw the dividers between each scoreBarView
+    if (scoreIndex % 2 == 0) {
+        UIView *verticalLine = [[UIView alloc]init];
+        verticalLine.frame = CGRectMake(scoreIndex / 2 * 500 + 500, -1000, 1, scoreBarView.frame.size.height + 2000);
+        verticalLine.layer.borderColor = [UIColor lightGrayColor].CGColor;
+        verticalLine.layer.borderWidth = 1.0;
+        verticalLine.tag = 9004;
+        [scoreBarView addSubview:verticalLine];
     }
     
-    
-    AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trialChosen];
-    AprilTestNormalizedVariable *simRunNormal = [tabControl.trialRunsNormalized objectAtIndex:trialChosen];
-    
+    int widthOfScoreBarView = (scoreIndex % 2 == 0) ? (scoreIndex / 2 * 400) : ((scoreIndex + 1) / 2 * 400);
+    [scoreBarView setContentSize:CGSizeMake(widthOfScoreBarView + 50, 540)];
 
     
-    // draw labels for each grading
-    for (int i = 0; i < numberOfScoreBarsToDraw; i++) {
-        NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
-        NSArray *currentProfile = [[NSArray alloc]init];
-        currentProfile = [tabControl.profiles objectAtIndex:i];
-        
-        for (int j = 3; j < [currentProfile count]; j++) {
-            [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:j]] withDisplayName:[currentProfile objectAtIndex: j] withNumVar:1 withWidth:widthOfTitleVisualization withRank:9-j]];
-        }
-        
-        float priorityTotal= 0;
-        float scoreTotal = 0;
-        for(int j = 0; j < currentConcernRanking.count; j++){
-            
-            priorityTotal += [(AprilTestVariable *)[currentConcernRanking objectAtIndex:j] currentConcernRanking];
-        }
-        
-        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-        [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-        [formatter setGroupingSeparator:@","];
-        
-        NSArray *sortedArray = [currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-            NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
-            NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
-            if(first > second) return NSOrderedAscending;
-            else return NSOrderedDescending;
-        }];
-        NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
-        NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
-        
-        for(int j = 0 ; j < currentConcernRanking.count ; j++){
-            
-            AprilTestVariable * currentVar =[sortedArray objectAtIndex:j];
-            
-            //laziness: this is just the investment costs
-            if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-                float investmentInstallN = simRunNormal.publicInstallCost;
-                float investmentMaintainN = simRunNormal.publicMaintenanceCost;
-                
-                scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
-                scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
-                //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
-                
-                [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN)) + ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
-                //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
-                [scoreVisNames addObject: @"publicCost"];
-                //[scoreVisNames addObject: @"publicCostD"];
-                
-                
-                //just damages now
-            } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
-                
-                scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
-                
-                //add values for the score visualization
-                
-                [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2]];
-                //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
-                //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
-                [scoreVisNames addObject: @"privateCostD"];
-                
-            } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
-                
-                scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
-                [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
-                [scoreVisNames addObject: currentVar.name];
-                
-            } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
-
-                
-                scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
-                [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
-                [scoreVisNames addObject: currentVar.name];
-            } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
-
-                
-                scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.floodedStreets);
-                [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking + 1)/priorityTotal * (1- simRunNormal.floodedStreets)]];
-                [scoreVisNames addObject: currentVar.name];
-                
-            } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
-
-                scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
-                [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
-                [scoreVisNames addObject: currentVar.name];
-            } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
-                
-                scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
-                [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
-                //NSLog(@"%@", NSStringFromCGRect(ev.frame));
-                [scoreVisNames addObject: currentVar.name];
-                
-            } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-                scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
-                [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * 0]];
-                [scoreVisNames addObject:currentVar.name];
-            }
-        }
+    NSMutableDictionary *scoreBarDict = [scoreBars objectAtIndex:scoreIndex];
+    UILabel *profileName = (UILabel*)[scoreBarDict objectForKey:@"profileName"];
+    UILabel *trialNumber = (UILabel*)[scoreBarDict objectForKey:@"trialNumber"];
     
-        //NSLog(@" %@", scoreVisVals);
-        float x = 0;
-        float totalScore = 0;
-        UILabel * componentScore;
-        UILabel * scoreBar = [[scoreBars objectAtIndex:0] objectForKey:@"value"];
+    if ([[[tabControl.profiles objectAtIndex:profileIndex] objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]]) {
+        profileName.text = [NSString stringWithFormat:@"User: %@ - (You)",[[tabControl.profiles objectAtIndex:profileIndex] objectAtIndex:2]];
+    }
+    else
+        profileName.text = [NSString stringWithFormat:@"User: %@",[[tabControl.profiles objectAtIndex:profileIndex] objectAtIndex:2]];
+    [profileName setTextAlignment:NSTextAlignmentCenter];
+    profileName.font = [UIFont systemFontOfSize:14.0];
+    trialNumber.text = [arrStatus_social objectAtIndex:trialNum];
+    [trialNumber setTextAlignment:NSTextAlignmentCenter];
+    trialNumber.font = [UIFont systemFontOfSize:14.0];
+    
+    // empty the text for all scoreBars scoreNumber and scoreName
+    UILabel *scoreNumber = (UILabel*)[scoreBarDict objectForKey:@"scoreNumber"];
+    UILabel *scoreName = (UILabel*)[scoreBarDict objectForKey:@"scoreName"];
+    
+    scoreNumber.text = @"";
+    scoreName.text = @"";
+    
+    AprilTestNormalizedVariable *simRunNormal = [tabControl.trialRunsNormalized objectAtIndex:trialNum];
+    
+
+    NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
+    NSArray *currentProfile = [[NSArray alloc]init];
+    currentProfile = [tabControl.profiles objectAtIndex:profileIndex];
+    
+    for (int j = 3; j < [currentProfile count]; j++) {
+        [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:j]] withDisplayName:[currentProfile objectAtIndex: j] withNumVar:1 withWidth:widthOfTitleVisualization withRank:9-j]];
+    }
+    
+    float priorityTotal= 0;
+    float scoreTotal = 0;
+    for(int j = 0; j < currentConcernRanking.count; j++){
         
-        //computing and drawing the final component score
-        for(int j =  0; j < scoreVisVals.count; j++){
-            componentScore = [[scoreBars objectAtIndex:i] objectForKey:[scoreVisNames objectAtIndex:j]];
+        priorityTotal += [(AprilTestVariable *)[currentConcernRanking objectAtIndex:j] currentConcernRanking];
+    }
+    
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
+    
+    NSArray *sortedArray = [currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+        if(first > second) return NSOrderedAscending;
+        else return NSOrderedDescending;
+    }];
+    NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
+    NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
+    
+    for(int j = 0 ; j < currentConcernRanking.count ; j++){
+        
+        AprilTestVariable * currentVar =[sortedArray objectAtIndex:j];
+        
+        //laziness: this is just the investment costs
+        if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
+            float investmentInstallN = simRunNormal.publicInstallCost;
+            float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             
-            float scoreWidth = [[scoreVisVals objectAtIndex: j] floatValue] * 100 * 2;
-            if (scoreWidth < 0) scoreWidth = 0.0;
-            totalScore += scoreWidth;
-            componentScore.frame = CGRectMake(scoreBar.frame.origin.x + x, scoreBar.frame.origin.y, floor(scoreWidth), 48);
-            componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:j]];
-            x+=floor(scoreWidth);
+            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
+            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
+            //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
+            
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN)) + ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
+            //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
+            [scoreVisNames addObject: @"publicCost"];
+            //[scoreVisNames addObject: @"publicCostD"];
+            
+            
+            //just damages now
+        } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
+            
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
+            
+            //add values for the score visualization
+            
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2]];
+            //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
+            //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
+            [scoreVisNames addObject: @"privateCostD"];
+            
+        } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
+            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
+            [scoreVisNames addObject: currentVar.name];
+            
+        } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
+            
+            
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
+            [scoreVisNames addObject: currentVar.name];
+        } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+            
+            
+            scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.floodedStreets);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking + 1)/priorityTotal * (1- simRunNormal.floodedStreets)]];
+            [scoreVisNames addObject: currentVar.name];
+            
+        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
+            [scoreVisNames addObject: currentVar.name];
+        } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
+            //NSLog(@"%@", NSStringFromCGRect(ev.frame));
+            [scoreVisNames addObject: currentVar.name];
+            
+        } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * 0]];
+            [scoreVisNames addObject:currentVar.name];
         }
     }
- 
+    
+    //draw pie chart
+    if (tabControl.pieCharts.count > profileIndex) {
+        [tabControl reloadDataForPieChartAtIndex:profileIndex];
+        [[tabControl.pieChartsForScoreBarView objectAtIndex:profileIndex] reloadData];
+        [[[scoreBars objectAtIndex:scoreIndex] objectForKey:@"scoreBar"] addSubview:[tabControl.pieChartsForScoreBarView objectAtIndex:profileIndex]];
+        
+    }
+    
+    //NSLog(@" %@", scoreVisVals);
+    float x = 0;
+    float totalScore = 0;
+    UILabel * componentScore;
+    UILabel * scoreBar = [[scoreBars objectAtIndex:0] objectForKey:@"value"];
+    
+    //computing and drawing the final component score
+    for(int j =  0; j < scoreVisVals.count; j++){
+        componentScore = [[scoreBars objectAtIndex:scoreIndex] objectForKey:[scoreVisNames objectAtIndex:j]];
+        
+        float scoreWidth = [[scoreVisVals objectAtIndex: j] floatValue] * 100 * 2;
+        if (scoreWidth < 0) scoreWidth = 0.0;
+        totalScore += scoreWidth;
+        componentScore.frame = CGRectMake(scoreBar.frame.origin.x + x, scoreBar.frame.origin.y, floor(scoreWidth), 48);
+        componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:j]];
+        x+=floor(scoreWidth);
+    }
+
 }
+
 
 - (void)impactTapped {
     UILabel *scoreNumber;
@@ -984,10 +1053,10 @@ int dynamic_cd_width = 0;
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
     // if the chosen trial is already loaded, return
-    if (trialChosen == row) {
-        [SortType_social removeFromSuperview];
-        return;
-    }
+    //if (trialChosen == row) {
+     //   [SortType_social removeFromSuperview];
+     //   return;
+    //}
     
     trialChosen = (int)row;
     
@@ -998,6 +1067,7 @@ int dynamic_cd_width = 0;
         if (tabControl.trialNum > 0) {
             [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
             [self loadFavorites];
+            [self drawScoreBarVisualizationHelper];
             [_loadingIndicator stopAnimating];
         }
         [SortType_social removeFromSuperview];
@@ -1008,6 +1078,7 @@ int dynamic_cd_width = 0;
         if (tabControl.trialNum > 0) {
             [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
             [self loadLeastFavorites];
+            [self drawScoreBarVisualizationHelper];
             [_loadingIndicator stopAnimating];
         }
         [SortType_social removeFromSuperview];
@@ -1020,7 +1091,7 @@ int dynamic_cd_width = 0;
 
     
     [self profileUpdate];
-    [self drawScoreBarVisualization];
+    [self drawScoreBarVisualizationHelper];
 
 }
 
@@ -1299,7 +1370,7 @@ int dynamic_cd_width = 0;
         NSArray *profile = [[NSArray alloc]init];
         
         // find the profile for this user
-        for(int j = 0; j < tabControl.favorites.count; j++) {
+        for(int j = 0; j < tabControl.profiles.count; j++) {
             if(tabControl.profiles.count < j)
                 return;
             if ([[[tabControl.favorites objectAtIndex:i] objectAtIndex:1] isEqualToString:[[tabControl.profiles objectAtIndex:j] objectAtIndex:1]]) {
@@ -1309,7 +1380,7 @@ int dynamic_cd_width = 0;
         }
         
         //exit if profile is not found
-        if (indexOfProfileInTabControlProfiles == -1) {
+        if (indexOfProfileInTabControlProfiles == -1 || [profile count] < 3) {
             NSLog(@"Exiting from drawing views in _usernamesWindow for favorite trials");
             return;
         }
@@ -1524,11 +1595,11 @@ int dynamic_cd_width = 0;
     
     int indexOfProfileInTabControlProfiles = -1;
     
-    for (int i = 0; i < tabControl.favorites.count; i++) {
+    for (int i = 0; i < tabControl.leastFavorites.count; i++) {
         NSArray *profile = [[NSArray alloc]init];
         
         // find the profile for this user
-        for(int j = 0; j < tabControl.leastFavorites.count; j++) {
+        for(int j = 0; j < tabControl.profiles.count; j++) {
             if ([[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:1] isEqualToString:[[tabControl.profiles objectAtIndex:j] objectAtIndex:1]]) {
                 profile = [tabControl.profiles objectAtIndex:j];
                 indexOfProfileInTabControlProfiles = j;
@@ -2195,8 +2266,8 @@ int dynamic_cd_width = 0;
     }
     
     
-    [_usernamesWindow setContentSize: CGSizeMake(_usernamesWindow.frame.size.width, numberOfProfiles * heightOfVisualization)];
-    [_profilesWindow setContentSize: CGSizeMake(widthOfTitleVisualization * 8 + 10, numberOfProfiles * heightOfVisualization)];
+    [_usernamesWindow setContentSize: CGSizeMake(_usernamesWindow.frame.size.width, numberOfProfiles * heightOfVisualization + 10)];
+    [_profilesWindow setContentSize: CGSizeMake(widthOfTitleVisualization * 8 + 10, numberOfProfiles * heightOfVisualization + 10)];
 }
 
 
@@ -2456,7 +2527,7 @@ int dynamic_cd_width = 0;
         maxX+=floor(scoreWidth);
     }
     
-    [_profilesWindow setContentSize:CGSizeMake(width+=20, (viewIndex+1)*200)];
+    [_profilesWindow setContentSize:CGSizeMake(width+=20, [tabControl.profiles count] * heightOfVisualization + 10)];
     
     UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 40, 0, 0)];
     //scoreLabel.text = [NSString stringWithFormat:  @"Score: %.0f / 100", totalScore];
@@ -2540,7 +2611,7 @@ int dynamic_cd_width = 0;
     else {
         //only update all labels/bars if Static normalization is switched on
         [self profileUpdate];
-        [self drawScoreBarVisualization];
+        [self drawScoreBarVisualizationHelper];
     }
 }
 
