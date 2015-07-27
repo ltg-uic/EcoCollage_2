@@ -136,7 +136,7 @@ int dynamic_cd_width = 0;
     // move profile visualization over
     _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
     _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _profilesWindow.frame.size.width, _usernamesWindow.frame.size.height);
-    [self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
+    //[self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
     
     scoreBars = [[NSMutableArray alloc]init];
 
@@ -290,6 +290,13 @@ int dynamic_cd_width = 0;
     
     widthOfUsernamesWindowWhenOpen = _usernamesWindow.frame.size.width;
     
+    UIView *lineAcrossScoreBarView = [[UIView alloc]init];
+    lineAcrossScoreBarView.frame = CGRectMake(0, scoreBarView.frame.size.height / 2, scoreBarView.frame.size.width, 1);
+    lineAcrossScoreBarView.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    lineAcrossScoreBarView.layer.borderWidth = 1.0;
+    lineAcrossScoreBarView.tag = 9003;
+    [scoreBarView addSubview:lineAcrossScoreBarView];
+    
     [self drawScoreBarVisualization];
     
 }
@@ -439,6 +446,7 @@ int dynamic_cd_width = 0;
     int numberOfScoreBarsToDraw = [tabControl.profiles count];
     
     // create any new scorebar views that are needed
+    // add any new line dividers needed
     for (int i = 0; i < numberOfScoreBarsToDraw; i++) {
         // only create a new view if we do not yet have one in the scoreBars array
         if (i >= [scoreBars count]) {
@@ -458,11 +466,18 @@ int dynamic_cd_width = 0;
             UILabel *scoreName =        [[UILabel alloc]init];
             UILabel *scoreNumber =      [[UILabel alloc]init];
             
-            newScoreBarView.layer.borderColor = [UIColor lightGrayColor].CGColor;
-            newScoreBarView.layer.borderWidth = 1.0;
+            scoreName.font = [UIFont systemFontOfSize:14.0];
+            scoreNumber.font = [UIFont systemFontOfSize:14.0];
             
-            scoreName.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
-            scoreNumber.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+            // draw the dividers between each scoreBarView
+            if (i % 2 == 0) {
+                UIView *horizontalLine = [[UIView alloc]init];
+                horizontalLine.frame = CGRectMake(i / 2 * 500 + 500, 0, 1, scoreBarView.frame.size.height);
+                horizontalLine.layer.borderColor = [UIColor lightGrayColor].CGColor;
+                horizontalLine.layer.borderWidth = 1.0;
+                [scoreBarView addSubview:horizontalLine];
+            }
+
             
             [scoreName setTextAlignment:NSTextAlignmentCenter];
             [scoreNumber setTextAlignment:NSTextAlignmentCenter];
@@ -684,23 +699,24 @@ int dynamic_cd_width = 0;
 - (void)impactTapped {
     UILabel *scoreNumber;
     UILabel *labelForScore;
+    UILabel *scoreName;
     
     for (int i = 0; i < [scoreBars count]; i++) {
         scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"impactingMyNeighbors"];
         
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
         [scoreNumber sizeToFit];
         
-        BOOL widthOfLabelToSmall = NO;
-        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
-            widthOfLabelToSmall = YES;
+        scoreName.text = @"Impact on my Neighbors";
+        [scoreName sizeToFit];
         
-        if (widthOfLabelToSmall) {
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        }
-        else
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"impactingMyNeighbors"];
@@ -709,23 +725,24 @@ int dynamic_cd_width = 0;
 - (void)groundwaterTapped {
     UILabel *scoreNumber;
     UILabel *labelForScore;
+    UILabel *scoreName;
     
     for (int i = 0; i < [scoreBars count]; i++) {
         scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"groundwaterInfiltration"];
         
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
         [scoreNumber sizeToFit];
         
-        BOOL widthOfLabelToSmall = NO;
-        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
-            widthOfLabelToSmall = YES;
+        scoreName.text = @"Groundwater Infiltration";
+        [scoreName sizeToFit];
         
-        if (widthOfLabelToSmall) {
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        }
-        else
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
         
     }
     
@@ -735,23 +752,25 @@ int dynamic_cd_width = 0;
 - (void)maxFloodTapped {
     UILabel *scoreNumber;
     UILabel *labelForScore;
+    UILabel *scoreName;
     
     for (int i = 0; i < [scoreBars count]; i++) {
         scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleMax"];
         
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
         [scoreNumber sizeToFit];
         
-        BOOL widthOfLabelToSmall = NO;
-        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
-            widthOfLabelToSmall = YES;
+        scoreName.text = @"Maximum Flooded Area";
+        [scoreName sizeToFit];
         
-        if (widthOfLabelToSmall) {
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        }
-        else
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleMax"];
@@ -760,23 +779,25 @@ int dynamic_cd_width = 0;
 - (void)waterDepthTapped {
     UILabel *scoreNumber;
     UILabel *labelForScore;
+    UILabel *scoreName;
     
     for (int i = 0; i < [scoreBars count]; i++) {
         scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleTime"];
         
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
         [scoreNumber sizeToFit];
         
-        BOOL widthOfLabelToSmall = NO;
-        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
-            widthOfLabelToSmall = YES;
+        scoreName.text = @"Water Depth Over Storm";
+        [scoreName sizeToFit];
         
-        if (widthOfLabelToSmall) {
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        }
-        else
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleTime"];
@@ -785,23 +806,25 @@ int dynamic_cd_width = 0;
 - (void)interventionCapTapped {
     UILabel *scoreNumber;
     UILabel *labelForScore;
+    UILabel *scoreName;
     
     for (int i = 0; i < [scoreBars count]; i++) {
         scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"capacity"];
         
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
         [scoreNumber sizeToFit];
         
-        BOOL widthOfLabelToSmall = NO;
-        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
-            widthOfLabelToSmall = YES;
+        scoreName.text = @"Intervention Capacity";
+        [scoreName sizeToFit];
         
-        if (widthOfLabelToSmall) {
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        }
-        else
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"capacity"];
@@ -810,23 +833,25 @@ int dynamic_cd_width = 0;
 - (void)efficiencyTapped {
     UILabel *scoreNumber;
     UILabel *labelForScore;
+    UILabel *scoreName;
     
     for (int i = 0; i < [scoreBars count]; i++) {
         scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"efficiencyOfIntervention"];
         
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
         [scoreNumber sizeToFit];
         
-        BOOL widthOfLabelToSmall = NO;
-        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
-            widthOfLabelToSmall = YES;
+        scoreName.text = @"Efficiency of Intervention";
+        [scoreName sizeToFit];
         
-        if (widthOfLabelToSmall) {
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        }
-        else
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"efficiencyOfIntervention"];
@@ -835,23 +860,25 @@ int dynamic_cd_width = 0;
 - (void)damageReducTapped {
     UILabel *scoreNumber;
     UILabel *labelForScore;
+    UILabel *scoreName;
     
     for (int i = 0; i < [scoreBars count]; i++) {
         scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"privateCostD"];
         
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
         [scoreNumber sizeToFit];
         
-        BOOL widthOfLabelToSmall = NO;
-        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
-            widthOfLabelToSmall = YES;
+        scoreName.text = @"Damage Reduction";
+        [scoreName sizeToFit];
         
-        if (widthOfLabelToSmall) {
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        }
-        else
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"privateCostD"];
@@ -860,23 +887,25 @@ int dynamic_cd_width = 0;
 - (void)investmentTapped {
     UILabel *scoreNumber;
     UILabel *labelForScore;
+    UILabel *scoreName;
     
     for (int i = 0; i < [scoreBars count]; i++) {
         scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"publicCost"];
         
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
         [scoreNumber sizeToFit];
         
-        BOOL widthOfLabelToSmall = NO;
-        if (labelForScore.frame.size.width < scoreNumber.frame.size.width)
-            widthOfLabelToSmall = YES;
+        scoreName.text = @"Investment";
+        [scoreName sizeToFit];
         
-        if (widthOfLabelToSmall) {
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        }
-        else
-            scoreNumber.frame = CGRectMake(labelForScore.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, labelForScore.frame.size.width, scoreNumber.frame.size.height);
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"publicCost"];
@@ -1952,7 +1981,7 @@ int dynamic_cd_width = 0;
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:currentProfileIndex];
             
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
@@ -2272,7 +2301,7 @@ int dynamic_cd_width = 0;
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load:%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
