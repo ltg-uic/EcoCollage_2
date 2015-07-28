@@ -1052,7 +1052,7 @@ float maxPublicInstallNorm;
 - (void) autoscrollTimerFired: (NSTimer*)Timer
 {
     NSNumber *trial = ((NSNumber*)[Timer userInfo]);
-    int trialInt = [trial integerValue];
+    int trialInt = (int)[trial integerValue];
     
     trialOffset = (trialInt - 3 < 0) ? 0 : (175 * (trialInt-3) + 35);
     
@@ -1642,7 +1642,7 @@ float maxPublicInstallNorm;
     
     int trial = (int)leastFavoriteSwitch.tag - 200;
     
-    BOOL turnedOn = (leastFavoriteSwitch.isOn) ? YES:NO;
+    //BOOL turnedOn = (leastFavoriteSwitch.isOn) ? YES:NO;
     
     // loop thru all switches and turn them off
     for (NSDictionary *trialRunInfo in trialRunSubViews) {

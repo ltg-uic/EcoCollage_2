@@ -23,6 +23,8 @@
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
 @synthesize trialNum = _trialNum;
+@synthesize logNum   =_logNum;
+@synthesize LogFile  =_LogFile;
 @synthesize session = _session;
 @synthesize profiles = _profiles;
 @synthesize ownProfile = _ownProfile;
@@ -448,7 +450,35 @@ NSMutableArray *slicesInfo;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
-
+//method that writes/rewrites at a file in documents directory
+-(NSString*) writeString:(NSString*)str ToLogFileWithLogNum:(int)logNum{
+    NSString* newLogFile;
+    NSDateComponents *components    = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[NSDate date]];
+    NSDateComponents *timeComponent = [[NSCalendar currentCalendar] components:NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:[NSDate date]];
+    
+    //generate the file name
+    newLogFile = [NSString stringWithFormat:@"%ld_%ld_%ld_%ld_%d.txt",(long)[components year], (long)[components month], (long)[components day], (long)[timeComponent hour], logNum];
+    
+    
+    //append the file name to Documents path to create the pathway
+    NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString* logfilePath = [documentsPath stringByAppendingPathComponent:newLogFile];
+    
+    //determine if the file exists or not... if not then create it
+    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:logfilePath];
+    if (!fileExists) {
+        [[NSFileManager defaultManager] createFileAtPath:logfilePath contents:nil attributes:nil];
+        [str writeToFile:logfilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    }
+    else{
+        NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:logfilePath];
+        [fileHandle seekToEndOfFile];
+        [fileHandle writeData:[str dataUsingEncoding:NSUTF8StringEncoding]];
+        [fileHandle closeFile];
+    }
+    
+    return logfilePath;
+}
 
 - (void)handleUsernameUpdates:(NSArray *)dataArray {
     // if username belongs to this device, don't do anything (name changes are stored locally already)

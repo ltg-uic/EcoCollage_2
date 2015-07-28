@@ -12,7 +12,10 @@
 
 @property (strong, nonatomic) IBOutlet UITextField *server;
 @property (strong, nonatomic) IBOutlet UITextField *studyNumber;
+@property (strong, nonatomic) IBOutlet UITextField *LogNumber;
 @property NSString * url;
+@property NSString* logFile;
+@property int logNum;
 @property int studyNum;
 @property int appType;
 @property (strong, nonatomic) IBOutlet UISwitch *profileHidingSwitch;

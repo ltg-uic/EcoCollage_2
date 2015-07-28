@@ -21,6 +21,8 @@
 @property NSString * url;
 @property int studyNum;
 @property int trialNum;
+@property int logNum;
+@property NSString* LogFile;
 @property (nonatomic, strong) GKSession * session;
 @property NSString * peerIDForMomma;
 @property int showProfile;

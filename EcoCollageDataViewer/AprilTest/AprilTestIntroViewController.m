@@ -24,8 +24,9 @@
 @synthesize url = _url;
 @synthesize studyNum = _studyNum;
 @synthesize appType = _appType;
-
-
+@synthesize logNum  = _logNum;
+@synthesize LogNumber = _LogNumber;
+@synthesize logFile =_logFile;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -45,8 +46,10 @@
     
     _url =  finalString;
     _studyNum = [_studyNumber.text intValue];
+    _logNum  =  [_LogNumber.text   intValue];
+    _logFile = [self generateLogFileWithLogNum:_logNum];
     
-    
+    NSLog(@"%@", _logFile);
     if(_appType == BABY_BIRD)
         [self performSegueWithIdentifier:@"switchToBabyBird" sender:self];
     else
@@ -64,16 +67,35 @@
     return YES;
 }
 
+//method that writes/rewrites at a file in documents directory
+-(NSString*) generateLogFileWithLogNum:(int)logNum{
+    NSString* newLogFile;
+    NSDateComponents *components    = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[NSDate date]];
+    NSDateComponents *timeComponent = [[NSCalendar currentCalendar] components:NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:[NSDate date]];
+    
+    //generate the file name
+    newLogFile = [NSString stringWithFormat:@"%ld_%ld_%ld_%ld_%d.txt",(long)[components year], (long)[components month], (long)[components day], (long)[timeComponent hour], logNum];
+    
+    
+    //append the file name to Documents path to create the pathway
+    NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString* logfilePath = [documentsPath stringByAppendingPathComponent:newLogFile];
+    
+    return logfilePath;
+}
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
    
-    
     if(_appType == BABY_BIRD) {
         AprilTestTabBarController *tab = [segue destinationViewController];
         tab.url = _url;
         tab.studyNum = _studyNum;
+        tab.logNum   =_logNum;   //transfer log Number
+        tab.LogFile  =_logFile;  //transfer the path to the log file generated
+        
         if ([self.profileHidingSwitch isOn])
             tab.showProfile = 1;
         else tab.showProfile = 0;
