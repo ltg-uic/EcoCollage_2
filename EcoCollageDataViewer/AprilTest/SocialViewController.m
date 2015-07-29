@@ -70,6 +70,7 @@ UIPickerView                *SortType_social;
 
 float thresh_social = 6;
 float hours_social = 0;
+
 int hoursAfterStorm_social = 0;
 int trialChosen= 0;
 int smallSizeOfMapWindow = 50;
@@ -1575,8 +1576,8 @@ int dynamic_cd_width = 0;
     }
     
     // if there are no favorites, load a message telling the user this
-    if (tabControl.favorites.count == 0) {
-        UIAlertView *alert= [[UIAlertView alloc] initWithTitle:@"No favorites loaded" message:@"Wait for other users to select their least favorite trial" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+    if (tabControl.leastFavorites.count == 0) {
+        UIAlertView *alert= [[UIAlertView alloc] initWithTitle:@"No least favorites loaded" message:@"Wait for other users to select their least favorite trial" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
         [alert show];
         return;
     }
@@ -2614,6 +2615,13 @@ int dynamic_cd_width = 0;
             [_loadingIndicator stopAnimating];
         }
     }
+    if (tabControl.trialNum + 1 == trialChosen) {
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+            [self loadLeastFavorites];
+            [_loadingIndicator stopAnimating];
+        }
+    }
     else {
         //only update all labels/bars if Static normalization is switched on
         [self profileUpdate];
@@ -2718,6 +2726,13 @@ int dynamic_cd_width = 0;
         if (tabControl.trialNum > 0) {
             [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
             [self loadFavorites];
+            [_loadingIndicator stopAnimating];
+        }
+    }
+    if (tabControl.trialNum + 1 == trialChosen) {
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+            [self loadLeastFavorites];
             [_loadingIndicator stopAnimating];
         }
     }
