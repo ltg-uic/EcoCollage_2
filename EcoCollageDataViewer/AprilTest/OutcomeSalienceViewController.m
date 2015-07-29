@@ -1435,18 +1435,16 @@ float maxPublicInstallNorm;
     tappedLeastFavorite.numberOfTapsRequired = 1;
     tappedLeastFavorite.numberOfTouchesRequired = 1;
     
-    //if its a new trial... draw a new label and uiswitch
+    //if its a new trial... draw new favorite and least favorite views
     //else retrieve it from the current views kept track of
     if (trial >= [trialRunSubViews count]) {
-        favoriteView = [[FavoriteView alloc]initWithFrame:CGRectMake(148, trial * 175 + 130, 32, 32) andTrialNumber:trial];
-        favoriteView.trialNum = trial;
+        favoriteView = [[FavoriteView alloc]initWithFrame:CGRectMake(160, trial * 175 + 130, 32, 32) andTrialNumber:simRun.trialNum];
         [favoriteView addGestureRecognizer:tappedFavorite];
         [favoriteView setUserInteractionEnabled:YES];
         [favoriteViews addObject:favoriteView];
         [_mapWindow addSubview:favoriteView];
         
-        leastFavoriteView = [[LeastFavoriteView alloc]initWithFrame:CGRectMake(190, trial * 175 + 130, 32, 32) andTrialNumber:trial];
-        leastFavoriteView.trialNum = trial;
+        leastFavoriteView = [[LeastFavoriteView alloc]initWithFrame:CGRectMake(210, trial * 175 + 130, 32, 32) andTrialNumber:simRun.trialNum];
         [leastFavoriteView addGestureRecognizer:tappedLeastFavorite];
         [leastFavoriteView setUserInteractionEnabled:YES];
         [leastFavoriteViews addObject:leastFavoriteView];
@@ -1457,14 +1455,14 @@ float maxPublicInstallNorm;
         favoriteView.trialNum = trial;
         [favoriteView addGestureRecognizer:tappedFavorite];
         [favoriteView setUserInteractionEnabled:YES];
-        [favoriteView setFrame:CGRectMake(148, trial * 175 + 130, 32, 32) andTrialNumber:trial];
+        [favoriteView setFrame:CGRectMake(160, trial * 175 + 130, 32, 32) andTrialNumber:simRun.trialNum];
         [_mapWindow addSubview:favoriteView];
         
         leastFavoriteView = [leastFavoriteViews objectAtIndex:simRun.trialNum];
         leastFavoriteView.trialNum = trial;
         [leastFavoriteView addGestureRecognizer:tappedLeastFavorite];
         [leastFavoriteView setUserInteractionEnabled:YES];
-        [leastFavoriteView setFrame:CGRectMake(210, trial * 175 + 130, 32, 32) andTrialNumber:trial];
+        [leastFavoriteView setFrame:CGRectMake(210, trial * 175 + 130, 32, 32) andTrialNumber:simRun.trialNum];
         [_mapWindow addSubview:leastFavoriteView];
     }
 
@@ -2228,9 +2226,9 @@ float maxPublicInstallNorm;
         FavoriteView *favoriteView            = [[trialRunSubViews objectAtIndex:i] objectForKey:@"FavoriteView"];
         LeastFavoriteView *leastFavoriteView  = [[trialRunSubViews objectAtIndex:i] objectForKey:@"LeastFavoriteView"];
         
-        [favoriteView setFrame:CGRectMake(148, i * 175 + 130, 32, 32) andTrialNumber:favoriteView.trialNum];
+        [favoriteView setFrame:CGRectMake(160, i * 175 + 130, 32, 32) andTrialNumber:favoriteView.trialNum];
         
-        [leastFavoriteView setFrame:CGRectMake(210, i * 175 + 130, 32, 32) andTrialNumber:favoriteView.trialNum];
+        [leastFavoriteView setFrame:CGRectMake(210, i * 175 + 130, 32, 32) andTrialNumber:leastFavoriteView.trialNum];
         
         [self OffsetView:InterventionImageView toX:InterventionImageView.frame.origin.x andY:175 * (i) + 40];
         
