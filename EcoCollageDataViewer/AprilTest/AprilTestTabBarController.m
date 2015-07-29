@@ -25,6 +25,7 @@
 @synthesize trialNum = _trialNum;
 @synthesize logNum   =_logNum;
 @synthesize LogFile  =_LogFile;
+
 @synthesize session = _session;
 @synthesize profiles = _profiles;
 @synthesize ownProfile = _ownProfile;
@@ -450,34 +451,28 @@ NSMutableArray *slicesInfo;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
+- (NSString*) generateLogEntryWith:(NSString*)extra{
+    NSDateComponents *time = [[NSCalendar currentCalendar] components: NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:[NSDate date]];
+    NSString *logEntry = [NSString stringWithFormat:@"%@ : %ld:%ld:%ld : %@\n",self.ownProfileName,(long)[time hour],(long)[time minute], (long)[time second], extra];
+    return logEntry;
+}
+
 //method that writes/rewrites at a file in documents directory
--(NSString*) writeString:(NSString*)str ToLogFileWithLogNum:(int)logNum{
-    NSString* newLogFile;
-    NSDateComponents *components    = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[NSDate date]];
-    NSDateComponents *timeComponent = [[NSCalendar currentCalendar] components:NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:[NSDate date]];
-    
-    //generate the file name
-    newLogFile = [NSString stringWithFormat:@"%ld_%ld_%ld_%ld_%d.txt",(long)[components year], (long)[components month], (long)[components day], (long)[timeComponent hour], logNum];
-    
-    
-    //append the file name to Documents path to create the pathway
-    NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString* logfilePath = [documentsPath stringByAppendingPathComponent:newLogFile];
+- (void) writeToLogFileString:(NSString*)str{
     
     //determine if the file exists or not... if not then create it
-    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:logfilePath];
+    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:_LogFile];
     if (!fileExists) {
-        [[NSFileManager defaultManager] createFileAtPath:logfilePath contents:nil attributes:nil];
-        [str writeToFile:logfilePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        [[NSFileManager defaultManager] createFileAtPath:_LogFile contents:nil attributes:nil];
+        [str writeToFile:_LogFile atomically:YES encoding:NSUTF8StringEncoding error:nil];
     }
     else{
-        NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:logfilePath];
+        NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:_LogFile];
         [fileHandle seekToEndOfFile];
         [fileHandle writeData:[str dataUsingEncoding:NSUTF8StringEncoding]];
         [fileHandle closeFile];
     }
-    
-    return logfilePath;
+
 }
 
 - (void)handleUsernameUpdates:(NSArray *)dataArray {

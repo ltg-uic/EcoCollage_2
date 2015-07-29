@@ -19,11 +19,11 @@
 @property NSMutableArray * profiles;
 @property NSMutableArray * ownProfile;
 @property NSString * url;
+@property NSString* LogFile;
+@property NSString *ownProfileName;
 @property int studyNum;
 @property int trialNum;
 @property int logNum;
-@property NSString* LogFile;
-@property (nonatomic, strong) GKSession * session;
 @property NSString * peerIDForMomma;
 @property int showProfile;
 @property int budget;
@@ -36,9 +36,15 @@
 @property int pieIndex;
 @property NSMutableArray *favorites;
 @property NSMutableArray *leastFavorites;
+
+@property (nonatomic, strong) GKSession * session;
 - (UIImage *)viewToImageForWaterDisplay:(FebTestWaterDisplay *)waterDisplay;
 + (void) shutdownBluetooth;
 - (void) addPieChartAtIndex:(int)index forProfile:(NSArray *)profile;
 - (void) updatePieChartAtIndex:(int)index forProfile:(NSArray *)profile;
 - (void)reloadDataForPieChartAtIndex:(int)index;
+
+//log writing related methods
+- (NSString*) generateLogEntryWith:(NSString*)extra;
+- (void) writeToLogFileString:(NSString*)str;
 @end

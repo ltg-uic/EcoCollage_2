@@ -44,9 +44,14 @@ NSArray * importQuestions;
 // called everytime tab is switched to this view
 // necessary in case currentSession changes, i.e. is disconnected and reconnected again
 - (void)viewDidAppear:(BOOL)animated {
-    
     [super viewDidAppear:animated];
     
+    //log switch in screens to log file
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"Switched To Concern Profile Builder Screen"];
+    NSLog(@"%@",logEntry);
+    [tabControl writeToLogFileString:logEntry];
+
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -271,11 +276,15 @@ NSArray * importQuestions;
     [tabControl.ownProfile addObject:@"ownProfile"];
     [tabControl.ownProfile addObject:[[UIDevice currentDevice]name]];
     
-    if ([_usernameText.text isEqualToString:@""])
+    if ([_usernameText.text isEqualToString:@""]){
          [tabControl.ownProfile addObject:[[UIDevice currentDevice]name]];
-    else
+         tabControl.ownProfileName = [[UIDevice currentDevice] name];
+    }
+    else{
          [tabControl.ownProfile addObject:_usernameText.text];
-          
+         tabControl.ownProfileName = _usernameText.text;
+    }
+    
     for (int i = 0; i < 8; i++) {
         // add each surveyItem and remove \t
         [tabControl.ownProfile addObject:[[[surveyItems objectAtIndex:i]text] stringByReplacingOccurrencesOfString:@"\t" withString:@""]];

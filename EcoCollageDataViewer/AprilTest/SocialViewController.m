@@ -398,6 +398,12 @@ int dynamic_cd_width = 0;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+    //log switch in screens to log file
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"Switched To Social View Screen"];
+    NSLog(@"%@",logEntry);
+    [tabControl writeToLogFileString:logEntry];
+    
     [self profileUpdate];
     [self drawScoreBarVisualizationHelper];
 }

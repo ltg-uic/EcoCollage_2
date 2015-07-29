@@ -110,6 +110,13 @@ float maxPublicInstallNorm;
 // called everytime tab is switched to this view
 // necessary in case currentSession changes, i.e. is disconnected and reconnected again
 - (void)viewDidAppear:(BOOL)animated {
+    
+    //log switch in screens to log file
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"Switched To Outcome Salience View Screen"];
+    NSLog(@"%@",logEntry);
+    [tabControl writeToLogFileString:logEntry];
+    
     [super viewDidAppear:animated];
     [self drawMultipleTrials];
 }
