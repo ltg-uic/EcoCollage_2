@@ -3,6 +3,7 @@
 //  AprilTest
 //
 //  Created by Tia on 4/7/14.
+//  Modified by Salvador Ariza
 //  Copyright (c) 2014 Tia. All rights reserved.
 //
 
@@ -115,7 +116,6 @@ float maxPublicInstallNorm;
     //log switch in screens to log file
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     NSString *logEntry = [tabControl generateLogEntryWith:@"Switched To Outcome Salience View Screen"];
-    NSLog(@"%@",logEntry);
     [tabControl writeToLogFileString:logEntry];
     
     [super viewDidAppear:animated];
@@ -217,6 +217,22 @@ float maxPublicInstallNorm;
     }
     else{
         return YES;
+    }
+}
+
+- (void) textFieldDidEndEditing:(UITextField *)textField{
+    if (textField != _SortPickerTextField){
+        NSNumber *trialNumEditted = [self getTrialNumFrom:textField];
+        
+        if (trialNumEditted == [NSNumber numberWithInt:-1]) {
+            NSLog(@"Editted a TextField that's neither a Trial Number Text Box nor the Sort Picker Text Field\n");
+        }
+        else{
+            //log the change of trial name for trial number
+            AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+            NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial %@ Name Changed to \"%@\"",trialNumEditted, textField.text]];
+            [tabControl writeToLogFileString:logEntry];
+        }
     }
 }
 
@@ -341,6 +357,30 @@ float maxPublicInstallNorm;
   
 }
 
+//returns the trial number of a particaular view existing as a trial run subview element
+//returns -1 if the element doesnt exist
+- (NSNumber*) getTrialNumFrom:(id) view{
+    NSNumber* trialFound = [NSNumber numberWithInt:-1];
+    
+    //attempting to find a textfield (trial text box names)
+    if ([view isKindOfClass:[UITextField class]]){
+        UITextField* txt = (UITextField*)view;
+        UITextField *currTxT;
+        
+        for (int i = 0; i < trialRunSubViews.count; i++){
+            currTxT   = [[trialRunSubViews objectAtIndex:i] objectForKey:@"TrialTxTBox"];
+            
+            //return trialNumber of view if it is found
+            if ([currTxT isEqual:txt]){
+                trialFound = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialNum"];
+                break;
+            }
+        }
+        
+    }
+    
+    return trialFound;
+}
 
 -(void) removeBudgetLabels{
     for (int i = 0; i < OverBudgetLabels.count; i++){
@@ -419,6 +459,11 @@ float maxPublicInstallNorm;
     }*/
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    
+    //log the change of storm hours
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Examined Water For %@hrs After Storm", [NSNumber numberWithInt:StormPlaybackInterv.value]]];
+    [tabControl writeToLogFileString:logEntry];
+    
     for (int i = 0; i < [trialRunSubViews count]; i++){
         AprilTestSimRun *simRun = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
         /*
@@ -1578,8 +1623,12 @@ float maxPublicInstallNorm;
     [favoriteView isTouched];
     
     int trial = favoriteView.trialNum;
-    
     BOOL turnedOn = (favoriteView.isActive) ? YES:NO;
+    
+    //log the trial tapped as favorite
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial %d Tapped As Favorite", trial]];
+    [tabControl writeToLogFileString:logEntry];
     
     // loop thru all favorite views and turn off any others
     for (NSDictionary *trialRunInfo in trialRunSubViews) {
@@ -1587,7 +1636,6 @@ float maxPublicInstallNorm;
             [[trialRunInfo objectForKey:@"FavoriteView"] setActive:NO];
     }
     
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     if(tabControl.session) {
         NSMutableArray *favorite = [[NSMutableArray alloc]init];
@@ -1615,16 +1663,19 @@ float maxPublicInstallNorm;
     [leastFavoriteView isTouched];
     
     int trial = leastFavoriteView.trialNum;
-    
     BOOL turnedOn = (leastFavoriteView.isActive) ? YES:NO;
+    
+    //log the trial tapped as least favorite
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial %d Tapped As Least Favorite", trial]];
+    [tabControl writeToLogFileString:logEntry];
+    
     
     // loop thru all favorite views and turn off any others
     for (NSDictionary *trialRunInfo in trialRunSubViews) {
         if (![[trialRunInfo objectForKey:@"LeastFavoriteView"] isEqual: leastFavoriteView] && [[trialRunInfo objectForKey:@"LeastFavoriteView"]isActive])
             [[trialRunInfo objectForKey:@"LeastFavoriteView"] setActive:NO];
     }
-    
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     if(tabControl.session) {
         NSMutableArray *leastFavorite = [[NSMutableArray alloc]init];
@@ -2272,9 +2323,12 @@ float maxPublicInstallNorm;
     // Handle the selection
     _SortPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus[row]];
     sortChosen = (int)row;
-
-    //[[self view] endEditing:YES];
     [SortType removeFromSuperview];
+    
+    //Log the type of sort chosen
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial Sort Set To Sort By %@", arrStatus[row]]];
+    [tabControl writeToLogFileString:logEntry];
     
     //Handle the sort afterwards
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];

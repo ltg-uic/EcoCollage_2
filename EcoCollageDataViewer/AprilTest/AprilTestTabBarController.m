@@ -451,13 +451,19 @@ NSMutableArray *slicesInfo;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileUpdate" object:self userInfo:nil];
 }
 
+//generates a log entry with an extra bit of information regarding the log that must be added as an argument
+//only offers the username and time stamp in the method
 - (NSString*) generateLogEntryWith:(NSString*)extra{
     NSDateComponents *time = [[NSCalendar currentCalendar] components: NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:[NSDate date]];
     NSString *logEntry = [NSString stringWithFormat:@"%@ : %ld:%ld:%ld : %@\n",self.ownProfileName,(long)[time hour],(long)[time minute], (long)[time second], extra];
+    
+    //log the entry that will be written (debugging reasons)
+    NSLog(@"%@", logEntry);
+    
     return logEntry;
 }
 
-//method that writes/rewrites at a file in documents directory
+//method that writes/rewrites at a log file in documents directory
 - (void) writeToLogFileString:(NSString*)str{
     
     //determine if the file exists or not... if not then create it
