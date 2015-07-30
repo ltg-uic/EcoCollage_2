@@ -61,6 +61,7 @@ NSMutableArray * lastKnownConcernProfile;
 NSMutableArray * bgCols;
 NSMutableArray * publicCostDisplays;
 NSMutableArray * OverBudgetLabels;
+NSMutableArray * favoriteLabels;
 NSMutableArray * favoriteViews;
 NSMutableArray * leastFavoriteViews;
 NSMutableArray * interventionViews;
@@ -136,6 +137,7 @@ float maxPublicInstallNorm;
     _scenarioNames          = [[NSMutableArray alloc] init];
     publicCostDisplays      = [[NSMutableArray alloc] init];
     OverBudgetLabels        = [[NSMutableArray alloc] init];
+    favoriteLabels          = [[NSMutableArray alloc] init];
     favoriteViews           = [[NSMutableArray alloc] init];
     leastFavoriteViews      = [[NSMutableArray alloc] init];
     interventionViews       = [[NSMutableArray alloc] init];
@@ -1435,35 +1437,48 @@ float maxPublicInstallNorm;
     tappedLeastFavorite.numberOfTapsRequired = 1;
     tappedLeastFavorite.numberOfTouchesRequired = 1;
     
+    UILabel *favoriteLabel;
+    
     //if its a new trial... draw new favorite and least favorite views
     //else retrieve it from the current views kept track of
     if (trial >= [trialRunSubViews count]) {
-        favoriteView = [[FavoriteView alloc]initWithFrame:CGRectMake(160, trial * 175 + 130, 32, 32) andTrialNumber:simRun.trialNum];
+        favoriteView = [[FavoriteView alloc]initWithFrame:CGRectMake(154, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
         [favoriteView addGestureRecognizer:tappedFavorite];
         [favoriteView setUserInteractionEnabled:YES];
         [favoriteViews addObject:favoriteView];
         [_mapWindow addSubview:favoriteView];
         
-        leastFavoriteView = [[LeastFavoriteView alloc]initWithFrame:CGRectMake(210, trial * 175 + 130, 32, 32) andTrialNumber:simRun.trialNum];
+        leastFavoriteView = [[LeastFavoriteView alloc]initWithFrame:CGRectMake(212, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
         [leastFavoriteView addGestureRecognizer:tappedLeastFavorite];
         [leastFavoriteView setUserInteractionEnabled:YES];
         [leastFavoriteViews addObject:leastFavoriteView];
         [_mapWindow addSubview:leastFavoriteView];
+        
+        favoriteLabel = [[UILabel alloc]initWithFrame:CGRectMake(148, trial * 175 + 105, 114, 20)];
+        favoriteLabel.text = @"Best      Worst";
+        favoriteLabel.font = [UIFont systemFontOfSize:14.0];
+        [favoriteLabel setTextAlignment:NSTextAlignmentCenter];
+        [favoriteLabels addObject:favoriteLabel];
+        [_mapWindow addSubview:favoriteLabel];
     }
     else{
         favoriteView = [favoriteViews objectAtIndex:simRun.trialNum];
         favoriteView.trialNum = trial;
         [favoriteView addGestureRecognizer:tappedFavorite];
         [favoriteView setUserInteractionEnabled:YES];
-        [favoriteView setFrame:CGRectMake(160, trial * 175 + 130, 32, 32) andTrialNumber:simRun.trialNum];
+        [favoriteView setFrame:CGRectMake(154, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
         [_mapWindow addSubview:favoriteView];
         
         leastFavoriteView = [leastFavoriteViews objectAtIndex:simRun.trialNum];
         leastFavoriteView.trialNum = trial;
         [leastFavoriteView addGestureRecognizer:tappedLeastFavorite];
         [leastFavoriteView setUserInteractionEnabled:YES];
-        [leastFavoriteView setFrame:CGRectMake(210, trial * 175 + 130, 32, 32) andTrialNumber:simRun.trialNum];
+        [leastFavoriteView setFrame:CGRectMake(212, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
         [_mapWindow addSubview:leastFavoriteView];
+        
+        favoriteLabel = [favoriteLabels objectAtIndex:simRun.trialNum];
+        favoriteLabel.frame = CGRectMake(148, trial * 175 + 105, 114, 20);
+        [_mapWindow addSubview:favoriteLabel];
     }
 
 
@@ -1490,6 +1505,7 @@ float maxPublicInstallNorm;
                                    @"Efficiency_Interv"   : efficiencyOfIntervention,
                                    @"ImpactNeighbor"      : impactNeighbor,
                                    @"CostDisplay"         : cd,
+                                   @"FavoriteLabel"       : favoriteLabel,
                                    @"FavoriteView"        : favoriteView,
                                    @"LeastFavoriteView"   : leastFavoriteView
                                    };
@@ -1579,12 +1595,12 @@ float maxPublicInstallNorm;
     
     int trial = favoriteView.trialNum;
     
-    BOOL turnedOn = (favoriteView.isActive) ? YES:NO;
-    
     // loop thru all favorite views and turn off any others
     for (NSDictionary *trialRunInfo in trialRunSubViews) {
         if (![[trialRunInfo objectForKey:@"FavoriteView"] isEqual: favoriteView] && [[trialRunInfo objectForKey:@"FavoriteView"]isActive])
             [[trialRunInfo objectForKey:@"FavoriteView"] setActive:NO];
+        if ([[trialRunInfo objectForKey:@"LeastFavoriteView"]trialNum] == favoriteView.trialNum)
+            [[trialRunInfo objectForKey:@"LeastFavoriteView"]setActive:NO];
     }
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -1616,12 +1632,12 @@ float maxPublicInstallNorm;
     
     int trial = leastFavoriteView.trialNum;
     
-    BOOL turnedOn = (leastFavoriteView.isActive) ? YES:NO;
-    
     // loop thru all favorite views and turn off any others
     for (NSDictionary *trialRunInfo in trialRunSubViews) {
         if (![[trialRunInfo objectForKey:@"LeastFavoriteView"] isEqual: leastFavoriteView] && [[trialRunInfo objectForKey:@"LeastFavoriteView"]isActive])
             [[trialRunInfo objectForKey:@"LeastFavoriteView"] setActive:NO];
+        if ([[trialRunInfo objectForKey:@"FavoriteView"] trialNum] == leastFavoriteView.trialNum)
+            [[trialRunInfo objectForKey:@"FavoriteView"] setActive:NO];
     }
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -2223,12 +2239,15 @@ float maxPublicInstallNorm;
         UIImageView *mwd                      = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDepthView"];
         UIImageView *ev                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"EfficiencyView"];
         UIImageView *InterventionImageView    = [[trialRunSubViews objectAtIndex:i] valueForKey:@"InterventionImgView"];
+        UILabel *favoriteLabel                = [[trialRunSubViews objectAtIndex:i] objectForKey:@"FavoriteLabel"];
         FavoriteView *favoriteView            = [[trialRunSubViews objectAtIndex:i] objectForKey:@"FavoriteView"];
         LeastFavoriteView *leastFavoriteView  = [[trialRunSubViews objectAtIndex:i] objectForKey:@"LeastFavoriteView"];
         
-        [favoriteView setFrame:CGRectMake(160, i * 175 + 130, 32, 32) andTrialNumber:favoriteView.trialNum];
+        [favoriteView setFrame:CGRectMake(154, i * 175 + 125, 40, 40) andTrialNumber:favoriteView.trialNum];
         
-        [leastFavoriteView setFrame:CGRectMake(210, i * 175 + 130, 32, 32) andTrialNumber:leastFavoriteView.trialNum];
+        [leastFavoriteView setFrame:CGRectMake(212, i * 175 + 125, 40, 40) andTrialNumber:leastFavoriteView.trialNum];
+        
+        [favoriteLabel setFrame:CGRectMake(148, 175 * i + 105, 114, 20)];
         
         [self OffsetView:InterventionImageView toX:InterventionImageView.frame.origin.x andY:175 * (i) + 40];
         

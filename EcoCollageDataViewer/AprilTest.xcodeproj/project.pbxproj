@@ -17,6 +17,10 @@
 		57A31DC31B6960AC007F6CDC /* least_favorite_inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A31DBF1B6960AC007F6CDC /* least_favorite_inactive.png */; };
 		57A31DC61B696615007F6CDC /* LeastFavoriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A31DC51B696615007F6CDC /* LeastFavoriteView.m */; };
 		57EEF5541B1E452200BECE7F /* SocialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 57EEF5531B1E452200BECE7F /* SocialViewController.m */; };
+		57FF57071B6AB03200543C93 /* favorite_active_large.png in Resources */ = {isa = PBXBuildFile; fileRef = 57FF57031B6AB03200543C93 /* favorite_active_large.png */; };
+		57FF57081B6AB03200543C93 /* favorite_inactive_large.png in Resources */ = {isa = PBXBuildFile; fileRef = 57FF57041B6AB03200543C93 /* favorite_inactive_large.png */; };
+		57FF57091B6AB03200543C93 /* least_favorite_active_large.png in Resources */ = {isa = PBXBuildFile; fileRef = 57FF57051B6AB03200543C93 /* least_favorite_active_large.png */; };
+		57FF570A1B6AB03200543C93 /* least_favorite_inactive_large.png in Resources */ = {isa = PBXBuildFile; fileRef = 57FF57061B6AB03200543C93 /* least_favorite_inactive_large.png */; };
 		841C0A1F1A16744500ED7A2E /* PeprViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 841C0A1C1A16744500ED7A2E /* PeprViewController.m */; };
 		841C0A201A16744500ED7A2E /* questions1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 841C0A1D1A16744500ED7A2E /* questions1.txt */; };
 		841C0A211A16744500ED7A2E /* questions2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 841C0A1E1A16744500ED7A2E /* questions2.txt */; };
@@ -99,6 +103,10 @@
 		57A31DC51B696615007F6CDC /* LeastFavoriteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeastFavoriteView.m; sourceTree = "<group>"; };
 		57EEF5521B1E452200BECE7F /* SocialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocialViewController.h; sourceTree = "<group>"; };
 		57EEF5531B1E452200BECE7F /* SocialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocialViewController.m; sourceTree = "<group>"; };
+		57FF57031B6AB03200543C93 /* favorite_active_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = favorite_active_large.png; sourceTree = "<group>"; };
+		57FF57041B6AB03200543C93 /* favorite_inactive_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = favorite_inactive_large.png; sourceTree = "<group>"; };
+		57FF57051B6AB03200543C93 /* least_favorite_active_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = least_favorite_active_large.png; sourceTree = "<group>"; };
+		57FF57061B6AB03200543C93 /* least_favorite_inactive_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = least_favorite_inactive_large.png; sourceTree = "<group>"; };
 		841C0A1B1A16744500ED7A2E /* PeprViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PeprViewController.h; path = ../PeprViewController.h; sourceTree = "<group>"; };
 		841C0A1C1A16744500ED7A2E /* PeprViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PeprViewController.m; path = ../PeprViewController.m; sourceTree = "<group>"; };
 		841C0A1D1A16744500ED7A2E /* questions1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = questions1.txt; path = ../questions1.txt; sourceTree = "<group>"; };
@@ -310,6 +318,10 @@
 		8453FA5918F2FC8F0010D12F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				57FF57031B6AB03200543C93 /* favorite_active_large.png */,
+				57FF57041B6AB03200543C93 /* favorite_inactive_large.png */,
+				57FF57051B6AB03200543C93 /* least_favorite_active_large.png */,
+				57FF57061B6AB03200543C93 /* least_favorite_inactive_large.png */,
 				57A31DBC1B6960AC007F6CDC /* favorite_active.png */,
 				57A31DBD1B6960AC007F6CDC /* favorite_inactive.png */,
 				57A31DBE1B6960AC007F6CDC /* least_favorite_active.png */,
@@ -433,6 +445,7 @@
 				848479C018F3208300BAD981 /* survey-1x.png in Resources */,
 				84DE92ED1993D110006525F4 /* baseElevation.txt in Resources */,
 				57A31DC31B6960AC007F6CDC /* least_favorite_inactive.png in Resources */,
+				57FF57081B6AB03200543C93 /* favorite_inactive_large.png in Resources */,
 				57A31DC11B6960AC007F6CDC /* favorite_inactive.png in Resources */,
 				846B972618FE0B1F0008BD59 /* sewer.png in Resources */,
 				842D4CC41B0271A7002B351B /* DuPage_May.png in Resources */,
@@ -447,6 +460,8 @@
 				846B972418FE0B1F0008BD59 /* greenroof.png in Resources */,
 				846B972718FE0B1F0008BD59 /* swale.png in Resources */,
 				841C0A201A16744500ED7A2E /* questions1.txt in Resources */,
+				57FF57071B6AB03200543C93 /* favorite_active_large.png in Resources */,
+				57FF57091B6AB03200543C93 /* least_favorite_active_large.png in Resources */,
 				57A31DC01B6960AC007F6CDC /* favorite_active.png in Resources */,
 				841C0A231A16749000ED7A2E /* descriptions.txt in Resources */,
 				84DE92E81993CD62006525F4 /* landcover.png in Resources */,
@@ -454,6 +469,7 @@
 				848479C118F3208300BAD981 /* survey-2x.png in Resources */,
 				84D44885191D240400BF0589 /* gradientScale.png in Resources */,
 				8453FA6618F2FC8F0010D12F /* Main.storyboard in Resources */,
+				57FF570A1B6AB03200543C93 /* least_favorite_inactive_large.png in Resources */,
 				848479CE18F59F3E00BAD981 /* sim-1x.png in Resources */,
 				846B972318FE0B1F0008BD59 /* greenalley.png in Resources */,
 				84BCFDB71A3B6C4200D37103 /* pdescriptions.txt in Resources */,

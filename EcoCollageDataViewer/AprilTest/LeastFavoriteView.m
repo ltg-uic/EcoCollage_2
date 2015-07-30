@@ -22,8 +22,8 @@ UIImage *leastFavoriteInactive;
     
     self.trialNum = trial;
     
-    leastFavoriteActive = [UIImage imageNamed: @"least_favorite_active.png"];
-    leastFavoriteInactive = [UIImage imageNamed:@"least_favorite_inactive.png"];
+    leastFavoriteActive = [UIImage imageNamed: @"least_favorite_active_large.png"];
+    leastFavoriteInactive = [UIImage imageNamed:@"least_favorite_inactive_large.png"];
     
     self.image = leastFavoriteInactive;
     

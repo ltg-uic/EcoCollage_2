@@ -78,8 +78,8 @@ NSData *ping;
     favorites = [[NSMutableArray alloc]init];
     leastFavorites = [[NSMutableArray alloc]init];
     
-    self.studyNumberLabel.text = [NSString stringWithFormat:@"Study Number %d", _studyNum];
-    self.trialNumberLabel.text = [NSString stringWithFormat:@"Trial Number %d", trialNum];
+    self.studyNumberLabel.text = [NSString stringWithFormat:@"Study Number: %d", _studyNum];
+    self.trialNumberLabel.text = [NSString stringWithFormat:@"Next Trial Number: %d", trialNum];
     
     // setup core bluetooth connection to mac mini
     self.data = [[NSMutableData alloc]init];
@@ -898,7 +898,8 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         NSLog(@"Number of trials loaded %lu", (unsigned long)trialRuns.count);
         
         trialNum++;
-        self.trialNumberLabel.text = [NSString stringWithFormat:@"Trial Number %d", trialNum];
+        self.trialNumberLabel.text = [NSString stringWithFormat:@"Next Trial Number: %d", trialNum];
+        [self.trialNumberLabel sizeToFit];
     }
 }
 

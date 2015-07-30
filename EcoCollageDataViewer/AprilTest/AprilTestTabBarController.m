@@ -506,10 +506,18 @@ NSMutableArray *slicesInfo;
 - (void) receiveAllProfilesFromMomma:(NSArray *)dataArray {
     NSLog(@"AprilTestTabBar: receiveAllProfilesFromMomma: Received all profiles from Momma");
     
-    // empty current profiles mutableArray if there is anything in there
-    if (_profiles.count >= ([dataArray count] - 1))
-        return;
+    // check if our profiles are the same as Momma's
+    int numberOfSameProfiles = 0;
+    for (NSArray *profile in _profiles) {
+        for (int i = 1; i < [dataArray count]; i++) {
+            if ([[dataArray objectAtIndex:i] isEqual:profile])
+                numberOfSameProfiles++;
+        }
+    }
     
+    // if all the profiles are the same, return
+    if (numberOfSameProfiles == [_profiles count])
+        return;
      
     if (_profiles.count != 0) {
         [_profiles removeAllObjects];

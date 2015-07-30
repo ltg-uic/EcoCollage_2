@@ -23,8 +23,8 @@ UIImage *favoriteInactive;
     
     self.trialNum = trial;
     
-    favoriteActive = [UIImage imageNamed: @"favorite_active.png"];
-    favoriteInactive = [UIImage imageNamed:@"favorite_inactive.png"];
+    favoriteActive = [UIImage imageNamed: @"favorite_active_large.png"];
+    favoriteInactive = [UIImage imageNamed:@"favorite_inactive_large.png"];
     
     self.image = favoriteInactive;
     
