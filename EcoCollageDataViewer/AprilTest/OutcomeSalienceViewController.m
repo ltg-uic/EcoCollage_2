@@ -382,6 +382,24 @@ float maxPublicInstallNorm;
     return trialFound;
 }
 
+//returns the dictionary object represented by the trial you are trying to find
+//returns nil if the trial you are trying to find doesnt exist
+- (NSDictionary*) getDictionaryFromTrial: (NSNumber*) trial{
+    NSDictionary *dict = nil;
+    NSNumber *dictTrial;
+    for (int i = 0; i < trialRunSubViews.count; i++) {
+        dictTrial = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialNum"];
+        
+        if ([dictTrial isEqualToValue:trial]){
+            dict = [trialRunSubViews objectAtIndex:i];
+            break;
+        }
+    }
+    
+    return dict;
+}
+
+
 -(void) removeBudgetLabels{
     for (int i = 0; i < OverBudgetLabels.count; i++){
         UILabel *label = [OverBudgetLabels objectAtIndex:i];
@@ -1625,9 +1643,15 @@ float maxPublicInstallNorm;
     int trial = favoriteView.trialNum;
     BOOL turnedOn = (favoriteView.isActive) ? YES:NO;
     
+   
+    //get the name (if it exists) for the trial chosen as favorite
+    NSDictionary *dictforTrial = [self getDictionaryFromTrial:[NSNumber numberWithInt:trial]];
+    UITextField *TxTforTrial   = [dictforTrial objectForKey:@"TrialTxTBox"];
+    NSString *trialName = ([TxTforTrial.text isEqualToString:[NSString stringWithFormat:@"Trial %d",trial]]) ?  (@"") : [NSString stringWithFormat:@"(%@)", TxTforTrial.text];
+    
     //log the trial tapped as favorite
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial %d Tapped As Favorite", trial]];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial %d%@ Tapped As Favorite", trial, trialName]];
     [tabControl writeToLogFileString:logEntry];
     
     // loop thru all favorite views and turn off any others
@@ -1665,9 +1689,14 @@ float maxPublicInstallNorm;
     int trial = leastFavoriteView.trialNum;
     BOOL turnedOn = (leastFavoriteView.isActive) ? YES:NO;
     
+    //get the name (if a unique one exists) for the trial chosen as favorite
+    NSDictionary *dictforTrial = [self getDictionaryFromTrial:[NSNumber numberWithInt:trial]];
+    UITextField *TxTforTrial   = [dictforTrial objectForKey:@"TrialTxTBox"];
+    NSString *trialName = ([TxTforTrial.text isEqualToString:[NSString stringWithFormat:@"Trial %d",trial]]) ?  (@"") : [NSString stringWithFormat:@"(%@)", TxTforTrial.text];
+    
     //log the trial tapped as least favorite
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial %d Tapped As Least Favorite", trial]];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial %d%@ Tapped As Least Favorite", trial, trialName]];
     [tabControl writeToLogFileString:logEntry];
     
     
