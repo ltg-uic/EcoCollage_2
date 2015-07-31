@@ -402,7 +402,6 @@ int dynamic_cd_width = 0;
     //log switch in screens to log file
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     NSString *logEntry = [tabControl generateLogEntryWith:@"Switched To Social View Screen"];
-    NSLog(@"%@",logEntry);
     [tabControl writeToLogFileString:logEntry];
     
     [self profileUpdate];
@@ -1394,10 +1393,13 @@ int dynamic_cd_width = 0;
      //   [SortType_social removeFromSuperview];
      //   return;
     //}
-    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     trialChosen = (int)row;
     
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    //Log inspected trial
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"%@ Chosen For Inspection (Social View)", arrStatus_social[row]]];
+    [tabControl writeToLogFileString:logEntry];
+    
     // Handle the selection
     if (row == tabControl.trialNum) {
         _trialPickerTextField.text = @"Favorite Trials";
@@ -1423,6 +1425,7 @@ int dynamic_cd_width = 0;
     }
     else
         _trialPickerTextField.text = [NSString stringWithFormat:@"Trial %d", row];
+    
     
     [SortType_social removeFromSuperview];
 
