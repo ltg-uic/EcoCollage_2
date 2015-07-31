@@ -65,6 +65,7 @@ NSMutableArray * favoriteLabels;
 NSMutableArray * favoriteViews;
 NSMutableArray * leastFavoriteViews;
 NSMutableArray * interventionViews;
+NSMutableArray * concernRankingTitles;
 
 UILabel *redThreshold;
 NSArray *arrStatus;
@@ -141,6 +142,7 @@ float maxPublicInstallNorm;
     favoriteViews           = [[NSMutableArray alloc] init];
     leastFavoriteViews      = [[NSMutableArray alloc] init];
     interventionViews       = [[NSMutableArray alloc] init];
+    concernRankingTitles    = [[NSMutableArray alloc] init];
     
     _mapWindow.delegate = self;
     _dataWindow.delegate = self;
@@ -297,6 +299,53 @@ float maxPublicInstallNorm;
     return dict;
 }
 
+//although a rectangle object (x,y,width,height)
+//return object will look like this (x,y,x + width, y + height) to make comparisons easier
+- (CGRect) getRectPositionsFrom:(CGRect) viewRect{
+    CGRect visibleRect = CGRectMake(viewRect.origin.x, viewRect.origin.y, viewRect.origin.x + viewRect.size.width, viewRect.origin.y + viewRect.size.height);
+    return visibleRect;
+}
+
+- (void) logVisibleTrialsandVariables{
+    
+    NSLog(@"Trials Visible Are:\n");
+    
+    CGRect mapWindow = [self getRectPositionsFrom:_mapWindow.bounds];
+    //determine which trials are visible by viewing if intervention views are visible within the bounds of the scrollview
+    for (int i = 0; i < trialRunSubViews.count; i++){
+        UIImageView *intervImgView = [[trialRunSubViews objectAtIndex:i] objectForKey:@"InterventionImgView"];
+        CGRect imgViewRect = [self getRectPositionsFrom:intervImgView.frame];
+        
+        //if map is completely visible in the scrollview
+        if ((mapWindow.origin.x    <= imgViewRect.origin.x)     &&
+            (mapWindow.origin.y    <= imgViewRect.origin.y)     &&
+            (mapWindow.size.width  >= imgViewRect.size.width)   &&
+            (mapWindow.size.height >= imgViewRect.size.height))  {
+            
+            NSNumber *trialNum = [[trialRunSubViews objectAtIndex:i] objectForKey:@"TrialNum"];
+            NSLog(@"Trial %d\n", [trialNum intValue]);
+        }
+    }
+    
+    NSLog(@"\nWith Visible Concern Rankings:\n");
+    
+    CGRect titleWindowRect = [self getRectPositionsFrom:_titleWindow.bounds];
+    //determine which concern rankings are visible
+    for (int i = 0; i < concernRankingTitles.count; i++){
+        UILabel *currLabel   = [concernRankingTitles objectAtIndex:i];
+        CGRect currLabelRect = [self getRectPositionsFrom:currLabel.frame];
+        
+        if ((titleWindowRect.origin.x    <= currLabelRect.origin.x)     &&
+            (titleWindowRect.origin.y    <= currLabelRect.origin.y)     &&
+            (titleWindowRect.size.width  >= currLabelRect.size.width)   &&
+            (titleWindowRect.size.height >= currLabelRect.size.height))  {
+            NSLog(@"%@\n", currLabel.text);
+        }
+
+    }
+    
+    NSLog(@"\n");
+}
 
 - (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
 {
@@ -308,6 +357,8 @@ float maxPublicInstallNorm;
         [SortType removeFromSuperview];
     }
 }
+
+
 
 - (void)doneTouched:(UIBarButtonItem *)sender
 {
@@ -383,7 +434,7 @@ float maxPublicInstallNorm;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawSingleTrial" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawMultipleTrials" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
-    
+    [concernRankingTitles removeAllObjects];
     
     [super viewWillDisappear:animated];
 }
@@ -1785,7 +1836,6 @@ float maxPublicInstallNorm;
                             }
                             ];
         
-        //NSLog(@"Trial %@ drawn at index %d\n", trialDrawn,index);
         if (index == NSNotFound){
             index = trialNum;
         }
@@ -1912,6 +1962,8 @@ float maxPublicInstallNorm;
     [UIView commitAnimations];
 }
 
+
+
 //Draws Labels to set on the dataWindow Scrollview but also returns object to be added into a MutableArray (used for updating labels)
 -(void) drawTextBasedVar: (NSString *) outputValue withConcernPosition: (int) concernPos andyValue: (int) yValue andColor: (UIColor*) color to:(UILabel**) label{
     if (label != nil){
@@ -1970,7 +2022,8 @@ float maxPublicInstallNorm;
         if(currentVar.widthOfVisualization != 0) visibleIndex++;
         
         if(currentVarLabel != NULL){
-        [_titleWindow addSubview:currentVarLabel];
+            [_titleWindow addSubview:currentVarLabel];
+            [concernRankingTitles addObject:currentVarLabel];
         }
         width+= currentVar.widthOfVisualization;
     }
@@ -2180,6 +2233,17 @@ float maxPublicInstallNorm;
         [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
         [file closeFile];
         passFirstThree = FALSE;
+    }
+}
+
+-(void) scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    //log the visible views and trials
+    [self logVisibleTrialsandVariables];
+}
+
+-(void) scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+    if (decelerate == NO){
+        [self logVisibleTrialsandVariables];
     }
 }
 
