@@ -309,8 +309,7 @@ float maxPublicInstallNorm;
 //Currently writes the contents of the variables and trials visible on screen after draging scrollview
 - (void) logVisibleTrialsandVariables{
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    
-    [tabControl writeToLogFileString:@"Trials Visible Are:\n"];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\nTrials Visible Are:"];
     
     CGRect mapWindow = [self getRectPositionsFrom:_mapWindow.bounds];
     //determine which trials are visible by viewing if intervention views are visible within the bounds of the scrollview
@@ -325,11 +324,11 @@ float maxPublicInstallNorm;
             (mapWindow.size.height >= imgViewRect.size.height))  {
             
             NSNumber *trialNum = [[trialRunSubViews objectAtIndex:i] objectForKey:@"TrialNum"];
-            [tabControl writeToLogFileString:[NSString stringWithFormat:@"Trial %d\n", [trialNum intValue]]];
+             logEntry = [logEntry stringByAppendingString:[NSString stringWithFormat:@"Trial %d\n", [trialNum intValue]]];
         }
     }
     
-    [tabControl writeToLogFileString:@"\nWith Visible Concern Rankings:\n"];
+    logEntry = [logEntry stringByAppendingString:@"\nWith Visible Concern Rankings:\n"];
     
     CGRect dataWindowRect = [self getRectPositionsFrom:_dataWindow.bounds];
     //determine which concern rankings are visible
@@ -342,13 +341,13 @@ float maxPublicInstallNorm;
             (dataWindowRect.size.width  >= currLabelRect.size.width)   &&
             (dataWindowRect.size.height >= currLabelRect.size.height))  {
             
-            [tabControl writeToLogFileString:[NSString stringWithFormat:@"%@\n", currLabel.text]];
-
+            logEntry = [logEntry stringByAppendingString:[NSString stringWithFormat:@"%@\n", currLabel.text]];
         }
 
     }
     
-    [tabControl writeToLogFileString:@"\n"];
+    logEntry = [logEntry stringByAppendingString:@"\n"];
+    [tabControl writeToLogFileString:logEntry];
 }
 
 - (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
