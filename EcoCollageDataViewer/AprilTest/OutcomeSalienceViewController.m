@@ -306,9 +306,11 @@ float maxPublicInstallNorm;
     return visibleRect;
 }
 
+//Currently writes the contents of the variables and trials visible on screen after draging scrollview
 - (void) logVisibleTrialsandVariables{
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     
-    NSLog(@"Trials Visible Are:\n");
+    [tabControl writeToLogFileString:@"Trials Visible Are:\n"];
     
     CGRect mapWindow = [self getRectPositionsFrom:_mapWindow.bounds];
     //determine which trials are visible by viewing if intervention views are visible within the bounds of the scrollview
@@ -323,28 +325,30 @@ float maxPublicInstallNorm;
             (mapWindow.size.height >= imgViewRect.size.height))  {
             
             NSNumber *trialNum = [[trialRunSubViews objectAtIndex:i] objectForKey:@"TrialNum"];
-            NSLog(@"Trial %d\n", [trialNum intValue]);
+            [tabControl writeToLogFileString:[NSString stringWithFormat:@"Trial %d\n", [trialNum intValue]]];
         }
     }
     
-    NSLog(@"\nWith Visible Concern Rankings:\n");
+    [tabControl writeToLogFileString:@"\nWith Visible Concern Rankings:\n"];
     
-    CGRect titleWindowRect = [self getRectPositionsFrom:_titleWindow.bounds];
+    CGRect dataWindowRect = [self getRectPositionsFrom:_dataWindow.bounds];
     //determine which concern rankings are visible
     for (int i = 0; i < concernRankingTitles.count; i++){
         UILabel *currLabel   = [concernRankingTitles objectAtIndex:i];
         CGRect currLabelRect = [self getRectPositionsFrom:currLabel.frame];
         
-        if ((titleWindowRect.origin.x    <= currLabelRect.origin.x)     &&
-            (titleWindowRect.origin.y    <= currLabelRect.origin.y)     &&
-            (titleWindowRect.size.width  >= currLabelRect.size.width)   &&
-            (titleWindowRect.size.height >= currLabelRect.size.height))  {
-            NSLog(@"%@\n", currLabel.text);
+        if ((dataWindowRect.origin.x    <= currLabelRect.origin.x)     &&
+            (dataWindowRect.origin.y    <= currLabelRect.origin.y)     &&
+            (dataWindowRect.size.width  >= currLabelRect.size.width)   &&
+            (dataWindowRect.size.height >= currLabelRect.size.height))  {
+            
+            [tabControl writeToLogFileString:[NSString stringWithFormat:@"%@\n", currLabel.text]];
+
         }
 
     }
     
-    NSLog(@"\n");
+    [tabControl writeToLogFileString:@"\n"];
 }
 
 - (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
