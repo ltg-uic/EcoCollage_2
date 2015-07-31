@@ -91,14 +91,14 @@
    
     if(_appType == BABY_BIRD) {
         AprilTestTabBarController *tab = [segue destinationViewController];
-        tab.url = _url;
-        tab.studyNum = _studyNum;
-        tab.logNum   =_logNum;   //transfer log Number
-        tab.LogFile  =_logFile;  //transfer the path to the log file generated
+        tab.url            = _url;
+        tab.studyNum       = _studyNum;
+        tab.logNum         =_logNum;   //transfer log Number
+        tab.LogFile        = _logFile;  //transfer the path to the log file generated
+        tab.SortingEnabled = ([self.SortingEnabled isOn]) ? YES : NO;
+        tab.showProfile    = ([self.profileHidingSwitch isOn]) ? 1 : 0;
         
-        if ([self.profileHidingSwitch isOn])
-            tab.showProfile = 1;
-        else tab.showProfile = 0;
+        
     }
     else {
         MommaBirdViewController *momma_data = [segue destinationViewController];

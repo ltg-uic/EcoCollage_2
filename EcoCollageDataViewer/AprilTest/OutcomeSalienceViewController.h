@@ -29,5 +29,4 @@
 - (IBAction)NormTypeSwitched:(UISwitch *)sender;
 
 
-@property (strong, nonatomic) IBOutlet UITextField *SortPickerTextField;
 @end

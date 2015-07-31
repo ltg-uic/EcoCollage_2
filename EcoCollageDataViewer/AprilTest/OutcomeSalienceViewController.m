@@ -32,7 +32,6 @@
 @synthesize SliderWindow = _SliderWindow;
 @synthesize loadingIndicator = _loadingIndicator;
 @synthesize scenarioNames = _scenarioNames;
-@synthesize SortPickerTextField = _SortPickerTextField;
 @synthesize maxBudget = _maxBudget;
 
 //structs that will keep track of the highest and lowest costs of Installation and maintenance (for convenience)
@@ -79,6 +78,7 @@ float kOFFSET_FOR_KEYBOARD = 425.0;
 float offsetForMoving = 0.0;
 float originalOffset = 0.0;
 UITextField *edittingTX;
+UITextField *SortPickerTextField;
 NSTimer *scrollingTimer = nil;
 UILabel  *investmentBudget;
 UILabel  *interventionCap;
@@ -155,18 +155,35 @@ float maxPublicInstallNorm;
 
      arrStatus = [[NSArray alloc] initWithObjects:@"Trial Number", @"Best Score", @"Investment", @"Damage Reduction",@"Intervention Capacity", @"Water Depth over Storm", @"Max Flooded Area", @"Impact on my Neighbors", @"Efficiency of Intervention", @"Groundwater Infiltration", nil];
     
-    _SortPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus[sortChosen]];
-    _SortPickerTextField.delegate = self;
-    
-    if (SortType == nil){
-        SortType = [[UIPickerView alloc] initWithFrame:CGRectMake(80, 120, 300, 100)];
-        SortType.backgroundColor = [UIColor lightTextColor];
-        SortType.layer.borderWidth = 1;
-        [SortType setDataSource:self];
-        [SortType setDelegate:self];
-        [SortType setShowsSelectionIndicator:YES];
-       
+
+    if (tabControl.SortingEnabled == YES){
+        //if sorting is enabled, add "Sort By" UILabel
+        UILabel *sortByLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 95, 58, 21)];
+        sortByLabel.text = @"Sort by";
+        [self.view addSubview:sortByLabel];
+        
+        //if sorting is enable, add it to subview
+        SortPickerTextField = [[UITextField alloc] initWithFrame:CGRectMake(76, 92, 199, 30)];
+        SortPickerTextField.text = [NSString stringWithFormat:@" %@", arrStatus[sortChosen]];
+        
+        UIColor *borderColor = [UIColor colorWithRed:204.0/255.0 green:204.0/255.0 blue:204.0/255.0 alpha:1.0];
+        SortPickerTextField.layer.borderColor = borderColor.CGColor;
+        SortPickerTextField.layer.borderWidth = 1.0;
+        SortPickerTextField.layer.cornerRadius = 5.0;
+        SortPickerTextField.delegate = self;
+        [self.view addSubview:SortPickerTextField];
+        
+        if (SortType == nil){
+            SortType = [[UIPickerView alloc] initWithFrame:CGRectMake(80, 120, 300, 100)];
+            SortType.backgroundColor = [UIColor lightTextColor];
+            SortType.layer.borderWidth = 1;
+            [SortType setDataSource:self];
+            [SortType setDelegate:self];
+            [SortType setShowsSelectionIndicator:YES];
+            
+        }
     }
+    
     
     scoreColors = [[NSMutableDictionary alloc] initWithObjects:
                    [NSArray arrayWithObjects:
@@ -207,7 +224,7 @@ float maxPublicInstallNorm;
 
 - (BOOL) textFieldShouldBeginEditing:(UITextField *)textView
 {
-    if (textView == _SortPickerTextField){
+    if (textView == SortPickerTextField){
         SortType.frame = CGRectMake(80, 120, 300, SortType.frame.size.height);
         [UIView beginAnimations:nil context:NULL];
         [UIView setAnimationDuration:.50];
@@ -223,7 +240,7 @@ float maxPublicInstallNorm;
 }
 
 - (void) textFieldDidEndEditing:(UITextField *)textField{
-    if (textField != _SortPickerTextField){
+    if (textField != SortPickerTextField){
         NSNumber *trialNumEditted = [self getTrialNumFrom:textField];
         
         if (trialNumEditted == [NSNumber numberWithInt:-1]) {
@@ -2370,7 +2387,7 @@ float maxPublicInstallNorm;
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
     // Handle the selection
-    _SortPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus[row]];
+    SortPickerTextField.text = [NSString stringWithFormat:@" %@", arrStatus[row]];
     sortChosen = (int)row;
     [SortType removeFromSuperview];
     

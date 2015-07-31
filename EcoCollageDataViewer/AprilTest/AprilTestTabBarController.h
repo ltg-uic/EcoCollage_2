@@ -21,12 +21,13 @@
 @property NSString * url;
 @property NSString* LogFile;
 @property NSString *ownProfileName;
-@property int studyNum;
-@property int trialNum;
-@property int logNum;
+@property int  studyNum;
+@property int  trialNum;
+@property int  logNum;
 @property NSString * peerIDForMomma;
-@property int showProfile;
-@property int budget;
+@property int  showProfile;
+@property int  budget;
+@property BOOL SortingEnabled;
 @property NSMutableArray *waterDisplaysInTab;
 @property NSMutableArray *maxWaterDisplaysInTab;
 @property NSMutableArray *efficiencyViewsInTab;

@@ -25,7 +25,7 @@
 @synthesize trialNum = _trialNum;
 @synthesize logNum   =_logNum;
 @synthesize LogFile  =_LogFile;
-
+@synthesize SortingEnabled = _SortingEnabled;
 @synthesize session = _session;
 @synthesize profiles = _profiles;
 @synthesize ownProfile = _ownProfile;
