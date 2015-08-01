@@ -588,7 +588,7 @@ NSMutableArray *slicesInfo;
     [pie2 setStartPieAngle:M_PI_2];
     [pie2 setAnimationSpeed:1.0];
     [pie2 setPieBackgroundColor:[UIColor colorWithWhite:0.95 alpha:1]];
-    [pie2 setUserInteractionEnabled:NO];
+    [pie2 setUserInteractionEnabled:YES];
     pie2.showLabel = false;
     [pie2 setLabelShadowColor:[UIColor blackColor]];
     

@@ -373,6 +373,47 @@ int dynamic_cd_width = 0;
                                                  name:@"updateBudget"
                                                object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(investmentTapped)
+                                                 name:@"slice0tapped"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(damageReducTapped)
+                                                 name:@"slice1tapped"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(efficiencyTapped)
+                                                 name:@"slice2tapped"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(interventionCapTapped)
+                                                 name:@"slice3tapped"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(waterDepthTapped)
+                                                 name:@"slice4tapped"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(maxFloodTapped)
+                                                 name:@"slice5tapped"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(groundwaterTapped)
+                                                 name:@"slice6tapped"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(impactTapped)
+                                                 name:@"slice7tapped"
+                                               object:nil];
+    
+    
     [self updatePicker];
     
     
@@ -417,6 +458,14 @@ int dynamic_cd_width = 0;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateSingleProfile" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawNewProfile" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateBudget" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice0tapped" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice1tapped" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice2tapped" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice3tapped" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice4tapped" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice5tapped" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice6tapped" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice7tapped" object:nil];
 
     // empty _usernamesWindow and _profilesWindow to free memory
     for (UIView *view in [_usernamesWindow subviews]) {
@@ -894,7 +943,9 @@ int dynamic_cd_width = 0;
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Impact on my Neighbors";
+        scoreName.numberOfLines = 2;
         [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
         
         scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
         scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
@@ -920,7 +971,9 @@ int dynamic_cd_width = 0;
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Groundwater Infiltration";
+        scoreName.numberOfLines = 2;
         [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
         
         scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
         scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
@@ -947,7 +1000,9 @@ int dynamic_cd_width = 0;
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Maximum Flooded Area";
+        scoreName.numberOfLines = 2;
         [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
         
         scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
         scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
@@ -974,7 +1029,9 @@ int dynamic_cd_width = 0;
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Water Depth Over Storm";
+        scoreName.numberOfLines = 2;
         [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
         
         scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
         scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
@@ -1001,7 +1058,9 @@ int dynamic_cd_width = 0;
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Intervention Capacity";
+        scoreName.numberOfLines = 2;
         [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
         
         scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
         scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
@@ -1028,7 +1087,9 @@ int dynamic_cd_width = 0;
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Efficiency of Intervention";
+        scoreName.numberOfLines = 2;
         [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
         
         scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
         scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
@@ -1054,8 +1115,11 @@ int dynamic_cd_width = 0;
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
         [scoreNumber sizeToFit];
         
+
         scoreName.text = @"Damage Reduction";
+        scoreName.numberOfLines = 2;
         [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
         
         scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
         scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
@@ -1082,6 +1146,7 @@ int dynamic_cd_width = 0;
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Investment";
+        scoreName.numberOfLines = 1;
         [scoreName sizeToFit];
         
         scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);

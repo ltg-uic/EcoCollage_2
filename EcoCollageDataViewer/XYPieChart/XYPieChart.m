@@ -504,6 +504,36 @@ static CGPathRef CGPathCreateArc(CGPoint center, CGFloat radius, CGFloat startAn
             [pieLayer setLineWidth:0.0];
         }
     }];
+    
+    switch (selectedIndex) {
+        case 0:
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"slice0tapped" object:self userInfo:nil];
+            break;
+        case 1:
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"slice1tapped" object:self userInfo:nil];
+            break;
+        case 2:
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"slice2tapped" object:self userInfo:nil];
+            break;
+        case 3:
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"slice3tapped" object:self userInfo:nil];
+            break;
+        case 4:
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"slice4tapped" object:self userInfo:nil];
+            break;
+        case 5:
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"slice5tapped" object:self userInfo:nil];
+            break;
+        case 6:
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"slice6tapped" object:self userInfo:nil];
+            break;
+        case 7:
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"slice7tapped" object:self userInfo:nil];
+            break;
+        default:
+            break;
+    }
+    
     return selectedIndex;
 }
 

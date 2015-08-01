@@ -1589,10 +1589,10 @@ float maxPublicInstallNorm;
         [leastFavoriteViews addObject:leastFavoriteView];
         [_mapWindow addSubview:leastFavoriteView];
         
-        favoriteLabel = [[UILabel alloc]initWithFrame:CGRectMake(148, trial * 175 + 105, 114, 20)];
-        favoriteLabel.text = @"Best      Worst";
-        favoriteLabel.font = [UIFont systemFontOfSize:14.0];
-        [favoriteLabel setTextAlignment:NSTextAlignmentCenter];
+        favoriteLabel = [[UILabel alloc]initWithFrame:CGRectMake(148, trial * 175 + 112, 114, 20)];
+        favoriteLabel.text = @"Best and Worst for me";
+        favoriteLabel.font = [UIFont systemFontOfSize:10.0];
+        [favoriteLabel setTextAlignment:NSTextAlignmentLeft];
         [favoriteLabels addObject:favoriteLabel];
         [_mapWindow addSubview:favoriteLabel];
     }
