@@ -91,7 +91,7 @@ UIPickerView *SortType;
 UITapGestureRecognizer *tapGestureRecognizer;
 
 //Important values that change elements of objects
-float thresh = 6;
+float thresh;
 int hours = 0;
 int hoursAfterStorm;
 
@@ -118,6 +118,7 @@ float maxPublicInstallNorm;
     //log switch in screens to log file
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     NSString *logEntry = [tabControl generateLogEntryWith:@"Switched To Outcome Salience View Screen"];
+    NSLog(@"received Thresh of %.2f\n", tabControl.threshVal);
     [tabControl writeToLogFileString:logEntry];
     
     [super viewDidAppear:animated];
@@ -131,6 +132,8 @@ float maxPublicInstallNorm;
     _currentConcernRanking = tabControl.currentConcernRanking;
     _studyNum = tabControl.studyNum;
     _url = tabControl.url;
+    thresh = tabControl.threshVal;
+    
     trialRunSubViews        = [[NSMutableArray alloc] init];
     waterDisplays           = [[NSMutableArray alloc] init];
     maxWaterDisplays        = [[NSMutableArray alloc] init];
@@ -155,7 +158,7 @@ float maxPublicInstallNorm;
     _loadingIndicator.color = [UIColor blueColor];
     [self.view addSubview:_loadingIndicator];
 
-     arrStatus = [[NSArray alloc] initWithObjects:@"Trial Number", @"Best Score", @"Investment", @"Damage Reduction",@"Intervention Capacity", @"Water Depth over Storm", @"Max Flooded Area", @"Impact on my Neighbors", @"Efficiency of Intervention", @"Groundwater Infiltration", nil];
+     arrStatus = [[NSArray alloc] initWithObjects:@"Trial Number", @"Best Score", @"Investment", @"Damage Reduction",@"Intervention Capacity", @"Water Flow", @"Max Flooded Area", @"Impact on my Neighbors", @"Efficiency of Intervention", @"Groundwater Infiltration", nil];
     
 
     if (tabControl.SortingEnabled == YES){
@@ -309,7 +312,7 @@ float maxPublicInstallNorm;
 //Currently writes the contents of the variables and trials visible on screen after draging scrollview
 - (void) logVisibleTrialsandVariables{
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:@"\nTrials Visible Are:"];
+    NSString *logEntry = [NSString stringWithFormat:@"\tTrials Visible Are:"];
     
     CGRect mapWindow = [self getRectPositionsFrom:_mapWindow.bounds];
     //determine which trials are visible by viewing if intervention views are visible within the bounds of the scrollview
@@ -324,11 +327,11 @@ float maxPublicInstallNorm;
             (mapWindow.size.height >= imgViewRect.size.height))  {
             
             NSNumber *trialNum = [[trialRunSubViews objectAtIndex:i] objectForKey:@"TrialNum"];
-             logEntry = [logEntry stringByAppendingString:[NSString stringWithFormat:@"Trial %d\n", [trialNum intValue]]];
+             logEntry = [logEntry stringByAppendingString:[NSString stringWithFormat:@" Trial %d,", [trialNum intValue]]];
         }
     }
     
-    logEntry = [logEntry stringByAppendingString:@"\nWith Visible Concern Rankings:\n"];
+    logEntry = [logEntry stringByAppendingString:@"\tWith Visible Concern Rankings:"];
     
     CGRect dataWindowRect = [self getRectPositionsFrom:_dataWindow.bounds];
     //determine which concern rankings are visible
@@ -337,16 +340,15 @@ float maxPublicInstallNorm;
         CGRect currLabelRect = [self getRectPositionsFrom:currLabel.frame];
         
         if ((dataWindowRect.origin.x    <= currLabelRect.origin.x)     &&
-            (dataWindowRect.origin.y    <= currLabelRect.origin.y)     &&
             (dataWindowRect.size.width  >= currLabelRect.size.width)   &&
             (dataWindowRect.size.height >= currLabelRect.size.height))  {
             
-            logEntry = [logEntry stringByAppendingString:[NSString stringWithFormat:@"%@\n", currLabel.text]];
+            logEntry = [logEntry stringByAppendingString:[NSString stringWithFormat:@" %@,", currLabel.text]];
         }
 
     }
     
-    logEntry = [logEntry stringByAppendingString:@"\n"];
+    [tabControl generateLogEntryWith:logEntry];
     [tabControl writeToLogFileString:logEntry];
 }
 
@@ -1222,6 +1224,7 @@ float maxPublicInstallNorm;
     //UILabel *maintenance;
     UILabel *damage;
     UILabel *damageReduced;
+    UILabel *stormsToMakeUpCost;
     UILabel *sewerLoad;
     UILabel *impactNeighbor;
     UILabel *gw_infiltration;
@@ -1375,10 +1378,10 @@ float maxPublicInstallNorm;
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
 
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue: (trial*175) +40 andColor:[UIColor blackColor] to:&damage];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: (trial*175) +70 andColor:[UIColor blackColor] to:&damageReduced];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue: (trial ) * 175 + 100 andColor:[UIColor blackColor] to:&sewerLoad];
-            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 10 andyValue: (trial*175) +20 andColor:[UIColor blackColor] to:&damage];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 10 andyValue: (trial*175) +45 andColor:[UIColor blackColor] to:&damageReduced];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 10 andyValue: (trial ) * 175 + 70 andColor:[UIColor blackColor] to:&sewerLoad];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"# of Storms Made from Cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 10 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
 
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
 
@@ -1642,7 +1645,8 @@ float maxPublicInstallNorm;
                                    @"CostDisplay"         : cd,
                                    @"FavoriteLabel"       : favoriteLabel,
                                    @"FavoriteView"        : favoriteView,
-                                   @"LeastFavoriteView"   : leastFavoriteView
+                                   @"LeastFavoriteView"   : leastFavoriteView,
+                                   @"StormsForCost"       : stormsToMakeUpCost
                                    };
    
     //Right now contains the contents of the map window scrollview
@@ -2011,7 +2015,7 @@ float maxPublicInstallNorm;
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             currentVarLabel.text =@"  Efficiency of Intervention";
         } else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
-            currentVarLabel.text = @"  Water Depth Over Storm";
+            currentVarLabel.text = @"  Water Flow";
         } else if( [currentVar.name compare:@"groundwaterInfiltration"] == NSOrderedSame){
             currentVarLabel.text = @"  Groundwater Infiltration";
         } else if( [currentVar.name compare:@"puddleMax"] == NSOrderedSame){
@@ -2322,7 +2326,7 @@ float maxPublicInstallNorm;
         }];
     }
     
-    else if ([arrStatus[row] isEqual: @"Water Depth over Storm"]){
+    else if ([arrStatus[row] isEqual: @"Water Flow"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             NSString *key = (_DynamicNormalization.isOn) ? @"TrialDynamic" : @"TrialStatic";
             
@@ -2397,6 +2401,7 @@ float maxPublicInstallNorm;
         UILabel *Damage                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Damage"];
         UILabel *DamageReduced                = [[trialRunSubViews objectAtIndex:i] valueForKey:@"DamageReduced"];
         UILabel *SewerLoad                    = [[trialRunSubViews objectAtIndex:i] valueForKey:@"SewerLoad"];
+        UILabel *StormsForCost                = [[trialRunSubViews objectAtIndex:i] valueForKey:@"StormsForCost"];
         UILabel *gw_infiltration              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterInfiltration"];
         UILabel *EfficiencyOfIntervention     = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Efficiency_Interv"];
         UILabel *impactNeighbor               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"ImpactNeighbor"];
@@ -2427,9 +2432,10 @@ float maxPublicInstallNorm;
         //[mwd updateView:48];
         
         //move over the private damage labels
-        [self OffsetView:Damage toX:Damage.frame.origin.x andY:(i*175) +40 ];
-        [self OffsetView:DamageReduced toX:DamageReduced.frame.origin.x andY:(i*175) +70];
-        [self OffsetView:SewerLoad toX:SewerLoad.frame.origin.x andY:(i*175) + 100];
+        [self OffsetView:Damage toX:Damage.frame.origin.x andY:(i*175) +20 ];
+        [self OffsetView:DamageReduced toX:DamageReduced.frame.origin.x andY:(i*175) +45];
+        [self OffsetView:SewerLoad toX:SewerLoad.frame.origin.x andY:(i*175) + 70];
+        [self OffsetView:StormsForCost toX:StormsForCost.frame.origin.x andY:(i*175) + 110];
         
         //move over impact on Neighbors
         [self OffsetView:impactNeighbor toX:impactNeighbor.frame.origin.x andY:(i*175) + 40];

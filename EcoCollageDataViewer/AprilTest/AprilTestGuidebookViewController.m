@@ -7,6 +7,7 @@
 //
 
 #import "AprilTestGuidebookViewController.h"
+#import "AprilTestTabBarController.h"
 
 @interface AprilTestGuidebookViewController ()
 
@@ -70,6 +71,9 @@ NSMutableArray * blocks;
     _irving.transform = CGAffineTransformMakeRotation(3*M_PI /2);
     _longwood.transform = CGAffineTransformMakeRotation(3*M_PI /2);
     _washington.transform = CGAffineTransformMakeRotation(3*M_PI /2);
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    self.threshLabel.text = [NSString stringWithFormat:@"%.2f\"",tabControl.threshVal];
 }
 
 - (void)didReceiveMemoryWarning

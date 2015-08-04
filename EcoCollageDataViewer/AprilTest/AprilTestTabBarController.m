@@ -42,7 +42,7 @@
 @synthesize pieIndex = _pieIndex;
 @synthesize favorites = _favorites;
 @synthesize leastFavorites = _leastFavorites;
-
+@synthesize threshVal = _threshVal;
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *viewsForWaterDisplays;
@@ -112,8 +112,8 @@ NSMutableArray *slicesInfo;
     _leastFavorites = [[NSMutableArray alloc]init];
     
     
-    _budget = 150000;
-    
+    _budget    = 150000;
+    _threshVal = 6;
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     
     dataDictionary = [[NSDictionary alloc]init];
@@ -455,7 +455,7 @@ NSMutableArray *slicesInfo;
 //only offers the username and time stamp in the method
 - (NSString*) generateLogEntryWith:(NSString*)extra{
     NSDateComponents *time = [[NSCalendar currentCalendar] components: NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:[NSDate date]];
-    NSString *logEntry = [NSString stringWithFormat:@"%@ : %ld:%ld:%ld : %@\n",self.ownProfileName,(long)[time hour],(long)[time minute], (long)[time second], extra];
+    NSString *logEntry = [NSString stringWithFormat:@"%@\t%ld:%ld:%ld\t%@\n",self.ownProfileName,(long)[time hour],(long)[time minute], (long)[time second], extra];
     
     //log the entry that will be written (debugging reasons)
     NSLog(@"%@", logEntry);

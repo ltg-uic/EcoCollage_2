@@ -15,5 +15,6 @@
 @property (strong, nonatomic) IBOutlet UILabel *washington;
 @property (strong, nonatomic) IBOutlet UILabel *longwood;
 @property (strong, nonatomic) IBOutlet UIView *streetView;
+@property (strong, nonatomic) IBOutlet UILabel *threshLabel;
 
 @end

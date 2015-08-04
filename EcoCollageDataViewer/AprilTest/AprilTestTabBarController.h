@@ -18,25 +18,28 @@
 @property NSMutableArray * trialRunsDynNorm;
 @property NSMutableArray * profiles;
 @property NSMutableArray * ownProfile;
-@property NSString * url;
-@property NSString* LogFile;
-@property NSString *ownProfileName;
-@property int  studyNum;
-@property int  trialNum;
-@property int  logNum;
-@property NSString * peerIDForMomma;
-@property int  showProfile;
-@property int  budget;
-@property BOOL SortingEnabled;
-@property NSMutableArray *waterDisplaysInTab;
-@property NSMutableArray *maxWaterDisplaysInTab;
-@property NSMutableArray *efficiencyViewsInTab;
-@property NSMutableArray *pieCharts;
-@property NSMutableArray *pieChartsForScoreBarView;
-@property NSMutableArray *slices;
+@property NSMutableArray * waterDisplaysInTab;
+@property NSMutableArray * maxWaterDisplaysInTab;
+@property NSMutableArray * efficiencyViewsInTab;
+@property NSMutableArray * pieCharts;
+@property NSMutableArray * pieChartsForScoreBarView;
+@property NSMutableArray * slices;
+@property NSMutableArray * favorites;
+@property NSMutableArray * leastFavorites;
+@property NSString       * url;
+@property NSString       * LogFile;
+@property NSString       * ownProfileName;
+@property NSString       * peerIDForMomma;
+@property int   studyNum;
+@property int   trialNum;
+@property int   logNum;
+@property float threshVal;
+@property int   showProfile;
+@property int   budget;
+@property BOOL  SortingEnabled;
+
 @property int pieIndex;
-@property NSMutableArray *favorites;
-@property NSMutableArray *leastFavorites;
+
 
 @property (nonatomic, strong) GKSession * session;
 - (UIImage *)viewToImageForWaterDisplay:(FebTestWaterDisplay *)waterDisplay;

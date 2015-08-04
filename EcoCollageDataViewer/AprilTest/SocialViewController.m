@@ -1028,7 +1028,7 @@ int dynamic_cd_width = 0;
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width];
         [scoreNumber sizeToFit];
         
-        scoreName.text = @"Water Depth Over Storm";
+        scoreName.text = @"Water Flow";
         scoreName.numberOfLines = 2;
         [scoreName sizeToFit];
         scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
@@ -1291,7 +1291,7 @@ int dynamic_cd_width = 0;
             currentLabel.text = @"  Intervention Capacity";
         }
         else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
-            currentLabel.text = @"  Water Depth Over Storm";
+            currentLabel.text = @"  Water Flow";
         }
         else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
             currentLabel.text = @"  Maximum Flooded Area";
@@ -1398,7 +1398,7 @@ int dynamic_cd_width = 0;
             currentLabel.text = @"  Intervention Capacity";
         }
         else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
-            currentLabel.text = @"  Water Depth Over Storm";
+            currentLabel.text = @"  Water Flow";
         }
         else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
             currentLabel.text = @"  Maximum Flooded Area";
@@ -1669,7 +1669,7 @@ int dynamic_cd_width = 0;
             currentLabel.text = @"  Intervention Capacity";
         }
         else if([[profileArray objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
-            currentLabel.text = @"  Water Depth Over Storm";
+            currentLabel.text = @"  Water Flow";
         }
         else if([[profileArray objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
             currentLabel.text = @"  Maximum Flooded Area";
@@ -1867,7 +1867,7 @@ int dynamic_cd_width = 0;
                 currentLabel.text = @"  Intervention Capacity";
             }
             else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
-                currentLabel.text = @"  Water Depth Over Storm";
+                currentLabel.text = @"  Water Flow";
             }
             else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
                 currentLabel.text = @"  Maximum Flooded Area";
@@ -2051,7 +2051,7 @@ int dynamic_cd_width = 0;
                 currentLabel.text = @"  Intervention Capacity";
             }
             else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
-                currentLabel.text = @"  Water Depth Over Storm";
+                currentLabel.text = @"  Water Flow";
             }
             else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
                 currentLabel.text = @"  Maximum Flooded Area";
@@ -2253,7 +2253,7 @@ int dynamic_cd_width = 0;
             currentLabel.text = @"  Intervention Capacity";
         }
         else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
-            currentLabel.text = @"  Water Depth Over Storm";
+            currentLabel.text = @"  Water Flow";
         }
         else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
             currentLabel.text = @"  Maximum Flooded Area";
