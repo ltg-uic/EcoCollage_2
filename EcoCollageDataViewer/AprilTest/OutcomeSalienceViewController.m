@@ -117,8 +117,9 @@ float maxPublicInstallNorm;
     
     //log switch in screens to log file
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:@"Switched To Outcome Salience View Screen"];
-    NSLog(@"received Thresh of %.2f\n", tabControl.threshVal);
+    thresh = tabControl.threshVal;  //obtain thresh value from parentview controller
+    
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To Outcome Salience View Screen"];
     [tabControl writeToLogFileString:logEntry];
     
     [super viewDidAppear:animated];
@@ -132,7 +133,6 @@ float maxPublicInstallNorm;
     _currentConcernRanking = tabControl.currentConcernRanking;
     _studyNum = tabControl.studyNum;
     _url = tabControl.url;
-    thresh = tabControl.threshVal;
     
     trialRunSubViews        = [[NSMutableArray alloc] init];
     waterDisplays           = [[NSMutableArray alloc] init];
@@ -254,7 +254,7 @@ float maxPublicInstallNorm;
         else{
             //log the change of trial name for trial number
             AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-            NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial %@ Name Changed to \"%@\"",trialNumEditted, textField.text]];
+            NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTrial %@ Name Changed to \"%@\"",trialNumEditted, textField.text]];
             [tabControl writeToLogFileString:logEntry];
         }
     }
@@ -312,7 +312,7 @@ float maxPublicInstallNorm;
 //Currently writes the contents of the variables and trials visible on screen after draging scrollview
 - (void) logVisibleTrialsandVariables{
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [NSString stringWithFormat:@"\tTrials Visible Are:"];
+    NSString *logEntry = @"\tScrollview did scroll\tTrials Visible Are:\t";
     
     CGRect mapWindow = [self getRectPositionsFrom:_mapWindow.bounds];
     //determine which trials are visible by viewing if intervention views are visible within the bounds of the scrollview
@@ -331,7 +331,7 @@ float maxPublicInstallNorm;
         }
     }
     
-    logEntry = [logEntry stringByAppendingString:@"\tWith Visible Concern Rankings:"];
+    logEntry = [logEntry stringByAppendingString:@"\tWith Visible Concern Rankings:\t"];
     
     CGRect dataWindowRect = [self getRectPositionsFrom:_dataWindow.bounds];
     //determine which concern rankings are visible
@@ -348,8 +348,8 @@ float maxPublicInstallNorm;
 
     }
     
-    [tabControl generateLogEntryWith:logEntry];
-    [tabControl writeToLogFileString:logEntry];
+    NSString *resultingEntry = [tabControl generateLogEntryWith:logEntry];
+    [tabControl writeToLogFileString:resultingEntry];
 }
 
 - (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
@@ -555,7 +555,7 @@ float maxPublicInstallNorm;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     
     //log the change of storm hours
-    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Examined Water For %@hrs After Storm", [NSNumber numberWithInt:StormPlaybackInterv.value]]];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tExamined Water For %@hrs After Storm", [NSNumber numberWithInt:StormPlaybackInterv.value]]];
     [tabControl writeToLogFileString:logEntry];
     
     for (int i = 0; i < [trialRunSubViews count]; i++){
@@ -1741,7 +1741,7 @@ float maxPublicInstallNorm;
     
     //log the trial tapped as favorite
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial %d%@ Tapped As Favorite", trial, trialName]];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTrial %d%@ Tapped As Favorite", trial, trialName]];
     [tabControl writeToLogFileString:logEntry];
     
     // loop thru all favorite views and turn off any others
@@ -1786,7 +1786,7 @@ float maxPublicInstallNorm;
     
     //log the trial tapped as least favorite
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial %d%@ Tapped As Least Favorite", trial, trialName]];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTrial %d%@ Tapped As Least Favorite", trial, trialName]];
     [tabControl writeToLogFileString:logEntry];
     
     
@@ -1863,6 +1863,8 @@ float maxPublicInstallNorm;
     for (int i =0; i < tabControl.trialNum; i++){
         [self drawTrial:i];
     }
+    
+    [self handleSort:sortChosen];
     
     //determine depending on min and max budget limits what is to be drawn on UILabels under le BudgetSlider
     minBudgetLabel = [NSString stringWithFormat:@"$%.1f%c", ((min_budget_limit/1000000 < 1) ? (min_budget_limit/1000) : (min_budget_limit/1000000)), (min_budget_limit/1000000 < 1) ? 'K' : 'M'];
@@ -2466,7 +2468,7 @@ float maxPublicInstallNorm;
     
     //Log the type of sort chosen
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"Trial Sort Set To Sort By %@", arrStatus[row]]];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTrial Sort Set To Sort By %@", arrStatus[row]]];
     [tabControl writeToLogFileString:logEntry];
     
     //Handle the sort afterwards

@@ -48,7 +48,7 @@ NSArray * importQuestions;
     
     //log switch in screens to log file
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:@"Switched To Concern Profile Builder Screen"];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To Concern Profile Builder Screen"];
     [tabControl writeToLogFileString:logEntry];
 
 }

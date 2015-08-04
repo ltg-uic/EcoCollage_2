@@ -68,7 +68,7 @@ UILabel                     *lastLabelTapped;
 UIPickerView                *SortType_social;
 
 
-float thresh_social = 6;
+float thresh_social;
 float hours_social = 0;
 
 int hoursAfterStorm_social = 0;
@@ -442,7 +442,9 @@ int dynamic_cd_width = 0;
 - (void)viewDidAppear:(BOOL)animated {
     //log switch in screens to log file
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:@"Switched To Social View Screen"];
+    thresh_social = tabControl.threshVal;
+    
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To Social View Screen"];
     [tabControl writeToLogFileString:logEntry];
     
     [self profileUpdate];
@@ -1462,7 +1464,7 @@ int dynamic_cd_width = 0;
     trialChosen = (int)row;
     
     //Log inspected trial
-    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"%@ Chosen For Inspection (Social View)", arrStatus_social[row]]];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\t%@ Chosen For Inspection (Social View)", arrStatus_social[row]]];
     [tabControl writeToLogFileString:logEntry];
     
     // Handle the selection
