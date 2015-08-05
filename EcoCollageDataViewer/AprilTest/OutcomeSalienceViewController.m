@@ -400,6 +400,17 @@ float maxPublicInstallNorm;
     //determine whether or not changes were made to the concern profile
     if (lastSortedArray != nil && [sortedArray isEqualToArray:lastSortedArray]) {
         NSLog(@"No changes made on concern profile\n");
+        
+        //make sure all the views are in the proper offsets they were in before leaving the view 
+        CGPoint offset = _mapWindow.contentOffset;
+        offset.y = _dataWindow.contentOffset.y;
+        CGPoint titleOffset = _titleWindow.contentOffset;
+        titleOffset.x = _dataWindow.contentOffset.x;
+        [_titleWindow setContentOffset:titleOffset];
+        [_SliderWindow setContentOffset:titleOffset];
+        [_mapWindow setContentOffset:offset];
+
+        
     }
     else{
         
