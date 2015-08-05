@@ -40,6 +40,8 @@ BGR_List *RedSample   = NULL;
 BGR_List *GreenSample = NULL;
 BGR_List *BlueSample  = NULL;
 BGR_List *BrownSample = NULL;
+BGR_List *CornerMarkers = NULL;
+
 /** Struct used to keep track of BGR values **/
 
 //A pair of Low and High Min and Max HSV Values used for Thresholding
@@ -220,15 +222,15 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
             h_v = temp_v;
         }
         
-        //logic that sets the high Saturation and Value values to midpoint from the recorded value and 255
+        //logic that sets the high Saturation and Value values to midpoint(EDIT: expanded range) from the recorded value and 255
         vals->high->h = h_h;
-        vals->high->s = 255 - ((255 - h_s)/2);
-        vals->high->v = 255 - ((255 - h_v)/2);;
+        vals->high->s = 255 - ((255 - h_s)/3);
+        vals->high->v = 255 - ((255 - h_v)/3);;
         
-        //logic that sets the low Saturation and Value values to midpoint from the recorded value and 0
+        //logic that sets the low Saturation and Value values to midpoint(EDIT: expanded range) from the recorded value and 0
         vals->low->h = l_h;
-        vals->low->s = 0 + (l_s/2);
-        vals->low->v = 0 + (l_v/2);
+        vals->low->s = 0 + (l_s/3);
+        vals->low->v = 0 + (l_v/3);
         
     }
     return vals;
@@ -291,6 +293,10 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
         case 2:
             printf("Extracting Sample for the colour brown!!!\n");
             insertNewBGR2(&BrownSample,(double)pixel[2], (double)pixel[1], (double)pixel[0], (double)pixel[3]);
+            break;
+        case 4:
+            printf("Extracting Sample for a Corner Marker!!!\n");
+            insertNewBGR2(&CornerMarkers,(double)pixel[2], (double)pixel[1], (double)pixel[0], (double)pixel[3]);
             break;
         default:
             break;
@@ -466,6 +472,10 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
             printf("Removing Last Brown Sample!!!\n");
             RemoveBGR(&BrownSample);
             break;
+        case 4:
+            printf("Removing Last Corner Marker Sample!!!\n");
+            RemoveBGR(&CornerMarkers);
+            break;
         default:
             break;
     }
@@ -487,6 +497,9 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
             break;
         case 2:
             deallocateList(&BrownSample);
+            break;
+        case 4:
+            deallocateList(&CornerMarkers);
             break;
         default:
             break;
@@ -597,6 +610,29 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
                 free(Brown->low);
                 free(Brown->high);
                 free(Brown);
+            }
+            break;
+        }
+            
+        case 4:
+        {
+            if (CornerMarkers == NULL){
+                UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:@"Samples for corner marker pieces not found: Please pick some samples" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
+                [alert show];
+            }
+            
+            MinMaxHSV *cornerMarker = GetMinMaxHSVfromSample(CornerMarkers);
+            
+            if (CornerMarkers != NULL)
+            {
+                printf("Corner Markers -> Obtained a min HSV value of: (%d, %d,%d)\nObtained a max HSV value of: (%d, %d,%d)\n\n", cornerMarker->low->h, cornerMarker->low->s, cornerMarker->low->v, cornerMarker->high->h, cornerMarker->high->s, cornerMarker->high->v);
+                
+                //send HSV values to double sliders
+                [self changeValues:4 MinMaxHSV:cornerMarker];
+                
+                free(cornerMarker->low);
+                free(cornerMarker->high);
+                free(cornerMarker);
             }
             break;
         }
