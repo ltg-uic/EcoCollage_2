@@ -52,6 +52,7 @@ Value  *standingWater     = NULL;
 Value  *efficiency_val    = NULL;
 
 NSArray *sortedArray;
+NSArray *lastSortedArray;
 
 NSMutableArray * trialRunSubViews;      //contains all subviews/visualizations added to UIview per trial
 NSMutableArray * waterDisplays;
@@ -123,16 +124,23 @@ float maxPublicInstallNorm;
     [tabControl writeToLogFileString:logEntry];
     
     [super viewDidAppear:animated];
-    [self drawMultipleTrials];
+    
+    if (lastSortedArray == nil){
+        [self drawMultipleTrials];
+    }
+    else if ([sortedArray isEqualToArray:lastSortedArray] == NO) {
+        [self drawMultipleTrials];
+    }
+    
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    _currentConcernRanking = tabControl.currentConcernRanking;
     _studyNum = tabControl.studyNum;
     _url = tabControl.url;
+    
     
     trialRunSubViews        = [[NSMutableArray alloc] init];
     waterDisplays           = [[NSMutableArray alloc] init];
@@ -380,10 +388,8 @@ float maxPublicInstallNorm;
 }
 
 - (void) viewWillAppear:(BOOL)animated{
-    //[trialRuns removeAllObjects];
-    //[waterDisplays removeAllObjects];
-    //[efficiency removeAllObjects];
-    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    _currentConcernRanking = tabControl.currentConcernRanking;
     sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
                             NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
                             NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
@@ -391,18 +397,26 @@ float maxPublicInstallNorm;
                             else return NSOrderedDescending;
                             }];
     
-    for (UIView *view in [_titleWindow subviews]){
-        [view removeFromSuperview];
+    //determine whether or not changes were made to the concern profile
+    if (lastSortedArray != nil && [sortedArray isEqualToArray:lastSortedArray]) {
+        NSLog(@"No changes made on concern profile\n");
     }
-    for( UIView *view in [_dataWindow subviews]){
-        [view removeFromSuperview];
+    else{
+        
+        for (UIView *view in [_titleWindow subviews]){
+            [view removeFromSuperview];
+        }
+        for( UIView *view in [_dataWindow subviews]){
+            [view removeFromSuperview];
+        }
+        for (UIView *view in [_mapWindow subviews]){
+            [view removeFromSuperview];
+        }
+        for (UIView *view in [_SliderWindow subviews]){
+            [view removeFromSuperview];
+        }
     }
-    for (UIView *view in [_mapWindow subviews]){
-        [view removeFromSuperview];
-    }
-    for (UIView *view in [_SliderWindow subviews]){
-        [view removeFromSuperview];
-    }
+    
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow)
@@ -440,6 +454,9 @@ float maxPublicInstallNorm;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawMultipleTrials" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
     [concernRankingTitles removeAllObjects];
+    
+    //keep a copy of concern profile prior to leaving view
+    lastSortedArray = [[NSArray alloc] initWithArray:sortedArray];
     
     [super viewWillDisappear:animated];
 }
@@ -1018,7 +1035,7 @@ float maxPublicInstallNorm;
             float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             
             scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
-            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
+            //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
             
             [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN))]];
             [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
@@ -1363,15 +1380,13 @@ float maxPublicInstallNorm;
             
             
             scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
-            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
-            //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
+            //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
 
             [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN))]];
             [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
-            //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
+            
             [scoreVisNames addObject: @"publicCostI"];
             [scoreVisNames addObject: @"publicCostM"];
-            //[scoreVisNames addObject: @"publicCostD"];
 
 
             //just damages now
@@ -1381,8 +1396,12 @@ float maxPublicInstallNorm;
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 10 andyValue: (trial*175) +20 andColor:[UIColor blackColor] to:&damage];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 10 andyValue: (trial*175) +45 andColor:[UIColor blackColor] to:&damageReduced];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 10 andyValue: (trial ) * 175 + 70 andColor:[UIColor blackColor] to:&sewerLoad];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"# of Storms Made from Cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 10 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
-
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 10 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:nil];
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 10 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
+            
+            
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
 
             //add values for the score visualization
@@ -1395,7 +1414,7 @@ float maxPublicInstallNorm;
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 40 andColor:[UIColor blackColor] to:&impactNeighbor];
-            [self drawTextBasedVar: [NSString stringWithFormat:@" run-off to neighbors"] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 55 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" flowed to neighbors"] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 55 andColor:[UIColor blackColor] to:nil];
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
             [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
@@ -1409,8 +1428,8 @@ float maxPublicInstallNorm;
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
 
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater was", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue: (trial)* 175 + 40 andColor:[UIColor blackColor] to:&gw_infiltration];
-            [self drawTextBasedVar: [NSString stringWithFormat:@" infiltrated by the swales"] withConcernPosition:width + 30 andyValue: (trial)* 175 + 55  andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of possible", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue: (trial)* 175 + 40 andColor:[UIColor blackColor] to:&gw_infiltration];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" groundwater infiltration"] withConcernPosition:width + 30 andyValue: (trial)* 175 + 55  andColor:[UIColor blackColor] to:nil];
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
@@ -1592,10 +1611,11 @@ float maxPublicInstallNorm;
         [leastFavoriteViews addObject:leastFavoriteView];
         [_mapWindow addSubview:leastFavoriteView];
         
-        favoriteLabel = [[UILabel alloc]initWithFrame:CGRectMake(148, trial * 175 + 112, 114, 20)];
-        favoriteLabel.text = @"Best and Worst for me";
-        favoriteLabel.font = [UIFont systemFontOfSize:10.0];
-        [favoriteLabel setTextAlignment:NSTextAlignmentLeft];
+        favoriteLabel = [[UILabel alloc]initWithFrame:CGRectMake(90, trial * 175 + 112, 0, 0)];
+        favoriteLabel.text = @"Best for me    Worst for me";
+        favoriteLabel.font = [UIFont systemFontOfSize:9.0];
+        [favoriteLabel sizeToFit];
+        //[favoriteLabel setTextAlignment:NSTextAlignmentLeft];
         [favoriteLabels addObject:favoriteLabel];
         [_mapWindow addSubview:favoriteLabel];
     }
@@ -1614,8 +1634,10 @@ float maxPublicInstallNorm;
         [leastFavoriteView setFrame:CGRectMake(212, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
         [_mapWindow addSubview:leastFavoriteView];
         
+        
         favoriteLabel = [favoriteLabels objectAtIndex:simRun.trialNum];
-        favoriteLabel.frame = CGRectMake(148, trial * 175 + 105, 114, 20);
+        favoriteLabel.frame = CGRectMake(90, trial * 175 + 112, 0, 0);
+        [favoriteLabel sizeToFit];
         [_mapWindow addSubview:favoriteLabel];
     }
 
@@ -2437,7 +2459,7 @@ float maxPublicInstallNorm;
         [self OffsetView:Damage toX:Damage.frame.origin.x andY:(i*175) +20 ];
         [self OffsetView:DamageReduced toX:DamageReduced.frame.origin.x andY:(i*175) +45];
         [self OffsetView:SewerLoad toX:SewerLoad.frame.origin.x andY:(i*175) + 70];
-        [self OffsetView:StormsForCost toX:StormsForCost.frame.origin.x andY:(i*175) + 110];
+        [self OffsetView:StormsForCost toX:StormsForCost.frame.origin.x andY:(i*175) + 125];
         
         //move over impact on Neighbors
         [self OffsetView:impactNeighbor toX:impactNeighbor.frame.origin.x andY:(i*175) + 40];

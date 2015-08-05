@@ -159,9 +159,9 @@ int dynamic_cd_width = 0;
                     [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
-                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"Investment", @"publicCostI", @"publicCostM", @"publicCostD", @"Damage Reduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"Efficiency of Intervention ($/Gallon)", @"Water Depth Over Time", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", @"Capacity Used", nil] ];
+                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"Investment", @"publicCostI", @"publicCostM", @"publicCostD", @"Damage Reduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"Efficiency of Intervention ($/Gallon)", @"Water Flow Path", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", @"Capacity Used", nil] ];
     
-    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Depth Over Time", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
+    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
     
     scoreColors = [[NSMutableDictionary alloc] initWithObjects:
                    [NSArray arrayWithObjects:
@@ -1292,7 +1292,7 @@ int dynamic_cd_width = 0;
         else if([[profile objectAtIndex:j] isEqualToString:@"Capacity Used"]) {
             currentLabel.text = @"  Intervention Capacity";
         }
-        else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
+        else if([[profile objectAtIndex:j] isEqualToString:@"Water Flow Path"]) {
             currentLabel.text = @"  Water Flow";
         }
         else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
@@ -1399,7 +1399,7 @@ int dynamic_cd_width = 0;
         else if([[profile objectAtIndex:j] isEqualToString:@"Capacity Used"]) {
             currentLabel.text = @"  Intervention Capacity";
         }
-        else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
+        else if([[profile objectAtIndex:j] isEqualToString:@"Water Flow Path"]) {
             currentLabel.text = @"  Water Flow";
         }
         else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
@@ -1670,7 +1670,7 @@ int dynamic_cd_width = 0;
         else if([[profileArray objectAtIndex:j] isEqualToString:@"Capacity Used"]) {
             currentLabel.text = @"  Intervention Capacity";
         }
-        else if([[profileArray objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Water Flow Path"]) {
             currentLabel.text = @"  Water Flow";
         }
         else if([[profileArray objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
@@ -1868,7 +1868,7 @@ int dynamic_cd_width = 0;
             else if([[profile objectAtIndex:j] isEqualToString:@"Capacity Used"]) {
                 currentLabel.text = @"  Intervention Capacity";
             }
-            else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
+            else if([[profile objectAtIndex:j] isEqualToString:@"Water Flow Path"]) {
                 currentLabel.text = @"  Water Flow";
             }
             else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
@@ -2052,7 +2052,7 @@ int dynamic_cd_width = 0;
             else if([[profile objectAtIndex:j] isEqualToString:@"Capacity Used"]) {
                 currentLabel.text = @"  Intervention Capacity";
             }
-            else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
+            else if([[profile objectAtIndex:j] isEqualToString:@"Water Flow Path"]) {
                 currentLabel.text = @"  Water Flow";
             }
             else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
@@ -2254,7 +2254,7 @@ int dynamic_cd_width = 0;
         else if([[profile objectAtIndex:j] isEqualToString:@"Capacity Used"]) {
             currentLabel.text = @"  Intervention Capacity";
         }
-        else if([[profile objectAtIndex:j] isEqualToString:@"Water Depth Over Time"]) {
+        else if([[profile objectAtIndex:j] isEqualToString:@"Water Flow Path"]) {
             currentLabel.text = @"  Water Flow";
         }
         else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
