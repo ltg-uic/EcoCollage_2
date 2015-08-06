@@ -17,6 +17,8 @@
 
 - (IBAction)threshold_image:(UIButton *)sender;
 - (IBAction)saveHSVValues:(UIButton *)sender;
+- (IBAction)un_thresh_image:(UIButton *)sender;
+
 
 @property (weak, nonatomic) IBOutlet UIImageView *InspectedColour;
 - (IBAction)UndoTap:(UIButton *)sender;

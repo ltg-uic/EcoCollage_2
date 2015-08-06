@@ -674,7 +674,7 @@
 		8453FA8818F2FC8F0010D12F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/AprilTest.app/AprilTest";
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -688,7 +688,7 @@
 				);
 				INFOPLIST_FILE = "AprilTestTests/AprilTestTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AprilTest.app/AprilTest";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -696,7 +696,7 @@
 		8453FA8918F2FC8F0010D12F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/AprilTest.app/AprilTest";
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -706,7 +706,7 @@
 				GCC_PREFIX_HEADER = "AprilTest/AprilTest-Prefix.pch";
 				INFOPLIST_FILE = "AprilTestTests/AprilTestTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AprilTest.app/AprilTest";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;

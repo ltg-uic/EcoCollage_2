@@ -255,9 +255,13 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
 {
     [super viewWillAppear:animated];
     
-    plainImage = [CVWrapper getCurrentImage];
-    if(plainImage != nil)
-        [self updateScrollView:[CVWrapper getCurrentImage]];
+    plainImage = [CVWrapper getCurrentImage];                                //get a copy if the normal image
+    
+    if(plainImage != nil){
+        mean_image = [CVWrapper ApplyMedianFilter:[CVWrapper getCurrentImage]];  //also get a copy of the median altered image
+        [self updateScrollView:plainImage];
+    }
+    
 }
 
 
@@ -393,10 +397,11 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
         [alert show];
         return;
     }
-
-    threshedImage = [CVWrapper thresh:plainImage colorCase: [CVWrapper getSegmentIndex]];
     
+    //thresh either the plain image or the median filtered image
+    threshedImage = [CVWrapper thresh:mean_image colorCase: [CVWrapper getSegmentIndex]];
     [self updateScrollView:threshedImage];
+
 }
 
 - (IBAction)saveHSVValues:(UIButton *)sender {
@@ -419,6 +424,15 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
     [file writeData:[str dataUsingEncoding:NSUTF8StringEncoding]];
     [file closeFile];
     
+}
+
+//same actions as a double tap but in an explicit button
+- (IBAction)un_thresh_image:(UIButton *)sender {
+    if (img != nil && (img.image != plainImage))
+    {
+        printf("Reseting to unthreshed image\n");
+        [self updateScrollView:plainImage];
+    }
 }
 
 - (void) setHSVValues {
@@ -479,6 +493,10 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
         default:
             break;
     }
+    
+    //remove image from inspected colour to denote removal
+    self.InspectedColour.backgroundColor = [UIColor clearColor];
+    
 }
 
 - (IBAction)ClearSamples:(UIButton *)sender {

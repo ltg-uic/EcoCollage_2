@@ -22,7 +22,7 @@ int widthGlobal = 0;
 UIImage *userImage = nil;
 UIImage *threshedGlobal = nil;
 UIImage *warpedGlobal;
-UIImage* mean_image = nil;
+UIImage *warpedGlobalMean;
 bool studyNum;
 NSString *fileContents;
 NSURL *server;
@@ -186,7 +186,9 @@ char results[5000];
         return 0;
     }
     else {
-        warpedGlobal = destination;
+        warpedGlobal     = destination;
+        warpedGlobalMean = [CVWrapper ApplyMedianFilter:destination];
+        
         [CVWrapper setCurrentImage:destination];
         [self updateScrollView:destination];
         return 1;
@@ -220,7 +222,8 @@ char results[5000];
         worked = [CVWrapper analysis:testImg studyNumber: studyNumber trialNumber:trialNumber results: results];
     }
     else {
-        worked = [CVWrapper analysis:warpedGlobal studyNumber: studyNumber trialNumber:trialNumber results: results];
+        //choose to warp with median filtered warped image or warpedimage
+        worked = [CVWrapper analysis:warpedGlobalMean studyNumber: studyNumber trialNumber:trialNumber results: results];
     }
     if(worked) {
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Success!" message:@"We found your pieces!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];
