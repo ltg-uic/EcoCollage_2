@@ -310,12 +310,31 @@ NSArray * importQuestions;
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     tabControl.currentConcernRanking = _currentConcernRanking;
+    
+    NSArray *sortedRankings = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+        if(first > second) return NSOrderedAscending;
+        else return NSOrderedDescending;
+    }];
+    
+    
+    NSString *logEntryContents = @"\t";
+    
+    for (int i = 0; i < sortedRankings.count; i++){
+        char endChar = (i == sortedRankings.count-1) ? ' ' : ',';
+        logEntryContents = [logEntryContents stringByAppendingString:[NSString stringWithFormat:@"%@%c",((AprilTestVariable*)[sortedRankings objectAtIndex:i]).displayName, endChar]];
+    }
+    
+    //log the current concern ranking decided by user
+    NSString *logEntry = [tabControl generateLogEntryWith:logEntryContents];
+    [tabControl writeToLogFileString:logEntry];
+    
     //create time stamp
     NSDate *myDate = [[NSDate alloc] init];
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"HH:mm:ss"];
     NSString *prettyVersion = [dateFormat stringFromDate:myDate];
-    
     
     
     NSMutableString * content = [[NSMutableString alloc] init];

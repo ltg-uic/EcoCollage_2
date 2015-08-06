@@ -320,13 +320,15 @@ float maxPublicInstallNorm;
 //Currently writes the contents of the variables and trials visible on screen after draging scrollview
 - (void) logVisibleTrialsandVariables{
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = @"\tScrollview did scroll\tTrials Visible Are:\t";
+    NSString *logEntry = @"";
+    logEntry = [logEntry stringByAppendingString:@"\nTrials Visible Are:\t"];
     
     CGRect mapWindow = [self getRectPositionsFrom:_mapWindow.bounds];
     //determine which trials are visible by viewing if intervention views are visible within the bounds of the scrollview
     for (int i = 0; i < trialRunSubViews.count; i++){
         UIImageView *intervImgView = [[trialRunSubViews objectAtIndex:i] objectForKey:@"InterventionImgView"];
         CGRect imgViewRect = [self getRectPositionsFrom:intervImgView.frame];
+        
         
         //if map is completely visible in the scrollview
         if ((mapWindow.origin.x    <= imgViewRect.origin.x)     &&
@@ -335,11 +337,13 @@ float maxPublicInstallNorm;
             (mapWindow.size.height >= imgViewRect.size.height))  {
             
             NSNumber *trialNum = [[trialRunSubViews objectAtIndex:i] objectForKey:@"TrialNum"];
-             logEntry = [logEntry stringByAppendingString:[NSString stringWithFormat:@" Trial %d,", [trialNum intValue]]];
+            
+            logEntry = [logEntry stringByAppendingString:[NSString stringWithFormat:@"%d,", [trialNum intValue]]];
         }
+        
     }
     
-    logEntry = [logEntry stringByAppendingString:@"\tWith Visible Concern Rankings:\t"];
+    logEntry = [logEntry stringByAppendingString:@"\nVisible Concern Rankings:\t"];
     
     CGRect dataWindowRect = [self getRectPositionsFrom:_dataWindow.bounds];
     //determine which concern rankings are visible
@@ -351,7 +355,7 @@ float maxPublicInstallNorm;
             (dataWindowRect.size.width  >= currLabelRect.size.width)   &&
             (dataWindowRect.size.height >= currLabelRect.size.height))  {
             
-            logEntry = [logEntry stringByAppendingString:[NSString stringWithFormat:@" %@,", currLabel.text]];
+            logEntry = [logEntry stringByAppendingString:[NSString stringWithFormat:@"%@,", currLabel.text]];
         }
 
     }
@@ -426,6 +430,8 @@ float maxPublicInstallNorm;
         for (UIView *view in [_SliderWindow subviews]){
             [view removeFromSuperview];
         }
+        
+        [concernRankingTitles removeAllObjects];
     }
     
     
@@ -464,7 +470,6 @@ float maxPublicInstallNorm;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawSingleTrial" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawMultipleTrials" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
-    [concernRankingTitles removeAllObjects];
     
     //keep a copy of concern profile prior to leaving view
     lastSortedArray = [[NSArray alloc] initWithArray:sortedArray];
@@ -583,7 +588,7 @@ float maxPublicInstallNorm;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     
     //log the change of storm hours
-    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tExamined Water For %@hrs After Storm", [NSNumber numberWithInt:StormPlaybackInterv.value]]];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tExamined hours after storm for hour:\t%@", [NSNumber numberWithInt:StormPlaybackInterv.value]]];
     [tabControl writeToLogFileString:logEntry];
     
     for (int i = 0; i < [trialRunSubViews count]; i++){
@@ -1770,11 +1775,12 @@ float maxPublicInstallNorm;
     //get the name (if it exists) for the trial chosen as favorite
     NSDictionary *dictforTrial = [self getDictionaryFromTrial:[NSNumber numberWithInt:trial]];
     UITextField *TxTforTrial   = [dictforTrial objectForKey:@"TrialTxTBox"];
-    NSString *trialName = ([TxTforTrial.text isEqualToString:[NSString stringWithFormat:@"Trial %d",trial]]) ?  (@"") : [NSString stringWithFormat:@"(%@)", TxTforTrial.text];
+    
+    //NSString *trialName = ([TxTforTrial.text isEqualToString:[NSString stringWithFormat:@"Trial %d",trial]]) ?  (@"") : [NSString stringWithFormat:@"(%@)", TxTforTrial.text];
     
     //log the trial tapped as favorite
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTrial %d%@ Tapped As Favorite", trial, trialName]];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTapped as favorite\t%d", trial]];
     [tabControl writeToLogFileString:logEntry];
     
     // loop thru all favorite views and turn off any others
@@ -1815,11 +1821,12 @@ float maxPublicInstallNorm;
     //get the name (if a unique one exists) for the trial chosen as favorite
     NSDictionary *dictforTrial = [self getDictionaryFromTrial:[NSNumber numberWithInt:trial]];
     UITextField *TxTforTrial   = [dictforTrial objectForKey:@"TrialTxTBox"];
-    NSString *trialName = ([TxTforTrial.text isEqualToString:[NSString stringWithFormat:@"Trial %d",trial]]) ?  (@"") : [NSString stringWithFormat:@"(%@)", TxTforTrial.text];
+    
+    //NSString *trialName = ([TxTforTrial.text isEqualToString:[NSString stringWithFormat:@"Trial %d",trial]]) ?  (@"") : [NSString stringWithFormat:@"(%@)", TxTforTrial.text];
     
     //log the trial tapped as least favorite
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTrial %d%@ Tapped As Least Favorite", trial, trialName]];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTapped as least favorite\t%d", trial]];
     [tabControl writeToLogFileString:logEntry];
     
     

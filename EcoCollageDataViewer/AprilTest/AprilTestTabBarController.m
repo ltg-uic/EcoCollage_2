@@ -455,8 +455,12 @@ NSMutableArray *slicesInfo;
 //generates a log entry with an extra bit of information regarding the log that must be added as an argument
 //only offers the username and time stamp in the method
 - (NSString*) generateLogEntryWith:(NSString*)extra{
-    NSDateComponents *time = [[NSCalendar currentCalendar] components: NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:[NSDate date]];
-    NSString *logEntry = [NSString stringWithFormat:@"%@\t%ld:%ld:%ld %@\n",self.ownProfileName,(long)[time hour],(long)[time minute], (long)[time second], extra];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+
+    [formatter setDateFormat:@"HH:mm:ss"];
+    NSString *timeStamp = [formatter stringFromDate:[NSDate date]];
+    
+    NSString *logEntry = [NSString stringWithFormat:@"%@\t%@ %@\n",self.ownProfileName,timeStamp, extra];
     
     //log the entry that will be written (debugging reasons)
     NSLog(@"%@", logEntry);
