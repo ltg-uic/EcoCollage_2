@@ -35,7 +35,7 @@ NSMutableArray * trialRunsNormalized;   // same as above, but this contains norm
 NSMutableArray *dataFromMacMini;
 UILabel *budgetLabel;
 int trialNum;
-int maxBudget = 5000000;
+int maxBudget = 17000000;
 int currentBudget;
 NSMutableArray *favorites;
 NSMutableArray *leastFavorites;

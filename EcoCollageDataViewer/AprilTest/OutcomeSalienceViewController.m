@@ -102,7 +102,7 @@ NSString *minBudgetLabel;
 NSString *maxBudgetLabel;
 float maxBudgetLimit   = 150000;        //max budget set by user
 float min_budget_limit = 0;
-float max_budget_limit = 5000000;
+float max_budget_limit = 17000000;
 
 
 //length of the budget bars set by the change in the budget slider
@@ -769,6 +769,8 @@ float maxPublicInstallNorm;
         
         //public cost
         someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(maxBudgetLimit));
+        
+        NSLog(@"%f", someTrialNorm.publicInstallCost);
         someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(maxBudgetLimit));
     }
     
