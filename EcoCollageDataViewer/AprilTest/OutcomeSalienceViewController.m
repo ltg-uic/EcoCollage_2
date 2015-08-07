@@ -593,6 +593,9 @@ float maxPublicInstallNorm;
     
     for (int i = 0; i < [trialRunSubViews count]; i++){
         AprilTestSimRun *simRun = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
+        
+        NSLog(@"Updating for trial %d\n", simRun.trialNum);
+        
         /*
         //update intervention capacity
         AprilTestEfficiencyView * temp2 = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
@@ -600,7 +603,7 @@ float maxPublicInstallNorm;
         
         /* Update Intervention Capacity */
         [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] updateViewForHour:hoursAfterStorm];
-        UIImageView *EfficiencyView = [[trialRunSubViews objectAtIndex:simRun.trialNum] valueForKey:@"EfficiencyView"];
+        UIImageView *EfficiencyView = [[trialRunSubViews objectAtIndex:i] valueForKey:@"EfficiencyView"];
         UIImage *newEfficiencyViewImage  = [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] viewforEfficiencyToImage];
         [EfficiencyView setImage:newEfficiencyViewImage];
         
@@ -610,7 +613,7 @@ float maxPublicInstallNorm;
         [[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum] fastUpdateView:hoursAfterStorm];
         
         //Update water depth image from the current trial
-        UIImageView *waterDepthView = [[trialRunSubViews objectAtIndex:simRun.trialNum] valueForKey:@"WaterDepthView"];
+        UIImageView *waterDepthView = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDepthView"];
         UIImage *newWaterDepth = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]];
         [waterDepthView setImage:newWaterDepth];
     }
@@ -2312,9 +2315,9 @@ float maxPublicInstallNorm;
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
         
-                if (first.publicInstallCost > second.publicInstallCost)
+                if (first.publicInstallCost < second.publicInstallCost)
                     return NSOrderedAscending;
-                else if (second.publicInstallCost > first.publicInstallCost)
+                else if (second.publicInstallCost < first.publicInstallCost)
                     return NSOrderedDescending;
                 return NSOrderedSame;
                 
@@ -2326,9 +2329,9 @@ float maxPublicInstallNorm;
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
 
-                if (first.privateDamages > second.privateDamages)
+                if (first.privateDamages < second.privateDamages)
                     return NSOrderedAscending;
-                else if (second.privateDamages > first.privateDamages)
+                else if (second.privateDamages < first.privateDamages)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             
@@ -2341,9 +2344,9 @@ float maxPublicInstallNorm;
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
 
-                if (first.impactNeighbors > second.impactNeighbors)
+                if (first.impactNeighbors < second.impactNeighbors)
                     return NSOrderedAscending;
-                else if (second.impactNeighbors > first.impactNeighbors)
+                else if (second.impactNeighbors < first.impactNeighbors)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             
@@ -2359,9 +2362,9 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
 
-                if (first.efficiency > second.efficiency)
+                if (first.efficiency < second.efficiency)
                     return NSOrderedAscending;
-                else if (second.efficiency > first.efficiency)
+                else if (second.efficiency < first.efficiency)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             
@@ -2376,9 +2379,9 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
             
-                if (first.floodedStreets > second.floodedStreets)
+                if (first.floodedStreets < second.floodedStreets)
                     return NSOrderedAscending;
-                else if (second.floodedStreets > first.floodedStreets)
+                else if (second.floodedStreets < first.floodedStreets)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             
@@ -2393,9 +2396,9 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
 
-                if (first.standingWater > second.standingWater)
+                if (first.standingWater < second.standingWater)
                     return NSOrderedAscending;
-                else if (second.standingWater > first.standingWater)
+                else if (second.standingWater < first.standingWater)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             
@@ -2408,9 +2411,9 @@ float maxPublicInstallNorm;
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
             
-                if (first.dollarsGallons > second.dollarsGallons)
+                if (first.dollarsGallons < second.dollarsGallons)
                     return NSOrderedAscending;
-                else if (second.dollarsGallons > first.dollarsGallons)
+                else if (second.dollarsGallons < first.dollarsGallons)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             
