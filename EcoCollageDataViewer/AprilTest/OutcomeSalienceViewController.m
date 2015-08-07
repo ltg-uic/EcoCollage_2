@@ -2379,7 +2379,7 @@ float maxPublicInstallNorm;
         }];
     }
     
-    else if ([arrStatus[row] isEqual: @"Water Flow"]){
+    else if ([arrStatus[row] isEqual: @"Max Flooded Area"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             NSString *key = (_DynamicNormalization.isOn) ? @"TrialDynamic" : @"TrialStatic";
             
@@ -2396,7 +2396,7 @@ float maxPublicInstallNorm;
         }];
     }
     
-    else if ([arrStatus[row] isEqual: @"Max Flooded Area"]){
+    else if ([arrStatus[row] isEqual: @"Water Flow"]){
         [trialRunSubViews sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             NSString *key = (_DynamicNormalization.isOn) ? @"TrialDynamic" : @"TrialStatic";
             
