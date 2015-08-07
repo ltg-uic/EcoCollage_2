@@ -1416,9 +1416,9 @@ float maxPublicInstallNorm;
             [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 10 andyValue: (trial*175) +45 andColor:[UIColor blackColor] to:&damageReduced];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 10 andyValue: (trial ) * 175 + 70 andColor:[UIColor blackColor] to:&sewerLoad];
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 10 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 10 andyValue: (trial ) * 175 + 95 andColor:[UIColor blackColor] to:nil];
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 10 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 10 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
             
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages));
@@ -2480,7 +2480,7 @@ float maxPublicInstallNorm;
         [self OffsetView:Damage toX:Damage.frame.origin.x andY:(i*175) +20 ];
         [self OffsetView:DamageReduced toX:DamageReduced.frame.origin.x andY:(i*175) +45];
         [self OffsetView:SewerLoad toX:SewerLoad.frame.origin.x andY:(i*175) + 70];
-        [self OffsetView:StormsForCost toX:StormsForCost.frame.origin.x andY:(i*175) + 125];
+        [self OffsetView:StormsForCost toX:StormsForCost.frame.origin.x andY:(i*175) + 110];
         
         //move over impact on Neighbors
         [self OffsetView:impactNeighbor toX:impactNeighbor.frame.origin.x andY:(i*175) + 40];
