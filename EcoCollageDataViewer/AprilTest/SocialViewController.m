@@ -2646,7 +2646,7 @@ int dynamic_cd_width = 0;
             float investmentInstall = simRun.publicInstallCost;
             float investmentMaintain = simRun.publicMaintenanceCost;
             float investmentInstallN = simRunNormal.publicInstallCost;
-            float investmentMaintainN = simRunNormal.publicMaintenanceCost;
+            //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             CGRect frame = CGRectMake(width + 25, 60, dynamic_cd_width, 30);
             
@@ -2674,12 +2674,12 @@ int dynamic_cd_width = 0;
             [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             
             
-            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN));
-            scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
+            scoreTotal += ((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN));
+            //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
             //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
             
-            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN))]];
-            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN))]];
+            //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
             //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
             [scoreVisNames addObject: @"publicCostI"];
             [scoreVisNames addObject: @"publicCostM"];
@@ -2690,10 +2690,11 @@ int dynamic_cd_width = 0;
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 25 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 25 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 25 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 20 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 20 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 20 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue:150 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 20 andyValue:165 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
             
@@ -2708,7 +2709,7 @@ int dynamic_cd_width = 0;
             
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@" run-off to neighbors"] withConcernPosition:width + 30 andyValue: 75 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" flowed to neighbors"] withConcernPosition:width + 30 andyValue: 75 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
             [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
@@ -2724,8 +2725,8 @@ int dynamic_cd_width = 0;
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater was", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@" infiltrated by the swales"] withConcernPosition:width + 30 andyValue:75  andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of possible", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" groundwater infiltration"] withConcernPosition:width + 30 andyValue:75  andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
