@@ -1459,14 +1459,12 @@ float maxPublicInstallNorm;
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
             
             AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-        
-            //Moved to creating UIImageViews... to minimize lag in scrolling
-            ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]).thresholdValue = thresh;
-            [[tabControl.waterDisplaysInTab objectAtIndex:trial] fastUpdateView:hoursAfterStorm];
+            ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh;
+            [[tabControl.maxWaterDisplaysInTab objectAtIndex:trial] updateView:48];
             
-            waterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
-            waterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]];
-            [_dataWindow addSubview:waterDepthView];
+            MaxWaterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
+            MaxWaterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:simRun.trialNum]];
+            [_dataWindow addSubview:MaxWaterDepthView];
             
             /*
             //NSLog(@"%d, %d", waterDisplays.count, i);
@@ -1491,12 +1489,14 @@ float maxPublicInstallNorm;
         } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
             
             AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-            ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh;
-            [[tabControl.maxWaterDisplaysInTab objectAtIndex:trial] updateView:48];
             
-            MaxWaterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
-            MaxWaterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:simRun.trialNum]];
-            [_dataWindow addSubview:MaxWaterDepthView];
+            //Moved to creating UIImageViews... to minimize lag in scrolling
+            ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]).thresholdValue = thresh;
+            [[tabControl.waterDisplaysInTab objectAtIndex:trial] fastUpdateView:hoursAfterStorm];
+            
+            waterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
+            waterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]];
+            [_dataWindow addSubview:waterDepthView];
             
             /*
             //display window for maxHeights
