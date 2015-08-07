@@ -1089,17 +1089,18 @@ float maxPublicInstallNorm;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
             [scoreVisNames addObject: currentVar.name];
         }
-        else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+        else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
             [scoreVisNames addObject: currentVar.name];
             
         }
-        else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+        else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
+            //NSLog(@"standing water: %f", currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater));
             [scoreVisNames addObject: currentVar.name];
             
         }
@@ -1451,8 +1452,9 @@ float maxPublicInstallNorm;
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
+            NSLog(@"Groundwater Infiltration: %d", currentVar.currentConcernRanking);
             [scoreVisNames addObject: currentVar.name];
-        } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
             
             AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
         
@@ -1481,9 +1483,10 @@ float maxPublicInstallNorm;
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
+            NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.floodedStreets, [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]);
             [scoreVisNames addObject: currentVar.name];
             
-        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+        } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
             
             AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
             ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh;
@@ -1507,8 +1510,9 @@ float maxPublicInstallNorm;
             [mwd updateView:48];*/
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater)]];
             [scoreVisNames addObject: currentVar.name];
+            NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.standingWater , [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater)]);
 
         } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
             
@@ -1570,7 +1574,9 @@ float maxPublicInstallNorm;
     
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
+        
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
+        NSLog(@"%@ has width %f",[scoreVisNames objectAtIndex:i], scoreWidth );
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
            componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 75, floor(scoreWidth), 22)];
@@ -1578,6 +1584,7 @@ float maxPublicInstallNorm;
         [_mapWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
     }
+    NSLog(@"\n");
     
     [_dataWindow setContentSize:CGSizeMake(width+=100, (trial+1)*200)];
     for(UILabel * bgCol in bgCols){
