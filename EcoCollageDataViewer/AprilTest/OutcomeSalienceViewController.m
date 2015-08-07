@@ -1056,7 +1056,7 @@ float maxPublicInstallNorm;
             scoreTotal += ((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN));
             //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
             
-            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN))]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN))]];
             //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
             
             [scoreVisNames addObject: @"publicCostI"];
@@ -1257,7 +1257,7 @@ float maxPublicInstallNorm;
 }
 
 -(void) drawTrial: (int) trial{
-    //UILabel *maintenance;
+    UILabel *maintenance;
     UILabel *damage;
     UILabel *damageReduced;
     UILabel *stormsToMakeUpCost;
@@ -1360,7 +1360,7 @@ float maxPublicInstallNorm;
         //laziness: this is just the investment costs
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
             float investmentInstall = simRun.publicInstallCost;
-            //float investmentMaintain = simRun.publicMaintenanceCost;
+            float investmentMaintain = simRun.publicMaintenanceCost;
             float investmentInstallN = simRunNormal.publicInstallCost;
             float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             CGRect frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
@@ -1393,9 +1393,8 @@ float maxPublicInstallNorm;
                 [OverBudgetLabels addObject:valueLabel];
             }
             
-            //removing maintenance component
-            /*
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (trial * 175) +100 andColor:[UIColor blackColor] to:&maintenance];*/
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (trial * 175) +100 andColor:[UIColor blackColor] to:&maintenance];
             
             
             scoreTotal += ((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN));
@@ -1672,7 +1671,7 @@ float maxPublicInstallNorm;
                                    //@"WaterDisplay"      : wd,
                                    //@"MWaterDisplay"     : mwd,
                                    //@"EfficiencyView"      : ev,
-                                   //@"Maintenance"       : maintenance,
+                                   @"Maintenance"         : maintenance,
                                    @"InterventionImgView" : interventionImageView,
                                    @"WaterDepthView"      : waterDepthView,
                                    @"MWaterDepthView"     : MaxWaterDepthView,
@@ -2438,10 +2437,10 @@ float maxPublicInstallNorm;
     
     //loop through all entries (in sorted order) and update its frame to its new position
     for (int i = 0; i < trialRunSubViews.count; i++) {
-        //UILabel *maintenance                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
         //FebTestWaterDisplay *wd               = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDisplay"];
         //FebTestWaterDisplay *mwd              = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDisplay"];
         //AprilTestEfficiencyView *ev           = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
+        UILabel *maintenance                  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Maintenance"];
         UITextField *newTxt                   = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialTxTBox"];
         UILabel *Damage                       = [[trialRunSubViews objectAtIndex:i] valueForKey:@"Damage"];
         UILabel *DamageReduced                = [[trialRunSubViews objectAtIndex:i] valueForKey:@"DamageReduced"];
@@ -2491,10 +2490,10 @@ float maxPublicInstallNorm;
         //move over efficiency of intervention
         [self OffsetView:EfficiencyOfIntervention toX:EfficiencyOfIntervention.frame.origin.x andY:(i*175) + 40];
         
-        /*
-        //move over maintenance ==> remove maintenance component
+        
+        //move over maintenance
         [self OffsetView:maintenance toX:maintenance.frame.origin.x andY:(i*175) + 100];
-        */
+        
         
         //Offset the "Trial #" label
         [self OffsetView:newTxt      toX:newTxt.frame.origin.x     andY:175*(i)+5];
