@@ -223,7 +223,7 @@ char results[5000];
     }
     else {
         //choose to warp with median filtered warped image or warpedimage
-        worked = [CVWrapper analysis:warpedGlobalMean studyNumber: studyNumber trialNumber:trialNumber results: results];
+        worked = [CVWrapper analysis:warpedGlobal studyNumber: studyNumber trialNumber:trialNumber results: results];
     }
     if(worked) {
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Success!" message:@"We found your pieces!" delegate:self cancelButtonTitle:@"Continue" otherButtonTitles:nil];

@@ -224,13 +224,13 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
         
         //logic that sets the high Saturation and Value values to midpoint(EDIT: expanded range) from the recorded value and 255
         vals->high->h = h_h;
-        vals->high->s = 255 - ((255 - h_s)/3);
-        vals->high->v = 255 - ((255 - h_v)/3);;
+        vals->high->s = 255 - ((255 - h_s)/2);
+        vals->high->v = 255 - ((255 - h_v)/2);;
         
         //logic that sets the low Saturation and Value values to midpoint(EDIT: expanded range) from the recorded value and 0
         vals->low->h = l_h;
-        vals->low->s = 0 + (l_s/3);
-        vals->low->v = 0 + (l_v/3);
+        vals->low->s = 0 + (l_s/2);
+        vals->low->v = 0 + (l_v/2);
         
     }
     return vals;
@@ -399,7 +399,7 @@ MinMaxHSV *GetMinMaxHSVfromSample(BGR_List* list)
     }
     
     //thresh either the plain image or the median filtered image
-    threshedImage = [CVWrapper thresh:mean_image colorCase: [CVWrapper getSegmentIndex]];
+    threshedImage = [CVWrapper thresh:plainImage colorCase: [CVWrapper getSegmentIndex]];
     [self updateScrollView:threshedImage];
 
 }
