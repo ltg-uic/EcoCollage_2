@@ -101,7 +101,7 @@ int hoursAfterStorm;
 //budget limits set by the application
 NSString *minBudgetLabel;
 NSString *maxBudgetLabel;
-float maxBudgetLimit   = 150000;        //max budget set by user
+float setBudget   = 150000;          //max budget set by user
 float min_budget_limit = 0;
 float max_budget_limit = 17000000;
 
@@ -235,6 +235,14 @@ float maxPublicInstallNorm;
     
 }
 
+/*
+    Description: Handles keyboard input from Texfields and determines when textfield displaying
+                 Sort categories is touched in order to reveal UIPickerView of possible sort types
+ 
+    Input:       Touch-inside a UITexfield
+    Output:      If SortTypePickerView, instead of animating keyboard animates the UIPickerView
+ 
+*/
 
 - (BOOL) textFieldShouldBeginEditing:(UITextField *)textView
 {
@@ -253,6 +261,7 @@ float maxPublicInstallNorm;
     }
 }
 
+
 - (void) textFieldDidEndEditing:(UITextField *)textField{
     if (textField != SortPickerTextField){
         NSNumber *trialNumEditted = [self getTrialNumFrom:textField];
@@ -269,8 +278,17 @@ float maxPublicInstallNorm;
     }
 }
 
-//returns the trial number of a particaular view existing as a trial run subview element
-//returns -1 if the element doesnt exist
+
+/*
+    Description: Returns the index position in a NSMutableArray of NSDictionaries that holds
+                 a particular UIview. This is used to quickly reference where the UIView is drawn 
+                 on the OutcomeSalienceView Controller.
+ 
+    Input:       A UIView
+    Output:      NSNumber -  referring to the position the UIView is drawn on
+                 -1 - if the UIView isn't contained in any dictionary (not a part of the trial UIViews)
+ 
+ */
 - (NSNumber*) getTrialNumFrom:(id) view{
     NSNumber* trialFound = [NSNumber numberWithInt:-1];
     
@@ -294,8 +312,14 @@ float maxPublicInstallNorm;
     return trialFound;
 }
 
-//returns the dictionary object represented by the trial you are trying to find
-//returns nil if the trial you are trying to find doesnt exist
+/*
+ Description: Returns NSDictionary object with the contents of a particular trial number
+ 
+ Input:       NSNumber - A trial number
+ Output:      NSDictionary -  the object itself
+              nil - if the particular trial doesnt exist
+ */
+
 - (NSDictionary*) getDictionaryFromTrial: (NSNumber*) trial{
     NSDictionary *dict = nil;
     NSNumber *dictTrial;
@@ -311,14 +335,27 @@ float maxPublicInstallNorm;
     return dict;
 }
 
-//although a rectangle object (x,y,width,height)
-//return object will look like this (x,y,x + width, y + height) to make comparisons easier
+
+/*
+ Description: Modifies a CGRect object to include in its 4 parameters, the end points of its
+              frame. Esentially, where the frame begins and where it ends. The origin remains the same
+              but the width and height components include the offset of the origin points as well.
+ 
+ Input:       (CGRect) - a frame
+ Output:      (CGRect) - a modified frame
+ */
+
 - (CGRect) getRectPositionsFrom:(CGRect) viewRect{
     CGRect visibleRect = CGRectMake(viewRect.origin.x, viewRect.origin.y, viewRect.origin.x + viewRect.size.width, viewRect.origin.y + viewRect.size.height);
     return visibleRect;
 }
 
-//Currently writes the contents of the variables and trials visible on screen after draging scrollview
+/*
+ Description: Logs the visible trials and variables after a successful scroll
+ 
+ Input:       A scroll
+ Output:      NSString write to a log file
+ */
 - (void) logVisibleTrialsandVariables{
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     NSString *logEntry = @"";
@@ -489,6 +526,13 @@ float maxPublicInstallNorm;
     [self loadNextSimulationRun];
 }*/
 
+
+/*
+ Description: Handles switching from viewing static and dynamic normalized data
+ 
+ Input:       Touch on UISwitch
+ Output:      Refreshed data on ViewController
+ */
 - (IBAction)NormTypeSwitched:(UISwitch *)sender {
     /**
       * Make Sure to update all displays/labels to reflect the change 
@@ -509,7 +553,12 @@ float maxPublicInstallNorm;
   
 }
 
-
+/*
+ Description: Removes "Over Budget: " labels found underneath Installation Cost (iff installation cost is greater than set budget)
+ 
+ Input:       none
+ Output:      removed UILabels
+ */
 -(void) removeBudgetLabels{
     for (int i = 0; i < OverBudgetLabels.count; i++){
         UILabel *label = [OverBudgetLabels objectAtIndex:i];
@@ -518,6 +567,12 @@ float maxPublicInstallNorm;
     [OverBudgetLabels removeAllObjects];
 }
 
+/*
+ Description: Updates "Over Budget: " labels to reflect new/updated set budget or
+ 
+ Input:       none
+ Output:      updated UILabels
+ */
 - (void) updateBudgetLabels{
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -541,9 +596,9 @@ float maxPublicInstallNorm;
         //AprilTestSimRun *simRun = [trialRuns objectAtIndex:i];
         AprilTestSimRun *simRun= [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
         
-        if (simRun.publicInstallCost > maxBudgetLimit){
+        if (simRun.publicInstallCost > setBudget){
             UILabel *valueLabel;
-            [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-maxBudgetLimit)]] ] withConcernPosition:width+25 andyValue:i *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
+            [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-setBudget)]] ] withConcernPosition:width+25 andyValue:i *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
             
             [OverBudgetLabels addObject:valueLabel];
         }
@@ -650,12 +705,17 @@ float maxPublicInstallNorm;
 
 
 
-/**
-  * Returns the width from the minimum end of a slider
-  * to a particular value on the slider
-  * 
-  * Used to draw the budget labels underneath the budget slider
-  */
+/*
+ Description: Gets width (pt) relative to the start of a UISlider and a particular value
+              found along the UISlider within its range. Used to draw the budget bars right under 
+              the Budget Slider.
+ 
+ Input:       (UISlider*) a Slider
+ Output:      (int) the width
+              (int) maxWidth of UISlider if value not in range
+ */
+
+
 - (int)getWidthFromSlider:(UISlider *)aSlider toValue:(float) value;
 {
     if (value < aSlider.minimumValue){
@@ -679,13 +739,23 @@ float maxPublicInstallNorm;
         return returnLocation;
 }
 
+/*
+ Description: Updates the set budget on local Budget Slider to that of a value
+              passed by Momma Bird. Also takes care of all the necessary updates 
+              and function calls due to the change in set budget (new over budget labels, etc..)
+ 
+ Input:       none
+ Output:      Updated ViewController configuration 
+              (float) newSetBudget
+ */
+
 - (void)budgetUpdated {
     // method called when budget is updated from Momma
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     [self updateBudgetSliderTo:tabControl.budget];
     
     //update the width of the public install cost bars (make sure it isn't 0)
-    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
     
     //only update all labels/bars if Static normalization is switched on
     if (!_DynamicNormalization.isOn){
@@ -707,10 +777,10 @@ float maxPublicInstallNorm;
     value = 1000.0 * floor((value/1000.0)+0.5);
     
     investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
-    maxBudgetLimit = value;
+    setBudget = value;
     
     //update the width of the public install cost bars (make sure it isn't 0)
-    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
     
     //only update all labels/bars if Static normalization is switched on
     if (!_DynamicNormalization.isOn){
@@ -722,7 +792,7 @@ float maxPublicInstallNorm;
 -(void) updateBudgetSliderTo: (float) newValue
 {
     [BudgetSlider setValue:newValue animated:YES];
-    maxBudgetLimit = newValue;
+    setBudget = newValue;
     
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -731,11 +801,18 @@ float maxPublicInstallNorm;
     investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:newValue]]];
 }
 
+/*
+ Description: Normalizes all trial data and updates view controller to reflect updated
+              static normalized data (Absolue)
+ 
+ Input:       none
+ Output:      Updated View displaying static normalized data
+ */
 -(void) normalizaAllandUpdateStatically{
     trialNum = (int)[trialRunSubViews count];
     [self normalizeStatically];
     
-    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
     [self updatePublicCostDisplays: trialNum];
     [self updateBudgetLabels];
     
@@ -744,6 +821,13 @@ float maxPublicInstallNorm;
         [self updateComponentScore:i];
 }
 
+/*
+ Description: Normalizes all trial data and updates view controller to reflect updated
+              dynamic normalized data (Best So Far)
+ 
+ Input:       none
+ Output:      Updated View displaying static normalized data
+ */
 -(void) normalizeAllandUpdateDynamically{
     trialNum = (int)[trialRunSubViews count];
     [self normalizeDynamically];
@@ -757,6 +841,12 @@ float maxPublicInstallNorm;
         [self updateComponentScore:i];
 }
 
+/*
+ Description: Normalizes all statically normalized data. Called after newly fetched data is found.
+ 
+ Input:       none
+ Output:      none
+ */
 -(void) normalizeStatically
 {
     for (int i = 0; i < trialRunSubViews.count; i++)
@@ -766,18 +856,22 @@ float maxPublicInstallNorm;
         AprilTestSimRun *someTrial = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
         AprilTestNormalizedVariable *someTrialNorm = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"];
         
-        if (maxBudgetLimit == 0){ maxBudgetLimit = .01; }
+        if (setBudget == 0){ setBudget = .01; }
         
         //public cost
-        someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(maxBudgetLimit));
+        someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(setBudget));
         
         //NSLog(@"%f", someTrialNorm.publicInstallCost);
-        someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(maxBudgetLimit));
+        someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(setBudget));
     }
     
 }
-
-//will normalize the cost of installation and maintenance
+/*
+ Description: Normalizes all dynamically normalized data. Called after newly fetched data is found.
+ 
+ Input:       none
+ Output:      none
+*/
 - (void)normalizeDynamically
 {
     if (installationCost  == NULL) { installationCost = (Value*)malloc(sizeof(Value));  }
@@ -995,7 +1089,7 @@ float maxPublicInstallNorm;
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
     
-    float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
+    float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
     
     for (int i = 0; i < trial; i++){
         newCD = [publicCostDisplays objectAtIndex:i];
@@ -1375,7 +1469,7 @@ float maxPublicInstallNorm;
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
                 float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.publicInstallCost];
-                float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
+                float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
                 
                 cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
                 [_dataWindow addSubview: cd];
@@ -1390,11 +1484,11 @@ float maxPublicInstallNorm;
             
             
             //checks if over budget, if so, prints warning message
-            if ((simRun.publicInstallCost > maxBudgetLimit) && (!_DynamicNormalization.isOn)){
+            if ((simRun.publicInstallCost > setBudget) && (!_DynamicNormalization.isOn)){
                 //store update labels for further use (updating over budget when using absolute val)
                
                 UILabel *valueLabel;
-                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-maxBudgetLimit)]] ] withConcernPosition:width+25 andyValue:trial *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
+                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-setBudget)]] ] withConcernPosition:width+25 andyValue:trial *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
                 
                 [OverBudgetLabels addObject:valueLabel];
             }
@@ -1932,7 +2026,7 @@ float maxPublicInstallNorm;
     [self drawTitles];
     [self drawSliders];
     
-    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:maxBudgetLimit];
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
     
     [_dataWindow setContentOffset:CGPointMake(0, 0)];
     [_mapWindow setContentOffset:CGPointMake(0,0 )];
@@ -2124,7 +2218,7 @@ float maxPublicInstallNorm;
             BudgetSlider.minimumValue = min_budget_limit;
             BudgetSlider.maximumValue = max_budget_limit;
             BudgetSlider.continuous = YES;
-            [BudgetSlider setValue:maxBudgetLimit animated:YES];
+            [BudgetSlider setValue:setBudget animated:YES];
             //[_SliderWindow addSubview:BudgetSlider];
             
             //draw min/max cost labels under slider
@@ -2141,7 +2235,7 @@ float maxPublicInstallNorm;
             CGRect currCostFrame = CGRectMake(width + 35, 50, currentVar.widthOfVisualization, 15);
             investmentBudget = [[UILabel alloc] initWithFrame:currCostFrame];
             investmentBudget.font = [UIFont boldSystemFontOfSize:14.0];
-            investmentBudget.text = [NSString stringWithFormat:@"Current Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:maxBudgetLimit]]];
+            investmentBudget.text = [NSString stringWithFormat:@"Current Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:setBudget]]];
             
             [_SliderWindow addSubview:minCostLabel];
             [_SliderWindow addSubview:maxCostLabel];
