@@ -79,6 +79,7 @@ bool passFirstThree = FALSE;
 float kOFFSET_FOR_KEYBOARD = 425.0;
 float offsetForMoving = 0.0;
 float originalOffset = 0.0;
+int maxDamagesReduced = 33000;
 UITextField *edittingTX;
 UITextField *SortPickerTextField;
 NSTimer *scrollingTimer = nil;
@@ -257,7 +258,7 @@ float maxPublicInstallNorm;
         NSNumber *trialNumEditted = [self getTrialNumFrom:textField];
         
         if (trialNumEditted == [NSNumber numberWithInt:-1]) {
-            NSLog(@"Editted a TextField that's neither a Trial Number Text Box nor the Sort Picker Text Field\n");
+            //NSLog(@"Editted a TextField that's neither a Trial Number Text Box nor the Sort Picker Text Field\n");
         }
         else{
             //log the change of trial name for trial number
@@ -368,7 +369,7 @@ float maxPublicInstallNorm;
 {
     //Code to handle the gesture
     if ([SortType isHidden]){
-        NSLog(@"View Doesn't Exist");
+        //NSLog(@"View Doesn't Exist");
     }
     else{
         [SortType removeFromSuperview];
@@ -403,7 +404,7 @@ float maxPublicInstallNorm;
     
     //determine whether or not changes were made to the concern profile
     if (lastSortedArray != nil && [sortedArray isEqualToArray:lastSortedArray]) {
-        NSLog(@"No changes made on concern profile\n");
+        //NSLog(@"No changes made on concern profile\n");
         
         //make sure all the views are in the proper offsets they were in before leaving the view 
         CGPoint offset = _mapWindow.contentOffset;
@@ -594,7 +595,7 @@ float maxPublicInstallNorm;
     for (int i = 0; i < [trialRunSubViews count]; i++){
         AprilTestSimRun *simRun = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
         
-        NSLog(@"Updating for trial %d\n", simRun.trialNum);
+        //NSLog(@"Updating for trial %d\n", simRun.trialNum);
         
         /*
         //update intervention capacity
@@ -770,7 +771,7 @@ float maxPublicInstallNorm;
         //public cost
         someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(maxBudgetLimit));
         
-        NSLog(@"%f", someTrialNorm.publicInstallCost);
+        //NSLog(@"%f", someTrialNorm.publicInstallCost);
         someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(maxBudgetLimit));
     }
     
@@ -1108,8 +1109,8 @@ float maxPublicInstallNorm;
         }
         else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
         
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency)]];
             [scoreVisNames addObject: currentVar.name];
         
             
@@ -1365,7 +1366,7 @@ float maxPublicInstallNorm;
             float investmentInstall = simRun.publicInstallCost;
             float investmentMaintain = simRun.publicMaintenanceCost;
             float investmentInstallN = simRunNormal.publicInstallCost;
-            float investmentMaintainN = simRunNormal.publicMaintenanceCost;
+            //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             CGRect frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
             
             
@@ -1404,6 +1405,7 @@ float maxPublicInstallNorm;
             //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
 
             [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN))]];
+            NSLog(@"Investment cost: %f Investment score: %f", investmentInstall, investmentInstallN);
            // [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
             
             [scoreVisNames addObject: @"publicCostI"];
@@ -1420,7 +1422,11 @@ float maxPublicInstallNorm;
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:nil];
             
+            if(simRun.privateDamages != 0){
             [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
+            }else {
+               [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/maxDamagesReduced)] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
+            }
             
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages));
@@ -1454,7 +1460,7 @@ float maxPublicInstallNorm;
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
-            NSLog(@"Groundwater Infiltration: %d", currentVar.currentConcernRanking);
+            //NSLog(@"Groundwater Infiltration: %d", currentVar.currentConcernRanking);
             [scoreVisNames addObject: currentVar.name];
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
             
@@ -1483,7 +1489,7 @@ float maxPublicInstallNorm;
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
-            NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.floodedStreets, [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]);
+            //NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.floodedStreets, [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]);
             [scoreVisNames addObject: currentVar.name];
             
         } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
@@ -1514,7 +1520,7 @@ float maxPublicInstallNorm;
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater)]];
             [scoreVisNames addObject: currentVar.name];
-            NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.standingWater , [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater)]);
+            //NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.standingWater , [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater)]);
 
         } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
             
@@ -1547,8 +1553,8 @@ float maxPublicInstallNorm;
                 [_dataWindow addSubview:efficiencyImageView];
             }
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency)]];
             //NSLog(@"%@", NSStringFromCGRect(ev.frame));
             [scoreVisNames addObject: currentVar.name];
             
@@ -1705,7 +1711,7 @@ float maxPublicInstallNorm;
     else
         [trialRunSubViews addObject:trialRunInfo];
     
-    NSLog(@"Just drew trial %d\n", simRun.trialNum);
+    //NSLog(@"Just drew trial %d\n", simRun.trialNum);
    
     [_dataWindow flashScrollIndicators];          
     
@@ -1776,7 +1782,7 @@ float maxPublicInstallNorm;
 }
 
 - (void)favoriteTapped:(UITapGestureRecognizer *)gestureRecognizer {
-    NSLog(@"Tapped favorite");
+    //NSLog(@"Tapped favorite");
     
     FavoriteView *favoriteView = (FavoriteView *)gestureRecognizer.view;
     [favoriteView isTouched];
@@ -2133,7 +2139,7 @@ float maxPublicInstallNorm;
             CGRect currCostFrame = CGRectMake(width + 35, 50, currentVar.widthOfVisualization, 15);
             investmentBudget = [[UILabel alloc] initWithFrame:currCostFrame];
             investmentBudget.font = [UIFont boldSystemFontOfSize:14.0];
-            investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:maxBudgetLimit]]];
+            investmentBudget.text = [NSString stringWithFormat:@"Current Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:maxBudgetLimit]]];
             
             [_SliderWindow addSubview:minCostLabel];
             [_SliderWindow addSubview:maxCostLabel];
