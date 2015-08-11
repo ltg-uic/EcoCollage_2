@@ -1301,7 +1301,7 @@ float maxPublicInstallNorm;
         interventionImageView.frame = CGRectMake(20, 175 * (trial) + 40, 115, 125);
         [_mapWindow addSubview:interventionImageView];
     }
-    [_mapWindow setContentSize: CGSizeMake(_mapWindow.contentSize.width, (trial+1)*200)];
+    [_mapWindow setContentSize: CGSizeMake(_mapWindow.contentSize.width, (trial+1)*175)];
     
     //int scoreBar=0;
     float priorityTotal= 0;
@@ -1405,7 +1405,7 @@ float maxPublicInstallNorm;
             //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
 
             [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN))]];
-            NSLog(@"Investment cost: %f Investment score: %f", investmentInstall, investmentInstallN);
+            //NSLog(@"Investment cost: %f Investment score: %f", investmentInstall, investmentInstallN);
            // [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
             
             [scoreVisNames addObject: @"publicCostI"];
@@ -1584,7 +1584,7 @@ float maxPublicInstallNorm;
     for(int i =  0; i < scoreVisVals.count; i++){
         
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
-        NSLog(@"%@ has width %f",[scoreVisNames objectAtIndex:i], scoreWidth );
+        //NSLog(@"%@ has width %f",[scoreVisNames objectAtIndex:i], scoreWidth );
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
            componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 75, floor(scoreWidth), 22)];
@@ -1592,14 +1592,14 @@ float maxPublicInstallNorm;
         [_mapWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
     }
-    NSLog(@"\n");
+    //NSLog(@"\n");
     
-    [_dataWindow setContentSize:CGSizeMake(width+=100, (trial+1)*200)];
+    [_dataWindow setContentSize:CGSizeMake(width+=100, (trial+1)*175)];
     for(UILabel * bgCol in bgCols){
         if(_dataWindow.contentSize.height > _dataWindow.frame.size.height){
-            [bgCol setFrame: CGRectMake(bgCol.frame.origin.x, bgCol.frame.origin.y, bgCol.frame.size.width, _dataWindow.contentSize.height + 100)];
+            [bgCol setFrame: CGRectMake(bgCol.frame.origin.x, bgCol.frame.origin.y, bgCol.frame.size.width, _dataWindow.contentSize.height + 1)];
         }else {
-            [bgCol setFrame: CGRectMake(bgCol.frame.origin.x, bgCol.frame.origin.y, bgCol.frame.size.width, _dataWindow.frame.size.height + 100)];
+            [bgCol setFrame: CGRectMake(bgCol.frame.origin.x, bgCol.frame.origin.y, bgCol.frame.size.width, _dataWindow.frame.size.height + 1)];
         }
     }
     
@@ -1829,7 +1829,7 @@ float maxPublicInstallNorm;
 }
 
 - (void)leastFavoriteTapped:(UITapGestureRecognizer *)gestureRecognizer {
-    NSLog(@"Tapped least favorite");
+    //NSLog(@"Tapped least favorite");
     
     LeastFavoriteView *leastFavoriteView = (LeastFavoriteView *)gestureRecognizer.view;
     [leastFavoriteView isTouched];
