@@ -1051,6 +1051,8 @@ float maxPublicInstallNorm;
     
     for(int i = 0 ; i <_currentConcernRanking.count ; i++){
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
+        AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+        AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([tabControl.trialRuns objectAtIndex:trial]);
         
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
             float investmentInstallN = simRunNormal.publicInstallCost;
@@ -1117,8 +1119,8 @@ float maxPublicInstallNorm;
         }
         else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * 0]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19)]];
             [scoreVisNames addObject:currentVar.name];
         }
         
@@ -1560,8 +1562,8 @@ float maxPublicInstallNorm;
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (trial * 175) + 40 andColor: [UIColor blackColor] to:&efficiencyOfIntervention];
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * 1;
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * 0]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19)]];
             [scoreVisNames addObject:currentVar.name];
         }
 
