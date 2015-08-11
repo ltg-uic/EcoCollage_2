@@ -1078,7 +1078,12 @@ float maxPublicInstallNorm;
     return labelAttributes;
 }
 
-//updates the score of the public install costs to reflect new trial
+/*
+ Description: Updates the public cost bars under the Investment column
+ 
+ Input:       (int) - number of trials so far
+ Output:      Updated public Cost Bars
+ */
 - (void) updatePublicCostDisplays:(int) trial
 {
     AprilTestCostDisplay        *newCD;
@@ -1109,6 +1114,13 @@ float maxPublicInstallNorm;
     }
     
 }
+
+/*
+ Description: Updates the component (performance) score bar that is found on the _mapWindow scrollview.
+ 
+ Input:       (int) - trial to be updated
+ Output:      Updated public cost bar for the trial
+ */
 
 - (void) updateComponentScore: (int) trial{
     //AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
