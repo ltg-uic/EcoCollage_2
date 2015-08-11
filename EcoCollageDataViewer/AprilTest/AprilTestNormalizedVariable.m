@@ -25,7 +25,7 @@
 -(id) init: (NSString *) pageResults withTrialNum:(int)trialNum {
     NSArray * components = [pageResults componentsSeparatedByString:@"\n\n"];
     
-    NSLog(@"%@", components);
+    //NSLog(@"%@", components);
     _publicInstallCost = [[components objectAtIndex :0] floatValue];
     _privateInstallCost = [[components objectAtIndex:1] floatValue];
     _publicDamages = [[components objectAtIndex:2] floatValue];
@@ -40,7 +40,7 @@
     _floodedStreets = [[components objectAtIndex:12] floatValue];
     _trialNum = trialNum;
     
-    NSLog(@"%f", _infiltration);
+    //NSLog(@"%f", _infiltration);
     
     return self;
 }

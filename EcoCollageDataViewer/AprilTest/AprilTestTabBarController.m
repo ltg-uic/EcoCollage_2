@@ -463,7 +463,7 @@ NSMutableArray *slicesInfo;
     NSString *logEntry = [NSString stringWithFormat:@"%@\t%@ %@\n",self.ownProfileName,timeStamp, extra];
     
     //log the entry that will be written (debugging reasons)
-    NSLog(@"%@", logEntry);
+    //NSLog(@"%@", logEntry);
     
     return logEntry;
 }
