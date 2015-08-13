@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		211FFF3A1B7D2F3D0089B94F /* IMG_0017.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 211FFF341B7D2F3D0089B94F /* IMG_0017.jpg */; };
+		211FFF3B1B7D2F3D0089B94F /* IMG_0018.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 211FFF351B7D2F3D0089B94F /* IMG_0018.jpg */; };
+		211FFF3C1B7D2F3D0089B94F /* IMG_0019.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 211FFF361B7D2F3D0089B94F /* IMG_0019.jpg */; };
+		211FFF3D1B7D2F3D0089B94F /* IMG_0020.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 211FFF371B7D2F3D0089B94F /* IMG_0020.jpg */; };
+		211FFF3E1B7D2F3D0089B94F /* IMG_0021.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 211FFF381B7D2F3D0089B94F /* IMG_0021.jpg */; };
+		211FFF3F1B7D2F3D0089B94F /* IMG_0022.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 211FFF391B7D2F3D0089B94F /* IMG_0022.jpg */; };
 		343D5F0C1AD864FB004CF3F4 /* CVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 343D5F051AD864FB004CF3F4 /* CVWrapper.mm */; };
 		343D5F0D1AD864FB004CF3F4 /* FirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 343D5F071AD864FB004CF3F4 /* FirstViewController.m */; };
 		343D5F0E1AD864FB004CF3F4 /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 343D5F091AD864FB004CF3F4 /* SecondViewController.m */; };
@@ -63,6 +69,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		211FFF341B7D2F3D0089B94F /* IMG_0017.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_0017.jpg; path = "../../../Test Images for EcoVision/IMG_0017.jpg"; sourceTree = "<group>"; };
+		211FFF351B7D2F3D0089B94F /* IMG_0018.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_0018.jpg; path = "../../../Test Images for EcoVision/IMG_0018.jpg"; sourceTree = "<group>"; };
+		211FFF361B7D2F3D0089B94F /* IMG_0019.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_0019.jpg; path = "../../../Test Images for EcoVision/IMG_0019.jpg"; sourceTree = "<group>"; };
+		211FFF371B7D2F3D0089B94F /* IMG_0020.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_0020.jpg; path = "../../../Test Images for EcoVision/IMG_0020.jpg"; sourceTree = "<group>"; };
+		211FFF381B7D2F3D0089B94F /* IMG_0021.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_0021.jpg; path = "../../../Test Images for EcoVision/IMG_0021.jpg"; sourceTree = "<group>"; };
+		211FFF391B7D2F3D0089B94F /* IMG_0022.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_0022.jpg; path = "../../../Test Images for EcoVision/IMG_0022.jpg"; sourceTree = "<group>"; };
 		343D5F041AD864FB004CF3F4 /* CVWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CVWrapper.h; path = "NMRangeSlider-Demo/CVWrapper.h"; sourceTree = SOURCE_ROOT; };
 		343D5F051AD864FB004CF3F4 /* CVWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CVWrapper.mm; sourceTree = "<group>"; };
 		343D5F061AD864FB004CF3F4 /* FirstViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FirstViewController.h; sourceTree = "<group>"; };
@@ -213,6 +225,12 @@
 		EC36F93D15CD0B96009A1A04 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				211FFF341B7D2F3D0089B94F /* IMG_0017.jpg */,
+				211FFF351B7D2F3D0089B94F /* IMG_0018.jpg */,
+				211FFF361B7D2F3D0089B94F /* IMG_0019.jpg */,
+				211FFF371B7D2F3D0089B94F /* IMG_0020.jpg */,
+				211FFF381B7D2F3D0089B94F /* IMG_0021.jpg */,
+				211FFF391B7D2F3D0089B94F /* IMG_0022.jpg */,
 				34563E7A1AFABF6E00637562 /* IMG_0463.JPG */,
 				348C91DE1AF29463001B7C50 /* camera-1x.png */,
 				348C91E01AF29498001B7C50 /* settings-1x.png */,
@@ -352,8 +370,10 @@
 				EC4B675917F8EDAA0054842C /* slider-default-trackCrossedOver.png in Resources */,
 				EC36F96B15CD0D4F009A1A04 /* slider-metal-handle.png in Resources */,
 				EC53B5F71993875B00C81C7E /* NMRangeSlider.podspec in Resources */,
+				211FFF3D1B7D2F3D0089B94F /* IMG_0020.jpg in Resources */,
 				EC36F96C15CD0D4F009A1A04 /* slider-metal-handle@2x.png in Resources */,
 				EC36F96D15CD0D4F009A1A04 /* slider-metal-track.png in Resources */,
+				211FFF3F1B7D2F3D0089B94F /* IMG_0022.jpg in Resources */,
 				EC36F96E15CD0D4F009A1A04 /* slider-metal-track@2x.png in Resources */,
 				EC36F96F15CD0D4F009A1A04 /* slider-metal-trackBackground.png in Resources */,
 				348C91DF1AF29463001B7C50 /* camera-1x.png in Resources */,
@@ -366,9 +386,11 @@
 				34563E7B1AFABF6E00637562 /* IMG_0463.JPG in Resources */,
 				EC6CCCC1180690AE00FBE743 /* slider-default7-trackBackground@2x.png in Resources */,
 				EC36F97215CD0D53009A1A04 /* slider-default-handle-highlighted@2x.png in Resources */,
+				211FFF3B1B7D2F3D0089B94F /* IMG_0018.jpg in Resources */,
 				EC36F97315CD0D53009A1A04 /* slider-default-handle.png in Resources */,
 				EC36F97415CD0D53009A1A04 /* slider-default-handle@2x.png in Resources */,
 				EC36F97515CD0D53009A1A04 /* slider-default-track.png in Resources */,
+				211FFF3E1B7D2F3D0089B94F /* IMG_0021.jpg in Resources */,
 				EC36F97615CD0D53009A1A04 /* slider-default-track@2x.png in Resources */,
 				EC6CCCC3180690AE00FBE743 /* slider-default7-trackCrossedOver@2x.png in Resources */,
 				EC36F97715CD0D53009A1A04 /* slider-default-trackBackground.png in Resources */,
@@ -376,8 +398,10 @@
 				EC6CCCC7180690AE00FBE743 /* slider-default7-handle@2x.png in Resources */,
 				EC36F9A615CE1295009A1A04 /* README.md in Resources */,
 				EC4B675A17F8EDAA0054842C /* slider-default-trackCrossedOver@2x.png in Resources */,
+				211FFF3A1B7D2F3D0089B94F /* IMG_0017.jpg in Resources */,
 				EC6CCCC6180690AE00FBE743 /* slider-default7-handle.png in Resources */,
 				EC6CCCC5180690AE00FBE743 /* slider-default7-track@2x.png in Resources */,
+				211FFF3C1B7D2F3D0089B94F /* IMG_0019.jpg in Resources */,
 				EC6CCCC2180690AE00FBE743 /* slider-default7-trackCrossedOver.png in Resources */,
 				EC6CCCC0180690AE00FBE743 /* slider-default7-trackBackground.png in Resources */,
 			);

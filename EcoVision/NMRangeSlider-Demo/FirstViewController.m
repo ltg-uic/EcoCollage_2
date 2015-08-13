@@ -23,6 +23,7 @@ UIImage *userImage = nil;
 UIImage *threshedGlobal = nil;
 UIImage *warpedGlobal;
 UIImage *warpedGlobalMean;
+UIImage *testImg;  //test image to be warped/analyzed if no picture is taken
 bool studyNum;
 NSString *fileContents;
 NSURL *server;
@@ -48,6 +49,9 @@ char results[5000];
     
     //this is the url you need to set to the output of the program
     fileContents = [NSString stringWithContentsOfFile:filepath encoding:NSUTF8StringEncoding error:&error];
+    
+    
+    testImg = [UIImage imageNamed:@"IMG_0017.jpg"];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -117,10 +121,7 @@ char results[5000];
 
 -(int)threshy{
     if (userImage == nil) {
-        UIImage* testImg = [UIImage imageNamed:@"IMG_0463.JPG"];
         userImage = testImg;
-        //[self throwErrorAlert:@"No image to threshold! \nTake a photo of the entire board"];
-        //return 0;
     }
     
     /* thresholds image
@@ -217,7 +218,6 @@ char results[5000];
     
     // for testing
     int worked;
-    UIImage* testImg = [UIImage imageNamed:@"single31.JPG"];
     if(warpedGlobal == nil) { // also for testing
         worked = [CVWrapper analysis:testImg studyNumber: studyNumber trialNumber:trialNumber results: results];
     }
