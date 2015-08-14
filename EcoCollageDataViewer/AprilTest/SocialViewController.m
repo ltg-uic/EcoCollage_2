@@ -225,7 +225,7 @@ int dynamic_cd_width = 0;
 
     
     _BudgetSlider = [[UISlider alloc]init];
-    _BudgetSlider.maximumValue = 5000000;
+    _BudgetSlider.maximumValue = 10000000;
     _BudgetSlider.value = tabControl.budget;
     [self drawMinMaxSliderLabels];
     
@@ -298,7 +298,12 @@ int dynamic_cd_width = 0;
     lineAcrossScoreBarView.layer.borderWidth = 1.0;
     lineAcrossScoreBarView.tag = 9003;
     [scoreBarView addSubview:lineAcrossScoreBarView];
-     
+    
+    // draw vertical lines between concerns
+    for (int i = 1; i < 8; i++) {
+        [self drawLineInView:_profilesWindow withXVal:i * widthOfTitleVisualization];
+    }
+    
 }
 
 - (BOOL) textFieldShouldBeginEditing:(UITextField *)textView
@@ -364,6 +369,11 @@ int dynamic_cd_width = 0;
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateFavoriteOrLeastFavoriteChosenForProfile:)
+                                                 name:@"updateFavoriteOrLeast"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(drawNewProfileHelper)
                                                  name:@"drawNewProfile"
                                                object:nil];
@@ -415,8 +425,6 @@ int dynamic_cd_width = 0;
     
     
     [self updatePicker];
-    
-    
 }
 
 - (void)profileUpdateHelper {
@@ -457,6 +465,7 @@ int dynamic_cd_width = 0;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"profileUpdate" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updatePicker" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"usernameUpdate" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateFavoriteOrLeast" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateSingleProfile" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawNewProfile" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateBudget" object:nil];
@@ -476,9 +485,11 @@ int dynamic_cd_width = 0;
         [view removeFromSuperview];
     }
     for (UIView *view in [_profilesWindow subviews]) {
-        for (UIView *subsubview in [view subviews])
-            [subsubview removeFromSuperview];
-        [view removeFromSuperview];
+        if (view.tag != 9005) {
+            for (UIView *subsubview in [view subviews])
+                [subsubview removeFromSuperview];
+            [view removeFromSuperview];
+        }
     }
     for (UIView *view in [bottomOfMapWindow subviews]) {
         for (UIView *subsubview in [view subviews])
@@ -665,6 +676,8 @@ int dynamic_cd_width = 0;
             [interventionView updateView];
         }
     }
+    
+    [scoreBarView setContentSize:CGSizeMake((scoreBars.count + 1) / 2 * 500, scoreBarView.frame.size.height)];
 }
 
 - (void)drawScoreBarVisualizationWithProfileIndex:(int)profileIndex andScoreIndex:(int)scoreIndex andTrial:(int)trialNum{
@@ -682,8 +695,8 @@ int dynamic_cd_width = 0;
         UIView  *newScoreBarView =  [[UIView alloc]initWithFrame:CGRectMake((scoreIndex/2) * 500, (scoreIndex % 2) * 270, 500, 270)];
         UILabel *fullValueBorder =  [[UILabel alloc] initWithFrame:CGRectMake(256, 60,  228, 52)];
         UILabel *fullValue =        [[UILabel alloc] initWithFrame:CGRectMake(258, 62,  224, 48)];
-        UILabel *profileName =      [[UILabel alloc]initWithFrame:CGRectMake(256, 150, 228, 20)];
-        UILabel *trialNumber =      [[UILabel alloc]initWithFrame:CGRectMake(256, 180, 228, 20)];
+        UILabel *profileName =      [[UILabel alloc]initWithFrame:CGRectMake(256, 160, 228, 20)];
+        UILabel *trialNumber =      [[UILabel alloc]initWithFrame:CGRectMake(256, 190, 228, 20)];
         UILabel *impact =           [[UILabel alloc]init];
         UILabel *groundwater =      [[UILabel alloc]init];
         UILabel *maxFlood =         [[UILabel alloc]init];
@@ -942,7 +955,7 @@ int dynamic_cd_width = 0;
         scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"impactingMyNeighbors"];
         
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width /2];
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width /2.56)];
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Impact on my Neighbors";
@@ -970,7 +983,7 @@ int dynamic_cd_width = 0;
         scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"groundwaterInfiltration"];
         
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width/2];
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Groundwater Infiltration";
@@ -999,7 +1012,7 @@ int dynamic_cd_width = 0;
         scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleMax"];
         
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width/2];
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Maximum Flooded Area";
@@ -1028,7 +1041,7 @@ int dynamic_cd_width = 0;
         scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleTime"];
         
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width/2];
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Water Flow";
@@ -1057,7 +1070,7 @@ int dynamic_cd_width = 0;
         scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"capacity"];
         
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width/2];
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Intervention Capacity";
@@ -1086,7 +1099,7 @@ int dynamic_cd_width = 0;
         scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"efficiencyOfIntervention"];
         
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width/2];
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Efficiency of Intervention";
@@ -1115,7 +1128,7 @@ int dynamic_cd_width = 0;
         scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"privateCostD"];
         
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width/2];
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
         [scoreNumber sizeToFit];
         
 
@@ -1145,7 +1158,7 @@ int dynamic_cd_width = 0;
         scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
         labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"publicCost"];
         
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)labelForScore.frame.size.width/2];
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
         [scoreNumber sizeToFit];
         
         scoreName.text = @"Investment";
@@ -1182,6 +1195,21 @@ int dynamic_cd_width = 0;
     nameLabel.text = [NSString stringWithFormat:@"  %@",[[tabControl.profiles objectAtIndex:index]objectAtIndex:2]];
 }
 
+- (void)updateFavoriteOrLeastFavoriteChosenForProfile:(NSNotification *)note {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    if (tabControl.trialNum == trialChosen) {
+        [self updateSingleProfileForFavorites:(NSNotification *)note];
+        // draw score bars and reloads maps in _mapWindow
+        [self drawScoreBarVisualizationHelper];
+        return;
+    }
+    else if (tabControl.trialNum + 1 ==trialChosen) {
+        [self updateSingleProfileForLeastFavorites:(NSNotification *)note];
+        // draw score bars and reloads maps in _mapWindow
+        [self drawScoreBarVisualizationHelper];
+        return;
+    }
+}
 
 - (void)updateSingleProfile:(NSNotification *)note {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -1211,9 +1239,9 @@ int dynamic_cd_width = 0;
     [self drawTrialForSpecificTrial:trialChosen forProfile:index withViewIndex:index];
 }
 
-- (void)updateSingleProfileForFavorites:(NSNotification *)note {
+- (void)updateSingleProfileForLeastFavorites:(NSNotification *)note {
     // within the note is the index of the profile within tabControl.profiles
-    // get the device name for that profile and find its index in tabControl.favorites
+    // get the device name for that profile and find its index in tabControl.leastFavorites
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
@@ -1238,7 +1266,7 @@ int dynamic_cd_width = 0;
     [[_profilesWindow viewWithTag:indexOfLeastFavorite + 1] removeFromSuperview];
     
     // draw views in _usernamesWindow
-    // tag for each view is 1+(index of device name in tabControl.favorites)
+    // tag for each view is 1+(index of device name in tabControl.leastFavorites)
     UIView *usernameSubview = [[UIView alloc]init];
     usernameSubview.frame = CGRectMake(0, indexOfLeastFavorite * heightOfVisualization, _usernamesWindow.frame.size.width, heightOfVisualization);
     // tag == i + 1 since 0 tag goes to the superview
@@ -1251,10 +1279,10 @@ int dynamic_cd_width = 0;
     nameLabel.frame = CGRectMake(0, 2, widthOfUsernamesWindowWhenOpen, 40);
     nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
     if ([profile isEqual:tabControl.ownProfile]) {
-        nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:indexOfLeastFavorite] objectAtIndex:2] integerValue]];
+        nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:indexOfLeastFavorite] objectAtIndex:2] integerValue]];
     }
     else {
-        nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:indexOfLeastFavorite] objectAtIndex:2] integerValue]];
+        nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:indexOfLeastFavorite] objectAtIndex:2] integerValue]];
     }
     if(nameLabel != NULL) {
         [[_usernamesWindow viewWithTag:indexOfLeastFavorite + 1] addSubview:nameLabel];
@@ -1318,7 +1346,7 @@ int dynamic_cd_width = 0;
     [self drawTrialForSpecificTrial:trialNum forProfile:index withViewIndex:indexOfLeastFavorite];
 }
 
-- (void)updateSingleProfileForLeastFavorites:(NSNotification *)note {
+- (void)updateSingleProfileForFavorites:(NSNotification *)note {
     // within the note is the index of the profile within tabControl.profiles
     // get the device name for that profile and find its index in tabControl.favorites
     
@@ -1331,8 +1359,8 @@ int dynamic_cd_width = 0;
     int indexOfFavorite = -1;
     int trialNum = -1;
     
-    for (int i = 0; i < tabControl.leastFavorites.count; i++) {
-        if([[profile objectAtIndex:1] isEqualToString:[[tabControl.leastFavorites objectAtIndex:i]objectAtIndex:1]]) {
+    for (int i = 0; i < tabControl.favorites.count; i++) {
+        if([[profile objectAtIndex:1] isEqualToString:[[tabControl.favorites objectAtIndex:i]objectAtIndex:1]]) {
             indexOfFavorite = i;
             trialNum = [[[tabControl.favorites objectAtIndex:i] objectAtIndex:2]integerValue];
         }
@@ -1358,10 +1386,10 @@ int dynamic_cd_width = 0;
     nameLabel.frame = CGRectMake(0, 2, widthOfUsernamesWindowWhenOpen, 40);
     nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
     if ([profile isEqual:tabControl.ownProfile]) {
-        nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:indexOfFavorite] objectAtIndex:2] integerValue]];
+        nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:indexOfFavorite] objectAtIndex:2] integerValue]];
     }
     else {
-        nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:indexOfFavorite] objectAtIndex:2] integerValue]];
+        nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:indexOfFavorite] objectAtIndex:2] integerValue]];
     }
     if(nameLabel != NULL) {
         [[_usernamesWindow viewWithTag:indexOfFavorite + 1] addSubview:nameLabel];
@@ -1729,9 +1757,11 @@ int dynamic_cd_width = 0;
     
     // first, remove all current subviews from the 3 visualization scrollViews
     for (UIView *subview in [_profilesWindow subviews]) {
-        for (UIView *subsubview in [subview subviews])
-            [subsubview removeFromSuperview];
-        [subview removeFromSuperview];
+        if (subview.tag != 9005) {
+            for (UIView *subsubview in [subview subviews])
+                [subsubview removeFromSuperview];
+            [subview removeFromSuperview];
+        }
     }
     for (UIView *subview in [_usernamesWindow subviews]) {
         for (UIView *subsubview in [subview subviews])
@@ -1914,9 +1944,11 @@ int dynamic_cd_width = 0;
     
     // first, remove all current subviews from the 3 visualization scrollViews
     for (UIView *subview in [_profilesWindow subviews]) {
-        for (UIView *subsubview in [subview subviews])
-            [subsubview removeFromSuperview];
-        [subview removeFromSuperview];
+        if (subview.tag != 9005) {
+            for (UIView *subsubview in [subview subviews])
+                [subsubview removeFromSuperview];
+            [subview removeFromSuperview];
+        }
     }
     for (UIView *subview in [_usernamesWindow subviews]) {
         for (UIView *subsubview in [subview subviews])
@@ -2530,9 +2562,11 @@ int dynamic_cd_width = 0;
     
     // first, remove all current subviews from the 3 visualization scrollViews
     for (UIView *subview in [_profilesWindow subviews]) {
-        for (UIView *subsubview in [subview subviews])
-            [subsubview removeFromSuperview];
-        [subview removeFromSuperview];
+        if (subview.tag != 9005) {
+            for (UIView *subsubview in [subview subviews])
+                [subsubview removeFromSuperview];
+            [subview removeFromSuperview];
+        }
     }
     for (UIView *subview in [_usernamesWindow subviews]) {
         for (UIView *subsubview in [subview subviews])
@@ -2589,6 +2623,15 @@ int dynamic_cd_width = 0;
     
     [_usernamesWindow setContentSize: CGSizeMake(_usernamesWindow.frame.size.width, numberOfProfiles * heightOfVisualization + 10)];
     [_profilesWindow setContentSize: CGSizeMake(widthOfTitleVisualization * 8 + 10, numberOfProfiles * heightOfVisualization + 10)];
+}
+
+- (void)drawLineInView:(UIView*)view withXVal:(int)x {
+    UIView *lineBelowData = [[UIView alloc]init];
+    lineBelowData.frame = CGRectMake(x, 0, 1, view.frame.origin.y + view.frame.size.height + 10000);
+    lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    lineBelowData.layer.borderWidth = 1.0;
+    lineBelowData.tag = 9005;
+    [view addSubview:lineBelowData];
 }
 
 
@@ -2909,6 +2952,9 @@ int dynamic_cd_width = 0;
     int returnLocation = (int)sliderValueToPixels - (int)sliderValforZero;
     if (returnLocation == 0){
         return 1;
+    }
+    else if(returnLocation > 160){
+        return 160;
     }
     else
         return returnLocation;

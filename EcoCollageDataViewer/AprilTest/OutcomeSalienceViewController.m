@@ -2244,7 +2244,7 @@ float maxPublicInstallNorm;
             maxCostLabel.font = [UIFont boldSystemFontOfSize:14.0];
             maxCostLabel.text = maxBudgetLabel;
             
-            CGRect currCostFrame = CGRectMake(width + 35, 50, currentVar.widthOfVisualization, 15);
+            CGRect currCostFrame = CGRectMake(width + 25, 50, currentVar.widthOfVisualization, 15);
             investmentBudget = [[UILabel alloc] initWithFrame:currCostFrame];
             investmentBudget.font = [UIFont boldSystemFontOfSize:14.0];
             investmentBudget.text = [NSString stringWithFormat:@"Current Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:setBudget]]];

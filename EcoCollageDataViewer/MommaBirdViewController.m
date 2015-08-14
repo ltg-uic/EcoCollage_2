@@ -142,7 +142,7 @@ NSData *ping;
     
 }
 
-- (void)teardownGkSession
+- (void)teardownGKSession
 {
     self.session.available = NO;
     [self.session disconnectFromAllPeers];

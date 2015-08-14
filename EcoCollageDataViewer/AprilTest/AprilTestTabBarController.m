@@ -265,6 +265,7 @@ NSMutableArray *slicesInfo;
             if ([peerName isEqualToString:[NSString stringWithFormat:@"Momma%d", _studyNum]]) {
                 self.session.delegate = nil;
                 self.session = nil;
+                [self setupSession];
             }
             
             break;
@@ -378,6 +379,7 @@ NSMutableArray *slicesInfo;
 
 - (void)updateFavorites:(NSArray*)dataArray {
     BOOL favoriteIsAnUpdate = NO;
+    int indexOfProfile = -1;
     
     for (int i = 0; i < _favorites.count; i++) {
         NSArray *favorite = [_favorites objectAtIndex:i];
@@ -386,6 +388,19 @@ NSMutableArray *slicesInfo;
             favoriteIsAnUpdate = YES;
             [_favorites replaceObjectAtIndex:i withObject:dataArray];
             NSLog(@"Replaced favorite for device %@", [dataArray objectAtIndex:1]);
+            
+            // send notification to social view controller that there was an update to a favorite
+        }
+    }
+    
+    NSArray *profile;
+    if (favoriteIsAnUpdate) {
+        for (int i = 0; i < _profiles.count; i++) {
+            profile = [_profiles objectAtIndex:i];
+            if ([[profile objectAtIndex:1] isEqualToString:[dataArray objectAtIndex:1]]) {
+                indexOfProfile = i;
+                break;
+            }
         }
     }
     
@@ -393,10 +408,17 @@ NSMutableArray *slicesInfo;
         [_favorites addObject:dataArray];
         NSLog(@"Added favorite for device %@", [dataArray objectAtIndex:1]);
     }
+    else if(favoriteIsAnUpdate && indexOfProfile != -1) {
+        NSNumber *numIndex = [NSNumber numberWithInt:indexOfProfile];
+        NSDictionary *dict = [NSDictionary dictionaryWithObject:numIndex forKey:@"data"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateFavoriteOrLeast" object:self   userInfo:dict];
+        [self updatePieChartAtIndex:indexOfProfile forProfile:profile];
+    }
 }
 
 - (void)updateLeastFavorites:(NSArray *)dataArray {
     BOOL leastFavoriteIsAnUpdate = NO;
+    int indexOfProfile = -1;
     
     for (int i = 0; i < _leastFavorites.count; i++) {
         NSArray *leastFavorite = [_leastFavorites objectAtIndex:i];
@@ -408,9 +430,26 @@ NSMutableArray *slicesInfo;
         }
     }
     
+    NSArray *profile;
+    if (leastFavoriteIsAnUpdate) {
+        for (int i = 0; i < _profiles.count; i++) {
+            profile = [_profiles objectAtIndex:i];
+            if ([[profile objectAtIndex:1] isEqualToString:[dataArray objectAtIndex:1]]) {
+                indexOfProfile = i;
+                break;
+            }
+        }
+    }
+    
     if (!leastFavoriteIsAnUpdate) {
         [_leastFavorites addObject:dataArray];
         NSLog(@"Added least favorite for device %@", [dataArray objectAtIndex:1]);
+    }
+    else if(leastFavoriteIsAnUpdate && indexOfProfile != -1) {
+        NSNumber *numIndex = [NSNumber numberWithInt:indexOfProfile];
+        NSDictionary *dict = [NSDictionary dictionaryWithObject:numIndex forKey:@"data"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateFavoriteOrLeast" object:self   userInfo:dict];
+        [self updatePieChartAtIndex:indexOfProfile forProfile:profile];
     }
 }
 
