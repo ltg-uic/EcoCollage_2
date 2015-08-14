@@ -678,6 +678,9 @@ int dynamic_cd_width = 0;
     }
     
     [scoreBarView setContentSize:CGSizeMake((scoreBars.count + 1) / 2 * 500, scoreBarView.frame.size.height)];
+    
+    UIView *lineAcrossScoreBarView = [self.view viewWithTag:9003];
+    lineAcrossScoreBarView.frame = CGRectMake(0, lineAcrossScoreBarView.frame.origin.y, scoreBarView.contentSize.width, 1);
 }
 
 - (void)drawScoreBarVisualizationWithProfileIndex:(int)profileIndex andScoreIndex:(int)scoreIndex andTrial:(int)trialNum{
