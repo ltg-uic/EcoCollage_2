@@ -68,17 +68,17 @@ UILabel                     *lastLabelTapped;
 UIPickerView                *SortType_social;
 
 
-float thresh_social;
-float hours_social = 0;
+float                       thresh_social;
+float                       hours_social = 0;
 
-int hoursAfterStorm_social = 0;
-int trialChosen= 0;
-int smallSizeOfMapWindow = 50;
-int largeSizeOfMapWindow = 220;
-int widthOfUsernamesWindowWhenOpen;
-int widthOfTitleVisualization = 220;
-int heightOfVisualization = 200;
-int dynamic_cd_width = 0;
+int                         hoursAfterStorm_social = 0;
+int                         trialChosen= 0;
+int                         smallSizeOfMapWindow = 50;
+int                         largeSizeOfMapWindow = 220;
+int                         widthOfUsernamesWindowWhenOpen;
+int                         widthOfTitleVisualization = 220;
+int                         heightOfVisualization = 200;
+int                         dynamic_cd_width = 0;
 
 #pragma mark View Lifecycle Functions
 
@@ -224,6 +224,8 @@ int dynamic_cd_width = 0;
     bottomOfMapWindow.frame = CGRectMake(0, smallSizeOfMapWindow, _mapWindow.frame.size.width, largeSizeOfMapWindow - smallSizeOfMapWindow);
     [_mapWindow addSubview:bottomOfMapWindow];
     
+    
+    // top of mapWindow label
     mapWindowStatusLabel = [[UILabel alloc]init];
     mapWindowStatusLabel.text = @"Tap to view map(s)";
     mapWindowStatusLabel.font = [UIFont systemFontOfSize:15.0];
@@ -237,7 +239,7 @@ int dynamic_cd_width = 0;
     viewForWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
     viewForMaxWateDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
     
-    // line below data viewers
+    // line below profilesWindow and usernamesWindow
     UIView *lineBelowData = [[UIView alloc]init];
     lineBelowData.frame = CGRectMake(0, _usernamesWindow.frame.origin.y + _usernamesWindow.frame.size.height - 1, 1100, 1);
     lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
@@ -255,7 +257,7 @@ int dynamic_cd_width = 0;
     
     widthOfUsernamesWindowWhenOpen = _usernamesWindow.frame.size.width;
     
-    
+    // draws horizontal line across scoreBarView to seperate users score bars
     UIView *lineAcrossScoreBarView = [[UIView alloc]init];
     lineAcrossScoreBarView.frame = CGRectMake(0, scoreBarView.frame.size.height / 2, scoreBarView.frame.size.width, 1);
     lineAcrossScoreBarView.layer.borderColor = [UIColor lightGrayColor].CGColor;
