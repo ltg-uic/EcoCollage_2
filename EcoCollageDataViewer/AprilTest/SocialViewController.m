@@ -80,43 +80,7 @@ int widthOfTitleVisualization = 220;
 int heightOfVisualization = 200;
 int dynamic_cd_width = 0;
 
-
-
-- (IBAction)hideOrShow:(UIButton *)sender {
-    
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:1.0];
-    [UIView setAnimationBeginsFromCurrentState:YES];
-    if (_usernamesWindow.frame.origin.x < 0) { // show profile visualization
-        // show profile visualization
-        _usernamesWindow.frame = CGRectMake(0, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
-        _profilesWindow.frame = CGRectMake(283, _profilesWindow.frame.origin.y, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height);
-        [self.view viewWithTag:9002].frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
-        
-        // hide scorebar visualization
-        scoreBarView.frame = CGRectMake(1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
-        
-        [_viewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
-        //[_viewSwitchButton sizeToFit];
-    }
-    else {
-        // hide profile visualization
-        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
-        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _profilesWindow.frame.size.width, _usernamesWindow.frame.size.height);
-        [self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
-        
-        // show scorebar visualization
-        scoreBarView.frame = CGRectMake(0, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
-        
-        
-        [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
-        //[_viewSwitchButton sizeToFit];
-    }
-    [UIView commitAnimations];
-    [_viewSwitchButton sizeToFit];
-}
-
+#pragma mark View Lifecycle Functions
 
 
 - (void)viewDidLoad {
@@ -140,26 +104,26 @@ int dynamic_cd_width = 0;
     //[self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
     
     scoreBars = [[NSMutableArray alloc]init];
-
+    
     
     
     
     concernColors = [[NSMutableDictionary alloc] initWithObjects:
-                   [NSArray arrayWithObjects:
-                    [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.5],
-                    [UIColor colorWithHue:.31 saturation:.6 brightness:.91 alpha: 0.5],
-                    [UIColor colorWithHue:.32 saturation:.6 brightness:.92 alpha: 0.5],
-                    [UIColor colorWithHue:.33 saturation:.6 brightness:.93 alpha: 0.5],
-                    [UIColor colorWithHue:.35 saturation:.8 brightness:.6 alpha: 0.5],
-                    [UIColor colorWithHue:.36 saturation:.8 brightness:.61 alpha: 0.5],
-                    [UIColor colorWithHue:.37 saturation:.8 brightness:.62 alpha: 0.5],
-                    [UIColor colorWithHue:.38 saturation:.8 brightness:.63 alpha: 0.5],
-                    [UIColor colorWithHue:.4 saturation:.8 brightness:.3 alpha: 0.5],
-                    [UIColor colorWithHue:.65 saturation:.8 brightness:.6 alpha: 0.5],
-                    [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
-                    [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
-                    [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
-                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"Investment", @"publicCostI", @"publicCostM", @"publicCostD", @"Damage Reduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"Efficiency of Intervention ($/Gallon)", @"Water Flow Path", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", @"Capacity Used", nil] ];
+                     [NSArray arrayWithObjects:
+                      [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.5],
+                      [UIColor colorWithHue:.31 saturation:.6 brightness:.91 alpha: 0.5],
+                      [UIColor colorWithHue:.32 saturation:.6 brightness:.92 alpha: 0.5],
+                      [UIColor colorWithHue:.33 saturation:.6 brightness:.93 alpha: 0.5],
+                      [UIColor colorWithHue:.35 saturation:.8 brightness:.6 alpha: 0.5],
+                      [UIColor colorWithHue:.36 saturation:.8 brightness:.61 alpha: 0.5],
+                      [UIColor colorWithHue:.37 saturation:.8 brightness:.62 alpha: 0.5],
+                      [UIColor colorWithHue:.38 saturation:.8 brightness:.63 alpha: 0.5],
+                      [UIColor colorWithHue:.4 saturation:.8 brightness:.3 alpha: 0.5],
+                      [UIColor colorWithHue:.65 saturation:.8 brightness:.6 alpha: 0.5],
+                      [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
+                      [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
+                      [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
+                      [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"Investment", @"publicCostI", @"publicCostM", @"publicCostD", @"Damage Reduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"Efficiency of Intervention ($/Gallon)", @"Water Flow Path", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", @"Capacity Used", nil] ];
     
     concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
     
@@ -182,17 +146,17 @@ int dynamic_cd_width = 0;
     
     
     sliceColors =[NSArray arrayWithObjects:
-                       [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.5],
-                       [UIColor colorWithHue:.35 saturation:.8 brightness:.6 alpha: 0.5],
-                       [UIColor colorWithHue:.4 saturation:.8 brightness:.3 alpha: 0.5],
-                       [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5],
-                       [UIColor colorWithHue:.65 saturation:.8 brightness:.6 alpha: 0.5],
-                       [UIColor colorWithHue:.6 saturation:.8 brightness:.6 alpha: 0.5],
-                       [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
-                       [UIColor colorWithHue:.65 saturation:.0 brightness:.9 alpha: 0.5],
-                       [UIColor colorWithHue:.7 saturation: 0.6 brightness:.3 alpha: 0.5],
-                       [UIColor colorWithHue:.75 saturation: 0.6 brightness:.6 alpha: 0.5], nil];
-
+                  [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.5],
+                  [UIColor colorWithHue:.35 saturation:.8 brightness:.6 alpha: 0.5],
+                  [UIColor colorWithHue:.4 saturation:.8 brightness:.3 alpha: 0.5],
+                  [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5],
+                  [UIColor colorWithHue:.65 saturation:.8 brightness:.6 alpha: 0.5],
+                  [UIColor colorWithHue:.6 saturation:.8 brightness:.6 alpha: 0.5],
+                  [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
+                  [UIColor colorWithHue:.65 saturation:.0 brightness:.9 alpha: 0.5],
+                  [UIColor colorWithHue:.7 saturation: 0.6 brightness:.3 alpha: 0.5],
+                  [UIColor colorWithHue:.75 saturation: 0.6 brightness:.6 alpha: 0.5], nil];
+    
     
     _loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _loadingIndicator.center = CGPointMake(512, 300);
@@ -222,7 +186,7 @@ int dynamic_cd_width = 0;
     efficiencySocial = [[NSMutableArray alloc]init];
     imageViewsToRemove = [[NSMutableArray alloc]init];
     
-
+    
     
     _BudgetSlider = [[UISlider alloc]init];
     _BudgetSlider.maximumValue = 10000000;
@@ -233,8 +197,8 @@ int dynamic_cd_width = 0;
     _StormPlayBack.maximumValue = 48;
     [_StormPlayBack addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
     [_StormPlayBack addTarget:self
-                      action:@selector(StormHoursChosen:)
-            forControlEvents:(UIControlEventTouchUpInside | UIControlEventTouchUpOutside)];
+                       action:@selector(StormHoursChosen:)
+             forControlEvents:(UIControlEventTouchUpInside | UIControlEventTouchUpOutside)];
     [_StormPlayBack addTarget:self
                        action:@selector(changeHoursLabel)
              forControlEvents:(UIControlEventValueChanged)];
@@ -304,32 +268,6 @@ int dynamic_cd_width = 0;
         [self drawLineInView:_profilesWindow withXVal:i * widthOfTitleVisualization];
     }
     
-}
-
-- (BOOL) textFieldShouldBeginEditing:(UITextField *)textView
-{
-    if (textView == _trialPickerTextField){
-        [UIView beginAnimations:nil context:NULL];
-        [UIView setAnimationDuration:.50];
-        [UIView setAnimationDelegate:self];
-        [self.view addSubview:SortType_social];
-        [UIView commitAnimations];
-        return NO;
-    }
-    else{
-        return YES;
-    }
-}
-
-- (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
-{
-    //Code to handle the gesture
-    if ([SortType_social isHidden]){
-        NSLog(@"View Doesn't Exist");
-    }
-    else{
-        [SortType_social removeFromSuperview];
-    }
 }
 
 
@@ -427,26 +365,6 @@ int dynamic_cd_width = 0;
     [self updatePicker];
 }
 
-- (void)profileUpdateHelper {
-    [self profileUpdate];
-    [self drawScoreBarVisualizationHelper];
-}
-
-- (void)usernameUpdateHelper:(NSNotification*)note {
-    [self usernameUpdate:note];
-    [self drawScoreBarVisualizationHelper];
-}
-
-- (void)updateSingleProfileHelper:(NSNotification*)note {
-    [self updateSingleProfile:note];
-    [self drawScoreBarVisualizationHelper];
-}
-
-- (void)drawNewProfileHelper {
-    [self drawNewProfile];
-    [self drawScoreBarVisualizationHelper];
-}
-
 - (void)viewDidAppear:(BOOL)animated {
     //log switch in screens to log file
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
@@ -477,7 +395,7 @@ int dynamic_cd_width = 0;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice5tapped" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice6tapped" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice7tapped" object:nil];
-
+    
     // empty _usernamesWindow and _profilesWindow to free memory
     for (UIView *view in [_usernamesWindow subviews]) {
         for (UIView *subsubview in [view subviews])
@@ -499,6 +417,360 @@ int dynamic_cd_width = 0;
     
     [super viewWillDisappear:animated];
 }
+
+
+#pragma mark Animation Functions
+
+- (IBAction)hideOrShow:(UIButton *)sender {
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    if (_usernamesWindow.frame.origin.x < 0) { // show profile visualization
+        // show profile visualization
+        _usernamesWindow.frame = CGRectMake(0, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
+        _profilesWindow.frame = CGRectMake(283, _profilesWindow.frame.origin.y, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height);
+        [self.view viewWithTag:9002].frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
+        
+        // hide scorebar visualization
+        scoreBarView.frame = CGRectMake(1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
+        
+        [_viewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
+        //[_viewSwitchButton sizeToFit];
+    }
+    else {
+        // hide profile visualization
+        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
+        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _profilesWindow.frame.size.width, _usernamesWindow.frame.size.height);
+        [self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
+        
+        // show scorebar visualization
+        scoreBarView.frame = CGRectMake(0, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
+        
+        
+        [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
+        //[_viewSwitchButton sizeToFit];
+    }
+    [UIView commitAnimations];
+    [_viewSwitchButton sizeToFit];
+}
+
+- (void)tapOnMapWindowRecognized {
+    int sizeOfChange = largeSizeOfMapWindow - smallSizeOfMapWindow;
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    if (_mapWindow.frame.size.height < largeSizeOfMapWindow) {
+        mapWindowStatusLabel.text = @"Tap to hide map(s)";
+        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y + sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height - sizeOfChange);
+        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y + sizeOfChange, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height - sizeOfChange);
+        _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, largeSizeOfMapWindow);
+        UIView *lineView = [self.view viewWithTag:9002];
+        lineView.frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
+        
+        
+        scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y + sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height - sizeOfChange);
+    }
+    else {
+        mapWindowStatusLabel.text = @"Tap to view map(s)";
+        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y - sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height + sizeOfChange);
+        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y - sizeOfChange, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height + sizeOfChange);
+        _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, smallSizeOfMapWindow);
+        UIView *lineView = [self.view viewWithTag:9002];
+        lineView.frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
+        
+        scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y - sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height + sizeOfChange);
+    }
+    [UIView commitAnimations];
+}
+
+#pragma mark Non-Animation Tap Recognizer Functions
+
+
+- (BOOL) textFieldShouldBeginEditing:(UITextField *)textView
+{
+    if (textView == _trialPickerTextField){
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:.50];
+        [UIView setAnimationDelegate:self];
+        [self.view addSubview:SortType_social];
+        [UIView commitAnimations];
+        return NO;
+    }
+    else{
+        return YES;
+    }
+}
+
+- (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
+{
+    //Code to handle the gesture
+    if ([SortType_social isHidden]){
+        NSLog(@"View Doesn't Exist");
+    }
+    else{
+        [SortType_social removeFromSuperview];
+    }
+}
+
+
+
+- (void)impactTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
+    UILabel *scoreName;
+    
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"impactingMyNeighbors"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width /2.56)];
+        [scoreNumber sizeToFit];
+        
+        scoreName.text = @"Impact on my Neighbors";
+        scoreName.numberOfLines = 2;
+        [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
+        
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"impactingMyNeighbors"];
+}
+
+- (void)groundwaterTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
+    UILabel *scoreName;
+    
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"groundwaterInfiltration"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
+        [scoreNumber sizeToFit];
+        
+        scoreName.text = @"Groundwater Infiltration";
+        scoreName.numberOfLines = 2;
+        [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
+        
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
+        
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"groundwaterInfiltration"];
+}
+
+- (void)maxFloodTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
+    UILabel *scoreName;
+    
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleMax"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
+        [scoreNumber sizeToFit];
+        
+        scoreName.text = @"Maximum Flooded Area";
+        scoreName.numberOfLines = 2;
+        [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
+        
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleMax"];
+}
+
+- (void)waterDepthTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
+    UILabel *scoreName;
+    
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleTime"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
+        [scoreNumber sizeToFit];
+        
+        scoreName.text = @"Water Flow";
+        scoreName.numberOfLines = 2;
+        [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
+        
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleTime"];
+}
+
+- (void)interventionCapTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
+    UILabel *scoreName;
+    
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"capacity"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
+        [scoreNumber sizeToFit];
+        
+        scoreName.text = @"Intervention Capacity";
+        scoreName.numberOfLines = 2;
+        [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
+        
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"capacity"];
+}
+
+- (void)efficiencyTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
+    UILabel *scoreName;
+    
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"efficiencyOfIntervention"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
+        [scoreNumber sizeToFit];
+        
+        scoreName.text = @"Efficiency of Intervention";
+        scoreName.numberOfLines = 2;
+        [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
+        
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"efficiencyOfIntervention"];
+}
+
+- (void)damageReducTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
+    UILabel *scoreName;
+    
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"privateCostD"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
+        [scoreNumber sizeToFit];
+        
+        
+        scoreName.text = @"Damage Reduction";
+        scoreName.numberOfLines = 2;
+        [scoreName sizeToFit];
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
+        
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"privateCostD"];
+}
+
+- (void)investmentTapped {
+    UILabel *scoreNumber;
+    UILabel *labelForScore;
+    UILabel *scoreName;
+    
+    for (int i = 0; i < [scoreBars count]; i++) {
+        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
+        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"publicCost"];
+        
+        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
+        [scoreNumber sizeToFit];
+        
+        scoreName.text = @"Investment";
+        scoreName.numberOfLines = 1;
+        [scoreName sizeToFit];
+        
+        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
+        
+        
+        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
+        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
+    }
+    
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"publicCost"];
+    
+}
+
+#pragma mark Helper Functions
+
+- (void)profileUpdateHelper {
+    [self profileUpdate];
+    [self drawScoreBarVisualizationHelper];
+}
+
+- (void)usernameUpdateHelper:(NSNotification*)note {
+    [self usernameUpdate:note];
+    [self drawScoreBarVisualizationHelper];
+}
+
+- (void)updateSingleProfileHelper:(NSNotification*)note {
+    [self updateSingleProfile:note];
+    [self drawScoreBarVisualizationHelper];
+}
+
+- (void)drawNewProfileHelper {
+    [self drawNewProfile];
+    [self drawScoreBarVisualizationHelper];
+}
+
 
 - (void)drawScoreBarVisualizationHelper {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -682,6 +954,8 @@ int dynamic_cd_width = 0;
     UIView *lineAcrossScoreBarView = [self.view viewWithTag:9003];
     lineAcrossScoreBarView.frame = CGRectMake(0, lineAcrossScoreBarView.frame.origin.y, scoreBarView.contentSize.width, 1);
 }
+
+#pragma mark Score Bar Visualization Functions
 
 - (void)drawScoreBarVisualizationWithProfileIndex:(int)profileIndex andScoreIndex:(int)scoreIndex andTrial:(int)trialNum{
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -948,238 +1222,7 @@ int dynamic_cd_width = 0;
 }
 
 
-- (void)impactTapped {
-    UILabel *scoreNumber;
-    UILabel *labelForScore;
-    UILabel *scoreName;
-    
-    for (int i = 0; i < [scoreBars count]; i++) {
-        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
-        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
-        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"impactingMyNeighbors"];
-        
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width /2.56)];
-        [scoreNumber sizeToFit];
-        
-        scoreName.text = @"Impact on my Neighbors";
-        scoreName.numberOfLines = 2;
-        [scoreName sizeToFit];
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
-        
-        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        
-        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
-    }
-    
-    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"impactingMyNeighbors"];
-}
-
-- (void)groundwaterTapped {
-    UILabel *scoreNumber;
-    UILabel *labelForScore;
-    UILabel *scoreName;
-    
-    for (int i = 0; i < [scoreBars count]; i++) {
-        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
-        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
-        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"groundwaterInfiltration"];
-        
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
-        [scoreNumber sizeToFit];
-        
-        scoreName.text = @"Groundwater Infiltration";
-        scoreName.numberOfLines = 2;
-        [scoreName sizeToFit];
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
-        
-        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        
-        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
-        
-    }
-    
-    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"groundwaterInfiltration"];
-}
-
-- (void)maxFloodTapped {
-    UILabel *scoreNumber;
-    UILabel *labelForScore;
-    UILabel *scoreName;
-    
-    for (int i = 0; i < [scoreBars count]; i++) {
-        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
-        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
-        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleMax"];
-        
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
-        [scoreNumber sizeToFit];
-        
-        scoreName.text = @"Maximum Flooded Area";
-        scoreName.numberOfLines = 2;
-        [scoreName sizeToFit];
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
-        
-        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        
-        
-        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
-    }
-    
-    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleMax"];
-}
-
-- (void)waterDepthTapped {
-    UILabel *scoreNumber;
-    UILabel *labelForScore;
-    UILabel *scoreName;
-    
-    for (int i = 0; i < [scoreBars count]; i++) {
-        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
-        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
-        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleTime"];
-        
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
-        [scoreNumber sizeToFit];
-        
-        scoreName.text = @"Water Flow";
-        scoreName.numberOfLines = 2;
-        [scoreName sizeToFit];
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
-        
-        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        
-        
-        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
-    }
-    
-    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleTime"];
-}
-
-- (void)interventionCapTapped {
-    UILabel *scoreNumber;
-    UILabel *labelForScore;
-    UILabel *scoreName;
-    
-    for (int i = 0; i < [scoreBars count]; i++) {
-        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
-        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
-        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"capacity"];
-        
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
-        [scoreNumber sizeToFit];
-        
-        scoreName.text = @"Intervention Capacity";
-        scoreName.numberOfLines = 2;
-        [scoreName sizeToFit];
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
-        
-        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        
-        
-        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
-    }
-    
-    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"capacity"];
-}
-
-- (void)efficiencyTapped {
-    UILabel *scoreNumber;
-    UILabel *labelForScore;
-    UILabel *scoreName;
-    
-    for (int i = 0; i < [scoreBars count]; i++) {
-        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
-        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
-        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"efficiencyOfIntervention"];
-        
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
-        [scoreNumber sizeToFit];
-        
-        scoreName.text = @"Efficiency of Intervention";
-        scoreName.numberOfLines = 2;
-        [scoreName sizeToFit];
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
-        
-        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        
-        
-        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
-    }
-    
-    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"efficiencyOfIntervention"];
-}
-
-- (void)damageReducTapped {
-    UILabel *scoreNumber;
-    UILabel *labelForScore;
-    UILabel *scoreName;
-    
-    for (int i = 0; i < [scoreBars count]; i++) {
-        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
-        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
-        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"privateCostD"];
-        
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
-        [scoreNumber sizeToFit];
-        
-
-        scoreName.text = @"Damage Reduction";
-        scoreName.numberOfLines = 2;
-        [scoreName sizeToFit];
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
-        
-        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        
-        
-        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
-    }
-    
-    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"privateCostD"];
-}
-
-- (void)investmentTapped {
-    UILabel *scoreNumber;
-    UILabel *labelForScore;
-    UILabel *scoreName;
-    
-    for (int i = 0; i < [scoreBars count]; i++) {
-        scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
-        scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
-        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"publicCost"];
-        
-        scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
-        [scoreNumber sizeToFit];
-        
-        scoreName.text = @"Investment";
-        scoreName.numberOfLines = 1;
-        [scoreName sizeToFit];
-        
-        scoreNumber.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreNumber.frame = CGRectMake(scoreNumber.frame.origin.x, labelForScore.frame.origin.y - scoreNumber.frame.size.height, scoreNumber.frame.size.width, scoreNumber.frame.size.height);
-        
-        
-        scoreName.center = CGPointMake(labelForScore.center.x, labelForScore.center.y);
-        scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
-    }
-    
-    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"publicCost"];
-    
-}
-
+#pragma mark Username Update Functions
 
 - (void)usernameUpdate:(NSNotification *)note {
     // do nothing if favorites are currently loaded
@@ -1197,6 +1240,39 @@ int dynamic_cd_width = 0;
     UILabel *nameLabel = (UILabel*) [viewInUsernamesWindow viewWithTag:1];
     nameLabel.text = [NSString stringWithFormat:@"  %@",[[tabControl.profiles objectAtIndex:index]objectAtIndex:2]];
 }
+
+#pragma mark Profile Update Functions
+
+- (void)profileUpdate {
+    // check to see if we should load the favorites
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    if (tabControl.trialNum == trialChosen) {
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+            [self loadFavorites];
+            [_loadingIndicator stopAnimating];
+        }
+        return;
+    }
+    else if(tabControl.trialNum + 1 == trialChosen) {
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+            [self loadLeastFavorites];
+            [_loadingIndicator stopAnimating];
+        }
+        return;
+    }
+    
+    if (tabControl.trialNum == 0)
+        return;
+    
+    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+    [self loadVisualizationForNewTrial];
+    [_loadingIndicator stopAnimating];
+    
+    NSLog(@"Updated profile in Social View");
+}
+
 
 - (void)updateFavoriteOrLeastFavoriteChosenForProfile:(NSNotification *)note {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -1470,6 +1546,8 @@ int dynamic_cd_width = 0;
     [self drawTrialForSpecificTrial:trialChosen forProfile:index withViewIndex:index];
 }
 
+#pragma mark UI Picker Functions
+
 - (void)updatePicker {
     [self pickerView:SortType_social numberOfRowsInComponent:0];
     
@@ -1570,47 +1648,6 @@ int dynamic_cd_width = 0;
 }
 
 
-- (void)profileUpdate {
-    // check to see if we should load the favorites
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    if (tabControl.trialNum == trialChosen) {
-        if (tabControl.trialNum > 0) {
-            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
-            [self loadFavorites];
-            [_loadingIndicator stopAnimating];
-        }
-        return;
-    }
-    else if(tabControl.trialNum + 1 == trialChosen) {
-        if (tabControl.trialNum > 0) {
-            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
-            [self loadLeastFavorites];
-            [_loadingIndicator stopAnimating];
-        }
-        return;
-    }
-
-    if (tabControl.trialNum == 0)
-        return;
-    
-    [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
-    [self loadVisualizationForNewTrial];
-    [_loadingIndicator stopAnimating];
-
-    NSLog(@"Updated profile in Social View");
-}
-
-- (void)loadPies {
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    
-    for (int i = 0; i < [tabControl.profiles count]; i++) {
-        
-        [tabControl reloadDataForPieChartAtIndex:i];
-        [[tabControl.pieCharts objectAtIndex:i] reloadData];
-        [[_usernamesWindow viewWithTag:i + 1] addSubview:[tabControl.pieCharts objectAtIndex:i]];
-    }
-}
-
 /*
 - (void)loadFavoritePies {
     for (int i = 0; i < [personalFavorites count]; i++) {
@@ -1640,36 +1677,7 @@ int dynamic_cd_width = 0;
 }
  */
 
-- (void)tapOnMapWindowRecognized {
-    int sizeOfChange = largeSizeOfMapWindow - smallSizeOfMapWindow;
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
-    [UIView setAnimationBeginsFromCurrentState:YES];
-    if (_mapWindow.frame.size.height < largeSizeOfMapWindow) {
-        mapWindowStatusLabel.text = @"Tap to hide map(s)";
-        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y + sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height - sizeOfChange);
-        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y + sizeOfChange, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height - sizeOfChange);
-        _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, largeSizeOfMapWindow);
-        UIView *lineView = [self.view viewWithTag:9002];
-        lineView.frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
-        
-        
-        scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y + sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height - sizeOfChange);
-    }
-    else {
-        mapWindowStatusLabel.text = @"Tap to view map(s)";
-        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y - sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height + sizeOfChange);
-        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y - sizeOfChange, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height + sizeOfChange);
-        _mapWindow.frame = CGRectMake(_mapWindow.frame.origin.x, _mapWindow.frame.origin.y, _mapWindow.frame.size.width, smallSizeOfMapWindow);
-        UIView *lineView = [self.view viewWithTag:9002];
-        lineView.frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
-        
-        scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y - sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height + sizeOfChange);
-    }
-    [UIView commitAnimations];
-}
-
+#pragma mark UI View Creation Functions
 
 - (void)createSubviewsForProfilesWindow:(int) i {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -1754,6 +1762,17 @@ int dynamic_cd_width = 0;
     [[_usernamesWindow viewWithTag:i + 1] addSubview:[tabControl.pieCharts objectAtIndex:i]];
 }
 
+
+- (void)drawLineInView:(UIView*)view withXVal:(int)x {
+    UIView *lineBelowData = [[UIView alloc]init];
+    lineBelowData.frame = CGRectMake(x, 0, 1, view.frame.origin.y + view.frame.size.height + 10000);
+    lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    lineBelowData.layer.borderWidth = 1.0;
+    lineBelowData.tag = 9005;
+    [view addSubview:lineBelowData];
+}
+
+#pragma mark Favorite and Least Favorite Functions
 
 - (void)loadFavorites {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -2628,15 +2647,8 @@ int dynamic_cd_width = 0;
     [_profilesWindow setContentSize: CGSizeMake(widthOfTitleVisualization * 8 + 10, numberOfProfiles * heightOfVisualization + 10)];
 }
 
-- (void)drawLineInView:(UIView*)view withXVal:(int)x {
-    UIView *lineBelowData = [[UIView alloc]init];
-    lineBelowData.frame = CGRectMake(x, 0, 1, view.frame.origin.y + view.frame.size.height + 10000);
-    lineBelowData.layer.borderColor = [UIColor lightGrayColor].CGColor;
-    lineBelowData.layer.borderWidth = 1.0;
-    lineBelowData.tag = 9005;
-    [view addSubview:lineBelowData];
-}
 
+#pragma mark Drawing Functions
 
 - (void) drawTrialForSpecificTrial:(int)trial forProfile:(int)currentProfileIndex withViewIndex:(int)viewIndex {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -2963,35 +2975,6 @@ int dynamic_cd_width = 0;
         return returnLocation;
 }
 
-//selector method that handles a change in value when budget changes (slider under titles)
--(void)BudgetChanged{
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-
-    _BudgetSlider.value = tabControl.budget;
-    
-    [self changeBudgetLabel:tabControl.budget];
-    
-    
-    if (tabControl.trialNum == trialChosen) {
-        if (tabControl.trialNum > 0) {
-            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
-            [self loadFavorites];
-            [_loadingIndicator stopAnimating];
-        }
-    }
-    if (tabControl.trialNum + 1 == trialChosen) {
-        if (tabControl.trialNum > 0) {
-            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
-            [self loadLeastFavorites];
-            [_loadingIndicator stopAnimating];
-        }
-    }
-    else {
-        //only update all labels/bars if Static normalization is switched on
-        [self profileUpdate];
-        [self drawScoreBarVisualizationHelper];
-    }
-}
 
 // synchronizes vertical scrolling between usersnamesWindow and profilesWindow
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -3009,6 +2992,25 @@ int dynamic_cd_width = 0;
         contentOffset.x = _usernamesWindow.contentOffset.x;
         [_usernamesWindow setContentOffset:contentOffset];
     }
+}
+
+
+#pragma mark Label Drawing and Editing Functions
+
+- (void)changeHoursLabel {
+    hoursAfterStormLabel.text = [NSString stringWithFormat:@"Storm Playback: %d hours", (int)_StormPlayBack.value];
+    [hoursAfterStormLabel sizeToFit];
+    hoursAfterStormLabel.frame = CGRectMake(hoursAfterStormLabel.frame.origin.x, _StormPlayBack.frame.origin.y, hoursAfterStormLabel.frame.size.width, _StormPlayBack.frame.size.height);
+    hours_social = (int)_StormPlayBack.value;
+}
+
+- (void)changeBudgetLabel:(int)budget {
+    NSNumberFormatter *formatter = [NSNumberFormatter new];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
+    
+    budgetLabel.text = [NSString stringWithFormat:@"Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:budget]]];
+    [budgetLabel sizeToFit];
 }
 
 
@@ -3055,22 +3057,39 @@ int dynamic_cd_width = 0;
 }
 
 
-- (void)changeBudgetLabel:(int)budget {
-    NSNumberFormatter *formatter = [NSNumberFormatter new];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    [formatter setGroupingSeparator:@","];
+
+#pragma mark Storm or Budget Change Functions
+
+
+//selector method that handles a change in value when budget changes (slider under titles)
+-(void)BudgetChanged{
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
-    budgetLabel.text = [NSString stringWithFormat:@"Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:budget]]];
-    [budgetLabel sizeToFit];
+    _BudgetSlider.value = tabControl.budget;
+    
+    [self changeBudgetLabel:tabControl.budget];
+    
+    
+    if (tabControl.trialNum == trialChosen) {
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+            [self loadFavorites];
+            [_loadingIndicator stopAnimating];
+        }
+    }
+    if (tabControl.trialNum + 1 == trialChosen) {
+        if (tabControl.trialNum > 0) {
+            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
+            [self loadLeastFavorites];
+            [_loadingIndicator stopAnimating];
+        }
+    }
+    else {
+        //only update all labels/bars if Static normalization is switched on
+        [self profileUpdate];
+        [self drawScoreBarVisualizationHelper];
+    }
 }
-
-- (void)changeHoursLabel {
-    hoursAfterStormLabel.text = [NSString stringWithFormat:@"Storm Playback: %d hours", (int)_StormPlayBack.value];
-    [hoursAfterStormLabel sizeToFit];
-    hoursAfterStormLabel.frame = CGRectMake(hoursAfterStormLabel.frame.origin.x, _StormPlayBack.frame.origin.y, hoursAfterStormLabel.frame.size.width, _StormPlayBack.frame.size.height);
-    hours_social = (int)_StormPlayBack.value;
-}
-
 
 -(void)StormHoursChanged:(id)sender{
     UISlider *slider = (UISlider*)sender;
@@ -3130,11 +3149,20 @@ int dynamic_cd_width = 0;
      */
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
+#pragma mark Pie Chart Functions
+
+
+- (void)loadPies {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    for (int i = 0; i < [tabControl.profiles count]; i++) {
+        
+        [tabControl reloadDataForPieChartAtIndex:i];
+        [[tabControl.pieCharts objectAtIndex:i] reloadData];
+        [[_usernamesWindow viewWithTag:i + 1] addSubview:[tabControl.pieCharts objectAtIndex:i]];
+    }
+}
 
  - (NSUInteger)numberOfSlicesInPieChart:(XYPieChart *)pieChart
  {
@@ -3151,5 +3179,15 @@ int dynamic_cd_width = 0;
  {
  return [sliceColors objectAtIndex:(index % sliceColors.count)];
  }
+
+#pragma mark Memory Warning Functions
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
 
 @end
