@@ -856,8 +856,8 @@ int                         dynamic_cd_width = 0;
             int trialNum = [[uniqueTrialNumbers objectAtIndex:i] integerValue];
             
             UILabel *mapWindowLabel = [[UILabel alloc]init];
-            mapWindowLabel.text = [NSString stringWithFormat:@"  Trial %d", trialNum];
-            mapWindowLabel.font = [UIFont systemFontOfSize:15.0];
+            mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", trialNum];
+            mapWindowLabel.font = [UIFont systemFontOfSize:15.3];
             [mapWindowLabel sizeToFit];
             mapWindowLabel.frame = CGRectMake(200 * i, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
             [bottomOfMapWindow addSubview:mapWindowLabel];
@@ -934,8 +934,8 @@ int                         dynamic_cd_width = 0;
             int trialNum = [[uniqueTrialNumbers objectAtIndex:i] integerValue];
             
             UILabel *mapWindowLabel = [[UILabel alloc]init];
-            mapWindowLabel.text = [NSString stringWithFormat:@"  Trial %d", trialNum];
-            mapWindowLabel.font = [UIFont systemFontOfSize:15.0];
+            mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", trialNum];
+            mapWindowLabel.font = [UIFont systemFontOfSize:15.3];
             [mapWindowLabel sizeToFit];
             mapWindowLabel.frame = CGRectMake(200 * i, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
             [bottomOfMapWindow addSubview:mapWindowLabel];
@@ -951,7 +951,7 @@ int                         dynamic_cd_width = 0;
         }
     }
     
-    [scoreBarView setContentSize:CGSizeMake((scoreBars.count + 1) / 2 * 500, scoreBarView.frame.size.height)];
+    [scoreBarView setContentSize:CGSizeMake((scoreBars.count + 1) / 2 * 500, 540)];
     
     UIView *lineAcrossScoreBarView = [self.view viewWithTag:9003];
     lineAcrossScoreBarView.frame = CGRectMake(0, lineAcrossScoreBarView.frame.origin.y, scoreBarView.contentSize.width, 1);
@@ -1067,9 +1067,6 @@ int                         dynamic_cd_width = 0;
         verticalLine.tag = 9004;
         [scoreBarView addSubview:verticalLine];
     }
-    
-    int widthOfScoreBarView = (scoreIndex % 2 == 0) ? (scoreIndex / 2 * 400) : ((scoreIndex + 1) / 2 * 400);
-    [scoreBarView setContentSize:CGSizeMake(widthOfScoreBarView + 50, 540)];
 
     
     NSMutableDictionary *scoreBarDict = [scoreBars objectAtIndex:scoreIndex];
@@ -1220,7 +1217,6 @@ int                         dynamic_cd_width = 0;
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:j]];
         x+=floor(scoreWidth);
     }
-
 }
 
 
@@ -2612,8 +2608,8 @@ int                         dynamic_cd_width = 0;
     // load map visualization
     if ([tabControl.trialRuns count] > trialChosen) {
         UILabel *mapWindowLabel = [[UILabel alloc]init];
-        mapWindowLabel.text = [NSString stringWithFormat:@"  Trial %d", trialChosen];
-        mapWindowLabel.font = [UIFont systemFontOfSize:15.0];
+        mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", trialChosen];
+        mapWindowLabel.font = [UIFont systemFontOfSize:15.3];
         [mapWindowLabel sizeToFit];
         mapWindowLabel.frame = CGRectMake(0, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
         [bottomOfMapWindow addSubview:mapWindowLabel];
@@ -3154,17 +3150,6 @@ int                         dynamic_cd_width = 0;
 
 #pragma mark Pie Chart Functions
 
-
-- (void)loadPies {
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    
-    for (int i = 0; i < [tabControl.profiles count]; i++) {
-        
-        [tabControl reloadDataForPieChartAtIndex:i];
-        [[tabControl.pieCharts objectAtIndex:i] reloadData];
-        [[_usernamesWindow viewWithTag:i + 1] addSubview:[tabControl.pieCharts objectAtIndex:i]];
-    }
-}
 
  - (NSUInteger)numberOfSlicesInPieChart:(XYPieChart *)pieChart
  {
