@@ -121,7 +121,7 @@ float maxPublicInstallNorm;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     thresh = tabControl.threshVal;  //obtain thresh value from parentview controller
     
-    NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To Outcome Salience View Screen"];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To \tOutcome Salience View Screen"];
     [tabControl writeToLogFileString:logEntry];
     
     [super viewDidAppear:animated];
@@ -2633,7 +2633,7 @@ float maxPublicInstallNorm;
     
     //Log the type of sort chosen
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTrial Sort Set To Sort By %@", arrStatus[row]]];
+    NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTrial Sort Set To Sort By  \t%@", arrStatus[row]]];
     [tabControl writeToLogFileString:logEntry];
     
     //Handle the sort afterwards

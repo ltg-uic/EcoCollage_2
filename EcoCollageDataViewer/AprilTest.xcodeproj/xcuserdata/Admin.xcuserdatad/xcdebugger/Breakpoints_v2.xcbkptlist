@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "154"
             endingLineNumber = "154"
-            landmarkName = "-displayExplicitSurvey"
+            landmarkName = "-sendProfile"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -87,6 +87,10 @@ int                         dynamic_cd_width = 0;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _studyNum = tabControl.studyNum;
     
+    //AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To \tSocial View"];
+    [tabControl writeToLogFileString:logEntry];
+    
     [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
     [_viewSwitchButton sizeToFit];
     _viewSwitchButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
@@ -489,6 +493,9 @@ int                         dynamic_cd_width = 0;
     [UIView setAnimationDuration:0.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
     if (_mapWindow.frame.size.height < largeSizeOfMapWindow) {
+        AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+        NSString *logEntry = [tabControl generateLogEntryWith:@"\tShowed maps in social view"];
+        [tabControl writeToLogFileString:logEntry];
         mapWindowStatusLabel.text = @"Tap to hide map(s)";
         _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y + sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height - sizeOfChange);
         _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y + sizeOfChange, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height - sizeOfChange);
@@ -500,6 +507,9 @@ int                         dynamic_cd_width = 0;
         scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y + sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height - sizeOfChange);
     }
     else {
+        AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+        NSString *logEntry = [tabControl generateLogEntryWith:@"\tHid maps in social view"];
+        [tabControl writeToLogFileString:logEntry];
         mapWindowStatusLabel.text = @"Tap to view map(s)";
         _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y - sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height + sizeOfChange);
         _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x, _profilesWindow.frame.origin.y - sizeOfChange, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height + sizeOfChange);
@@ -583,6 +593,9 @@ int                         dynamic_cd_width = 0;
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"impactingMyNeighbors"];
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tImpact on Neighbors score inspected"];
+    [tabControl writeToLogFileString:logEntry];
 }
 
 
@@ -618,6 +631,9 @@ int                         dynamic_cd_width = 0;
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"groundwaterInfiltration"];
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tGroundwater Infiltration score inspected"];
+    [tabControl writeToLogFileString:logEntry];
 }
 
 /*
@@ -652,6 +668,9 @@ int                         dynamic_cd_width = 0;
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleMax"];
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tMaximum Flooded Area score inspected"];
+    [tabControl writeToLogFileString:logEntry];
 }
 
 /*
@@ -686,6 +705,10 @@ int                         dynamic_cd_width = 0;
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleTime"];
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tWater Flow score inspected"];
+    [tabControl writeToLogFileString:logEntry];
 }
 
 /*
@@ -720,6 +743,9 @@ int                         dynamic_cd_width = 0;
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"capacity"];
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tCapacity score inspected"];
+    [tabControl writeToLogFileString:logEntry];
 }
 
 /*
@@ -754,6 +780,9 @@ int                         dynamic_cd_width = 0;
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"efficiencyOfIntervention"];
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tDollars per Gallon score Inspected"];
+    [tabControl writeToLogFileString:logEntry];
 }
 
 /*
@@ -788,6 +817,9 @@ int                         dynamic_cd_width = 0;
         scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
     }
     
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tDamage Reduction Score inspected"];
+    [tabControl writeToLogFileString:logEntry];
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"privateCostD"];
 }
 
@@ -822,6 +854,10 @@ int                         dynamic_cd_width = 0;
     }
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"publicCost"];
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tInvestment cost inspected"];
+    [tabControl writeToLogFileString:logEntry];
     
 }
 
