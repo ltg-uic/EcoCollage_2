@@ -51,7 +51,7 @@ char results[5000];
     fileContents = [NSString stringWithContentsOfFile:filepath encoding:NSUTF8StringEncoding error:&error];
     
     
-    testImg = [UIImage imageNamed:@"IMG_0017.jpg"];
+    testImg = [UIImage imageNamed:@"IMG_0040.jpg"];
 }
 
 - (void)didReceiveMemoryWarning {
