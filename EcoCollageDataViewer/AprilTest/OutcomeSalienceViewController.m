@@ -2260,7 +2260,7 @@ float maxPublicInstallNorm;
             [StormPlaybackWater addTarget:self action:@selector(StormHoursChangedOutcome:) forControlEvents:UIControlEventValueChanged];
             [StormPlaybackWater addTarget:self
                               action:@selector(StormHoursChosenOutcome:)
-                    forControlEvents:(UIControlEventTouchUpInside | UIControlEventTouchUpOutside)];
+                    forControlEvents:UIControlEventValueChanged];
             [StormPlaybackWater setBackgroundColor:[UIColor clearColor]];
             StormPlaybackWater.minimumValue = 0.0;
             StormPlaybackWater.maximumValue = 48;
@@ -2300,7 +2300,7 @@ float maxPublicInstallNorm;
             [StormPlaybackInterv addTarget:self action:@selector(StormHoursChangedOutcome:) forControlEvents:UIControlEventValueChanged];
             [StormPlaybackInterv addTarget:self
                                action:@selector(StormHoursChosenOutcome:)
-                     forControlEvents:(UIControlEventTouchUpInside| UIControlEventTouchUpOutside)];
+                     forControlEvents:UIControlEventValueChanged];
             
             [_SliderWindow addSubview:StormPlaybackInterv];
             

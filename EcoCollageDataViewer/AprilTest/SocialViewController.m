@@ -202,7 +202,7 @@ int                         dynamic_cd_width = 0;
     [_StormPlayBack addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
     [_StormPlayBack addTarget:self
                        action:@selector(StormHoursChosen:)
-             forControlEvents:(UIControlEventTouchUpInside | UIControlEventTouchUpOutside)];
+             forControlEvents:UIControlEventValueChanged];
     [_StormPlayBack addTarget:self
                        action:@selector(changeHoursLabel)
              forControlEvents:(UIControlEventValueChanged)];
