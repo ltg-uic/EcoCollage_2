@@ -19,6 +19,8 @@
 @property (strong, nonatomic) IBOutlet UIButton *viewSwitchButton;
 
 
+@property (strong, nonatomic) NSMutableArray *currentConcernRanking;
+
 @property (strong, nonatomic) IBOutlet UITextField *trialPickerTextField;
 
 
