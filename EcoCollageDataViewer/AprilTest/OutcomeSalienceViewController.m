@@ -189,7 +189,7 @@ float maxPublicInstallNorm;
         
         if (SortType == nil){
             SortType = [[UIPickerView alloc] initWithFrame:CGRectMake(80, 120, 300, 100)];
-            SortType.backgroundColor = [UIColor lightTextColor];
+            SortType.backgroundColor = [UIColor whiteColor];
             SortType.layer.borderWidth = 1;
             [SortType setDataSource:self];
             [SortType setDelegate:self];
@@ -2631,6 +2631,38 @@ float maxPublicInstallNorm;
     sortChosen = (int)row;
     [SortType removeFromSuperview];
     
+    //highlight the textfield to reflect the concern ranking chosen
+    if ([[arrStatus objectAtIndex:row] isEqualToString:@"Investment"]){
+        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"publicCost"];
+    }
+    else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Damage Reduction"]){
+        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"privateCost"];
+    }
+    else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Efficiency of Intervention"]){
+        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"efficiencyOfIntervention"];
+    }
+    else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Intervention Capacity"]){
+        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"capacity"];
+    }
+    else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Water Flow"]){
+        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"puddleTime"];
+    }
+    else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Max Flooded Area"]){
+        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"puddleMax"];
+    }
+    else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Groundwater Infiltration"]){
+        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"groundwaterInfiltration"];
+    }
+    else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Impact on my Neighbors"]){
+        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"impactingMyNeighbors"];
+    }
+    else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Best Score"]){
+        SortPickerTextField.backgroundColor = [UIColor orangeColor];
+    }
+    else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Trial Number"]){
+        SortPickerTextField.backgroundColor = [UIColor clearColor];
+    }
+    
     //Log the type of sort chosen
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTrial Sort Set To Sort By  \t%@", arrStatus[row]]];
@@ -2656,20 +2688,51 @@ float maxPublicInstallNorm;
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view{
     
+    //create an individual frame for each element in the UIPicker and add its text
     UILabel* tView = (UILabel*)view;
     if (!tView){
         tView = [[UILabel alloc] init];
         // Setup label properties - frame, font, colors etc
-        tView.frame = CGRectMake(0, 0, 250, 30);
+        tView.frame = CGRectMake(0, 0, 250, 20);
     }
     tView.text = [arrStatus objectAtIndex:row];
-
-    return tView;
+    
+    //set the background color to be its respective concern ranking color
+    if ([tView.text isEqualToString:@"Investment"]){
+        tView.backgroundColor = [scoreColors objectForKey:@"publicCost"];
+    }
+    else if ([tView.text isEqualToString:@"Damage Reduction"]){
+        tView.backgroundColor = [scoreColors objectForKey:@"privateCost"];
+    }
+    else if ([tView.text isEqualToString:@"Efficiency of Intervention"]){
+        tView.backgroundColor = [scoreColors objectForKey:@"efficiencyOfIntervention"];
+    }
+    else if ([tView.text isEqualToString:@"Intervention Capacity"]){
+        tView.backgroundColor = [scoreColors objectForKey:@"capacity"];
+    }
+    else if ([tView.text isEqualToString:@"Water Flow"]){
+        tView.backgroundColor = [scoreColors objectForKey:@"puddleTime"];
+    }
+    else if ([tView.text isEqualToString:@"Max Flooded Area"]){
+        tView.backgroundColor = [scoreColors objectForKey:@"puddleMax"];
+    }
+    else if ([tView.text isEqualToString:@"Groundwater Infiltration"]){
+        tView.backgroundColor = [scoreColors objectForKey:@"groundwaterInfiltration"];
+    }
+    else if ([tView.text isEqualToString:@"Impact on my Neighbors"]){
+        tView.backgroundColor = [scoreColors objectForKey:@"impactingMyNeighbors"];
+    }
+    else if ([tView.text isEqualToString:@"Best Score"]){
+        tView.backgroundColor = [UIColor orangeColor];
+    }
+    else if ([tView.text isEqualToString:@"Trial Number"]){
+        tView.backgroundColor = [UIColor clearColor];
+    }
+        return tView;
 }
 
 // tell the picker the title for a given component
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-
     return [arrStatus objectAtIndex:row];
 }
 
