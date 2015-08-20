@@ -990,7 +990,7 @@ int                         dynamic_cd_width = 0;
             int trialNum = [[uniqueTrialNumbers objectAtIndex:i] integerValue];
             
             UILabel *mapWindowLabel = [[UILabel alloc]init];
-            mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", trialNum];
+            mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", trialNum + 1];
             mapWindowLabel.font = [UIFont systemFontOfSize:15.3];
             [mapWindowLabel sizeToFit];
             mapWindowLabel.frame = CGRectMake(200 * i, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
@@ -1068,7 +1068,7 @@ int                         dynamic_cd_width = 0;
             int trialNum = [[uniqueTrialNumbers objectAtIndex:i] integerValue];
             
             UILabel *mapWindowLabel = [[UILabel alloc]init];
-            mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", trialNum];
+            mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", trialNum + 1];
             mapWindowLabel.font = [UIFont systemFontOfSize:15.3];
             [mapWindowLabel sizeToFit];
             mapWindowLabel.frame = CGRectMake(200 * i, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
@@ -1519,10 +1519,10 @@ int                         dynamic_cd_width = 0;
     nameLabel.frame = CGRectMake(0, 2, widthOfUsernamesWindowWhenOpen, 40);
     nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
     if ([profile isEqual:tabControl.ownProfile]) {
-        nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:indexOfLeastFavorite] objectAtIndex:2] integerValue]];
+        nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:indexOfLeastFavorite] objectAtIndex:2] integerValue] + 1];
     }
     else {
-        nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:indexOfLeastFavorite] objectAtIndex:2] integerValue]];
+        nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:indexOfLeastFavorite] objectAtIndex:2] integerValue] + 1];
     }
     if(nameLabel != NULL) {
         [[_usernamesWindow viewWithTag:indexOfLeastFavorite + 1] addSubview:nameLabel];
@@ -1631,10 +1631,10 @@ int                         dynamic_cd_width = 0;
     nameLabel.frame = CGRectMake(0, 2, widthOfUsernamesWindowWhenOpen, 40);
     nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
     if ([profile isEqual:tabControl.ownProfile]) {
-        nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:indexOfFavorite] objectAtIndex:2] integerValue]];
+        nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:indexOfFavorite] objectAtIndex:2] integerValue] + 1];
     }
     else {
-        nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:indexOfFavorite] objectAtIndex:2] integerValue]];
+        nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:indexOfFavorite] objectAtIndex:2] integerValue] + 1];
     }
     if(nameLabel != NULL) {
         [[_usernamesWindow viewWithTag:indexOfFavorite + 1] addSubview:nameLabel];
@@ -1731,7 +1731,7 @@ int                         dynamic_cd_width = 0;
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     for (int i = 0; i < tabControl.trialNum; i++) {
-        [arrStatus_social addObject:[NSString stringWithFormat:@"Trial %d", i]];
+        [arrStatus_social addObject:[NSString stringWithFormat:@"Trial %d", i + 1]];
     }
     
     [arrStatus_social addObject:@"Favorite Trials"];
@@ -1782,7 +1782,7 @@ int                         dynamic_cd_width = 0;
         return;
     }
     else
-        _trialPickerTextField.text = [NSString stringWithFormat:@"Trial %d", row];
+        _trialPickerTextField.text = [NSString stringWithFormat:@"Trial %d", (int)row + 1];
     
     
     [SortType_social removeFromSuperview];
@@ -1824,7 +1824,7 @@ int                         dynamic_cd_width = 0;
     else if(row == tabControl.trialNum + 1 && tabControl.trialNum != 0)
         tView.text = @"Least Favorite Trials";
     else if (row != tabControl.trialNum && tabControl.trialNum != 0)
-        tView.text = [NSString stringWithFormat:@"Trial %d", (int)row];
+        tView.text = [NSString stringWithFormat:@"Trial %d", (int)row + 1];
     else
         tView.text = @"No Trials Loaded";
     // Fill the label text here
@@ -2038,10 +2038,10 @@ int                         dynamic_cd_width = 0;
         nameLabel.frame = CGRectMake(0, 2, widthOfUsernamesWindowWhenOpen, 40);
         nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
         if ([profile isEqual:tabControl.ownProfile]) {
-            nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:i] objectAtIndex:2] integerValue]];
+            nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:i] objectAtIndex:2] integerValue] + 1];
         }
         else {
-            nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:i] objectAtIndex:2] integerValue]];
+            nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.favorites objectAtIndex:i] objectAtIndex:2] integerValue] + 1];
         }
         if(nameLabel != NULL) {
             [[_usernamesWindow viewWithTag:i + 1] addSubview:nameLabel];
@@ -2233,10 +2233,10 @@ int                         dynamic_cd_width = 0;
         nameLabel.frame = CGRectMake(0, 2, widthOfUsernamesWindowWhenOpen, 40);
         nameLabel.font = [UIFont boldSystemFontOfSize:15.3];
         if ([profile isEqual:tabControl.ownProfile]) {
-            nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:2] integerValue]];
+            nameLabel.text = [NSString stringWithFormat:@"  %@ (You) - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:2] integerValue] + 1];
         }
         else {
-            nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:2] integerValue]];
+            nameLabel.text = [NSString stringWithFormat:@"  %@ - Trial %d", [profile objectAtIndex:2], (int)[[[tabControl.leastFavorites objectAtIndex:i] objectAtIndex:2] integerValue] + 1];
         }
         if(nameLabel != NULL) {
             [[_usernamesWindow viewWithTag:i + 1] addSubview:nameLabel];
@@ -2373,7 +2373,7 @@ int                         dynamic_cd_width = 0;
     // load map visualization
     if ([tabControl.trialRuns count] > trialChosen) {
         UILabel *mapWindowLabel = [[UILabel alloc]init];
-        mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", trialChosen];
+        mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", trialChosen + 1];
         mapWindowLabel.font = [UIFont systemFontOfSize:15.3];
         [mapWindowLabel sizeToFit];
         mapWindowLabel.frame = CGRectMake(0, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);

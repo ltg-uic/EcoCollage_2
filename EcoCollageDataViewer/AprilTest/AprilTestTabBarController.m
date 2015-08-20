@@ -226,7 +226,10 @@ NSMutableArray *slicesInfo;
         {
             NSLog(@"didChangeState: peer %@ available", peerName);
             
-            BOOL shouldInvite = ([peerName isEqualToString:[NSString stringWithFormat:@"Momma%d", _studyNum]]);
+            BOOL shouldInvite = FALSE;
+            
+            if ([peerName isEqualToString:[NSString stringWithFormat:@"Momma%d", _studyNum]])
+                shouldInvite = TRUE;
             
             if (shouldInvite)
             {

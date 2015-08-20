@@ -224,6 +224,7 @@ NSData *ping;
     NSString *peerName = [session displayNameForPeer:peerID];
     
     if([peerName isEqualToString:[NSString stringWithFormat:@"Baby%d", _studyNum]])
+        // if connection is established, acceptConnectionFromPeer method returns TRUE
         connectionEstablished = [session acceptConnectionFromPeer:peerID error:&error];
     else {
         [session denyConnectionFromPeer:peerID];
