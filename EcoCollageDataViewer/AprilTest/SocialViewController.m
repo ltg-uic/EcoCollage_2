@@ -173,7 +173,10 @@ int                         dynamic_cd_width = 0;
     
     arrStatus_social = [[NSMutableArray alloc] initWithObjects:@"Trial 0", @"Favorite trials", @"Least Favorite Trials", nil];
     
-    _trialPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus_social[trialChosen]];
+    if (tabControl.trialNum != 0)
+        _trialPickerTextField.text = [NSString stringWithFormat:@"%@", arrStatus_social[trialChosen]];
+    else
+        _trialPickerTextField.text = @"No Trials Loaded";
     _trialPickerTextField.delegate = self;
     
     if (SortType_social == nil){
@@ -204,7 +207,7 @@ int                         dynamic_cd_width = 0;
     [_StormPlayBack addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
     [_StormPlayBack addTarget:self
                        action:@selector(StormHoursChosen:)
-             forControlEvents:UIControlEventValueChanged];
+             forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
     [_StormPlayBack addTarget:self
                        action:@selector(changeHoursLabel)
              forControlEvents:(UIControlEventValueChanged)];
@@ -1397,8 +1400,7 @@ int                         dynamic_cd_width = 0;
         if (tabControl.trialNum > 0) {
             [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
             [self loadFavorites];
-            [_loadingIndicator stopAnimating];
-        }
+            [_loadingIndicator stopAnimating];        }
         return;
     }
     else if(tabControl.trialNum + 1 == trialChosen) {
@@ -1416,6 +1418,9 @@ int                         dynamic_cd_width = 0;
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     [self loadVisualizationForNewTrial];
     [_loadingIndicator stopAnimating];
+    
+    _trialPickerTextField.text = arrStatus_social[trialChosen];
+
     
     NSLog(@"Updated profile in Social View");
 }
@@ -1759,7 +1764,7 @@ int                         dynamic_cd_width = 0;
     [tabControl writeToLogFileString:logEntry];
     
     // Handle the selection
-    if (row == tabControl.trialNum) {
+    if (row == tabControl.trialNum && tabControl.trialNum != 0) {
         _trialPickerTextField.text = @"Favorite Trials";
         if (tabControl.trialNum > 0) {
             [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
@@ -1770,7 +1775,7 @@ int                         dynamic_cd_width = 0;
         [SortType_social removeFromSuperview];
         return;
     }
-    else if(row == tabControl.trialNum + 1) {
+    else if(row == tabControl.trialNum + 1 && tabControl.trialNum != 0) {
         _trialPickerTextField.text = @"Least Favorite Trials";
         if (tabControl.trialNum > 0) {
             [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
@@ -1781,9 +1786,12 @@ int                         dynamic_cd_width = 0;
         [SortType_social removeFromSuperview];
         return;
     }
-    else
+    else if(tabControl.trialNum != 0) {
         _trialPickerTextField.text = [NSString stringWithFormat:@"Trial %d", (int)row + 1];
-    
+    }
+    else {
+        _trialPickerTextField.text = @"No Trials Loaded";
+    }
     
     [SortType_social removeFromSuperview];
 
@@ -1826,7 +1834,7 @@ int                         dynamic_cd_width = 0;
     else if (row != tabControl.trialNum && tabControl.trialNum != 0)
         tView.text = [NSString stringWithFormat:@"Trial %d", (int)row + 1];
     else
-        tView.text = @"No Trials Loaded";
+        tView.text = @"";
     // Fill the label text here
     
     return tView;

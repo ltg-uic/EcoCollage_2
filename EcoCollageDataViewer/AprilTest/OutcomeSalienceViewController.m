@@ -75,6 +75,7 @@ int sortChosen = 0;
 int lastMoved = 0;
 int trialNum = 0;
 int trialOffset = 0;
+int numberOfTrialsLoaded = 0;
 bool passFirstThree = FALSE;
 float kOFFSET_FOR_KEYBOARD = 425.0;
 float offsetForMoving = 0.0;
@@ -126,10 +127,7 @@ float maxPublicInstallNorm;
     
     [super viewDidAppear:animated];
     
-    if (lastSortedArray == nil){
-        [self drawMultipleTrials];
-    }
-    else if ([sortedArray isEqualToArray:lastSortedArray] == NO) {
+    if (lastSortedArray == nil || [sortedArray isEqualToArray:lastSortedArray] == NO || numberOfTrialsLoaded < tabControl.trialNum){
         [self drawMultipleTrials];
     }
     
@@ -440,7 +438,8 @@ float maxPublicInstallNorm;
                             }];
     
     //determine whether or not changes were made to the concern profile
-    if (lastSortedArray != nil && [sortedArray isEqualToArray:lastSortedArray]) {
+    //also make sure same number of trials loaded before are the number of trials currently on device
+    if (lastSortedArray != nil && [sortedArray isEqualToArray:lastSortedArray] && numberOfTrialsLoaded ==tabControl.trialNum) {
         //NSLog(@"No changes made on concern profile\n");
         
         //make sure all the views are in the proper offsets they were in before leaving the view 
@@ -509,8 +508,12 @@ float maxPublicInstallNorm;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawMultipleTrials" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
     
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    
     //keep a copy of concern profile prior to leaving view
     lastSortedArray = [[NSArray alloc] initWithArray:sortedArray];
+    numberOfTrialsLoaded = tabControl.trialNum;
     
     [super viewWillDisappear:animated];
 }
@@ -2024,6 +2027,13 @@ float maxPublicInstallNorm;
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    for(UIView *subview in [_SliderWindow subviews])
+        [subview removeFromSuperview];
+    
+    for(UIView *subview in [_titleWindow subviews])
+        [subview removeFromSuperview];
+    
     
     for (int i =0; i < tabControl.trialNum; i++){
         [self drawTrial:i];

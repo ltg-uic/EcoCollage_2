@@ -266,6 +266,7 @@ NSMutableArray *slicesInfo;
             
             // if momma was disconnected, allow for reconnection
             if ([peerName isEqualToString:[NSString stringWithFormat:@"Momma%d", _studyNum]]) {
+                NSLog(@"Attemping reconnection");
                 self.session.delegate = nil;
                 self.session = nil;
                 [self setupSession];
