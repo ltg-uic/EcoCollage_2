@@ -1431,7 +1431,7 @@ float maxPublicInstallNorm;
         tx.clearButtonMode = UITextFieldViewModeWhileEditing;
         tx.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         tx.delegate = self;
-        tx.text = [NSString stringWithFormat:  @"Trial %d", simRunNormal.trialNum];
+        tx.text = [NSString stringWithFormat:  @"Trial %d", simRunNormal.trialNum + 1];
         [_mapWindow addSubview:tx];
         [_scenarioNames addObject:tx];
     } else {
@@ -2017,7 +2017,7 @@ float maxPublicInstallNorm;
         [_loadingIndicator stopAnimating];
     }
     else
-        NSLog(@"Trial %d not yet loaded", trialNum);
+        NSLog(@"Trial %d not yet loaded", trialNum + 1);
 }
 
 - (void)drawMultipleTrials {
@@ -2260,7 +2260,7 @@ float maxPublicInstallNorm;
             [StormPlaybackWater addTarget:self action:@selector(StormHoursChangedOutcome:) forControlEvents:UIControlEventValueChanged];
             [StormPlaybackWater addTarget:self
                               action:@selector(StormHoursChosenOutcome:)
-                    forControlEvents:UIControlEventValueChanged];
+                    forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
             [StormPlaybackWater setBackgroundColor:[UIColor clearColor]];
             StormPlaybackWater.minimumValue = 0.0;
             StormPlaybackWater.maximumValue = 48;
@@ -2300,7 +2300,7 @@ float maxPublicInstallNorm;
             [StormPlaybackInterv addTarget:self action:@selector(StormHoursChangedOutcome:) forControlEvents:UIControlEventValueChanged];
             [StormPlaybackInterv addTarget:self
                                action:@selector(StormHoursChosenOutcome:)
-                     forControlEvents:UIControlEventValueChanged];
+                     forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
             
             [_SliderWindow addSubview:StormPlaybackInterv];
             
