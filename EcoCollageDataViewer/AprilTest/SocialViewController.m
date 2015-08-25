@@ -2871,11 +2871,11 @@ int                         dynamic_cd_width = 0;
             [_loadingIndicator stopAnimating];
         }
     }
-    else {
-        //only update all labels/bars if Static normalization is switched on
+  
+    //updates labels and bars in social view since currently
         [self profileUpdate];
         [self drawScoreBarVisualizationHelper];
-    }
+    
 }
 
 /*
