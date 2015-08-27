@@ -32,7 +32,6 @@
 @synthesize mapWindow = _mapWindow;
 @synthesize trialPickerTextField = _trialPickerTextField;
 @synthesize viewSwitchButton = _viewSwitchButton;
-@synthesize currentConcernRanking = _currentConcernRanking;
 
 NSMutableDictionary         *concernColors;
 NSMutableDictionary         *concernNames;
@@ -109,7 +108,6 @@ int                         dynamic_cd_width = 0;
     //[self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
     
     scoreBars = [[NSMutableArray alloc]init];
-    _currentConcernRanking = [[NSMutableArray alloc]init];
     
     
     
@@ -377,8 +375,6 @@ int                         dynamic_cd_width = 0;
                                                object:nil];
     
     
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    _currentConcernRanking = tabControl.currentConcernRanking;
     
     [self updatePicker];
 }
@@ -1245,18 +1241,24 @@ int                         dynamic_cd_width = 0;
     NSArray *currentProfile = [[NSArray alloc]init];
     currentProfile = [tabControl.profiles objectAtIndex:profileIndex];
     
+    NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
+    
+    for (int j = 3; j < [currentProfile count]; j++) {
+        [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:j]] withDisplayName:[currentProfile objectAtIndex: j] withNumVar:1 withWidth:widthOfTitleVisualization withRank:10-j]];
+    }
+    
     float priorityTotal= 0;
     float scoreTotal = 0;
-    for(int j = 0; j < _currentConcernRanking.count; j++){
+    for(int j = 0; j < currentConcernRanking.count; j++){
         
-        priorityTotal += [(AprilTestVariable *)[_currentConcernRanking objectAtIndex:j] currentConcernRanking];
+        priorityTotal += [(AprilTestVariable *)[currentConcernRanking objectAtIndex:j] currentConcernRanking];
     }
     
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
     
-    NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+    NSArray *sortedArray = [currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
         NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
         NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
         if(first > second) return NSOrderedAscending;
@@ -1265,7 +1267,7 @@ int                         dynamic_cd_width = 0;
     NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
     NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
     
-    for(int j = 0 ; j < _currentConcernRanking.count ; j++){
+    for(int j = 0 ; j < currentConcernRanking.count ; j++){
         
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:j];
         
@@ -2444,11 +2446,16 @@ int                         dynamic_cd_width = 0;
     NSArray *currentProfile = [[NSArray alloc]init];
     currentProfile = [tabControl.profiles objectAtIndex:currentProfileIndex];
 
+    NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
+    
+    for (int j = 3; j < [currentProfile count]; j++) {
+        [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:j]] withDisplayName:[currentProfile objectAtIndex: j] withNumVar:1 withWidth:widthOfTitleVisualization withRank:10-j]];
+    }
     
     float priorityTotal= 0;
     float scoreTotal = 0;
-    for(int i = 0; i < _currentConcernRanking.count; i++){
-        priorityTotal += [(AprilTestVariable *)[_currentConcernRanking objectAtIndex:i] currentConcernRanking];
+    for(int i = 0; i < currentConcernRanking.count; i++){
+        priorityTotal += [(AprilTestVariable *)[currentConcernRanking objectAtIndex:i] currentConcernRanking];
     }
     
     int width = 0;
@@ -2456,7 +2463,7 @@ int                         dynamic_cd_width = 0;
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
     
-    NSArray *sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+    NSArray *sortedArray = [currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
         NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
         NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
         if(first > second) return NSOrderedAscending;
@@ -2467,7 +2474,7 @@ int                         dynamic_cd_width = 0;
     AprilTestCostDisplay *cd;
     int visibleIndex = 0;
     
-    for(int i = 0 ; i < _currentConcernRanking.count ; i++){
+    for(int i = 0 ; i < currentConcernRanking.count ; i++){
         
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
         

@@ -899,7 +899,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         NSLog(@"Number of trials loaded %lu", (unsigned long)trialRuns.count);
         
         trialNum++;
-        self.trialNumberLabel.text = [NSString stringWithFormat:@"Next Trial Number: %d", trialNum];
+        self.trialNumberLabel.text = [NSString stringWithFormat:@"Next Trial Number: %d", trialNum + 1];
         [self.trialNumberLabel sizeToFit];
     }
 }
