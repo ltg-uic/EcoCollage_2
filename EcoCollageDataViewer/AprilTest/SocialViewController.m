@@ -2478,11 +2478,11 @@ int                         dynamic_cd_width = 0;
         
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
         
-        //laziness: this is just the investment costs
+        
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
             float investmentInstall = simRun.publicInstallCost;
             float investmentMaintain = simRun.publicMaintenanceCost;
-            float investmentInstallN = simRunNormal.publicInstallCost;
+            float investmentInstallN = simRun.publicInstallCost/tabControl.budget;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             CGRect frame = CGRectMake(width + 25, 60, dynamic_cd_width, 30);
