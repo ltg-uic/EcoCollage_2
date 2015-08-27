@@ -297,7 +297,7 @@ int                         dynamic_cd_width = 0;
  Method Description: Called whenever the social view will appear. Sets up notifications.
  Inputs: None
  Outputs: None
-*/
+ */
 - (void)viewWillAppear:(BOOL)animated {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(profileUpdateHelper)
@@ -383,7 +383,7 @@ int                         dynamic_cd_width = 0;
  Method Description: Once the social view appears, draws the profiles and score bars
  Inputs: Animation boolean
  Outputs: None
-*/
+ */
 - (void)viewDidAppear:(BOOL)animated {
     //log switch in screens to log file
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
@@ -400,7 +400,7 @@ int                         dynamic_cd_width = 0;
  Method Description: Called when user switches from social view to another view. Removes notification observers. Clears the following three views: _usernamesWindow, _profilesWindow (except for vertical lines drawn in viewDidLoad), bottomOfMapWindow.
  Inputs: Animation boolean
  Outputs: None
-*/
+ */
 - (void)viewWillDisappear:(BOOL)animated {
     // remove notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"profileUpdate" object:nil];
@@ -449,7 +449,7 @@ int                         dynamic_cd_width = 0;
  Method Description: Switches between score bar visualization and profiles visualization with animation.
  Inputs: UIButton*
  Outputs: None
-*/
+ */
 - (IBAction)hideOrShow:(UIButton *)sender {
     
     [UIView beginAnimations:nil context:NULL];
@@ -489,7 +489,7 @@ int                         dynamic_cd_width = 0;
  Method Description: When user taps on _mapWindow, it should slide open or closed with an animation depending on its current state.
  Inputs: None
  Outputs: None
-*/
+ */
 - (void)tapOnMapWindowRecognized {
     int sizeOfChange = largeSizeOfMapWindow - smallSizeOfMapWindow;
     [UIView beginAnimations:nil context:NULL];
@@ -533,7 +533,7 @@ int                         dynamic_cd_width = 0;
  Method Description: Called when user taps on a UITextField (in this case, the textField is for the trial choosing. Opens up UIPicker for trial choosing.
  Inputs: UITextField*
  Outputs: BOOL
-*/
+ */
 - (BOOL) textFieldShouldBeginEditing:(UITextField *)textView
 {
     if (textView == _trialPickerTextField){
@@ -553,7 +553,7 @@ int                         dynamic_cd_width = 0;
  Method Description: Called when user taps outside of SortType_Social UIPicker. Closes Picker if it is open.
  Inputs: UITapGestureRecognizer*
  Outputs: None
-*/
+ */
 - (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
 {
     //Code to handle the gesture
@@ -570,7 +570,7 @@ int                         dynamic_cd_width = 0;
  Method Description: Called when user taps on the "Impact On My Neighbors" portion of the pie chart or score section in Score Bar Visualization. Displays score for this section and the name of the section.
  Inputs: None
  Outputs: None
-*/
+ */
 - (void)impactTapped {
     UILabel *scoreNumber;
     UILabel *labelForScore;
@@ -924,13 +924,13 @@ int                         dynamic_cd_width = 0;
         }
         for(int i = 0; i < tabControl.profiles.count; i++) {
             //if ( scoreBars.count > i && [[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"]isHidden] == NO)
-               // [[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"] removeFromSuperview];
-
+            // [[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"] removeFromSuperview];
+            
             [self drawScoreBarVisualizationWithProfileIndex:i andScoreIndex:i andTrial:trialChosen];
             if (scoreBars.count > i)
                 [scoreBarView addSubview:[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"]];
         }
-
+        
     }
     else if(tabControl.trialNum == trialChosen) {
         int scoreNum = 0;
@@ -941,7 +941,7 @@ int                         dynamic_cd_width = 0;
         }
         for(int i = 0; i < tabControl.profiles.count; i++) {
             //if ( scoreBars.count > i && [[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"]isHidden] == NO)
-               // [[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"] removeFromSuperview];
+            // [[[scoreBars objectAtIndex:i] objectForKey:@"scoreBar"] removeFromSuperview];
             
             // gotta find the favorite for this profile and get the trial number for that favorite
             int trial = -1;
@@ -1210,7 +1210,7 @@ int                         dynamic_cd_width = 0;
         verticalLine.tag = 9004;
         [scoreBarView addSubview:verticalLine];
     }
-
+    
     
     NSMutableDictionary *scoreBarDict = [scoreBars objectAtIndex:scoreIndex];
     UILabel *profileName = (UILabel*)[scoreBarDict objectForKey:@"profileName"];
@@ -1237,7 +1237,7 @@ int                         dynamic_cd_width = 0;
     AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trialNum];
     AprilTestNormalizedVariable *simRunNormal = [tabControl.trialRunsNormalized objectAtIndex:trialNum];
     
-
+    
     NSArray *currentProfile = [[NSArray alloc]init];
     currentProfile = [tabControl.profiles objectAtIndex:profileIndex];
     
@@ -1422,7 +1422,7 @@ int                         dynamic_cd_width = 0;
     [_loadingIndicator stopAnimating];
     
     _trialPickerTextField.text = arrStatus_social[trialChosen];
-
+    
     
     NSLog(@"Updated profile in Social View");
 }
@@ -1539,7 +1539,7 @@ int                         dynamic_cd_width = 0;
     [tabControl reloadDataForPieChartAtIndex:index];
     [[tabControl.pieCharts objectAtIndex:index] reloadData];
     [[_usernamesWindow viewWithTag:indexOfLeastFavorite + 1] addSubview:[tabControl.pieCharts objectAtIndex:index]];
-
+    
     UIView *profileSubview = [[UIView alloc]init];
     profileSubview.frame = CGRectMake(0, indexOfLeastFavorite * heightOfVisualization, widthOfTitleVisualization * 8, heightOfVisualization);
     // tag == i + 1 since 0 tag goes to the superview
@@ -1589,7 +1589,7 @@ int                         dynamic_cd_width = 0;
             width += widthOfTitleVisualization;
         }
     }
-
+    
     [self drawTrialForSpecificTrial:trialNum forProfile:index withViewIndex:indexOfLeastFavorite];
 }
 
@@ -1755,8 +1755,8 @@ int                         dynamic_cd_width = 0;
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
     // if the chosen trial is already loaded, return
     //if (trialChosen == row) {
-     //   [SortType_social removeFromSuperview];
-     //   return;
+    //   [SortType_social removeFromSuperview];
+    //   return;
     //}
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     trialChosen = (int)row;
@@ -1796,11 +1796,11 @@ int                         dynamic_cd_width = 0;
     }
     
     [SortType_social removeFromSuperview];
-
+    
     
     [self profileUpdate];
     [self drawScoreBarVisualizationHelper];
-
+    
 }
 
 // tell the picker how many rows are available for a given component
@@ -1931,7 +1931,7 @@ int                         dynamic_cd_width = 0;
     if(nameLabel != NULL) {
         [[_usernamesWindow viewWithTag:i + 1] addSubview:nameLabel];
     }
-
+    
     
     [tabControl reloadDataForPieChartAtIndex:i];
     [[tabControl.pieCharts objectAtIndex:i] reloadData];
@@ -2145,7 +2145,7 @@ int                         dynamic_cd_width = 0;
     
     [_profilesWindow setContentSize:CGSizeMake(widthOfTitleVisualization * 8 + 10, tabControl.favorites.count * heightOfVisualization + 10)];
     [_usernamesWindow setContentSize:CGSizeMake(_usernamesWindow.frame.size.width, tabControl.favorites.count * heightOfVisualization + 10)];
-
+    
     
 }
 
@@ -2345,12 +2345,12 @@ int                         dynamic_cd_width = 0;
 
 
 // create a new subview for each profile with frame.origin.y = i * heightOfVisualization and width = widthOfTitleVisualization * 8
-    // fill subview in _profilesWindow with profile information
-    // fill subview in _profilesWindow with trial information
+// fill subview in _profilesWindow with profile information
+// fill subview in _profilesWindow with trial information
 // create a new subview for each username with frame.origin.y = i * heightOfVisualization and width = _usernameWindow...width
-    // fill subview in _usernamesWindow with username info and profile pie chart
+// fill subview in _usernamesWindow with username info and profile pie chart
 // create a new subview for each map with frame.origin.x = i * heightOfVisualization
-    // fill subview in _mapWindow with map visualization
+// fill subview in _mapWindow with map visualization
 - (void)loadVisualizationForNewTrial {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     int numberOfProfiles = tabControl.profiles.count;
@@ -2388,11 +2388,11 @@ int                         dynamic_cd_width = 0;
         [mapWindowLabel sizeToFit];
         mapWindowLabel.frame = CGRectMake(0, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
         [bottomOfMapWindow addSubview:mapWindowLabel];
-    
+        
         AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trialChosen];
         
         [bottomOfMapWindow setContentSize:CGSizeMake(_mapWindow.frame.size.width, bottomOfMapWindow.frame.size.height)];
-    
+        
         FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(mapWindowLabel.frame.origin.x + 20, mapWindowLabel.frame.size.height + 5, 115, 125))];
         interventionView.view = [[bottomOfMapWindow subviews] objectAtIndex:0];
         [interventionView updateView];
@@ -2445,7 +2445,7 @@ int                         dynamic_cd_width = 0;
     
     NSArray *currentProfile = [[NSArray alloc]init];
     currentProfile = [tabControl.profiles objectAtIndex:currentProfileIndex];
-
+    
     NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
     
     for (int j = 3; j < [currentProfile count]; j++) {
@@ -2478,11 +2478,11 @@ int                         dynamic_cd_width = 0;
         
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
         
-        
+        //laziness: this is just the investment costs
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
             float investmentInstall = simRun.publicInstallCost;
             float investmentMaintain = simRun.publicMaintenanceCost;
-            float investmentInstallN = simRun.publicInstallCost/tabControl.budget;
+            float investmentInstallN = simRunNormal.publicInstallCost;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             CGRect frame = CGRectMake(width + 25, 60, dynamic_cd_width, 30);
@@ -2635,13 +2635,13 @@ int                         dynamic_cd_width = 0;
             
             
             AprilTestEfficiencyView *ev;
-
+            
             //NSLog(@"Drawing efficiency display for first time");
             ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, 60, 130, 150) withContent: simRun.efficiency];
             ev.trialNum = trial;
             ev.view = [_profilesWindow viewWithTag:viewIndex + 1];
             [efficiencySocial addObject:ev];
-
+            
             
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency);
@@ -2878,11 +2878,11 @@ int                         dynamic_cd_width = 0;
             [_loadingIndicator stopAnimating];
         }
     }
-  
-    //updates labels and bars in social view since currently
+    else {
+        //only update all labels/bars if Static normalization is switched on
         [self profileUpdate];
         [self drawScoreBarVisualizationHelper];
-    
+    }
 }
 
 /*
@@ -2925,7 +2925,7 @@ int                         dynamic_cd_width = 0;
     }
     else
         [self profileUpdate];
-
+    
     
     
     NSMutableString * content = [NSMutableString alloc];
@@ -2951,29 +2951,29 @@ int                         dynamic_cd_width = 0;
     [file seekToEndOfFile];
     [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];;
     //}
-     
+    
 }
 
 
 #pragma mark Pie Chart Functions
 
 // returns the number of slices that will be in a pieChart (8 slices for 8 concerns)
- - (NSUInteger)numberOfSlicesInPieChart:(XYPieChart *)pieChart
- {
-     return 8;
- }
+- (NSUInteger)numberOfSlicesInPieChart:(XYPieChart *)pieChart
+{
+    return 8;
+}
 
 
- - (CGFloat) pieChart:(XYPieChart *)pieChart valueForSliceAtIndex:(NSUInteger)index
- {
-     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-     return [[[tabControl.slices objectAtIndex:tabControl.pieIndex]objectAtIndex:index] intValue];
- }
+- (CGFloat) pieChart:(XYPieChart *)pieChart valueForSliceAtIndex:(NSUInteger)index
+{
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    return [[[tabControl.slices objectAtIndex:tabControl.pieIndex]objectAtIndex:index] intValue];
+}
 
- - (UIColor *)pieChart:(XYPieChart *)pieChart colorForSliceAtIndex:(NSUInteger)index
- {
-     return [sliceColors objectAtIndex:(index % sliceColors.count)];
- }
+- (UIColor *)pieChart:(XYPieChart *)pieChart colorForSliceAtIndex:(NSUInteger)index
+{
+    return [sliceColors objectAtIndex:(index % sliceColors.count)];
+}
 
 #pragma mark Memory Warning Functions
 
@@ -2982,7 +2982,5 @@ int                         dynamic_cd_width = 0;
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-
 
 @end
