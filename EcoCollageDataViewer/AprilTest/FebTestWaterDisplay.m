@@ -67,7 +67,7 @@ UILabel *bg;
                 //NSLog(@"waterHeight: %f, thresholdValue: %f", waterHeight, _thresholdValue);
                 ux.backgroundColor = [UIColor redColor];
             } else if ([[temp objectAtIndex:3] floatValue] < _thresholdValue && [[temp objectAtIndex:3] floatValue] != 0){
-                float saturation = [[temp objectAtIndex:3] floatValue]/40;
+                float saturation = [[temp objectAtIndex:3] floatValue]/40.0 +.1;
                 if (saturation > maxSaturation) maxSaturation = saturation;
                 ux.backgroundColor = [UIColor colorWithHue:0.7 saturation: saturation brightness:.55 alpha:1];
             } else if ([[temp objectAtIndex:3] floatValue]==0){
