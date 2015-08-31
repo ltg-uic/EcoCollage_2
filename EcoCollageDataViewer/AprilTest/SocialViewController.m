@@ -2504,7 +2504,7 @@ int                         dynamic_cd_width = 0;
                 //store update labels for further use (updating over budget when using absolute val)
                 
                 UILabel *valueLabel;
-                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-tabControl.budget)]] ] withConcernPosition:width+25 andyValue:100 andColor:[UIColor redColor] to:&valueLabel withIndex:viewIndex];
+                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget by $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-tabControl.budget)]] ] withConcernPosition:width+25 andyValue:100 andColor:[UIColor redColor] to:&valueLabel withIndex:viewIndex];
             }
             
             

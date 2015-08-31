@@ -601,7 +601,7 @@ float maxPublicInstallNorm;
         
         if (simRun.publicInstallCost > setBudget){
             UILabel *valueLabel;
-            [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-setBudget)]] ] withConcernPosition:width+25 andyValue:i *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
+            [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget by $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-setBudget)]] ] withConcernPosition:width+25 andyValue:i *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
             
             [OverBudgetLabels addObject:valueLabel];
         }
@@ -1503,7 +1503,7 @@ float maxPublicInstallNorm;
                 //store update labels for further use (updating over budget when using absolute val)
                
                 UILabel *valueLabel;
-                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget: $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-setBudget)]] ] withConcernPosition:width+25 andyValue:trial *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
+                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget by $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-setBudget)]] ] withConcernPosition:width+25 andyValue:trial *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
                 
                 [OverBudgetLabels addObject:valueLabel];
             }

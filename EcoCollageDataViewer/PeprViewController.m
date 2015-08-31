@@ -24,6 +24,7 @@
 @synthesize slices = _slices;
 @synthesize sliceColors = _sliceColors;
 @synthesize currentConcernRanking = _currentConcernRanking;
+@synthesize profileIsLocked = _profileIsLocked;
 
 
 NSMutableDictionary * segConToVar;
@@ -65,6 +66,8 @@ NSArray * importQuestions;
     //set up
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _currentConcernRanking = tabControl.currentConcernRanking;
+    
+    [_profileIsLocked setOn:NO];
     
     
     // enable touch delivery
@@ -131,6 +134,7 @@ NSArray * importQuestions;
                                              selector:@selector(sendProfile)
                                                  name:@"sendProfile"
                                                object:nil];
+
 }
 
 
@@ -568,6 +572,8 @@ NSArray * importQuestions;
 
 -(void) handleDrag: (UIPanGestureRecognizer *)sender{
     //NSLog(@"drag detected at: %@, state: %d", NSStringFromCGPoint([sender locationInView:_surveyView]), [sender state]);
+    if(_profileIsLocked.isOn) return;
+    
     bool activeTagSelected = FALSE;
     surveyItems = [[surveyItems sortedArrayUsingComparator:^NSComparisonResult(id label1, id label2) {
         if ([label1 frame].origin.y < [label2 frame].origin.y) return NSOrderedAscending;
@@ -644,6 +650,7 @@ NSArray * importQuestions;
                 
             }
         }
+        
         
         /*
          for(int i = 0; i < surveyItems.count; i++) {

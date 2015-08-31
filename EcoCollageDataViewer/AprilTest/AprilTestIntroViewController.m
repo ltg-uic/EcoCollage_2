@@ -31,6 +31,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    _appType = 0;
+    
     // Do any additional setup after loading the view.
 }
 
@@ -60,7 +62,6 @@
 - (IBAction)applicationType:(UISegmentedControl *)sender {
     _appType = (int)sender.selectedSegmentIndex;
 }
-
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
@@ -97,7 +98,6 @@
         tab.LogFile        = _logFile;  //transfer the path to the log file generated
         tab.SortingEnabled = ([self.SortingEnabled isOn]) ? YES : NO;
         tab.showProfile    = ([self.profileHidingSwitch isOn]) ? 1 : 0;
-        
         
     }
     else {
