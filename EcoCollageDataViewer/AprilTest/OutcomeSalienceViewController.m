@@ -626,7 +626,6 @@ float maxPublicInstallNorm;
 - (void)StormHoursChosenOutcome:(NSNotification *)notification {
     
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
-    
     NSMutableString * content = [NSMutableString alloc];
     /*
     for(int i = 0; i < trialRunSubViews.count; i++){
@@ -2267,10 +2266,21 @@ float maxPublicInstallNorm;
         else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
             CGRect frame = CGRectMake(width, 16, currentVar.widthOfVisualization, 40);
             StormPlaybackWater = [[UISlider alloc] initWithFrame:frame];
-            [StormPlaybackWater addTarget:self action:@selector(StormHoursChangedOutcome:) forControlEvents:UIControlEventValueChanged];
+            [StormPlaybackWater addTarget:self
+                              action:@selector(StormHoursChangedOutcome:)
+                    forControlEvents:UIControlEventValueChanged];
+            
             [StormPlaybackWater addTarget:self
                               action:@selector(StormHoursChosenOutcome:)
-                    forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
+                    forControlEvents:UIControlEventTouchUpInside];
+            
+            [StormPlaybackWater addTarget:self
+                              action:@selector(StormHoursChosenOutcome:)
+                         forControlEvents:UIControlEventTouchUpOutside];
+            [StormPlaybackWater addTarget:self
+                                   action:@selector(StormHoursChosenOutcome:)
+                         forControlEvents:UIControlEventTouchCancel];
+            
             [StormPlaybackWater setBackgroundColor:[UIColor clearColor]];
             StormPlaybackWater.minimumValue = 0.0;
             StormPlaybackWater.maximumValue = 48;
@@ -2307,10 +2317,21 @@ float maxPublicInstallNorm;
             StormPlaybackInterv.continuous = YES;
             StormPlaybackInterv.value = hours;
             [StormPlaybackInterv setBackgroundColor:[UIColor clearColor]];
-            [StormPlaybackInterv addTarget:self action:@selector(StormHoursChangedOutcome:) forControlEvents:UIControlEventValueChanged];
             [StormPlaybackInterv addTarget:self
-                               action:@selector(StormHoursChosenOutcome:)
-                     forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
+                                    action:@selector(StormHoursChangedOutcome:)
+                          forControlEvents:UIControlEventValueChanged];
+            
+            [StormPlaybackInterv addTarget:self
+                                    action:@selector(StormHoursChosenOutcome:)
+                          forControlEvents:UIControlEventTouchUpInside];
+            
+            [StormPlaybackInterv addTarget:self
+                                    action:@selector(StormHoursChosenOutcome:)
+                          forControlEvents:UIControlEventTouchUpOutside];
+            
+            [StormPlaybackInterv addTarget:self
+                                    action:@selector(StormHoursChosenOutcome:)
+                          forControlEvents:UIControlEventTouchCancel];
             
             [_SliderWindow addSubview:StormPlaybackInterv];
             
