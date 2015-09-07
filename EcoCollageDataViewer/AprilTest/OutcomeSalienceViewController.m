@@ -113,6 +113,7 @@ float maxPublicInstallNorm;
 
 @synthesize currentConcernRanking = _currentConcernRanking;
 
+#pragma mark View Lifecycle Functions
 
 // called everytime tab is switched to this view
 // necessary in case currentSession changes, i.e. is disconnected and reconnected again
@@ -233,6 +234,107 @@ float maxPublicInstallNorm;
     
 }
 
+
+- (void) viewWillAppear:(BOOL)animated{
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    _currentConcernRanking = tabControl.currentConcernRanking;
+    sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+        if(first > second) return NSOrderedAscending;
+        else return NSOrderedDescending;
+    }];
+    
+    //determine whether or not changes were made to the concern profile
+    //also make sure same number of trials loaded before are the number of trials currently on device
+    if (lastSortedArray != nil && [sortedArray isEqualToArray:lastSortedArray] && numberOfTrialsLoaded ==tabControl.trialNum) {
+        //NSLog(@"No changes made on concern profile\n");
+        
+        //make sure all the views are in the proper offsets they were in before leaving the view
+        CGPoint offset = _mapWindow.contentOffset;
+        offset.y = _dataWindow.contentOffset.y;
+        CGPoint titleOffset = _titleWindow.contentOffset;
+        titleOffset.x = _dataWindow.contentOffset.x;
+        [_titleWindow setContentOffset:titleOffset];
+        [_SliderWindow setContentOffset:titleOffset];
+        [_mapWindow setContentOffset:offset];
+        
+        
+    }
+    else{
+        
+        for (UIView *view in [_titleWindow subviews]){
+            [view removeFromSuperview];
+        }
+        for( UIView *view in [_dataWindow subviews]){
+            [view removeFromSuperview];
+        }
+        for (UIView *view in [_mapWindow subviews]){
+            [view removeFromSuperview];
+        }
+        for (UIView *view in [_SliderWindow subviews]){
+            [view removeFromSuperview];
+        }
+        
+        [concernRankingTitles removeAllObjects];
+    }
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(drawSingleTrial)
+                                                 name:@"drawSingleTrial"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(drawMultipleTrials)
+                                                 name:@"drawMultipleTrials"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(budgetUpdated)
+                                                 name:@"updateBudget"
+                                               object:nil];
+    
+    
+    [super viewWillAppear:animated];
+}
+
+- (void) viewWillDisappear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawSingleTrial" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawMultipleTrials" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
+    
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    
+    //keep a copy of concern profile prior to leaving view
+    lastSortedArray = [[NSArray alloc] initWithArray:sortedArray];
+    numberOfTrialsLoaded = tabControl.trialNum;
+    
+    [super viewWillDisappear:animated];
+}
+
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark UITextField Functions
+
 /*
     Description: Handles keyboard input from Texfields and determines when textfield displaying
                  Sort categories is touched in order to reveal UIPickerView of possible sort types
@@ -275,6 +377,99 @@ float maxPublicInstallNorm;
         }
     }
 }
+
+
+-(void)keyboardWillShow {
+    // Animate the current view out of the way
+    NSMutableString *content = [[NSMutableString alloc] init];
+    [content appendString: @"Before new naming:\n"];
+    for(int i =0; i < _scenarioNames.count; i++){
+        UITextField *tx =[_scenarioNames objectAtIndex:i];
+        
+        [content appendString: tx.text];
+        [content appendString:@"\n"];
+    }
+    
+    [content appendString:@"\n"];
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
+    
+    //create file if it doesn't exist
+    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
+        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
+    
+    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
+    [file seekToEndOfFile];
+    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+    [file closeFile];
+    
+    
+    for (int i = 0; i < _scenarioNames.count; i++){
+        UITextField *tx = [_scenarioNames objectAtIndex:i];
+        if ( [tx isEditing]){
+            if ((tx.frame.origin.y - _mapWindow.contentOffset.y) > (self.view.frame.size.height - 450)){
+                lastMoved = 1;
+                edittingTX = tx;
+                [self setViewMovedUp:YES];
+            }
+        }
+    }
+    
+}
+
+-(void)keyboardWillHide {
+    NSMutableString *content = [[NSMutableString alloc] init];
+    [content appendString: @"After naming:\n"];
+    for(int i =0; i < _scenarioNames.count; i++){
+        UITextField *tx =[_scenarioNames objectAtIndex:i];
+        
+        [content appendString: tx.text];
+        [content appendString:@"\n"];
+    }
+    [content appendString:@"\n"];
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
+    
+    //create file if it doesn't exist
+    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
+        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
+    
+    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
+    [file seekToEndOfFile];
+    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+    [file closeFile];
+    if(lastMoved == 1) [self setViewMovedUp:NO];
+    lastMoved = 0;
+    
+    
+}
+
+//method to move the view up/down whenever the keyboard is shown/dismissed
+-(void)setViewMovedUp:(BOOL)movedUp{
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:0.3]; // if you want to slide up the view
+    
+    CGPoint rect = self.mapWindow.contentOffset;
+    CGPoint rect2 = self.dataWindow.contentOffset;
+    
+    if (movedUp){
+        originalOffset = rect.y;
+        rect.y += (edittingTX.frame.origin.y + _mapWindow.contentOffset.y) - 225;
+        rect2.y = rect.y;
+    }
+    else{
+        // revert back to the normal state.
+        rect.y = originalOffset;
+        rect2.y = originalOffset;
+    }
+    self.mapWindow.contentOffset = rect;
+    self.dataWindow.contentOffset = rect2;
+    
+    [UIView commitAnimations];
+}
+
+
+#pragma mark Getter Functions
 
 
 /*
@@ -348,6 +543,8 @@ float maxPublicInstallNorm;
     return visibleRect;
 }
 
+#pragma mark Logging Functions
+
 /*
  Description: Logs the visible trials and variables after a successful scroll
  
@@ -400,6 +597,8 @@ float maxPublicInstallNorm;
     [tabControl writeToLogFileString:resultingEntry];
 }
 
+#pragma mark Gesture Recognizers
+
 - (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
 {
     //Code to handle the gesture
@@ -427,102 +626,6 @@ float maxPublicInstallNorm;
     [_loadingIndicator stopAnimating];
 }
 
-- (void) viewWillAppear:(BOOL)animated{
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    _currentConcernRanking = tabControl.currentConcernRanking;
-    sortedArray = [_currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-                            NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
-                            NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
-                            if(first > second) return NSOrderedAscending;
-                            else return NSOrderedDescending;
-                            }];
-    
-    //determine whether or not changes were made to the concern profile
-    //also make sure same number of trials loaded before are the number of trials currently on device
-    if (lastSortedArray != nil && [sortedArray isEqualToArray:lastSortedArray] && numberOfTrialsLoaded ==tabControl.trialNum) {
-        //NSLog(@"No changes made on concern profile\n");
-        
-        //make sure all the views are in the proper offsets they were in before leaving the view 
-        CGPoint offset = _mapWindow.contentOffset;
-        offset.y = _dataWindow.contentOffset.y;
-        CGPoint titleOffset = _titleWindow.contentOffset;
-        titleOffset.x = _dataWindow.contentOffset.x;
-        [_titleWindow setContentOffset:titleOffset];
-        [_SliderWindow setContentOffset:titleOffset];
-        [_mapWindow setContentOffset:offset];
-
-        
-    }
-    else{
-        
-        for (UIView *view in [_titleWindow subviews]){
-            [view removeFromSuperview];
-        }
-        for( UIView *view in [_dataWindow subviews]){
-            [view removeFromSuperview];
-        }
-        for (UIView *view in [_mapWindow subviews]){
-            [view removeFromSuperview];
-        }
-        for (UIView *view in [_SliderWindow subviews]){
-            [view removeFromSuperview];
-        }
-        
-        [concernRankingTitles removeAllObjects];
-    }
-    
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide)
-                                                 name:UIKeyboardWillHideNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(drawSingleTrial)
-                                                 name:@"drawSingleTrial"
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(drawMultipleTrials)
-                                                 name:@"drawMultipleTrials"
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(budgetUpdated)
-                                                 name:@"updateBudget"
-                                               object:nil];
-    
-  
-    [super viewWillAppear:animated];
-}
-
-- (void) viewWillDisappear:(BOOL)animated {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawSingleTrial" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawMultipleTrials" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
-    
-    
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    
-    //keep a copy of concern profile prior to leaving view
-    lastSortedArray = [[NSArray alloc] initWithArray:sortedArray];
-    numberOfTrialsLoaded = tabControl.trialNum;
-    
-    [super viewWillDisappear:animated];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 /*
 - (IBAction)pullNextRun:(id)sender {
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
@@ -530,31 +633,7 @@ float maxPublicInstallNorm;
 }*/
 
 
-/*
- Description: Handles switching from viewing static and dynamic normalized data
- 
- Input:       Touch on UISwitch
- Output:      Refreshed data on ViewController
- */
-- (IBAction)NormTypeSwitched:(UISwitch *)sender {
-    /**
-      * Make Sure to update all displays/labels to reflect the change 
-      */
-    
-    if ([sender isOn]){
-        //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        [self removeBudgetLabels];
-        [self normalizeAllandUpdateDynamically];
-        [self handleSort:sortChosen];
-    }
-    else{
-        //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Static" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
-        [self removeBudgetLabels];
-        [self normalizaAllandUpdateStatically];
-        [self handleSort:sortChosen];
-    }
-  
-}
+#pragma mark Budget Updates
 
 /*
  Description: Removes "Over Budget: " labels found underneath Installation Cost (iff installation cost is greater than set budget)
@@ -608,6 +687,69 @@ float maxPublicInstallNorm;
     }
 }
 
+/*
+ Description: Updates the set budget on local Budget Slider to that of a value
+ passed by Momma Bird. Also takes care of all the necessary updates
+ and function calls due to the change in set budget (new over budget labels, etc..)
+ 
+ Input:       none
+ Output:      Updated ViewController configuration
+ (float) newSetBudget
+ */
+
+- (void)budgetUpdated {
+    // method called when budget is updated from Momma
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    [self updateBudgetSliderTo:tabControl.budget];
+    
+    //update the width of the public install cost bars (make sure it isn't 0)
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
+    
+    //only update all labels/bars if Static normalization is switched on
+    if (!_DynamicNormalization.isOn){
+        [self normalizaAllandUpdateStatically];
+    }
+}
+
+//selector method that handles a change in value when budget changes (slider under titles)
+-(void)BudgetChanged:(id)sender
+{
+    UISlider *slider = (UISlider*)sender;
+    int value = slider.value;
+    //-- Do further actions
+    
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
+    
+    value = 1000.0 * floor((value/1000.0)+0.5);
+    
+    investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
+    setBudget = value;
+    
+    //update the width of the public install cost bars (make sure it isn't 0)
+    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
+    
+    //only update all labels/bars if Static normalization is switched on
+    if (!_DynamicNormalization.isOn){
+        [self normalizaAllandUpdateStatically];
+    }
+}
+
+//method that updates Budget slider with animation and writes the new value to a label WITHOUT making a change to the max set by the User
+-(void) updateBudgetSliderTo: (float) newValue
+{
+    [BudgetSlider setValue:newValue animated:YES];
+    setBudget = newValue;
+    
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
+    
+    investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:newValue]]];
+}
+
+#pragma mark Storm Hour Updates
 
 -(void)StormHoursChangedOutcome:(id)sender{
     UISlider *slider = (UISlider*)sender;
@@ -706,6 +848,179 @@ float maxPublicInstallNorm;
 }
 
 
+#pragma mark UISlider Functions
+
+
+
+//will draw sliders on a scrollview right below the titles of concern rankings
+-(void) drawSliders{
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
+    
+    int width = 0;
+    int visibleIndex = 0;
+    for(int i = 0 ; i <_currentConcernRanking.count ; i++){
+        
+        AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
+        UILabel * currentVarLabel = [[UILabel alloc] init];
+        currentVarLabel.backgroundColor = [scoreColors objectForKey:currentVar.name];
+        currentVarLabel.frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 70);
+        currentVarLabel.font = [UIFont boldSystemFontOfSize:15.3];
+        
+        
+        if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
+            CGRect frame  = CGRectMake(width + 25, 16, 160, 40);
+            BudgetSlider = [[UISlider alloc] initWithFrame:frame];
+            [BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
+            [BudgetSlider setBackgroundColor:[UIColor clearColor]];
+            BudgetSlider.minimumValue = min_budget_limit;
+            BudgetSlider.maximumValue = max_budget_limit;
+            BudgetSlider.continuous = YES;
+            [BudgetSlider setValue:setBudget animated:YES];
+            //[_SliderWindow addSubview:BudgetSlider];
+            
+            //draw min/max cost labels under slider
+            CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/3, 15);
+            UILabel *minCostLabel = [[UILabel alloc] initWithFrame:minCostFrame];
+            minCostLabel.font =  [UIFont boldSystemFontOfSize:14.0];
+            minCostLabel.text =  minBudgetLabel;
+            
+            CGRect maxCostFrame = CGRectMake(width + 160, 5, currentVar.widthOfVisualization/3, 15);
+            UILabel *maxCostLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
+            maxCostLabel.font = [UIFont boldSystemFontOfSize:14.0];
+            maxCostLabel.text = maxBudgetLabel;
+            
+            CGRect currCostFrame = CGRectMake(width + 25, 50, currentVar.widthOfVisualization, 15);
+            investmentBudget = [[UILabel alloc] initWithFrame:currCostFrame];
+            investmentBudget.font = [UIFont boldSystemFontOfSize:14.0];
+            investmentBudget.text = [NSString stringWithFormat:@"Current Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:setBudget]]];
+            
+            [_SliderWindow addSubview:minCostLabel];
+            [_SliderWindow addSubview:maxCostLabel];
+            [_SliderWindow addSubview:investmentBudget];
+            
+        }
+        else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+            CGRect frame = CGRectMake(width, 16, currentVar.widthOfVisualization, 40);
+            StormPlaybackWater = [[UISlider alloc] initWithFrame:frame];
+            [StormPlaybackWater addTarget:self
+                                   action:@selector(StormHoursChangedOutcome:)
+                         forControlEvents:UIControlEventValueChanged];
+            
+            [StormPlaybackWater addTarget:self
+                                   action:@selector(StormHoursChosenOutcome:)
+                         forControlEvents:UIControlEventTouchUpInside];
+            
+            [StormPlaybackWater addTarget:self
+                                   action:@selector(StormHoursChosenOutcome:)
+                         forControlEvents:UIControlEventTouchUpOutside];
+            [StormPlaybackWater addTarget:self
+                                   action:@selector(StormHoursChosenOutcome:)
+                         forControlEvents:UIControlEventTouchCancel];
+            
+            [StormPlaybackWater setBackgroundColor:[UIColor clearColor]];
+            StormPlaybackWater.minimumValue = 0.0;
+            StormPlaybackWater.maximumValue = 48;
+            StormPlaybackWater.continuous = YES;
+            StormPlaybackWater.value = hours;
+            
+            [_SliderWindow addSubview:StormPlaybackWater];
+            
+            //draw labels for range of hours
+            CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/5, 15);
+            UILabel *minHoursLabel = [[UILabel alloc] initWithFrame:minCostFrame];
+            minHoursLabel.font = [UIFont boldSystemFontOfSize:14];
+            minHoursLabel.text = [NSString stringWithFormat:@" 0 hrs"];
+            
+            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 5, currentVar.widthOfVisualization/4, 15);
+            UILabel *maxHoursLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
+            maxHoursLabel.font = [UIFont boldSystemFontOfSize:14];
+            maxHoursLabel.text = [NSString stringWithFormat:@"48 hrs"];
+            
+            CGRect currCostFrame = CGRectMake(width + 25, 50, currentVar.widthOfVisualization, 15);
+            WaterDepthOverStorm = [[UILabel alloc] initWithFrame:currCostFrame];
+            WaterDepthOverStorm.font = [UIFont boldSystemFontOfSize:14.0];
+            WaterDepthOverStorm.text = [NSString stringWithFormat:@"Storm Playback: %@ hours", [NSNumber numberWithInt:hours]];
+            
+            [_SliderWindow addSubview:minHoursLabel];
+            [_SliderWindow addSubview:maxHoursLabel];
+            [_SliderWindow addSubview:WaterDepthOverStorm];
+        }
+        else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
+            CGRect frame = CGRectMake(width, 16, currentVar.widthOfVisualization, 40);
+            StormPlaybackInterv = [[UISlider alloc] initWithFrame:frame];
+            StormPlaybackInterv.minimumValue = 0.0;
+            StormPlaybackInterv.maximumValue = 48;
+            StormPlaybackInterv.continuous = YES;
+            StormPlaybackInterv.value = hours;
+            [StormPlaybackInterv setBackgroundColor:[UIColor clearColor]];
+            [StormPlaybackInterv addTarget:self
+                                    action:@selector(StormHoursChangedOutcome:)
+                          forControlEvents:UIControlEventValueChanged];
+            
+            [StormPlaybackInterv addTarget:self
+                                    action:@selector(StormHoursChosenOutcome:)
+                          forControlEvents:UIControlEventTouchUpInside];
+            
+            [StormPlaybackInterv addTarget:self
+                                    action:@selector(StormHoursChosenOutcome:)
+                          forControlEvents:UIControlEventTouchUpOutside];
+            
+            [StormPlaybackInterv addTarget:self
+                                    action:@selector(StormHoursChosenOutcome:)
+                          forControlEvents:UIControlEventTouchCancel];
+            
+            [_SliderWindow addSubview:StormPlaybackInterv];
+            
+            //draw labels for range of hours
+            CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/5, 15);
+            UILabel *minHoursLabel = [[UILabel alloc] initWithFrame:minCostFrame];
+            minHoursLabel.font = [UIFont boldSystemFontOfSize:14];
+            minHoursLabel.text = [NSString stringWithFormat:@" 0 hrs"];
+            
+            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 5, currentVar.widthOfVisualization/4, 15);
+            UILabel *maxHoursLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
+            maxHoursLabel.font = [UIFont boldSystemFontOfSize:14];
+            maxHoursLabel.text = [NSString stringWithFormat:@"48 hrs"];
+            
+            CGRect currCostFrame = CGRectMake(width + 25, 50, currentVar.widthOfVisualization, 15);
+            interventionCap = [[UILabel alloc] initWithFrame:currCostFrame];
+            interventionCap.font = [UIFont boldSystemFontOfSize:14.0];
+            interventionCap.text = [NSString stringWithFormat:@"Storm Playback: %@ hours", [NSNumber numberWithInt:hours]];
+            
+            [_SliderWindow addSubview:minHoursLabel];
+            [_SliderWindow addSubview:maxHoursLabel];
+            [_SliderWindow addSubview:interventionCap];
+        }
+        
+        else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
+            
+        } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
+            
+        } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
+            
+        } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
+            
+        } else if( [currentVar.name compare:@"groundwaterInfiltration"] == NSOrderedSame){
+            
+        } else if( [currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+            
+            
+        }
+        else {
+            currentVarLabel = NULL;
+        }
+        if(currentVar.widthOfVisualization != 0) visibleIndex++;
+        
+        if(currentVarLabel != NULL){
+            [_SliderWindow addSubview:currentVarLabel];
+        }
+        width+= currentVar.widthOfVisualization;
+    }
+    
+}
+
 
 /*
  Description: Gets width (pt) relative to the start of a UISlider and a particular value
@@ -741,66 +1056,33 @@ float maxPublicInstallNorm;
         return returnLocation;
 }
 
+
+#pragma mark Normalization Functions
+
 /*
- Description: Updates the set budget on local Budget Slider to that of a value
-              passed by Momma Bird. Also takes care of all the necessary updates 
-              and function calls due to the change in set budget (new over budget labels, etc..)
+ Description: Handles switching from viewing static and dynamic normalized data
  
- Input:       none
- Output:      Updated ViewController configuration 
-              (float) newSetBudget
+ Input:       Touch on UISwitch
+ Output:      Refreshed data on ViewController
  */
-
-- (void)budgetUpdated {
-    // method called when budget is updated from Momma
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    [self updateBudgetSliderTo:tabControl.budget];
+- (IBAction)NormTypeSwitched:(UISwitch *)sender {
+    /**
+     * Make Sure to update all displays/labels to reflect the change
+     */
     
-    //update the width of the public install cost bars (make sure it isn't 0)
-    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
-    
-    //only update all labels/bars if Static normalization is switched on
-    if (!_DynamicNormalization.isOn){
-        [self normalizaAllandUpdateStatically];
+    if ([sender isOn]){
+        //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Dynamic" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
+        [self removeBudgetLabels];
+        [self normalizeAllandUpdateDynamically];
+        [self handleSort:sortChosen];
     }
-}
-
-//selector method that handles a change in value when budget changes (slider under titles)
--(void)BudgetChanged:(id)sender
-{
-    UISlider *slider = (UISlider*)sender;
-    int value = slider.value;
-    //-- Do further actions
-    
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    [formatter setGroupingSeparator:@","];
-    
-    value = 1000.0 * floor((value/1000.0)+0.5);
-    
-    investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:value]]];
-    setBudget = value;
-    
-    //update the width of the public install cost bars (make sure it isn't 0)
-    dynamic_cd_width = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
-    
-    //only update all labels/bars if Static normalization is switched on
-    if (!_DynamicNormalization.isOn){
+    else{
+        //alert= [[UIAlertView alloc] initWithTitle:@"Hey!!" message:@"Its Static" delegate:self cancelButtonTitle:@"Just Leave" otherButtonTitles:nil, nil];
+        [self removeBudgetLabels];
         [self normalizaAllandUpdateStatically];
+        [self handleSort:sortChosen];
     }
-}
-
-//method that updates Budget slider with animation and writes the new value to a label WITHOUT making a change to the max set by the User
--(void) updateBudgetSliderTo: (float) newValue
-{
-    [BudgetSlider setValue:newValue animated:YES];
-    setBudget = newValue;
     
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    [formatter setGroupingSeparator:@","];
-    
-    investmentBudget.text = [NSString stringWithFormat:@"Set Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:newValue]]];
 }
 
 /*
@@ -1074,6 +1356,8 @@ float maxPublicInstallNorm;
     }
 }
 
+#pragma mark Update Displays
+
 //Updates the text of a UILabel (used to update labels after new trials are fetched)
 - (NSMutableAttributedString *)myLabelAttributes:(NSString *)input{
     NSMutableAttributedString *labelAttributes = [[NSMutableAttributedString alloc] initWithString:input];
@@ -1345,487 +1629,7 @@ float maxPublicInstallNorm;
 }*/
 
 
-//autoscroll to the bottom of the mapwindow (trial and component score) scrollview
-- (void) autoscrollTimerFired: (NSTimer*)Timer
-{
-    NSNumber *trial = ((NSNumber*)[Timer userInfo]);
-    int trialInt = (int)[trial integerValue];
-    
-    trialOffset = (trialInt - 3 < 0) ? 0 : (175 * (trialInt-3) + 35);
-    
-    //CGPoint bottomOffset = CGPointMake(0, _mapWindow.contentSize.height - _mapWindow.bounds.size.height);
-    CGPoint bottomOffset = CGPointMake(0, trialOffset);
-    [_mapWindow setContentOffset:bottomOffset animated:YES];
-    
-}
-
--(void) OffsetView: (UIView*) view toX:(int)x andY:(int)y{
-    ///GENERAL FORMULA FOR TRANSLATING A FRAME
-    CGRect frame = view.frame;
-    frame.origin.x = x;
-    frame.origin.y = y;
-    [view setFrame: frame];
-    /*
-    CGRect frame = CGRectMake(x, y, view.frame.size.width, view.frame.size.height);
-    [view setFrame: frame];*/
-}
-
--(void) drawTrial: (int) trial{
-    UILabel *maintenance;
-    UILabel *damage;
-    UILabel *damageReduced;
-    UILabel *stormsToMakeUpCost;
-    UILabel *sewerLoad;
-    UILabel *impactNeighbor;
-    UILabel *gw_infiltration;
-    UILabel *efficiencyOfIntervention;
-    
-    
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([tabControl.trialRuns objectAtIndex:trial]);
-    
-    AprilTestNormalizedVariable *simRunNormal;
-    //determines via UIswitch what type of normalization is being drawn
-    if (_DynamicNormalization.isOn){
-        simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialDynamic"])  : ([tabControl.trialRunsDynNorm objectAtIndex:trial]);
-    }
-    else{
-        simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialStatic"]) :([tabControl.trialRunsNormalized objectAtIndex:trial]);
-    }
-
-    //creates a UIImageview of the intervention map OR finds it in the stored trials already loaded
-    UIImageView *interventionImageView;
-    if (trial >= [trialRunSubViews count]){
-        UIView *tempView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 115, 125)];
-        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:tempView.frame];
-        interventionView.view = tempView;
-        [interventionView updateView];
-        
-        interventionImageView = [[UIImageView alloc] initWithFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
-        interventionImageView.image = [interventionView viewToImage];
-        [interventionViews addObject:interventionImageView];
-        [_mapWindow addSubview:interventionImageView];
-    }
-    else{
-        interventionImageView = [interventionViews objectAtIndex:simRun.trialNum];
-        interventionImageView.frame = CGRectMake(20, 175 * (trial) + 40, 115, 125);
-        [_mapWindow addSubview:interventionImageView];
-    }
-    [_mapWindow setContentSize: CGSizeMake(_mapWindow.contentSize.width, (trial+1)*175)];
-    
-    //int scoreBar=0;
-    float priorityTotal= 0;
-    float scoreTotal = 0;
-    
-    for(int i = 0; i < _currentConcernRanking.count; i++){
-        priorityTotal += [(AprilTestVariable *)[_currentConcernRanking objectAtIndex:i] currentConcernRanking];
-    }
-    
-    UITextField *tx;
-    if(trial >= [trialRunSubViews count]){
-        tx = [[UITextField alloc] initWithFrame:CGRectMake(20, 175*(trial)+5, 245, 30)];
-        tx.borderStyle = UITextBorderStyleRoundedRect;
-        tx.font = [UIFont systemFontOfSize:15];
-        tx.placeholder = @"enter text";
-        tx.autocorrectionType = UITextAutocorrectionTypeNo;
-        tx.keyboardType = UIKeyboardTypeDefault;
-        tx.returnKeyType = UIReturnKeyDone;
-        tx.clearButtonMode = UITextFieldViewModeWhileEditing;
-        tx.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-        tx.delegate = self;
-        tx.text = [NSString stringWithFormat:  @"Trial %d", simRunNormal.trialNum + 1];
-        [_mapWindow addSubview:tx];
-        [_scenarioNames addObject:tx];
-    } else {
-        tx = [_scenarioNames objectAtIndex:simRun.trialNum];
-        tx.frame = CGRectMake(20, 175*(trial)+5, 245, 30);
-        [_mapWindow addSubview:tx];
-    }
-    
-    int width = 0;
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    [formatter setGroupingSeparator:@","];
-    
-    NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
-    NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
-    AprilTestCostDisplay *cd;
-    //FebTestWaterDisplay * wd;
-    //FebTestWaterDisplay * mwd;
-    //AprilTestEfficiencyView *ev;
-    UIImageView *waterDepthView;
-    UIImageView *MaxWaterDepthView;
-    UIImageView *efficiencyImageView;
-    int visibleIndex = 0;
-    
-    for(int i = 0 ; i <_currentConcernRanking.count ; i++){
-        
-        AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
-        if(trial == 0 && visibleIndex %2 == 0 && currentVar.widthOfVisualization > 0){
-            UILabel *bgCol = [[UILabel alloc] initWithFrame:CGRectMake(width, -2, currentVar.widthOfVisualization+1, _dataWindow.contentSize.height + 100)];
-            bgCol.backgroundColor = [UIColor whiteColor];
-            bgCol.layer.borderColor = [UIColor lightGrayColor].CGColor;
-            bgCol.layer.borderWidth = 2.0;
-            [_dataWindow addSubview:bgCol];
-            [bgCols addObject:bgCol];
-        }
-        
-        
-        //laziness: this is just the investment costs
-        if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            float investmentInstall = simRun.publicInstallCost;
-            float investmentMaintain = simRun.publicMaintenanceCost;
-            float investmentInstallN = simRunNormal.publicInstallCost;
-            //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
-            CGRect frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
-            
-            
-            if(publicCostDisplays.count <= trial){
-                //NSLog(@"Drawing water display for first time");
-                float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.publicInstallCost];
-                float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
-                
-                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
-                [_dataWindow addSubview: cd];
-                [publicCostDisplays addObject:cd];
-                
-            } else {
-                //NSLog(@"Repositioning water display");
-                cd = [publicCostDisplays objectAtIndex:trial];
-                cd.frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
-                [_dataWindow addSubview:cd];
-            }
-            
-            
-            //checks if over budget, if so, prints warning message
-            if ((simRun.publicInstallCost > setBudget) && (!_DynamicNormalization.isOn)){
-                //store update labels for further use (updating over budget when using absolute val)
-               
-                UILabel *valueLabel;
-                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget by $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-setBudget)]] ] withConcernPosition:width+25 andyValue:trial *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
-                
-                [OverBudgetLabels addObject:valueLabel];
-            }
-            
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (trial * 175) +100 andColor:[UIColor blackColor] to:&maintenance];
-            
-            
-            scoreTotal += ((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN));
-            //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
-
-            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN))]];
-            //NSLog(@"Investment cost: %f Investment score: %f", investmentInstall, investmentInstallN);
-           // [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
-            
-            [scoreVisNames addObject: @"publicCostI"];
-           // [scoreVisNames addObject: @"publicCostM"];
-
-
-            //just damages now
-        } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
-
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 20 andyValue: (trial*175) +20 andColor:[UIColor blackColor] to:&damage];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 20 andyValue: (trial*175) +50 andColor:[UIColor blackColor] to:&damageReduced];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 80 andColor:[UIColor blackColor] to:&sewerLoad];
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:nil];
-            
-            if(simRun.privateDamages != 0){
-            [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
-            }else {
-               [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/maxDamagesReduced)] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
-            }
-            
-            
-            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages));
-
-            //add values for the score visualization
-    
-            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) )]];
-            //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
-            //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
-            [scoreVisNames addObject: @"privateCostD"];
-            
-        } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 40 andColor:[UIColor blackColor] to:&impactNeighbor];
-            [self drawTextBasedVar: [NSString stringWithFormat:@" flowed to neighbors"] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 55 andColor:[UIColor blackColor] to:nil];
-            
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
-            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
-            [scoreVisNames addObject: currentVar.name];
-        } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (trial)*175 + 40 andColor:[UIColor blackColor] to:nil];
-            
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe)]];
-            [scoreVisNames addObject: currentVar.name];
-        } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
-
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of possible", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue: (trial)* 175 + 40 andColor:[UIColor blackColor] to:&gw_infiltration];
-            [self drawTextBasedVar: [NSString stringWithFormat:@" groundwater infiltration"] withConcernPosition:width + 30 andyValue: (trial)* 175 + 55  andColor:[UIColor blackColor] to:nil];
-            
-            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
-            //NSLog(@"Groundwater Infiltration: %d", currentVar.currentConcernRanking);
-            [scoreVisNames addObject: currentVar.name];
-        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
-            
-            AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-            ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh;
-            [[tabControl.maxWaterDisplaysInTab objectAtIndex:trial] updateView:48];
-            
-            MaxWaterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
-            MaxWaterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:simRun.trialNum]];
-            [_dataWindow addSubview:MaxWaterDepthView];
-            
-            /*
-            //NSLog(@"%d, %d", waterDisplays.count, i);
-            if(waterDisplays.count <= trial){
-                //NSLog(@"Drawing water display for first time");
-                wd = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125) andContent:simRun.standingWater];
-                wd.view = _dataWindow;
-                [waterDisplays addObject:wd];
-            } else {
-                wd = [waterDisplays objectAtIndex:simRun.trialNum];
-                wd.frame = CGRectMake(width + 10, (trial)*175 + 40, 115, 125);
-            }
-            wd.thresholdValue = thresh;
-            [wd fastUpdateView: StormPlaybackWater.value];*/
-            
-            
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
-            //NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.floodedStreets, [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]);
-            [scoreVisNames addObject: currentVar.name];
-            
-        } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
-            
-            AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-            
-            //Moved to creating UIImageViews... to minimize lag in scrolling
-            ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]).thresholdValue = thresh;
-            [[tabControl.waterDisplaysInTab objectAtIndex:trial] fastUpdateView:hoursAfterStorm];
-            
-            waterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
-            waterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]];
-            [_dataWindow addSubview:waterDepthView];
-            
-            /*
-            //display window for maxHeights
-            if(maxWaterDisplays.count <= trial){
-                mwd  = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125) andContent:simRun.maxWaterHeights];
-                mwd.view = _dataWindow;
-                [maxWaterDisplays addObject:mwd];
-            } else {
-                mwd = [maxWaterDisplays objectAtIndex:simRun.trialNum];
-                mwd.frame = CGRectMake(width + 10, (trial)*175 + 40, 115, 125);
-            }
-            mwd.thresholdValue = thresh;
-            [mwd updateView:48];*/
-            
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater)]];
-            [scoreVisNames addObject: currentVar.name];
-            //NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.standingWater , [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater)]);
-
-        } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
-            
-            /*
-            if( efficiency.count <= trial){
-                //NSLog(@"Drawing efficiency display for first time");
-            ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, (trial )*175 + 40, 130, 150) withContent: simRun.efficiency];
-                ev.trialNum = i;
-                ev.view = _dataWindow;
-                [efficiency addObject:ev];
-            } else {
-                //NSLog(@"Repositioning efficiency display");
-                ev = [efficiency objectAtIndex:simRun.trialNum];
-                ev.frame = CGRectMake(width, (trial )*175 + 40, 130, 150);
-            }
-            [ev updateViewForHour: StormPlaybackInterv.value];*/
-            
-            if (trial >= [trialRunSubViews count]){
-                AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-                ((AprilTestEfficiencyView*)[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum]).trialNum = i;
-                [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] updateViewForHour:StormPlaybackInterv.value];
-                
-                efficiencyImageView         = [[UIImageView alloc] initWithFrame:CGRectMake(width, (trial )*175 + 40, 180, 150)];
-                efficiencyImageView.image   = [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] viewforEfficiencyToImage];
-                [_dataWindow addSubview:efficiencyImageView];
-            }
-            else{
-                efficiencyImageView         = [[UIImageView alloc] initWithFrame:CGRectMake(width, (trial )*175 + 40, 180, 150)];
-                efficiencyImageView.image   = [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] viewforEfficiencyToImage];
-                [_dataWindow addSubview:efficiencyImageView];
-            }
-            
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency)]];
-            //NSLog(@"%@", NSStringFromCGRect(ev.frame));
-            [scoreVisNames addObject: currentVar.name];
-            
-        } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (trial * 175) + 40 andColor: [UIColor blackColor] to:&efficiencyOfIntervention];
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19)]];
-            [scoreVisNames addObject:currentVar.name];
-        }
-
-        width+= currentVar.widthOfVisualization;
-        if (currentVar.widthOfVisualization > 0) visibleIndex++;
-    }
-    //border around component score
-    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (trial)*175 + 73,  114, 26)];
-    fullValueBorder.backgroundColor = [UIColor grayColor];
-    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (trial)*175 + 75,  110, 22)];
-    fullValue.backgroundColor = [UIColor whiteColor];
-    [_mapWindow addSubview:fullValueBorder];
-    [_mapWindow addSubview:fullValue];
-    //NSLog(@" %@", scoreVisVals);
-    float maxX = 150;
-    float totalScore = 0;
-    UILabel *componentScore;
-    
-    //computing and drawing the final component score
-    for(int i =  0; i < scoreVisVals.count; i++){
-        
-        float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
-        //NSLog(@"%@ has width %f",[scoreVisNames objectAtIndex:i], scoreWidth );
-        if (scoreWidth < 0) scoreWidth = 0.0;
-        totalScore += scoreWidth;
-           componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 75, floor(scoreWidth), 22)];
-        componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
-        [_mapWindow addSubview:componentScore];
-        maxX+=floor(scoreWidth);
-    }
-    //NSLog(@"\n");
-    
-    [_dataWindow setContentSize:CGSizeMake(width+=100, (trial+1)*175)];
-    for(UILabel * bgCol in bgCols){
-        if(_dataWindow.contentSize.height > _dataWindow.frame.size.height){
-            [bgCol setFrame: CGRectMake(bgCol.frame.origin.x, bgCol.frame.origin.y, bgCol.frame.size.width, _dataWindow.contentSize.height + 1)];
-        }else {
-            [bgCol setFrame: CGRectMake(bgCol.frame.origin.x, bgCol.frame.origin.y, bgCol.frame.size.width, _dataWindow.frame.size.height + 1)];
-        }
-    }
-    
-    UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 175*(trial) + 40, 0, 0)];
-    scoreLabel.text = @"Performance:";
-    scoreLabel.font = [UIFont systemFontOfSize:14.0];
-    [scoreLabel sizeToFit];
-    scoreLabel.textColor = [UIColor blackColor];
-    [_mapWindow addSubview:scoreLabel];
-    UILabel *scoreLabel2 = [[UILabel alloc] initWithFrame:CGRectMake(150, 175*(trial) + 60, 0, 0)];
-    scoreLabel2.text = [NSString stringWithFormat:  @"Broken down by source:"];
-    scoreLabel2.font = [UIFont systemFontOfSize:10.0];
-    [scoreLabel2 sizeToFit];
-    scoreLabel2.textColor = [UIColor blackColor];
-    [_mapWindow addSubview:scoreLabel2];
-
-    
-    FavoriteView *favoriteView;
-    UITapGestureRecognizer *tappedFavorite = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(favoriteTapped:)];
-    tappedFavorite.numberOfTapsRequired = 1;
-    tappedFavorite.numberOfTouchesRequired = 1;
-    
-    LeastFavoriteView *leastFavoriteView;
-    UITapGestureRecognizer *tappedLeastFavorite = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(leastFavoriteTapped:)];
-    tappedLeastFavorite.numberOfTapsRequired = 1;
-    tappedLeastFavorite.numberOfTouchesRequired = 1;
-    
-    UILabel *favoriteLabel;
-    
-    //if its a new trial... draw new favorite and least favorite views
-    //else retrieve it from the current views kept track of
-    if (trial >= [trialRunSubViews count]) {
-        favoriteView = [[FavoriteView alloc]initWithFrame:CGRectMake(154, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
-        [favoriteView addGestureRecognizer:tappedFavorite];
-        [favoriteView setUserInteractionEnabled:YES];
-        [favoriteViews addObject:favoriteView];
-        [_mapWindow addSubview:favoriteView];
-        
-        leastFavoriteView = [[LeastFavoriteView alloc]initWithFrame:CGRectMake(212, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
-        [leastFavoriteView addGestureRecognizer:tappedLeastFavorite];
-        [leastFavoriteView setUserInteractionEnabled:YES];
-        [leastFavoriteViews addObject:leastFavoriteView];
-        [_mapWindow addSubview:leastFavoriteView];
-        
-        favoriteLabel = [[UILabel alloc]initWithFrame:CGRectMake(90, trial * 175 + 112, 0, 0)];
-        favoriteLabel.text = @"Best for me    Worst for me";
-        favoriteLabel.font = [UIFont systemFontOfSize:9.0];
-        [favoriteLabel sizeToFit];
-        //[favoriteLabel setTextAlignment:NSTextAlignmentLeft];
-        [favoriteLabels addObject:favoriteLabel];
-        [_mapWindow addSubview:favoriteLabel];
-    }
-    else{
-        favoriteView = [favoriteViews objectAtIndex:simRun.trialNum];
-        favoriteView.trialNum = trial;
-        [favoriteView addGestureRecognizer:tappedFavorite];
-        [favoriteView setUserInteractionEnabled:YES];
-        [favoriteView setFrame:CGRectMake(154, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
-        [_mapWindow addSubview:favoriteView];
-        
-        leastFavoriteView = [leastFavoriteViews objectAtIndex:simRun.trialNum];
-        leastFavoriteView.trialNum = trial;
-        [leastFavoriteView addGestureRecognizer:tappedLeastFavorite];
-        [leastFavoriteView setUserInteractionEnabled:YES];
-        [leastFavoriteView setFrame:CGRectMake(212, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
-        [_mapWindow addSubview:leastFavoriteView];
-        
-        
-        favoriteLabel = [favoriteLabels objectAtIndex:simRun.trialNum];
-        favoriteLabel.frame = CGRectMake(90, trial * 175 + 112, 0, 0);
-        [favoriteLabel sizeToFit];
-        [_mapWindow addSubview:favoriteLabel];
-    }
-
-
-    //NSLog(@"Trial: %d\nScore: %@ / 100\n\n", simRun.trialNum, [NSNumber numberWithInt: totalScore]);
-    
-    NSDictionary *trialRunInfo = @{@"TrialNum"            : [NSNumber numberWithInt:simRun.trialNum],
-                                   @"TrialRun"            : [tabControl.trialRuns objectAtIndex:simRun.trialNum],
-                                   @"TrialStatic"         : [tabControl.trialRunsNormalized objectAtIndex:simRun.trialNum],
-                                   @"TrialDynamic"        : [tabControl.trialRunsDynNorm objectAtIndex:simRun.trialNum],
-                                   @"TrialTxTBox"         : tx,
-                                   @"PerformanceScore"    : [NSNumber numberWithInt: totalScore],
-                                   //@"WaterDisplay"      : wd,
-                                   //@"MWaterDisplay"     : mwd,
-                                   //@"EfficiencyView"      : ev,
-                                   @"Maintenance"         : maintenance,
-                                   @"InterventionImgView" : interventionImageView,
-                                   @"WaterDepthView"      : waterDepthView,
-                                   @"MWaterDepthView"     : MaxWaterDepthView,
-                                   @"EfficiencyView"      : efficiencyImageView,
-                                   @"Damage"              : damage,
-                                   @"DamageReduced"       : damageReduced,
-                                   @"SewerLoad"           : sewerLoad,
-                                   @"WaterInfiltration"   : gw_infiltration,
-                                   @"Efficiency_Interv"   : efficiencyOfIntervention,
-                                   @"ImpactNeighbor"      : impactNeighbor,
-                                   @"CostDisplay"         : cd,
-                                   @"FavoriteLabel"       : favoriteLabel,
-                                   @"FavoriteView"        : favoriteView,
-                                   @"LeastFavoriteView"   : leastFavoriteView,
-                                   @"StormsForCost"       : stormsToMakeUpCost
-                                   };
-   
-    //Right now contains the contents of the map window scrollview
-    if (trial < trialRunSubViews.count){
-        [trialRunSubViews replaceObjectAtIndex:trial withObject:trialRunInfo];
-    }
-    else
-        [trialRunSubViews addObject:trialRunInfo];
-    
-    //NSLog(@"Just drew trial %d\n", simRun.trialNum);
-   
-    [_dataWindow flashScrollIndicators];          
-    
-}
+#pragma mark Favorite and Least Favorite Functions
 
 - (void)sendFavorite {
     int favorite = -1;
@@ -1984,6 +1788,466 @@ float maxPublicInstallNorm;
     }
 }
 
+#pragma mark Trial Drawing Functions
+
+
+-(void) drawTrial: (int) trial{
+    UILabel *maintenance;
+    UILabel *damage;
+    UILabel *damageReduced;
+    UILabel *stormsToMakeUpCost;
+    UILabel *sewerLoad;
+    UILabel *impactNeighbor;
+    UILabel *gw_infiltration;
+    UILabel *efficiencyOfIntervention;
+    
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([tabControl.trialRuns objectAtIndex:trial]);
+    
+    AprilTestNormalizedVariable *simRunNormal;
+    //determines via UIswitch what type of normalization is being drawn
+    if (_DynamicNormalization.isOn){
+        simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialDynamic"])  : ([tabControl.trialRunsDynNorm objectAtIndex:trial]);
+    }
+    else{
+        simRunNormal = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialStatic"]) :([tabControl.trialRunsNormalized objectAtIndex:trial]);
+    }
+    
+    //creates a UIImageview of the intervention map OR finds it in the stored trials already loaded
+    UIImageView *interventionImageView;
+    if (trial >= [trialRunSubViews count]){
+        UIView *tempView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 115, 125)];
+        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:tempView.frame];
+        interventionView.view = tempView;
+        [interventionView updateView];
+        
+        interventionImageView = [[UIImageView alloc] initWithFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
+        interventionImageView.image = [interventionView viewToImage];
+        [interventionViews addObject:interventionImageView];
+        [_mapWindow addSubview:interventionImageView];
+    }
+    else{
+        interventionImageView = [interventionViews objectAtIndex:simRun.trialNum];
+        interventionImageView.frame = CGRectMake(20, 175 * (trial) + 40, 115, 125);
+        [_mapWindow addSubview:interventionImageView];
+    }
+    [_mapWindow setContentSize: CGSizeMake(_mapWindow.contentSize.width, (trial+1)*175)];
+    
+    //int scoreBar=0;
+    float priorityTotal= 0;
+    float scoreTotal = 0;
+    
+    for(int i = 0; i < _currentConcernRanking.count; i++){
+        priorityTotal += [(AprilTestVariable *)[_currentConcernRanking objectAtIndex:i] currentConcernRanking];
+    }
+    
+    UITextField *tx;
+    if(trial >= [trialRunSubViews count]){
+        tx = [[UITextField alloc] initWithFrame:CGRectMake(20, 175*(trial)+5, 245, 30)];
+        tx.borderStyle = UITextBorderStyleRoundedRect;
+        tx.font = [UIFont systemFontOfSize:15];
+        tx.placeholder = @"enter text";
+        tx.autocorrectionType = UITextAutocorrectionTypeNo;
+        tx.keyboardType = UIKeyboardTypeDefault;
+        tx.returnKeyType = UIReturnKeyDone;
+        tx.clearButtonMode = UITextFieldViewModeWhileEditing;
+        tx.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+        tx.delegate = self;
+        tx.text = [NSString stringWithFormat:  @"Trial %d", simRunNormal.trialNum + 1];
+        [_mapWindow addSubview:tx];
+        [_scenarioNames addObject:tx];
+    } else {
+        tx = [_scenarioNames objectAtIndex:simRun.trialNum];
+        tx.frame = CGRectMake(20, 175*(trial)+5, 245, 30);
+        [_mapWindow addSubview:tx];
+    }
+    
+    int width = 0;
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
+    
+    NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
+    NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
+    AprilTestCostDisplay *cd;
+    //FebTestWaterDisplay * wd;
+    //FebTestWaterDisplay * mwd;
+    //AprilTestEfficiencyView *ev;
+    UIImageView *waterDepthView;
+    UIImageView *MaxWaterDepthView;
+    UIImageView *efficiencyImageView;
+    int visibleIndex = 0;
+    
+    for(int i = 0 ; i <_currentConcernRanking.count ; i++){
+        
+        AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
+        if(trial == 0 && visibleIndex %2 == 0 && currentVar.widthOfVisualization > 0){
+            UILabel *bgCol = [[UILabel alloc] initWithFrame:CGRectMake(width, -2, currentVar.widthOfVisualization+1, _dataWindow.contentSize.height + 100)];
+            bgCol.backgroundColor = [UIColor whiteColor];
+            bgCol.layer.borderColor = [UIColor lightGrayColor].CGColor;
+            bgCol.layer.borderWidth = 2.0;
+            [_dataWindow addSubview:bgCol];
+            [bgCols addObject:bgCol];
+        }
+        
+        
+        //laziness: this is just the investment costs
+        if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
+            float investmentInstall = simRun.publicInstallCost;
+            float investmentMaintain = simRun.publicMaintenanceCost;
+            float investmentInstallN = simRunNormal.publicInstallCost;
+            //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
+            CGRect frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
+            
+            
+            if(publicCostDisplays.count <= trial){
+                //NSLog(@"Drawing water display for first time");
+                float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.publicInstallCost];
+                float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
+                
+                cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
+                [_dataWindow addSubview: cd];
+                [publicCostDisplays addObject:cd];
+                
+            } else {
+                //NSLog(@"Repositioning water display");
+                cd = [publicCostDisplays objectAtIndex:trial];
+                cd.frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
+                [_dataWindow addSubview:cd];
+            }
+            
+            
+            //checks if over budget, if so, prints warning message
+            if ((simRun.publicInstallCost > setBudget) && (!_DynamicNormalization.isOn)){
+                //store update labels for further use (updating over budget when using absolute val)
+                
+                UILabel *valueLabel;
+                [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget by $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (investmentInstall-setBudget)]] ] withConcernPosition:width+25 andyValue:trial *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
+                
+                [OverBudgetLabels addObject:valueLabel];
+            }
+            
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Maintenance Cost: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:investmentMaintain ]]] withConcernPosition:width + 25 andyValue: (trial * 175) +100 andColor:[UIColor blackColor] to:&maintenance];
+            
+            
+            scoreTotal += ((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN));
+            //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
+            
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN))]];
+            //NSLog(@"Investment cost: %f Investment score: %f", investmentInstall, investmentInstallN);
+            // [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
+            
+            [scoreVisNames addObject: @"publicCostI"];
+            // [scoreVisNames addObject: @"publicCostM"];
+            
+            
+            //just damages now
+        } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
+            
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 20 andyValue: (trial*175) +20 andColor:[UIColor blackColor] to:&damage];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 20 andyValue: (trial*175) +50 andColor:[UIColor blackColor] to:&damageReduced];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 80 andColor:[UIColor blackColor] to:&sewerLoad];
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:nil];
+            
+            if(simRun.privateDamages != 0){
+                [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
+            }else {
+                [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/maxDamagesReduced)] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
+            }
+            
+            
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages));
+            
+            //add values for the score visualization
+            
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) )]];
+            //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
+            //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
+            [scoreVisNames addObject: @"privateCostD"];
+            
+        } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 40 andColor:[UIColor blackColor] to:&impactNeighbor];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" flowed to neighbors"] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 55 andColor:[UIColor blackColor] to:nil];
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
+            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
+            [scoreVisNames addObject: currentVar.name];
+        } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (trial)*175 + 40 andColor:[UIColor blackColor] to:nil];
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe)]];
+            [scoreVisNames addObject: currentVar.name];
+        } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
+            
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of possible", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue: (trial)* 175 + 40 andColor:[UIColor blackColor] to:&gw_infiltration];
+            [self drawTextBasedVar: [NSString stringWithFormat:@" groundwater infiltration"] withConcernPosition:width + 30 andyValue: (trial)* 175 + 55  andColor:[UIColor blackColor] to:nil];
+            
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
+            //NSLog(@"Groundwater Infiltration: %d", currentVar.currentConcernRanking);
+            [scoreVisNames addObject: currentVar.name];
+        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+            
+            AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+            ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh;
+            [[tabControl.maxWaterDisplaysInTab objectAtIndex:trial] updateView:48];
+            
+            MaxWaterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
+            MaxWaterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:simRun.trialNum]];
+            [_dataWindow addSubview:MaxWaterDepthView];
+            
+            /*
+             //NSLog(@"%d, %d", waterDisplays.count, i);
+             if(waterDisplays.count <= trial){
+             //NSLog(@"Drawing water display for first time");
+             wd = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125) andContent:simRun.standingWater];
+             wd.view = _dataWindow;
+             [waterDisplays addObject:wd];
+             } else {
+             wd = [waterDisplays objectAtIndex:simRun.trialNum];
+             wd.frame = CGRectMake(width + 10, (trial)*175 + 40, 115, 125);
+             }
+             wd.thresholdValue = thresh;
+             [wd fastUpdateView: StormPlaybackWater.value];*/
+            
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
+            //NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.floodedStreets, [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]);
+            [scoreVisNames addObject: currentVar.name];
+            
+        } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+            
+            AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+            
+            //Moved to creating UIImageViews... to minimize lag in scrolling
+            ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]).thresholdValue = thresh;
+            [[tabControl.waterDisplaysInTab objectAtIndex:trial] fastUpdateView:hoursAfterStorm];
+            
+            waterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
+            waterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]];
+            [_dataWindow addSubview:waterDepthView];
+            
+            /*
+             //display window for maxHeights
+             if(maxWaterDisplays.count <= trial){
+             mwd  = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125) andContent:simRun.maxWaterHeights];
+             mwd.view = _dataWindow;
+             [maxWaterDisplays addObject:mwd];
+             } else {
+             mwd = [maxWaterDisplays objectAtIndex:simRun.trialNum];
+             mwd.frame = CGRectMake(width + 10, (trial)*175 + 40, 115, 125);
+             }
+             mwd.thresholdValue = thresh;
+             [mwd updateView:48];*/
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater)]];
+            [scoreVisNames addObject: currentVar.name];
+            //NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.standingWater , [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater)]);
+            
+        } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
+            
+            /*
+             if( efficiency.count <= trial){
+             //NSLog(@"Drawing efficiency display for first time");
+             ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, (trial )*175 + 40, 130, 150) withContent: simRun.efficiency];
+             ev.trialNum = i;
+             ev.view = _dataWindow;
+             [efficiency addObject:ev];
+             } else {
+             //NSLog(@"Repositioning efficiency display");
+             ev = [efficiency objectAtIndex:simRun.trialNum];
+             ev.frame = CGRectMake(width, (trial )*175 + 40, 130, 150);
+             }
+             [ev updateViewForHour: StormPlaybackInterv.value];*/
+            
+            if (trial >= [trialRunSubViews count]){
+                AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+                ((AprilTestEfficiencyView*)[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum]).trialNum = i;
+                [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] updateViewForHour:StormPlaybackInterv.value];
+                
+                efficiencyImageView         = [[UIImageView alloc] initWithFrame:CGRectMake(width, (trial )*175 + 40, 180, 150)];
+                efficiencyImageView.image   = [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] viewforEfficiencyToImage];
+                [_dataWindow addSubview:efficiencyImageView];
+            }
+            else{
+                efficiencyImageView         = [[UIImageView alloc] initWithFrame:CGRectMake(width, (trial )*175 + 40, 180, 150)];
+                efficiencyImageView.image   = [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] viewforEfficiencyToImage];
+                [_dataWindow addSubview:efficiencyImageView];
+            }
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency)]];
+            //NSLog(@"%@", NSStringFromCGRect(ev.frame));
+            [scoreVisNames addObject: currentVar.name];
+            
+        } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
+            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (trial * 175) + 40 andColor: [UIColor blackColor] to:&efficiencyOfIntervention];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19)]];
+            [scoreVisNames addObject:currentVar.name];
+        }
+        
+        width+= currentVar.widthOfVisualization;
+        if (currentVar.widthOfVisualization > 0) visibleIndex++;
+    }
+    //border around component score
+    UILabel *fullValueBorder = [[UILabel alloc] initWithFrame:CGRectMake(148, (trial)*175 + 73,  114, 26)];
+    fullValueBorder.backgroundColor = [UIColor grayColor];
+    UILabel *fullValue = [[UILabel alloc] initWithFrame:CGRectMake(150, (trial)*175 + 75,  110, 22)];
+    fullValue.backgroundColor = [UIColor whiteColor];
+    [_mapWindow addSubview:fullValueBorder];
+    [_mapWindow addSubview:fullValue];
+    //NSLog(@" %@", scoreVisVals);
+    float maxX = 150;
+    float totalScore = 0;
+    UILabel *componentScore;
+    
+    //computing and drawing the final component score
+    for(int i =  0; i < scoreVisVals.count; i++){
+        
+        float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
+        //NSLog(@"%@ has width %f",[scoreVisNames objectAtIndex:i], scoreWidth );
+        if (scoreWidth < 0) scoreWidth = 0.0;
+        totalScore += scoreWidth;
+        componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 75, floor(scoreWidth), 22)];
+        componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
+        [_mapWindow addSubview:componentScore];
+        maxX+=floor(scoreWidth);
+    }
+    //NSLog(@"\n");
+    
+    [_dataWindow setContentSize:CGSizeMake(width+=100, (trial+1)*175)];
+    for(UILabel * bgCol in bgCols){
+        if(_dataWindow.contentSize.height > _dataWindow.frame.size.height){
+            [bgCol setFrame: CGRectMake(bgCol.frame.origin.x, bgCol.frame.origin.y, bgCol.frame.size.width, _dataWindow.contentSize.height + 1)];
+        }else {
+            [bgCol setFrame: CGRectMake(bgCol.frame.origin.x, bgCol.frame.origin.y, bgCol.frame.size.width, _dataWindow.frame.size.height + 1)];
+        }
+    }
+    
+    UILabel *scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 175*(trial) + 40, 0, 0)];
+    scoreLabel.text = @"Performance:";
+    scoreLabel.font = [UIFont systemFontOfSize:14.0];
+    [scoreLabel sizeToFit];
+    scoreLabel.textColor = [UIColor blackColor];
+    [_mapWindow addSubview:scoreLabel];
+    UILabel *scoreLabel2 = [[UILabel alloc] initWithFrame:CGRectMake(150, 175*(trial) + 60, 0, 0)];
+    scoreLabel2.text = [NSString stringWithFormat:  @"Broken down by source:"];
+    scoreLabel2.font = [UIFont systemFontOfSize:10.0];
+    [scoreLabel2 sizeToFit];
+    scoreLabel2.textColor = [UIColor blackColor];
+    [_mapWindow addSubview:scoreLabel2];
+    
+    
+    FavoriteView *favoriteView;
+    UITapGestureRecognizer *tappedFavorite = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(favoriteTapped:)];
+    tappedFavorite.numberOfTapsRequired = 1;
+    tappedFavorite.numberOfTouchesRequired = 1;
+    
+    LeastFavoriteView *leastFavoriteView;
+    UITapGestureRecognizer *tappedLeastFavorite = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(leastFavoriteTapped:)];
+    tappedLeastFavorite.numberOfTapsRequired = 1;
+    tappedLeastFavorite.numberOfTouchesRequired = 1;
+    
+    UILabel *favoriteLabel;
+    
+    //if its a new trial... draw new favorite and least favorite views
+    //else retrieve it from the current views kept track of
+    if (trial >= [trialRunSubViews count]) {
+        favoriteView = [[FavoriteView alloc]initWithFrame:CGRectMake(154, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
+        [favoriteView addGestureRecognizer:tappedFavorite];
+        [favoriteView setUserInteractionEnabled:YES];
+        [favoriteViews addObject:favoriteView];
+        [_mapWindow addSubview:favoriteView];
+        
+        leastFavoriteView = [[LeastFavoriteView alloc]initWithFrame:CGRectMake(212, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
+        [leastFavoriteView addGestureRecognizer:tappedLeastFavorite];
+        [leastFavoriteView setUserInteractionEnabled:YES];
+        [leastFavoriteViews addObject:leastFavoriteView];
+        [_mapWindow addSubview:leastFavoriteView];
+        
+        favoriteLabel = [[UILabel alloc]initWithFrame:CGRectMake(90, trial * 175 + 112, 0, 0)];
+        favoriteLabel.text = @"Best for me    Worst for me";
+        favoriteLabel.font = [UIFont systemFontOfSize:9.0];
+        [favoriteLabel sizeToFit];
+        //[favoriteLabel setTextAlignment:NSTextAlignmentLeft];
+        [favoriteLabels addObject:favoriteLabel];
+        [_mapWindow addSubview:favoriteLabel];
+    }
+    else{
+        favoriteView = [favoriteViews objectAtIndex:simRun.trialNum];
+        favoriteView.trialNum = trial;
+        [favoriteView addGestureRecognizer:tappedFavorite];
+        [favoriteView setUserInteractionEnabled:YES];
+        [favoriteView setFrame:CGRectMake(154, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
+        [_mapWindow addSubview:favoriteView];
+        
+        leastFavoriteView = [leastFavoriteViews objectAtIndex:simRun.trialNum];
+        leastFavoriteView.trialNum = trial;
+        [leastFavoriteView addGestureRecognizer:tappedLeastFavorite];
+        [leastFavoriteView setUserInteractionEnabled:YES];
+        [leastFavoriteView setFrame:CGRectMake(212, trial * 175 + 125, 40, 40) andTrialNumber:simRun.trialNum];
+        [_mapWindow addSubview:leastFavoriteView];
+        
+        
+        favoriteLabel = [favoriteLabels objectAtIndex:simRun.trialNum];
+        favoriteLabel.frame = CGRectMake(90, trial * 175 + 112, 0, 0);
+        [favoriteLabel sizeToFit];
+        [_mapWindow addSubview:favoriteLabel];
+    }
+    
+    
+    //NSLog(@"Trial: %d\nScore: %@ / 100\n\n", simRun.trialNum, [NSNumber numberWithInt: totalScore]);
+    
+    NSDictionary *trialRunInfo = @{@"TrialNum"            : [NSNumber numberWithInt:simRun.trialNum],
+                                   @"TrialRun"            : [tabControl.trialRuns objectAtIndex:simRun.trialNum],
+                                   @"TrialStatic"         : [tabControl.trialRunsNormalized objectAtIndex:simRun.trialNum],
+                                   @"TrialDynamic"        : [tabControl.trialRunsDynNorm objectAtIndex:simRun.trialNum],
+                                   @"TrialTxTBox"         : tx,
+                                   @"PerformanceScore"    : [NSNumber numberWithInt: totalScore],
+                                   //@"WaterDisplay"      : wd,
+                                   //@"MWaterDisplay"     : mwd,
+                                   //@"EfficiencyView"      : ev,
+                                   @"Maintenance"         : maintenance,
+                                   @"InterventionImgView" : interventionImageView,
+                                   @"WaterDepthView"      : waterDepthView,
+                                   @"MWaterDepthView"     : MaxWaterDepthView,
+                                   @"EfficiencyView"      : efficiencyImageView,
+                                   @"Damage"              : damage,
+                                   @"DamageReduced"       : damageReduced,
+                                   @"SewerLoad"           : sewerLoad,
+                                   @"WaterInfiltration"   : gw_infiltration,
+                                   @"Efficiency_Interv"   : efficiencyOfIntervention,
+                                   @"ImpactNeighbor"      : impactNeighbor,
+                                   @"CostDisplay"         : cd,
+                                   @"FavoriteLabel"       : favoriteLabel,
+                                   @"FavoriteView"        : favoriteView,
+                                   @"LeastFavoriteView"   : leastFavoriteView,
+                                   @"StormsForCost"       : stormsToMakeUpCost
+                                   };
+    
+    //Right now contains the contents of the map window scrollview
+    if (trial < trialRunSubViews.count){
+        [trialRunSubViews replaceObjectAtIndex:trial withObject:trialRunInfo];
+    }
+    else
+        [trialRunSubViews addObject:trialRunInfo];
+    
+    //NSLog(@"Just drew trial %d\n", simRun.trialNum);
+    
+    [_dataWindow flashScrollIndicators];          
+    
+}
+
 
 - (void)drawSingleTrial {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
@@ -2056,95 +2320,8 @@ float maxPublicInstallNorm;
     [_loadingIndicator stopAnimating];
 }
 
--(void)keyboardWillShow {
-    // Animate the current view out of the way
-    NSMutableString *content = [[NSMutableString alloc] init];
-    [content appendString: @"Before new naming:\n"];
-    for(int i =0; i < _scenarioNames.count; i++){
-        UITextField *tx =[_scenarioNames objectAtIndex:i];
-        
-        [content appendString: tx.text];
-        [content appendString:@"\n"];
-    }
-    
-    [content appendString:@"\n"];
-    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-    
-    //create file if it doesn't exist
-    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-    
-    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-    [file seekToEndOfFile];
-    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [file closeFile];
-    
-    
-    for (int i = 0; i < _scenarioNames.count; i++){
-        UITextField *tx = [_scenarioNames objectAtIndex:i];
-        if ( [tx isEditing]){
-            if ((tx.frame.origin.y - _mapWindow.contentOffset.y) > (self.view.frame.size.height - 450)){
-                lastMoved = 1;
-                edittingTX = tx;
-                [self setViewMovedUp:YES];
-            }
-        }
-    }
-    
-}
 
--(void)keyboardWillHide {
-    NSMutableString *content = [[NSMutableString alloc] init];
-    [content appendString: @"After naming:\n"];
-    for(int i =0; i < _scenarioNames.count; i++){
-        UITextField *tx =[_scenarioNames objectAtIndex:i];
-        
-        [content appendString: tx.text];
-        [content appendString:@"\n"];
-    }
-    [content appendString:@"\n"];
-    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-    
-    //create file if it doesn't exist
-    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-    
-    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-    [file seekToEndOfFile];
-    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [file closeFile];
-       if(lastMoved == 1) [self setViewMovedUp:NO];
-    lastMoved = 0;
-
-
-}
-
-//method to move the view up/down whenever the keyboard is shown/dismissed
--(void)setViewMovedUp:(BOOL)movedUp{
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.3]; // if you want to slide up the view
-    
-    CGPoint rect = self.mapWindow.contentOffset;
-    CGPoint rect2 = self.dataWindow.contentOffset;
-    
-    if (movedUp){
-        originalOffset = rect.y;
-        rect.y += (edittingTX.frame.origin.y + _mapWindow.contentOffset.y) - 225;
-        rect2.y = rect.y;
-    }
-    else{
-        // revert back to the normal state.
-        rect.y = originalOffset;
-        rect2.y = originalOffset;
-    }
-    self.mapWindow.contentOffset = rect;
-    self.dataWindow.contentOffset = rect2;
-    
-    [UIView commitAnimations];
-}
-
+#pragma mark Other Drawing Functions
 
 
 //Draws Labels to set on the dataWindow Scrollview but also returns object to be added into a MutableArray (used for updating labels)
@@ -2214,173 +2391,34 @@ float maxPublicInstallNorm;
     [_dataWindow setContentSize: CGSizeMake(width + 10, _dataWindow.contentSize.height)];
 }
 
-//will draw sliders on a scrollview right below the titles of concern rankings
--(void) drawSliders{
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    [formatter setGroupingSeparator:@","];
-    
-    int width = 0;
-    int visibleIndex = 0;
-    for(int i = 0 ; i <_currentConcernRanking.count ; i++){
-        
-        AprilTestVariable * currentVar =[sortedArray objectAtIndex:i];
-        UILabel * currentVarLabel = [[UILabel alloc] init];
-        currentVarLabel.backgroundColor = [scoreColors objectForKey:currentVar.name];
-        currentVarLabel.frame = CGRectMake(width, 2, currentVar.widthOfVisualization, 70);
-        currentVarLabel.font = [UIFont boldSystemFontOfSize:15.3];
-        
-        
-        if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            CGRect frame  = CGRectMake(width + 25, 16, 160, 40);
-            BudgetSlider = [[UISlider alloc] initWithFrame:frame];
-            [BudgetSlider addTarget:self action:@selector(BudgetChanged:) forControlEvents:UIControlEventValueChanged];
-            [BudgetSlider setBackgroundColor:[UIColor clearColor]];
-            BudgetSlider.minimumValue = min_budget_limit;
-            BudgetSlider.maximumValue = max_budget_limit;
-            BudgetSlider.continuous = YES;
-            [BudgetSlider setValue:setBudget animated:YES];
-            //[_SliderWindow addSubview:BudgetSlider];
-            
-            //draw min/max cost labels under slider
-            CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/3, 15);
-            UILabel *minCostLabel = [[UILabel alloc] initWithFrame:minCostFrame];
-            minCostLabel.font =  [UIFont boldSystemFontOfSize:14.0];
-            minCostLabel.text =  minBudgetLabel;
-            
-            CGRect maxCostFrame = CGRectMake(width + 160, 5, currentVar.widthOfVisualization/3, 15);
-            UILabel *maxCostLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
-            maxCostLabel.font = [UIFont boldSystemFontOfSize:14.0];
-            maxCostLabel.text = maxBudgetLabel;
-            
-            CGRect currCostFrame = CGRectMake(width + 25, 50, currentVar.widthOfVisualization, 15);
-            investmentBudget = [[UILabel alloc] initWithFrame:currCostFrame];
-            investmentBudget.font = [UIFont boldSystemFontOfSize:14.0];
-            investmentBudget.text = [NSString stringWithFormat:@"Current Budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:setBudget]]];
-            
-            [_SliderWindow addSubview:minCostLabel];
-            [_SliderWindow addSubview:maxCostLabel];
-            [_SliderWindow addSubview:investmentBudget];
-            
-        }
-        else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
-            CGRect frame = CGRectMake(width, 16, currentVar.widthOfVisualization, 40);
-            StormPlaybackWater = [[UISlider alloc] initWithFrame:frame];
-            [StormPlaybackWater addTarget:self
-                              action:@selector(StormHoursChangedOutcome:)
-                    forControlEvents:UIControlEventValueChanged];
-            
-            [StormPlaybackWater addTarget:self
-                              action:@selector(StormHoursChosenOutcome:)
-                    forControlEvents:UIControlEventTouchUpInside];
-            
-            [StormPlaybackWater addTarget:self
-                              action:@selector(StormHoursChosenOutcome:)
-                         forControlEvents:UIControlEventTouchUpOutside];
-            [StormPlaybackWater addTarget:self
-                                   action:@selector(StormHoursChosenOutcome:)
-                         forControlEvents:UIControlEventTouchCancel];
-            
-            [StormPlaybackWater setBackgroundColor:[UIColor clearColor]];
-            StormPlaybackWater.minimumValue = 0.0;
-            StormPlaybackWater.maximumValue = 48;
-            StormPlaybackWater.continuous = YES;
-            StormPlaybackWater.value = hours;
+#pragma mark Scroll View Functions
 
-            [_SliderWindow addSubview:StormPlaybackWater];
-            
-            //draw labels for range of hours
-            CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/5, 15);
-            UILabel *minHoursLabel = [[UILabel alloc] initWithFrame:minCostFrame];
-            minHoursLabel.font = [UIFont boldSystemFontOfSize:14];
-            minHoursLabel.text = [NSString stringWithFormat:@" 0 hrs"];
-            
-            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 5, currentVar.widthOfVisualization/4, 15);
-            UILabel *maxHoursLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
-            maxHoursLabel.font = [UIFont boldSystemFontOfSize:14];
-            maxHoursLabel.text = [NSString stringWithFormat:@"48 hrs"];
-            
-            CGRect currCostFrame = CGRectMake(width + 25, 50, currentVar.widthOfVisualization, 15);
-            WaterDepthOverStorm = [[UILabel alloc] initWithFrame:currCostFrame];
-            WaterDepthOverStorm.font = [UIFont boldSystemFontOfSize:14.0];
-            WaterDepthOverStorm.text = [NSString stringWithFormat:@"Storm Playback: %@ hours", [NSNumber numberWithInt:hours]];
-            
-            [_SliderWindow addSubview:minHoursLabel];
-            [_SliderWindow addSubview:maxHoursLabel];
-            [_SliderWindow addSubview:WaterDepthOverStorm];
-        }
-        else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
-            CGRect frame = CGRectMake(width, 16, currentVar.widthOfVisualization, 40);
-            StormPlaybackInterv = [[UISlider alloc] initWithFrame:frame];
-            StormPlaybackInterv.minimumValue = 0.0;
-            StormPlaybackInterv.maximumValue = 48;
-            StormPlaybackInterv.continuous = YES;
-            StormPlaybackInterv.value = hours;
-            [StormPlaybackInterv setBackgroundColor:[UIColor clearColor]];
-            [StormPlaybackInterv addTarget:self
-                                    action:@selector(StormHoursChangedOutcome:)
-                          forControlEvents:UIControlEventValueChanged];
-            
-            [StormPlaybackInterv addTarget:self
-                                    action:@selector(StormHoursChosenOutcome:)
-                          forControlEvents:UIControlEventTouchUpInside];
-            
-            [StormPlaybackInterv addTarget:self
-                                    action:@selector(StormHoursChosenOutcome:)
-                          forControlEvents:UIControlEventTouchUpOutside];
-            
-            [StormPlaybackInterv addTarget:self
-                                    action:@selector(StormHoursChosenOutcome:)
-                          forControlEvents:UIControlEventTouchCancel];
-            
-            [_SliderWindow addSubview:StormPlaybackInterv];
-            
-            //draw labels for range of hours
-            CGRect minCostFrame = CGRectMake(width + 5, 5, currentVar.widthOfVisualization/5, 15);
-            UILabel *minHoursLabel = [[UILabel alloc] initWithFrame:minCostFrame];
-            minHoursLabel.font = [UIFont boldSystemFontOfSize:14];
-            minHoursLabel.text = [NSString stringWithFormat:@" 0 hrs"];
-            
-            CGRect maxCostFrame = CGRectMake((width + currentVar.widthOfVisualization) -53, 5, currentVar.widthOfVisualization/4, 15);
-            UILabel *maxHoursLabel = [[UILabel alloc] initWithFrame:maxCostFrame];
-            maxHoursLabel.font = [UIFont boldSystemFontOfSize:14];
-            maxHoursLabel.text = [NSString stringWithFormat:@"48 hrs"];
-            
-            CGRect currCostFrame = CGRectMake(width + 25, 50, currentVar.widthOfVisualization, 15);
-            interventionCap = [[UILabel alloc] initWithFrame:currCostFrame];
-            interventionCap.font = [UIFont boldSystemFontOfSize:14.0];
-            interventionCap.text = [NSString stringWithFormat:@"Storm Playback: %@ hours", [NSNumber numberWithInt:hours]];
-            
-            [_SliderWindow addSubview:minHoursLabel];
-            [_SliderWindow addSubview:maxHoursLabel];
-            [_SliderWindow addSubview:interventionCap];
-        }
-        
-        else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
-            
-        } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
-            
-        } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
-            
-        } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-            
-        } else if( [currentVar.name compare:@"groundwaterInfiltration"] == NSOrderedSame){
-            
-        } else if( [currentVar.name compare:@"puddleMax"] == NSOrderedSame){
-            
-        
-        }
-        else {
-            currentVarLabel = NULL;
-        }
-        if(currentVar.widthOfVisualization != 0) visibleIndex++;
-        
-        if(currentVarLabel != NULL){
-            [_SliderWindow addSubview:currentVarLabel];
-        }
-        width+= currentVar.widthOfVisualization;
-    }
+
+
+
+//autoscroll to the bottom of the mapwindow (trial and component score) scrollview
+- (void) autoscrollTimerFired: (NSTimer*)Timer
+{
+    NSNumber *trial = ((NSNumber*)[Timer userInfo]);
+    int trialInt = (int)[trial integerValue];
     
+    trialOffset = (trialInt - 3 < 0) ? 0 : (175 * (trialInt-3) + 35);
+    
+    //CGPoint bottomOffset = CGPointMake(0, _mapWindow.contentSize.height - _mapWindow.bounds.size.height);
+    CGPoint bottomOffset = CGPointMake(0, trialOffset);
+    [_mapWindow setContentOffset:bottomOffset animated:YES];
+    
+}
+
+-(void) OffsetView: (UIView*) view toX:(int)x andY:(int)y{
+    ///GENERAL FORMULA FOR TRANSLATING A FRAME
+    CGRect frame = view.frame;
+    frame.origin.x = x;
+    frame.origin.y = y;
+    [view setFrame: frame];
+    /*
+     CGRect frame = CGRectMake(x, y, view.frame.size.width, view.frame.size.height);
+     [view setFrame: frame];*/
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -2451,6 +2489,8 @@ float maxPublicInstallNorm;
         [self logVisibleTrialsandVariables];
     }
 }
+
+#pragma mark Sorting Functions
 
 - (void) handleSort:(int) row{
     
@@ -2655,6 +2695,8 @@ float maxPublicInstallNorm;
 
     (_DynamicNormalization.isOn) ? ([self normalizeAllandUpdateDynamically]) : ([self normalizaAllandUpdateStatically]);
 }
+
+#pragma mark UIPickerView Functions
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
     // Handle the selection
