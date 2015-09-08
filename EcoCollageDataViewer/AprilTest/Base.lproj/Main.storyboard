@@ -410,6 +410,16 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="JIA-f0-Uo0">
+                                <rect key="frame" x="912" y="656" width="96" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Coreplot View">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="hideOrShow:" destination="Xor-Qe-PFj" eventType="touchUpInside" id="nMn-XT-6Ko"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -417,6 +427,7 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
                         <outlet property="StormPlayBack" destination="lAH-2v-pHo" id="VYn-CQ-mWd"/>
+                        <outlet property="coreplotviewSwitchButton" destination="JIA-f0-Uo0" id="tFk-sI-pnN"/>
                         <outlet property="mapWindow" destination="7Hg-Ai-r1h" id="Pn0-Sz-Hw8"/>
                         <outlet property="profilesWindow" destination="uay-AJ-gq5" id="Hcn-ad-Bmf"/>
                         <outlet property="trialPickerTextField" destination="8Qk-of-IHh" id="D7T-TP-MR8"/>

@@ -26,6 +26,7 @@
 @property NSMutableArray * slices;
 @property NSMutableArray * favorites;
 @property NSMutableArray * leastFavorites;
+@property NSMutableArray * scores;
 @property NSString       * url;
 @property NSString       * LogFile;
 @property NSString       * ownProfileName;

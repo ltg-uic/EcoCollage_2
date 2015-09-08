@@ -32,6 +32,7 @@
 @synthesize mapWindow = _mapWindow;
 @synthesize trialPickerTextField = _trialPickerTextField;
 @synthesize viewSwitchButton = _viewSwitchButton;
+@synthesize coreplotviewSwitchButton = _coreplotviewSwitchButton;
 
 NSMutableDictionary         *concernColors;
 NSMutableDictionary         *concernNames;
@@ -55,6 +56,7 @@ UIImage                     *maxWaterDisplayImage;
 
 UITapGestureRecognizer      *tapGestureRecognizer_social;
 
+UIScrollView                *corePlotView;
 UIScrollView                *scoreBarView;
 UIScrollView                *bottomOfMapWindow;
 
@@ -101,6 +103,24 @@ int                         dynamic_cd_width = 0;
     // make scorebar visualization
     scoreBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 108, 283 + 769, 540)];
     [self.view addSubview:scoreBarView];
+    
+    // make coreplot visualization
+    corePlotView = [[UIScrollView alloc]initWithFrame:CGRectMake(1100, 108, 1052, 540)];
+    corePlotView.backgroundColor = [UIColor blueColor];
+    [self.view addSubview:corePlotView];
+    
+    // set tags for two buttons for animations
+    _viewSwitchButton.tag = 100;
+    _coreplotviewSwitchButton.tag = 101;
+    
+    /* visual representation of 3 screens
+       ---------------------------------------------------
+       | profiles view   | scorebar view | coreplot view |
+       |                 |               |               |
+       |                 |               |               |
+       ---------------------------------------------------
+    
+    */
     
     // move profile visualization over
     _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
@@ -451,12 +471,39 @@ int                         dynamic_cd_width = 0;
  Outputs: None
  */
 - (IBAction)hideOrShow:(UIButton *)sender {
+    /*          6 move choices
+     1 : from scoreBarView to profilesView
+     2 : from scoreBarView to coreplotView
+     3 : from profilesView to scoreBarView
+     4 : from profilesView to coreplotView
+     5 : from coreplotView to profilesView
+     6 : from coreplotView to scoreBarView
+     
+     sender.tag == 100 -> profiles view button
+     sender.tag == 101 -> coreplot view button
+    */
+    int moveChoice = 0;
+    if (sender.tag == 100 && scoreBarView.frame.origin.x == 0) moveChoice = 1;
+    else if (sender.tag == 101 && scoreBarView.frame.origin.x == 0) moveChoice = 2;
+    else if (sender.tag == 100 && _usernamesWindow.frame.origin.x == 0) {
+        moveChoice = 3;
+        scoreBarView.frame = CGRectMake(1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
+    }
+    else if (sender.tag == 101 && _usernamesWindow.frame.origin.x == 0) moveChoice = 4;
+    else if (sender.tag == 100 && corePlotView.frame.origin.x == 0) moveChoice = 5;
+    else if (sender.tag == 101 && corePlotView.frame.origin.x == 0) {
+        moveChoice = 6;
+        scoreBarView.frame = CGRectMake(-1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
+    }else return;
+    
     
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
-    if (_usernamesWindow.frame.origin.x < 0) { // show profile visualization
+    
+    // move scoreBarView out and move profilesView in
+    if (moveChoice == 1) {
         // show profile visualization
         _usernamesWindow.frame = CGRectMake(0, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
         _profilesWindow.frame = CGRectMake(283, _profilesWindow.frame.origin.y, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height);
@@ -468,7 +515,17 @@ int                         dynamic_cd_width = 0;
         [_viewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
         //[_viewSwitchButton sizeToFit];
     }
-    else {
+    // move scoreBarView out and move coreplotView in
+    else if(moveChoice == 2) {
+        // show coreplotView visualization
+        corePlotView.frame = CGRectMake(0, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
+        
+        // hide scoreBarView
+        scoreBarView.frame = CGRectMake(-1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
+        [_coreplotviewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
+    }
+    // move profilesView out and move scoreBarView in
+    else if(moveChoice == 3) {
         // hide profile visualization
         _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
         _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _profilesWindow.frame.size.width, _usernamesWindow.frame.size.height);
@@ -481,7 +538,47 @@ int                         dynamic_cd_width = 0;
         [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
         //[_viewSwitchButton sizeToFit];
     }
+    // move profilesView out and move coreplotView in
+    else if(moveChoice == 4) {
+        // hide profile visualization
+        _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
+        _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _profilesWindow.frame.size.width, _usernamesWindow.frame.size.height);
+        [self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
+        
+        // show coreplotView visualization
+        corePlotView.frame = CGRectMake(0, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
+        
+        [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
+        [_coreplotviewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
+    }
+    // move coreplotView out and move profilesView in
+    else if(moveChoice == 5) {
+        // hide coreplotView visualization
+        corePlotView.frame = CGRectMake(1100, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
+        
+        // show profile visualization
+        _usernamesWindow.frame = CGRectMake(0, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
+        _profilesWindow.frame = CGRectMake(283, _profilesWindow.frame.origin.y, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height);
+        [self.view viewWithTag:9002].frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
+        
+        [_coreplotviewSwitchButton setTitle:@"Switch to Core Plot Visualization" forState:UIControlStateNormal];
+        [_viewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
+    }
+    // move coreplotView out and move scoreBarView in
+    else if(moveChoice == 6) {
+        // hide coreplotView visualization
+        corePlotView.frame = CGRectMake(1100, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
+        
+        // show scorebar visualization
+        scoreBarView.frame = CGRectMake(0, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
+        
+        [_coreplotviewSwitchButton setTitle:@"Switch to Core Plot Visualization" forState:UIControlStateNormal];
+    }
+    
+    
     [UIView commitAnimations];
+    [_coreplotviewSwitchButton sizeToFit];
+    _coreplotviewSwitchButton.frame = CGRectMake(1008 - _coreplotviewSwitchButton.frame.size.width, _coreplotviewSwitchButton.frame.origin.y, _coreplotviewSwitchButton.frame.size.width, _coreplotviewSwitchButton.frame.size.height);
     [_viewSwitchButton sizeToFit];
 }
 
@@ -509,6 +606,8 @@ int                         dynamic_cd_width = 0;
         
         
         scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y + sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height - sizeOfChange);
+        
+        corePlotView.frame = CGRectMake(corePlotView.frame.origin.x, corePlotView.frame.origin.y + sizeOfChange, corePlotView.frame.size.width, corePlotView.frame.size.height - sizeOfChange);
     }
     else {
         AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
@@ -522,6 +621,8 @@ int                         dynamic_cd_width = 0;
         lineView.frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
         
         scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y - sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height + sizeOfChange);
+        
+        corePlotView.frame = CGRectMake(corePlotView.frame.origin.x, corePlotView.frame.origin.y - sizeOfChange, corePlotView.frame.size.width, corePlotView.frame.size.height + sizeOfChange);
     }
     [UIView commitAnimations];
 }

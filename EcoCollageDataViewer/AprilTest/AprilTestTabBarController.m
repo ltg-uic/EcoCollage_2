@@ -43,6 +43,7 @@
 @synthesize favorites = _favorites;
 @synthesize leastFavorites = _leastFavorites;
 @synthesize threshVal = _threshVal;
+@synthesize scores = _scores;
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *viewsForWaterDisplays;
@@ -112,6 +113,19 @@ NSMutableArray *slicesInfo;
     _favorites = [[NSMutableArray alloc]init];
     _leastFavorites = [[NSMutableArray alloc]init];
     
+    // within scores are NSDictionaries
+    //          @"Username"     : NSString deviceName for a user
+    //          @"Profile"      : NSArray profileArray for a user
+    //          @"Trial Scores" : NSMutableArray trialScores for the profile for each trial
+    // add new NSDictionary each time a new user joins
+    // NSDictionary at index 0 belongs to this device
+    _scores = [[NSMutableArray alloc]init];
+    
+    NSMutableArray *trialScores = [[NSMutableArray alloc]init];
+    NSDictionary *scoreDict = @{@"Device Name" : [[UIDevice currentDevice] name],
+                                @"Profile"     : _ownProfile,
+                                @"Scores"      : trialScores };
+    [_scores addObject:scoreDict];
     
     _budget    = 150000;
     _threshVal = 6;
@@ -577,19 +591,38 @@ NSMutableArray *slicesInfo;
     if (_profiles.count != 0) {
         [_profiles removeAllObjects];
         [_pieCharts removeAllObjects];
+        [_scores removeAllObjects];
         [_pieChartsForScoreBarView removeAllObjects];
         [_slices removeAllObjects];
     }
+    
+    int indexOffset = 0;
+    indexOffset = (int)_ownProfile.count - 8;
+    
+    NSMutableArray *trialScores = [[NSMutableArray alloc]init];
+    NSDictionary *scoreDict = @{@"Device Name" : [[UIDevice currentDevice]name],
+                                @"Profile"     : [[NSArray alloc] initWithObjects:[_ownProfile objectAtIndex:indexOffset], [_ownProfile objectAtIndex:indexOffset+1], [_ownProfile objectAtIndex:indexOffset+2], [_ownProfile objectAtIndex:indexOffset+3], [_ownProfile objectAtIndex:indexOffset+4], [_ownProfile objectAtIndex:indexOffset+5], [_ownProfile objectAtIndex:indexOffset+6], [_ownProfile objectAtIndex:indexOffset+7], nil],
+                                @"Scores"      : trialScores };
+    [_scores addObject:scoreDict];
     
     [_profiles addObject:_ownProfile];
     [self addPieChartAtIndex:0 forProfile:_ownProfile];
     
     // add all profiles sent from momma to local profile list in baby
     for (int i = 1; i < dataArray.count; i++) {
+        indexOffset = (int)[[dataArray objectAtIndex:i] count] - 8;
         // only add the profile if it is not our own
         if (![[[dataArray objectAtIndex:i]objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name] ]) {
             [_profiles addObject:[dataArray objectAtIndex:i]];
             [self addPieChartAtIndex:i forProfile:[dataArray objectAtIndex:i]];
+
+            NSArray *profile = [dataArray objectAtIndex:i];
+            
+            NSMutableArray *trialScores = [[NSMutableArray alloc]init];
+            NSDictionary *scoreDict = @{@"Device Name" : [[UIDevice currentDevice]name],
+                                        @"Profile"     : [[NSArray alloc] initWithObjects:[profile objectAtIndex:indexOffset], [profile objectAtIndex:indexOffset+1], [profile objectAtIndex:indexOffset+2], [profile objectAtIndex:indexOffset+3], [profile objectAtIndex:indexOffset+4], [profile objectAtIndex:indexOffset+5], [profile objectAtIndex:indexOffset+6], [profile objectAtIndex:indexOffset+7], nil],
+                                        @"Scores"      : trialScores };
+            [_scores addObject:scoreDict];
         }
     }
     
@@ -695,6 +728,14 @@ NSMutableArray *slicesInfo;
     if ([[dataArray objectAtIndex:1] isEqualToString:[[UIDevice currentDevice]name]]) {
         [self addPieChartAtIndex:0 forProfile:_ownProfile];
         
+        int indexOffset = (int)_ownProfile.count - 8;
+        
+        NSMutableArray *trialScores = [[NSMutableArray alloc]init];
+        NSDictionary *scoreDict = @{@"Device Name" : [[UIDevice currentDevice]name],
+                                    @"Profile"     : [[NSArray alloc]initWithObjects:[_ownProfile objectAtIndex:indexOffset], [_ownProfile objectAtIndex:indexOffset+1], [_ownProfile objectAtIndex:indexOffset+2], [_ownProfile objectAtIndex:indexOffset+3], [_ownProfile objectAtIndex:indexOffset+4], [_ownProfile objectAtIndex:indexOffset+5], [_ownProfile objectAtIndex:indexOffset+6], [_ownProfile objectAtIndex:indexOffset+7], nil],
+                                    @"Scores"      : trialScores };
+        [_scores replaceObjectAtIndex:0 withObject:scoreDict];
+        
         return;
     }
     
@@ -714,14 +755,31 @@ NSMutableArray *slicesInfo;
             oldProfile = 1;
             // grab the index of the profile changed so social view visualization can reload that profile
             index = i;
+            
+            int indexOffset = (int)dataArray.count - 8;
+            
+            NSMutableArray *trialScores = [[NSMutableArray alloc]init];
+            NSDictionary *scoreDict = @{@"Device Name" : [dataArray objectAtIndex:1],
+                                        @"Profile"     : [[NSArray alloc]initWithObjects:[dataArray objectAtIndex:indexOffset], [dataArray objectAtIndex:indexOffset+1], [dataArray objectAtIndex:indexOffset+2], [dataArray objectAtIndex:indexOffset+3], [dataArray objectAtIndex:indexOffset+4], [dataArray objectAtIndex:indexOffset+5], [dataArray objectAtIndex:indexOffset+6], [dataArray objectAtIndex:indexOffset+7], nil],
+                                        @"Scores"      : trialScores };
+            [_scores replaceObjectAtIndex:i withObject:scoreDict];
         }
     }
     
     // otherwise, the profile is new and should be added to the mutableArray 'profiles'
     // a pie chart should also be loaded for the profile
+    // add NSDictionary to _scores
     if (!oldProfile) {
         [_profiles addObject:dataArray];
         [self addPieChartAtIndex:(int)[_pieCharts count] forProfile:dataArray];
+        
+        int indexOffset = (int)dataArray.count - 8;
+        
+        NSMutableArray *trialScores = [[NSMutableArray alloc]init];
+        NSDictionary *scoreDict = @{@"Device Name" : [dataArray objectAtIndex:1],
+                                    @"Profile"     : [[NSArray alloc]initWithObjects:[dataArray objectAtIndex:indexOffset], [dataArray objectAtIndex:indexOffset+1], [dataArray objectAtIndex:indexOffset+2], [dataArray objectAtIndex:indexOffset+3], [dataArray objectAtIndex:indexOffset+4], [dataArray objectAtIndex:indexOffset+5], [dataArray objectAtIndex:indexOffset+6], [dataArray objectAtIndex:indexOffset+7], nil],
+                                    @"Scores"      : trialScores };
+        [_scores addObject:scoreDict];
     }
     
     
