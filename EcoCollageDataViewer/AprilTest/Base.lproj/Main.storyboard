@@ -410,7 +410,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="JIA-f0-Uo0">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="JIA-f0-Uo0" userLabel="Coreplot View Button">
                                 <rect key="frame" x="912" y="656" width="96" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Coreplot View">
@@ -420,6 +420,17 @@
                                     <action selector="hideOrShow:" destination="Xor-Qe-PFj" eventType="touchUpInside" id="nMn-XT-6Ko"/>
                                 </connections>
                             </button>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="SJZ-o3-ghp" userLabel="Coreplot View">
+                                <rect key="frame" x="645" y="688" width="0.0" height="4"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" id="PE3-VG-TeF" userLabel="CoreplotGraph View" customClass="GraphView">
+                                        <rect key="frame" x="-191" y="-76" width="240" height="128"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </view>
+                                </subviews>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -427,6 +438,8 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
                         <outlet property="StormPlayBack" destination="lAH-2v-pHo" id="VYn-CQ-mWd"/>
+                        <outlet property="corePlotGraphView" destination="PE3-VG-TeF" id="H8G-9a-VNz"/>
+                        <outlet property="corePlotView" destination="SJZ-o3-ghp" id="94l-dq-Cw1"/>
                         <outlet property="coreplotviewSwitchButton" destination="JIA-f0-Uo0" id="tFk-sI-pnN"/>
                         <outlet property="mapWindow" destination="7Hg-Ai-r1h" id="Pn0-Sz-Hw8"/>
                         <outlet property="profilesWindow" destination="uay-AJ-gq5" id="Hcn-ad-Bmf"/>
@@ -437,7 +450,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VNS-9k-UPm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="373" y="2626"/>
+            <point key="canvasLocation" x="373" y="2622"/>
         </scene>
         <!--April Test Intro View Controller-->
         <scene sceneID="tyK-Bo-XQe">

@@ -52,4 +52,6 @@
 //log writing related methods
 - (NSString*) generateLogEntryWith:(NSString*)extra;
 - (void) writeToLogFileString:(NSString*)str;
+
+- (NSMutableArray*) getTrialRuns;
 @end

@@ -17,6 +17,7 @@
 #import "AprilTestNormalizedVariable.h"
 #import "XYPieChart.h"
 #import <QuartzCore/QuartzCore.h>
+#import "GraphView.h"
 
 @interface SocialViewController ()
 @end
@@ -33,6 +34,8 @@
 @synthesize trialPickerTextField = _trialPickerTextField;
 @synthesize viewSwitchButton = _viewSwitchButton;
 @synthesize coreplotviewSwitchButton = _coreplotviewSwitchButton;
+@synthesize corePlotView = _corePlotView;
+@synthesize corePlotGraphView = _corePlotGraphView;
 
 NSMutableDictionary         *concernColors;
 NSMutableDictionary         *concernNames;
@@ -56,7 +59,6 @@ UIImage                     *maxWaterDisplayImage;
 
 UITapGestureRecognizer      *tapGestureRecognizer_social;
 
-UIScrollView                *corePlotView;
 UIScrollView                *scoreBarView;
 UIScrollView                *bottomOfMapWindow;
 
@@ -89,6 +91,8 @@ int                         dynamic_cd_width = 0;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _studyNum = tabControl.studyNum;
     
+    _corePlotGraphView.frame = CGRectMake(0, 108, 1052, 540);
+    
     //AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To \tSocial View"];
     [tabControl writeToLogFileString:logEntry];
@@ -103,17 +107,16 @@ int                         dynamic_cd_width = 0;
     // make scorebar visualization
     scoreBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 108, 283 + 769, 540)];
     [self.view addSubview:scoreBarView];
+
     
-    // make coreplot visualization
-    corePlotView = [[UIScrollView alloc]initWithFrame:CGRectMake(1100, 108, 1052, 540)];
-    corePlotView.backgroundColor = [UIColor blueColor];
-    [self.view addSubview:corePlotView];
+    _corePlotView.frame = CGRectMake(1100, 108, 1052, 540);
+    
     
     // set tags for two buttons for animations
     _viewSwitchButton.tag = 100;
     _coreplotviewSwitchButton.tag = 101;
     
-    /* visual representation of 3 screens
+    /* visual representation of layout 3 screens
        ---------------------------------------------------
        | profiles view   | scorebar view | coreplot view |
        |                 |               |               |
@@ -414,6 +417,12 @@ int                         dynamic_cd_width = 0;
     
     [self profileUpdate];
     [self drawScoreBarVisualizationHelper];
+    
+    [self drawCorePlot];
+    
+    _corePlotGraphView = nil;
+    
+    _corePlotGraphView = [[GraphView alloc]initWithFrame:_corePlotView.frame];
 }
 
 /*
@@ -473,11 +482,11 @@ int                         dynamic_cd_width = 0;
 - (IBAction)hideOrShow:(UIButton *)sender {
     /*          6 move choices
      1 : from scoreBarView to profilesView
-     2 : from scoreBarView to coreplotView
+     2 : from scoreBarView to _corePlotView
      3 : from profilesView to scoreBarView
-     4 : from profilesView to coreplotView
-     5 : from coreplotView to profilesView
-     6 : from coreplotView to scoreBarView
+     4 : from profilesView to _corePlotView
+     5 : from _corePlotView to profilesView
+     6 : from _corePlotView to scoreBarView
      
      sender.tag == 100 -> profiles view button
      sender.tag == 101 -> coreplot view button
@@ -490,8 +499,8 @@ int                         dynamic_cd_width = 0;
         scoreBarView.frame = CGRectMake(1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
     }
     else if (sender.tag == 101 && _usernamesWindow.frame.origin.x == 0) moveChoice = 4;
-    else if (sender.tag == 100 && corePlotView.frame.origin.x == 0) moveChoice = 5;
-    else if (sender.tag == 101 && corePlotView.frame.origin.x == 0) {
+    else if (sender.tag == 100 && _corePlotView.frame.origin.x == 0) moveChoice = 5;
+    else if (sender.tag == 101 && _corePlotView.frame.origin.x == 0) {
         moveChoice = 6;
         scoreBarView.frame = CGRectMake(-1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
     }else return;
@@ -515,10 +524,10 @@ int                         dynamic_cd_width = 0;
         [_viewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
         //[_viewSwitchButton sizeToFit];
     }
-    // move scoreBarView out and move coreplotView in
+    // move scoreBarView out and move _corePlotView in
     else if(moveChoice == 2) {
-        // show coreplotView visualization
-        corePlotView.frame = CGRectMake(0, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
+        // show _corePlotView visualization
+        _corePlotView.frame = CGRectMake(0, _corePlotView.frame.origin.y, _corePlotView.frame.size.width, _corePlotView.frame.size.height);
         
         // hide scoreBarView
         scoreBarView.frame = CGRectMake(-1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
@@ -538,23 +547,23 @@ int                         dynamic_cd_width = 0;
         [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
         //[_viewSwitchButton sizeToFit];
     }
-    // move profilesView out and move coreplotView in
+    // move profilesView out and move _corePlotView in
     else if(moveChoice == 4) {
         // hide profile visualization
         _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
         _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _profilesWindow.frame.size.width, _usernamesWindow.frame.size.height);
         [self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
         
-        // show coreplotView visualization
-        corePlotView.frame = CGRectMake(0, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
+        // show _corePlotView visualization
+        _corePlotView.frame = CGRectMake(0, _corePlotView.frame.origin.y, _corePlotView.frame.size.width, _corePlotView.frame.size.height);
         
         [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
         [_coreplotviewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
     }
-    // move coreplotView out and move profilesView in
+    // move _corePlotView out and move profilesView in
     else if(moveChoice == 5) {
-        // hide coreplotView visualization
-        corePlotView.frame = CGRectMake(1100, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
+        // hide _corePlotView visualization
+        _corePlotView.frame = CGRectMake(1100, _corePlotView.frame.origin.y, _corePlotView.frame.size.width, _corePlotView.frame.size.height);
         
         // show profile visualization
         _usernamesWindow.frame = CGRectMake(0, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
@@ -564,10 +573,10 @@ int                         dynamic_cd_width = 0;
         [_coreplotviewSwitchButton setTitle:@"Switch to Core Plot Visualization" forState:UIControlStateNormal];
         [_viewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
     }
-    // move coreplotView out and move scoreBarView in
+    // move _corePlotView out and move scoreBarView in
     else if(moveChoice == 6) {
-        // hide coreplotView visualization
-        corePlotView.frame = CGRectMake(1100, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
+        // hide _corePlotView visualization
+        _corePlotView.frame = CGRectMake(1100, _corePlotView.frame.origin.y, _corePlotView.frame.size.width, _corePlotView.frame.size.height);
         
         // show scorebar visualization
         scoreBarView.frame = CGRectMake(0, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
@@ -607,7 +616,7 @@ int                         dynamic_cd_width = 0;
         
         scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y + sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height - sizeOfChange);
         
-        corePlotView.frame = CGRectMake(corePlotView.frame.origin.x, corePlotView.frame.origin.y + sizeOfChange, corePlotView.frame.size.width, corePlotView.frame.size.height - sizeOfChange);
+        _corePlotView.frame = CGRectMake(_corePlotView.frame.origin.x, _corePlotView.frame.origin.y + sizeOfChange, _corePlotView.frame.size.width, _corePlotView.frame.size.height - sizeOfChange);
     }
     else {
         AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
@@ -622,7 +631,7 @@ int                         dynamic_cd_width = 0;
         
         scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y - sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height + sizeOfChange);
         
-        corePlotView.frame = CGRectMake(corePlotView.frame.origin.x, corePlotView.frame.origin.y - sizeOfChange, corePlotView.frame.size.width, corePlotView.frame.size.height + sizeOfChange);
+        _corePlotView.frame = CGRectMake(_corePlotView.frame.origin.x, _corePlotView.frame.origin.y - sizeOfChange, _corePlotView.frame.size.width, _corePlotView.frame.size.height + sizeOfChange);
     }
     [UIView commitAnimations];
 }
@@ -1196,6 +1205,158 @@ int                         dynamic_cd_width = 0;
     lineAcrossScoreBarView.frame = CGRectMake(0, lineAcrossScoreBarView.frame.origin.y, scoreBarView.contentSize.width, 1);
 }
 
+#pragma mark CorePlot Visualization Functions
+
+- (void)drawCorePlot {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    int i, j;
+    
+    // loop thru all profiles
+    for(i = 0; i < tabControl.profiles.count; i++) {
+        
+        NSMutableArray *trialScores = [[NSMutableArray alloc]init];
+        
+        // get the component score for each profile
+        for(j = 0; j < tabControl.trialRuns.count; j++) {
+            
+            AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:j];
+            AprilTestNormalizedVariable *simRunNormal = [tabControl.trialRunsNormalized objectAtIndex:j];
+            
+            
+            NSArray *currentProfile = [[NSArray alloc]init];
+            currentProfile = [tabControl.profiles objectAtIndex:i];
+            
+            NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
+            
+            // get the concernRanking for the currentProfile
+            for (int j = 3; j < [currentProfile count]; j++) {
+                [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:j]] withDisplayName:[currentProfile objectAtIndex: j] withNumVar:1 withWidth:widthOfTitleVisualization withRank:10-j]];
+            }
+            
+            float priorityTotal= 0;
+            float scoreTotal = 0;
+            for(int j = 0; j < currentConcernRanking.count; j++){
+                
+                priorityTotal += [(AprilTestVariable *)[currentConcernRanking objectAtIndex:j] currentConcernRanking];
+            }
+            
+            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+            [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+            [formatter setGroupingSeparator:@","];
+            
+            NSArray *sortedArray = [currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+                NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+                NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+                if(first > second) return NSOrderedAscending;
+                else return NSOrderedDescending;
+            }];
+            NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
+            NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
+            
+            for(int j = 0 ; j < currentConcernRanking.count ; j++){
+                
+                AprilTestVariable * currentVar =[sortedArray objectAtIndex:j];
+                
+                //laziness: this is just the investment costs
+                if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
+                    float investmentInstallN = simRunNormal.publicInstallCost;
+                    float investmentMaintainN = simRunNormal.publicMaintenanceCost;
+                    
+                    scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - investmentInstallN));
+                    //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
+                    //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
+                    
+                    [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN)) + ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
+                    //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
+                    [scoreVisNames addObject: @"publicCost"];
+                    //[scoreVisNames addObject: @"publicCostD"];
+                    
+                    
+                    //just damages now
+                } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
+                    
+                    scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
+                    
+                    //add values for the score visualization
+                    
+                    [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages))]];
+                    //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
+                    //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
+                    [scoreVisNames addObject: @"privateCostD"];
+                    
+                } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
+                    
+                    scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
+                    [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
+                    [scoreVisNames addObject: currentVar.name];
+                    
+                } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
+                    
+                    
+                    scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
+                    [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
+                    [scoreVisNames addObject: currentVar.name];
+                } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+                    
+                    
+                    scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.standingWater);
+                    [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking + 1)/priorityTotal * (1- simRunNormal.standingWater)]];
+                    [scoreVisNames addObject: currentVar.name];
+                    
+                } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+                    
+                    scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
+                    [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
+                    [scoreVisNames addObject: currentVar.name];
+                } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
+                    
+                    scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (1- simRunNormal.efficiency);
+                    [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency)]];
+                    //NSLog(@"%@", NSStringFromCGRect(ev.frame));
+                    [scoreVisNames addObject: currentVar.name];
+                    
+                } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
+                    scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19);
+                    [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19)]];
+                    [scoreVisNames addObject:currentVar.name];
+                }
+            }
+            
+            [trialScores addObject:[NSNumber numberWithFloat:scoreTotal]];
+        }
+        // draw line for this profiles scores
+        
+        float scores[trialScores.count];
+        
+        for (int k = 0; k < trialScores.count; k++) {
+            scores[k] = [[trialScores objectAtIndex:k]floatValue];
+        }
+        
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        [self drawLineGraphWithContext:context andColor:[UIColor redColor] andData:scores andDataSize:trialScores.count];
+        
+    }
+}
+
+- (void)drawLineGraphWithContext:(CGContextRef)ctx andColor:(UIColor*)color andData:(float[])data andDataSize:(int)size{
+    CGContextSetLineWidth(ctx, 2.0);
+    CGContextSetStrokeColorWithColor(ctx, [color CGColor]);
+    
+    int maxGraphHeight = _corePlotView.frame.size.height;
+    CGContextBeginPath(ctx);
+    CGContextMoveToPoint(ctx, 0, maxGraphHeight - maxGraphHeight * data[0]);
+    
+    for (int i = 0; i < size; i++)
+    {
+        CGContextAddLineToPoint(ctx, i * 50, maxGraphHeight - maxGraphHeight * data[i]);
+    }
+    
+    CGContextDrawPath(ctx, kCGPathStroke);
+    
+    
+}
+
 #pragma mark Score Bar Visualization Functions
 
 /*
@@ -1344,6 +1505,7 @@ int                         dynamic_cd_width = 0;
     
     NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
     
+    // get the concernRanking for the currentProfile
     for (int j = 3; j < [currentProfile count]; j++) {
         [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:j]] withDisplayName:[currentProfile objectAtIndex: j] withNumVar:1 withWidth:widthOfTitleVisualization withRank:10-j]];
     }

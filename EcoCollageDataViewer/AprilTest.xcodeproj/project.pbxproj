@@ -10,6 +10,7 @@
 		5711E1621B190CE3005FF2F1 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5711E1611B190CE3005FF2F1 /* CoreBluetooth.framework */; };
 		574737081B14E52C00D5EED8 /* MommaBirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 574737071B14E52C00D5EED8 /* MommaBirdViewController.m */; };
 		5759D44F1B9F8120000C7B72 /* BabyBird.m in Sources */ = {isa = PBXBuildFile; fileRef = 5759D44E1B9F8120000C7B72 /* BabyBird.m */; };
+		5759D4901BA22A60000C7B72 /* GraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5759D48F1BA22A60000C7B72 /* GraphView.m */; };
 		5767434F1B7E8C98003F1227 /* social24.png in Resources */ = {isa = PBXBuildFile; fileRef = 5767434E1B7E8C98003F1227 /* social24.png */; };
 		579A157C1B1CE7D4009FBBD0 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579A15781B1CE4F4009FBBD0 /* GameKit.framework */; };
 		57A31DB71B695FA6007F6CDC /* FavoriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A31DB61B695FA6007F6CDC /* FavoriteView.m */; };
@@ -95,6 +96,8 @@
 		574737071B14E52C00D5EED8 /* MommaBirdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MommaBirdViewController.m; path = ../MommaBirdViewController.m; sourceTree = "<group>"; };
 		5759D44D1B9F8120000C7B72 /* BabyBird.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyBird.h; sourceTree = "<group>"; };
 		5759D44E1B9F8120000C7B72 /* BabyBird.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabyBird.m; sourceTree = "<group>"; };
+		5759D48E1BA22A60000C7B72 /* GraphView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphView.h; sourceTree = "<group>"; };
+		5759D48F1BA22A60000C7B72 /* GraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GraphView.m; sourceTree = "<group>"; };
 		5767434E1B7E8C98003F1227 /* social24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = social24.png; sourceTree = "<group>"; };
 		579A15781B1CE4F4009FBBD0 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		579A157A1B1CE591009FBBD0 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
@@ -270,6 +273,7 @@
 				846B971418FC26920008BD59 /* AprilTestSimRun.h */,
 				848479D618F71D7600BAD981 /* AprilTestTabBarController.h */,
 				848479D018F71ACE00BAD981 /* AprilTestVariable.h */,
+				5759D44D1B9F8120000C7B72 /* BabyBird.h */,
 				57A31DB51B695FA6007F6CDC /* FavoriteView.h */,
 				846B971818FE0B1F0008BD59 /* FebTestIntervention.h */,
 				846B971A18FE0B1F0008BD59 /* FebTestWaterDisplay.h */,
@@ -278,7 +282,6 @@
 				8453FA6A18F2FC8F0010D12F /* OutcomeSalienceViewController.h */,
 				841C0A1B1A16744500ED7A2E /* PeprViewController.h */,
 				57EEF5521B1E452200BECE7F /* SocialViewController.h */,
-				5759D44D1B9F8120000C7B72 /* BabyBird.h */,
 				8453FA6218F2FC8F0010D12F /* AprilTestAppDelegate.m */,
 				8423FC921AC9C4C600BC16E8 /* AprilTestCostDisplay.m */,
 				848479CA18F32AAA00BAD981 /* AprilTestCPBViewController.m */,
@@ -290,6 +293,7 @@
 				846B971518FC26920008BD59 /* AprilTestSimRun.m */,
 				848479D718F71D7600BAD981 /* AprilTestTabBarController.m */,
 				848479D118F71ACE00BAD981 /* AprilTestVariable.m */,
+				5759D44E1B9F8120000C7B72 /* BabyBird.m */,
 				57A31DB61B695FA6007F6CDC /* FavoriteView.m */,
 				846B971918FE0B1F0008BD59 /* FebTestIntervention.m */,
 				846B971B18FE0B1F0008BD59 /* FebTestWaterDisplay.m */,
@@ -298,7 +302,6 @@
 				8453FA6B18F2FC8F0010D12F /* OutcomeSalienceViewController.m */,
 				841C0A1C1A16744500ED7A2E /* PeprViewController.m */,
 				57EEF5531B1E452200BECE7F /* SocialViewController.m */,
-				5759D44E1B9F8120000C7B72 /* BabyBird.m */,
 				84DE92E51993CA79006525F4 /* BlueIsland_AugStudy.png */,
 				84DE92F21993EC3D006525F4 /* blueIslandOverlay.png */,
 				842D4CC31B0271A7002B351B /* DuPage_May.png */,
@@ -317,6 +320,8 @@
 				841C0A1E1A16744500ED7A2E /* questions2.txt */,
 				8453FA6D18F2FC8F0010D12F /* Images.xcassets */,
 				8453FA6418F2FC8F0010D12F /* Main.storyboard */,
+				5759D48E1BA22A60000C7B72 /* GraphView.h */,
+				5759D48F1BA22A60000C7B72 /* GraphView.m */,
 				8453FA5918F2FC8F0010D12F /* Supporting Files */,
 			);
 			path = AprilTest;
@@ -525,6 +530,7 @@
 				5759D44F1B9F8120000C7B72 /* BabyBird.m in Sources */,
 				574737081B14E52C00D5EED8 /* MommaBirdViewController.m in Sources */,
 				848479D218F71ACE00BAD981 /* AprilTestVariable.m in Sources */,
+				5759D4901BA22A60000C7B72 /* GraphView.m in Sources */,
 				846B972218FE0B1F0008BD59 /* FebTestWaterDisplay.m in Sources */,
 				846B972118FE0B1F0008BD59 /* FebTestIntervention.m in Sources */,
 				846B972A18FF04B50008BD59 /* AprilTestEfficiencyView.m in Sources */,

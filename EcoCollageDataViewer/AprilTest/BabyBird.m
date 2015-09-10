@@ -16,12 +16,15 @@
 @synthesize username = _username;
 @synthesize deviceName = _deviceName;
 
-- (BabyBird*) initWithConcernRanking:(NSArray*)concernRanking username:(NSString*)username deviceName:(NSString*)deviceName {
+AprilTestTabBarController *tabControl;
+
+- (BabyBird*) initWithConcernRanking:(NSArray*)concernRanking username:(NSString*)username deviceName:(NSString*)deviceName tabControl:(AprilTestTabBarController**)tabController {
     int indexOffset = (int)concernRanking.count - 8;
     
     _concernRanking = [[NSMutableArray alloc]initWithObjects:[concernRanking objectAtIndex:indexOffset], [concernRanking objectAtIndex:indexOffset+1], [concernRanking objectAtIndex:indexOffset+2], [concernRanking objectAtIndex:indexOffset+3], [concernRanking objectAtIndex:indexOffset+4], [concernRanking objectAtIndex:indexOffset+5], [concernRanking objectAtIndex:indexOffset+6], [concernRanking objectAtIndex:indexOffset+7], nil];
     _username = username;
     _deviceName = deviceName;
+    tabControl = *tabController;
     
     return self;
 }
@@ -42,7 +45,7 @@
 
 // calculate trial scores based on concerns
 - (void)calculateScores {
-    
+    NSLog(@"trial num: %d\n", tabControl.trialNum);
 }
 
 @end

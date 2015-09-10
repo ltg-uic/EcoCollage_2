@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "AprilTestTabBarController.h"
 
 @interface BabyBird : NSObject
 
@@ -15,6 +16,8 @@
 
 @property NSString       *username;
 @property NSString       *deviceName;
+
+- (BabyBird*) initWithConcernRanking:(NSArray*)concernRanking username:(NSString*)username deviceName:(NSString*)deviceName tabControl:(AprilTestTabBarController**)tabController;
 
 - (void)changeConcernRanking:(NSArray*)concernRanking;
 
