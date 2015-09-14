@@ -34,8 +34,6 @@
 @synthesize trialPickerTextField = _trialPickerTextField;
 @synthesize viewSwitchButton = _viewSwitchButton;
 @synthesize coreplotviewSwitchButton = _coreplotviewSwitchButton;
-@synthesize corePlotView = _corePlotView;
-@synthesize corePlotGraphView = _corePlotGraphView;
 
 NSMutableDictionary         *concernColors;
 NSMutableDictionary         *concernNames;
@@ -59,6 +57,7 @@ UIImage                     *maxWaterDisplayImage;
 
 UITapGestureRecognizer      *tapGestureRecognizer_social;
 
+UIScrollView                *corePlotView;
 UIScrollView                *scoreBarView;
 UIScrollView                *bottomOfMapWindow;
 
@@ -91,7 +90,6 @@ int                         dynamic_cd_width = 0;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _studyNum = tabControl.studyNum;
     
-    _corePlotGraphView.frame = CGRectMake(0, 108, 1052, 540);
     
     //AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To \tSocial View"];
@@ -109,7 +107,7 @@ int                         dynamic_cd_width = 0;
     [self.view addSubview:scoreBarView];
 
     
-    _corePlotView.frame = CGRectMake(1100, 108, 1052, 540);
+    corePlotView = [[UIScrollView alloc] initWithFrame:CGRectMake(1100, 108, 1052, 540)];
     
     
     // set tags for two buttons for animations
@@ -419,10 +417,6 @@ int                         dynamic_cd_width = 0;
     [self drawScoreBarVisualizationHelper];
     
     [self drawCorePlot];
-    
-    _corePlotGraphView = nil;
-    
-    _corePlotGraphView = [[GraphView alloc]initWithFrame:_corePlotView.frame];
 }
 
 /*
@@ -482,11 +476,11 @@ int                         dynamic_cd_width = 0;
 - (IBAction)hideOrShow:(UIButton *)sender {
     /*          6 move choices
      1 : from scoreBarView to profilesView
-     2 : from scoreBarView to _corePlotView
+     2 : from scoreBarView to corePlotView
      3 : from profilesView to scoreBarView
-     4 : from profilesView to _corePlotView
-     5 : from _corePlotView to profilesView
-     6 : from _corePlotView to scoreBarView
+     4 : from profilesView to corePlotView
+     5 : from corePlotView to profilesView
+     6 : from corePlotView to scoreBarView
      
      sender.tag == 100 -> profiles view button
      sender.tag == 101 -> coreplot view button
@@ -499,8 +493,8 @@ int                         dynamic_cd_width = 0;
         scoreBarView.frame = CGRectMake(1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
     }
     else if (sender.tag == 101 && _usernamesWindow.frame.origin.x == 0) moveChoice = 4;
-    else if (sender.tag == 100 && _corePlotView.frame.origin.x == 0) moveChoice = 5;
-    else if (sender.tag == 101 && _corePlotView.frame.origin.x == 0) {
+    else if (sender.tag == 100 && corePlotView.frame.origin.x == 0) moveChoice = 5;
+    else if (sender.tag == 101 && corePlotView.frame.origin.x == 0) {
         moveChoice = 6;
         scoreBarView.frame = CGRectMake(-1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
     }else return;
@@ -524,10 +518,10 @@ int                         dynamic_cd_width = 0;
         [_viewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
         //[_viewSwitchButton sizeToFit];
     }
-    // move scoreBarView out and move _corePlotView in
+    // move scoreBarView out and move corePlotView in
     else if(moveChoice == 2) {
-        // show _corePlotView visualization
-        _corePlotView.frame = CGRectMake(0, _corePlotView.frame.origin.y, _corePlotView.frame.size.width, _corePlotView.frame.size.height);
+        // show corePlotView visualization
+        corePlotView.frame = CGRectMake(0, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
         
         // hide scoreBarView
         scoreBarView.frame = CGRectMake(-1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
@@ -547,23 +541,23 @@ int                         dynamic_cd_width = 0;
         [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
         //[_viewSwitchButton sizeToFit];
     }
-    // move profilesView out and move _corePlotView in
+    // move profilesView out and move corePlotView in
     else if(moveChoice == 4) {
         // hide profile visualization
         _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
         _profilesWindow.frame = CGRectMake(_profilesWindow.frame.origin.x - 1100, _usernamesWindow.frame.origin.y, _profilesWindow.frame.size.width, _usernamesWindow.frame.size.height);
         [self.view viewWithTag:9002].frame = CGRectMake([self.view viewWithTag:9002].frame.origin.x - 1100, _usernamesWindow.frame.origin.y, 1, _usernamesWindow.frame.size.height);
         
-        // show _corePlotView visualization
-        _corePlotView.frame = CGRectMake(0, _corePlotView.frame.origin.y, _corePlotView.frame.size.width, _corePlotView.frame.size.height);
+        // show corePlotView visualization
+        corePlotView.frame = CGRectMake(0, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
         
         [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
         [_coreplotviewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
     }
-    // move _corePlotView out and move profilesView in
+    // move corePlotView out and move profilesView in
     else if(moveChoice == 5) {
-        // hide _corePlotView visualization
-        _corePlotView.frame = CGRectMake(1100, _corePlotView.frame.origin.y, _corePlotView.frame.size.width, _corePlotView.frame.size.height);
+        // hide corePlotView visualization
+        corePlotView.frame = CGRectMake(1100, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
         
         // show profile visualization
         _usernamesWindow.frame = CGRectMake(0, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
@@ -573,10 +567,10 @@ int                         dynamic_cd_width = 0;
         [_coreplotviewSwitchButton setTitle:@"Switch to Core Plot Visualization" forState:UIControlStateNormal];
         [_viewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
     }
-    // move _corePlotView out and move scoreBarView in
+    // move corePlotView out and move scoreBarView in
     else if(moveChoice == 6) {
-        // hide _corePlotView visualization
-        _corePlotView.frame = CGRectMake(1100, _corePlotView.frame.origin.y, _corePlotView.frame.size.width, _corePlotView.frame.size.height);
+        // hide corePlotView visualization
+        corePlotView.frame = CGRectMake(1100, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
         
         // show scorebar visualization
         scoreBarView.frame = CGRectMake(0, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
@@ -616,7 +610,7 @@ int                         dynamic_cd_width = 0;
         
         scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y + sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height - sizeOfChange);
         
-        _corePlotView.frame = CGRectMake(_corePlotView.frame.origin.x, _corePlotView.frame.origin.y + sizeOfChange, _corePlotView.frame.size.width, _corePlotView.frame.size.height - sizeOfChange);
+        corePlotView.frame = CGRectMake(corePlotView.frame.origin.x, corePlotView.frame.origin.y + sizeOfChange, corePlotView.frame.size.width, corePlotView.frame.size.height - sizeOfChange);
     }
     else {
         AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
@@ -631,7 +625,7 @@ int                         dynamic_cd_width = 0;
         
         scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y - sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height + sizeOfChange);
         
-        _corePlotView.frame = CGRectMake(_corePlotView.frame.origin.x, _corePlotView.frame.origin.y - sizeOfChange, _corePlotView.frame.size.width, _corePlotView.frame.size.height + sizeOfChange);
+        corePlotView.frame = CGRectMake(corePlotView.frame.origin.x, corePlotView.frame.origin.y - sizeOfChange, corePlotView.frame.size.width, corePlotView.frame.size.height + sizeOfChange);
     }
     [UIView commitAnimations];
 }
@@ -1343,7 +1337,7 @@ int                         dynamic_cd_width = 0;
     CGContextSetLineWidth(ctx, 2.0);
     CGContextSetStrokeColorWithColor(ctx, [color CGColor]);
     
-    int maxGraphHeight = _corePlotView.frame.size.height;
+    int maxGraphHeight = corePlotView.frame.size.height;
     CGContextBeginPath(ctx);
     CGContextMoveToPoint(ctx, 0, maxGraphHeight - maxGraphHeight * data[0]);
     

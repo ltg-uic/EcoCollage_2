@@ -20,9 +20,6 @@
 @property (strong, nonatomic) IBOutlet UIButton *coreplotviewSwitchButton;
 
 @property (strong, nonatomic) IBOutlet UITextField *trialPickerTextField;
-@property (strong, nonatomic) IBOutlet UIScrollView *corePlotView;
-
-@property (strong, nonatomic) IBOutlet UIView *corePlotGraphView;
 
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 
