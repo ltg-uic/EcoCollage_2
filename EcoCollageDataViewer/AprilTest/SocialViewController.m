@@ -17,7 +17,6 @@
 #import "AprilTestNormalizedVariable.h"
 #import "XYPieChart.h"
 #import <QuartzCore/QuartzCore.h>
-#import "GraphView.h"
 
 @interface SocialViewController ()
 @end
@@ -32,8 +31,7 @@
 @synthesize loadingIndicator = _loadingIndicator;
 @synthesize mapWindow = _mapWindow;
 @synthesize trialPickerTextField = _trialPickerTextField;
-@synthesize viewSwitchButton = _viewSwitchButton;
-@synthesize coreplotviewSwitchButton = _coreplotviewSwitchButton;
+@synthesize viewSegmentController = _viewSegmentController;
 
 NSMutableDictionary         *concernColors;
 NSMutableDictionary         *concernNames;
@@ -67,6 +65,7 @@ UILabel                     *budgetLabel;
 UILabel                     *hoursAfterStormLabel;
 UILabel                     *mapWindowStatusLabel;
 UILabel                     *lastLabelTapped;
+UILabel                     *maxLabelStorm;
 
 UIPickerView                *SortType_social;
 
@@ -95,9 +94,6 @@ int                         dynamic_cd_width = 0;
     NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To \tSocial View"];
     [tabControl writeToLogFileString:logEntry];
     
-    [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
-    [_viewSwitchButton sizeToFit];
-    _viewSwitchButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -108,11 +104,14 @@ int                         dynamic_cd_width = 0;
 
     
     corePlotView = [[UIScrollView alloc] initWithFrame:CGRectMake(1100, 108, 1052, 540)];
+    [corePlotView setContentSize:CGSizeMake(879, 540)];
+    UIImageView* plotView= [[UIImageView alloc]initWithFrame:CGRectMake(72, 0, 879, 540)];
+    plotView.image = [UIImage imageNamed:@"pedvpolStudy.png"];
+    [corePlotView addSubview:plotView];
     
+    [self.view addSubview:corePlotView];
     
-    // set tags for two buttons for animations
-    _viewSwitchButton.tag = 100;
-    _coreplotviewSwitchButton.tag = 101;
+    [_viewSegmentController setSelectedSegmentIndex:1];
     
     /* visual representation of layout 3 screens
        ---------------------------------------------------
@@ -467,13 +466,12 @@ int                         dynamic_cd_width = 0;
 
 #pragma mark Animation Functions
 
-
 /*
- Method Description: Switches between score bar visualization and profiles visualization with animation.
- Inputs: UIButton*
+ Method Description: Switches between score bar visualization, profiles visualization, and graphing visualization with animation.
+ Inputs: UISegmentedControl*
  Outputs: None
  */
-- (IBAction)hideOrShow:(UIButton *)sender {
+- (IBAction)switchView:(UISegmentedControl*)sender {
     /*          6 move choices
      1 : from scoreBarView to profilesView
      2 : from scoreBarView to corePlotView
@@ -482,23 +480,19 @@ int                         dynamic_cd_width = 0;
      5 : from corePlotView to profilesView
      6 : from corePlotView to scoreBarView
      
-     sender.tag == 100 -> profiles view button
-     sender.tag == 101 -> coreplot view button
-    */
-    int moveChoice = 0;
-    if (sender.tag == 100 && scoreBarView.frame.origin.x == 0) moveChoice = 1;
-    else if (sender.tag == 101 && scoreBarView.frame.origin.x == 0) moveChoice = 2;
-    else if (sender.tag == 100 && _usernamesWindow.frame.origin.x == 0) {
-        moveChoice = 3;
-        scoreBarView.frame = CGRectMake(1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
-    }
-    else if (sender.tag == 101 && _usernamesWindow.frame.origin.x == 0) moveChoice = 4;
-    else if (sender.tag == 100 && corePlotView.frame.origin.x == 0) moveChoice = 5;
-    else if (sender.tag == 101 && corePlotView.frame.origin.x == 0) {
-        moveChoice = 6;
-        scoreBarView.frame = CGRectMake(-1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
-    }else return;
+     sender.selectedSegmentIndex == 0 -> go to profiles view
+     sender.selectedSegmentIndex == 1 -> go to score bar view
+     sender.selectedSegmentIndex == 2 -> go to graph view
+     */
     
+    int moveChoice = 0;
+    if (sender.selectedSegmentIndex == 0 && scoreBarView.frame.origin.x == 0) moveChoice = 1;
+    else if (sender.selectedSegmentIndex == 2 && scoreBarView.frame.origin.x == 0) moveChoice = 2;
+    else if (sender.selectedSegmentIndex == 1 && _usernamesWindow.frame.origin.x == 0) moveChoice = 3;
+    else if (sender.selectedSegmentIndex == 2 && _usernamesWindow.frame.origin.x == 0) moveChoice = 4;
+    else if (sender.selectedSegmentIndex == 0 && corePlotView.frame.origin.x == 0) moveChoice = 5;
+    else if (sender.selectedSegmentIndex == 1 && corePlotView.frame.origin.x == 0) moveChoice = 6;
+    else return;
     
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
@@ -514,8 +508,6 @@ int                         dynamic_cd_width = 0;
         
         // hide scorebar visualization
         scoreBarView.frame = CGRectMake(1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
-        
-        [_viewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
         //[_viewSwitchButton sizeToFit];
     }
     // move scoreBarView out and move corePlotView in
@@ -525,7 +517,6 @@ int                         dynamic_cd_width = 0;
         
         // hide scoreBarView
         scoreBarView.frame = CGRectMake(-1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
-        [_coreplotviewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
     }
     // move profilesView out and move scoreBarView in
     else if(moveChoice == 3) {
@@ -536,10 +527,6 @@ int                         dynamic_cd_width = 0;
         
         // show scorebar visualization
         scoreBarView.frame = CGRectMake(0, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
-        
-        
-        [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
-        //[_viewSwitchButton sizeToFit];
     }
     // move profilesView out and move corePlotView in
     else if(moveChoice == 4) {
@@ -550,9 +537,7 @@ int                         dynamic_cd_width = 0;
         
         // show corePlotView visualization
         corePlotView.frame = CGRectMake(0, corePlotView.frame.origin.y, corePlotView.frame.size.width, corePlotView.frame.size.height);
-        
-        [_viewSwitchButton setTitle:@"Switch to Profile Visualization" forState:UIControlStateNormal];
-        [_coreplotviewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
+
     }
     // move corePlotView out and move profilesView in
     else if(moveChoice == 5) {
@@ -563,9 +548,6 @@ int                         dynamic_cd_width = 0;
         _usernamesWindow.frame = CGRectMake(0, _usernamesWindow.frame.origin.y, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height);
         _profilesWindow.frame = CGRectMake(283, _profilesWindow.frame.origin.y, _profilesWindow.frame.size.width, _profilesWindow.frame.size.height);
         [self.view viewWithTag:9002].frame = CGRectMake(_usernamesWindow.frame.origin.x + _usernamesWindow.frame.size.width, _usernamesWindow.frame.origin.y - 1, 1, _usernamesWindow.frame.size.height + 1);
-        
-        [_coreplotviewSwitchButton setTitle:@"Switch to Core Plot Visualization" forState:UIControlStateNormal];
-        [_viewSwitchButton setTitle:@"Switch to Score Bar Visualization" forState:UIControlStateNormal];
     }
     // move corePlotView out and move scoreBarView in
     else if(moveChoice == 6) {
@@ -574,15 +556,15 @@ int                         dynamic_cd_width = 0;
         
         // show scorebar visualization
         scoreBarView.frame = CGRectMake(0, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height);
-        
-        [_coreplotviewSwitchButton setTitle:@"Switch to Core Plot Visualization" forState:UIControlStateNormal];
     }
     
     
     [UIView commitAnimations];
-    [_coreplotviewSwitchButton sizeToFit];
-    _coreplotviewSwitchButton.frame = CGRectMake(1008 - _coreplotviewSwitchButton.frame.size.width, _coreplotviewSwitchButton.frame.origin.y, _coreplotviewSwitchButton.frame.size.width, _coreplotviewSwitchButton.frame.size.height);
-    [_viewSwitchButton sizeToFit];
+    
+    if(moveChoice == 4)
+        [scoreBarView setFrame:CGRectMake(-1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height)];
+    else if(moveChoice == 5)
+        [scoreBarView setFrame:CGRectMake(1100, scoreBarView.frame.origin.y, scoreBarView.frame.size.width, scoreBarView.frame.size.height)];
 }
 
 /*
@@ -1261,7 +1243,7 @@ int                         dynamic_cd_width = 0;
                     //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
                     //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
                     
-                    [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN)) + ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
+                    [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN))]];
                     //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
                     [scoreVisNames addObject: @"publicCost"];
                     //[scoreVisNames addObject: @"publicCostD"];
@@ -1327,28 +1309,9 @@ int                         dynamic_cd_width = 0;
             scores[k] = [[trialScores objectAtIndex:k]floatValue];
         }
         
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        [self drawLineGraphWithContext:context andColor:[UIColor redColor] andData:scores andDataSize:trialScores.count];
+
         
     }
-}
-
-- (void)drawLineGraphWithContext:(CGContextRef)ctx andColor:(UIColor*)color andData:(float[])data andDataSize:(int)size{
-    CGContextSetLineWidth(ctx, 2.0);
-    CGContextSetStrokeColorWithColor(ctx, [color CGColor]);
-    
-    int maxGraphHeight = corePlotView.frame.size.height;
-    CGContextBeginPath(ctx);
-    CGContextMoveToPoint(ctx, 0, maxGraphHeight - maxGraphHeight * data[0]);
-    
-    for (int i = 0; i < size; i++)
-    {
-        CGContextAddLineToPoint(ctx, i * 50, maxGraphHeight - maxGraphHeight * data[i]);
-    }
-    
-    CGContextDrawPath(ctx, kCGPathStroke);
-    
-    
 }
 
 #pragma mark Score Bar Visualization Functions
@@ -1537,7 +1500,7 @@ int                         dynamic_cd_width = 0;
             //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
             //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
             
-            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentInstallN)) + ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN))]];
             //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
             [scoreVisNames addObject: @"publicCost"];
             //[scoreVisNames addObject: @"publicCostD"];
@@ -1571,7 +1534,7 @@ int                         dynamic_cd_width = 0;
             
             
             scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.standingWater);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking + 1)/priorityTotal * (1- simRunNormal.standingWater)]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking)/priorityTotal * (1- simRunNormal.standingWater)]];
             [scoreVisNames addObject: currentVar.name];
             
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
@@ -2855,7 +2818,7 @@ int                         dynamic_cd_width = 0;
              */
             
             scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.standingWater);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking + 1)/priorityTotal * (1- simRunNormal.standingWater)]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking)/priorityTotal * (1- simRunNormal.standingWater)]];
             [scoreVisNames addObject: currentVar.name];
             
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
@@ -3060,6 +3023,8 @@ int                         dynamic_cd_width = 0;
     
     budgetLabel.text = [NSString stringWithFormat:@"Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:budget]]];
     [budgetLabel sizeToFit];
+    budgetLabel.frame = CGRectMake(maxLabelStorm.frame.origin.x + maxLabelStorm.frame.size.width - budgetLabel.frame.size.width, maxLabelStorm.frame.origin.y - budgetLabel.frame.size.height - 4, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
+
 }
 
 /*
@@ -3082,7 +3047,7 @@ int                         dynamic_cd_width = 0;
     [minLabelStorm setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:minLabelStorm];
     
-    UILabel *maxLabelStorm = [[UILabel alloc]init];
+    maxLabelStorm = [[UILabel alloc]init];
     maxLabelStorm.text = @"48 hrs";
     maxLabelStorm.font = [UIFont systemFontOfSize: 15.0];
     [maxLabelStorm sizeToFit];
@@ -3102,7 +3067,7 @@ int                         dynamic_cd_width = 0;
     budgetLabel.text = [NSString stringWithFormat:@"Budget $%@", [formatter stringFromNumber:[NSNumber numberWithInt:tabControl.budget]]];
     budgetLabel.font = [UIFont systemFontOfSize:15.0];
     [budgetLabel sizeToFit];
-    budgetLabel.frame = CGRectMake(hoursAfterStormLabel.frame.origin.x, hoursAfterStormLabel.frame.origin.y - budgetLabel.frame.size.height - 4, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
+    budgetLabel.frame = CGRectMake(maxLabelStorm.frame.origin.x + maxLabelStorm.frame.size.width - budgetLabel.frame.size.width, maxLabelStorm.frame.origin.y - budgetLabel.frame.size.height - 4, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
     [budgetLabel setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:budgetLabel];
 }
