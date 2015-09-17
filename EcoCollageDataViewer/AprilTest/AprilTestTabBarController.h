@@ -48,6 +48,7 @@
 - (void) addPieChartAtIndex:(int)index forProfile:(NSArray *)profile;
 - (void) updatePieChartAtIndex:(int)index forProfile:(NSArray *)profile;
 - (void)reloadDataForPieChartAtIndex:(int)index;
+- (NSMutableArray*)getScoreBarValuesForProfile:(int)profileIndex forTrial:(int)trial isDynamicTrial:(int)dynamic;
 
 //log writing related methods
 - (NSString*) generateLogEntryWith:(NSString*)extra;

@@ -11,6 +11,17 @@
 #import "AprilTestNormalizedVariable.h"
 #import "AprilTestSimRun.h"
 #import "XYPieChart.h"
+#import "SocialViewController.h"
+#import "AprilTestTabBarController.h"
+#import "AprilTestSimRun.h"
+#import "FebTestIntervention.h"
+#import "AprilTestVariable.h"
+#import "FebTestWaterDisplay.h"
+#import "AprilTestEfficiencyView.h"
+#import "AprilTestCostDisplay.h"
+#import "AprilTestNormalizedVariable.h"
+#import "XYPieChart.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface AprilTestTabBarController ()
 
@@ -54,6 +65,10 @@ NSArray *sliceColors;
 NSMutableDictionary *sliceNumbers;
 NSMutableArray *slicesInfo;
 
+NSMutableDictionary         *concernColors;
+NSMutableDictionary         *concernNames;
+NSMutableDictionary         *scoreColors;
+
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -93,6 +108,42 @@ NSMutableArray *slicesInfo;
     //    Impact on my Neighbors	impactingMyNeighbors
 
     _currentConcernRanking = [[NSMutableArray alloc] initWithObjects: [[AprilTestVariable alloc] initWith:@"publicCost" withDisplayName:@"Investment" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"privateCost" withDisplayName:@"Damage Reduction" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"efficiencyOfIntervention" withDisplayName:@"Efficiency of Intervention ($/Gallon)" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"capacity" withDisplayName:@"Capacity Used" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleTime" withDisplayName:@"Water Flow Path" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleMax" withDisplayName:@"Maximum Flooded Area" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"groundwaterInfiltration" withDisplayName:@"Groundwater Infiltration" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"impactingMyNeighbors" withDisplayName:@"Impact on my Neighbors" withNumVar:1 withWidth:220 withRank:1], nil];
+    
+    concernColors = [[NSMutableDictionary alloc] initWithObjects:
+                     [NSArray arrayWithObjects:
+                      [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.5],
+                      [UIColor colorWithHue:.31 saturation:.6 brightness:.91 alpha: 0.5],
+                      [UIColor colorWithHue:.32 saturation:.6 brightness:.92 alpha: 0.5],
+                      [UIColor colorWithHue:.33 saturation:.6 brightness:.93 alpha: 0.5],
+                      [UIColor colorWithHue:.35 saturation:.8 brightness:.6 alpha: 0.5],
+                      [UIColor colorWithHue:.36 saturation:.8 brightness:.61 alpha: 0.5],
+                      [UIColor colorWithHue:.37 saturation:.8 brightness:.62 alpha: 0.5],
+                      [UIColor colorWithHue:.38 saturation:.8 brightness:.63 alpha: 0.5],
+                      [UIColor colorWithHue:.4 saturation:.8 brightness:.3 alpha: 0.5],
+                      [UIColor colorWithHue:.65 saturation:.8 brightness:.6 alpha: 0.5],
+                      [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
+                      [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
+                      [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
+                      [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"Investment", @"publicCostI", @"publicCostM", @"publicCostD", @"Damage Reduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"Efficiency of Intervention ($/Gallon)", @"Water Flow Path", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", @"Capacity Used", nil] ];
+    
+    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
+    
+    scoreColors = [[NSMutableDictionary alloc] initWithObjects:
+                   [NSArray arrayWithObjects:
+                    [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.5],
+                    [UIColor colorWithHue:.31 saturation:.6 brightness:.91 alpha: 0.5],
+                    [UIColor colorWithHue:.32 saturation:.6 brightness:.92 alpha: 0.5],
+                    [UIColor colorWithHue:.33 saturation:.6 brightness:.93 alpha: 0.5],
+                    [UIColor colorWithHue:.35 saturation:.8 brightness:.6 alpha: 0.5],
+                    [UIColor colorWithHue:.36 saturation:.8 brightness:.61 alpha: 0.5],
+                    [UIColor colorWithHue:.37 saturation:.8 brightness:.62 alpha: 0.5],
+                    [UIColor colorWithHue:.38 saturation:.8 brightness:.63 alpha: 0.5],
+                    [UIColor colorWithHue:.4 saturation:.8 brightness:.3 alpha: 0.5],
+                    [UIColor colorWithHue:.65 saturation:.8 brightness:.6 alpha: 0.5],
+                    [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
+                    [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
+                    [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
+                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
 
     
     // Do any additional setup after loading the view.
@@ -382,6 +433,124 @@ NSMutableArray *slicesInfo;
     else {
         NSLog(@"Received unknown data");
     }
+}
+
+/* 
+ Functions figures out the scores for a specific trial for a specific profile (concernRankings)
+ 
+ Returns: Returns a mutablearray with two components. First component is another mutablearray called scoreVisVals which holds the values for each concernRanking. Second component is again another mutablearray called scoreVisNames which holds the names of each concernRanking in order.
+ */
+- (NSMutableArray*)getScoreBarValuesForProfile:(int)profileIndex forTrial:(int)trial isDynamicTrial:(int)dynamic{
+    NSMutableArray* scores = [[NSMutableArray alloc]init];
+
+    AprilTestSimRun *simRun = [_trialRuns objectAtIndex:trial];
+    AprilTestNormalizedVariable *simRunNormal;
+    
+    if(dynamic) simRunNormal = [_trialRunsDynNorm objectAtIndex:trial];
+    else simRunNormal = [_trialRunsNormalized objectAtIndex:trial];
+    
+    
+    NSArray *currentProfile = [[NSArray alloc]init];
+    currentProfile = [_profiles objectAtIndex:profileIndex];
+    
+    NSMutableArray *currentConcernRanking = [[NSMutableArray alloc]init];
+    
+    // get the concernRanking for the currentProfile
+    for (int j = 3; j < [currentProfile count]; j++) {
+        [currentConcernRanking addObject:[[AprilTestVariable alloc] initWith:[concernNames objectForKey:[currentProfile objectAtIndex:j]] withDisplayName:[currentProfile objectAtIndex: j] withNumVar:1 withWidth:220 withRank:10-j]];
+    }
+    
+    float priorityTotal= 0;
+    float scoreTotal = 0;
+    for(int j = 0; j < currentConcernRanking.count; j++){
+        
+        priorityTotal += [(AprilTestVariable *)[currentConcernRanking objectAtIndex:j] currentConcernRanking];
+    }
+    
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setGroupingSeparator:@","];
+    
+    NSArray *sortedArray = [currentConcernRanking sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSInteger first = [(AprilTestVariable*)a currentConcernRanking];
+        NSInteger second = [(AprilTestVariable*)b currentConcernRanking];
+        if(first > second) return NSOrderedAscending;
+        else return NSOrderedDescending;
+    }];
+    NSMutableArray *scoreVisVals = [[NSMutableArray alloc] init];
+    NSMutableArray *scoreVisNames = [[NSMutableArray alloc] init];
+    
+    for(int j = 0 ; j < currentConcernRanking.count ; j++){
+        
+        AprilTestVariable * currentVar =[sortedArray objectAtIndex:j];
+        
+        //laziness: this is just the investment costs
+        if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
+            float investmentInstallN = simRunNormal.publicInstallCost;
+            float investmentMaintainN = simRunNormal.publicMaintenanceCost;
+            
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - investmentInstallN));
+            //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
+            //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
+            
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN))]];
+            //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
+            [scoreVisNames addObject: @"publicCost"];
+            //[scoreVisNames addObject: @"publicCostD"];
+            
+            
+            //just damages now
+        } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
+            
+            //add values for the score visualization
+            
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages))]];
+            //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
+            //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
+            [scoreVisNames addObject: @"privateCostD"];
+            
+        } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
+            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
+            [scoreVisNames addObject: currentVar.name];
+            
+        } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
+            
+            
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
+            [scoreVisNames addObject: currentVar.name];
+        } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+            
+            
+            scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.standingWater);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking)/priorityTotal * (1- simRunNormal.standingWater)]];
+            [scoreVisNames addObject: currentVar.name];
+            
+        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
+            [scoreVisNames addObject: currentVar.name];
+        } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
+            
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (1- simRunNormal.efficiency);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency)]];
+            //NSLog(@"%@", NSStringFromCGRect(ev.frame));
+            [scoreVisNames addObject: currentVar.name];
+            
+        } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19)]];
+            [scoreVisNames addObject:currentVar.name];
+        }
+    }
+    [scores addObject:scoreVisVals];
+    [scores addObject:scoreVisNames];
+    return scores;
 }
 
 - (void)updateAllFavorites:(NSArray *)dataArray {
