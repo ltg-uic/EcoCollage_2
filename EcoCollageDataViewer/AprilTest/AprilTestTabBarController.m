@@ -55,6 +55,7 @@
 @synthesize leastFavorites = _leastFavorites;
 @synthesize threshVal = _threshVal;
 @synthesize scores = _scores;
+@synthesize reloadSocialView = _reloadSocialView;
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *viewsForWaterDisplays;
@@ -394,16 +395,20 @@ NSMutableDictionary         *scoreColors;
     }
     else if([dataArray[0] isEqualToString:@"profileToBaby"]) {
         // receive individual profile when updated by another baby bird
+        _reloadSocialView = 1;
         [self receiveProfileFromMomma:dataArray];
     }
     else if([dataArray[0] isEqualToString:@"usernameToBaby"]) {
+        _reloadSocialView = 1;
         [self handleUsernameUpdates:dataArray];
     }
     else if([dataArray[0] isEqualToString:@"allProfilesToNewBaby"]) {
         // receive all profiles when baby bird first connects to Momma so that baby is brought up to speed
+        _reloadSocialView = 1;
         [self receiveAllProfilesFromMomma:dataArray];
     }
     else if([dataArray[0] isEqualToString:@"removeProfile"]) {
+        _reloadSocialView = 1;
         [self removeProfile:dataArray];
     }
     else if([dataArray[0] isEqualToString:@"singleTrialData"]) {
@@ -413,21 +418,26 @@ NSMutableDictionary         *scoreColors;
         [self receiveMultipleTrials:dataArray];
     }
     else if([dataArray[0] isEqualToString:@"budgetChange"]) {
+        _reloadSocialView = 1;
         [self updateBudget:dataArray];
     }
     else if ([dataArray[0] isEqualToString:@"trialRequestToBaby"]) {
         [self sendTrialRequestToMomma:dataArray];
     }
     else if([dataArray[0] isEqualToString:@"favoriteForBabies"]) {
+        _reloadSocialView = 1;
         [self updateFavorites:dataArray];
     }
     else if([dataArray[0] isEqualToString:@"multipleFavoritesForBaby"]) {
+        _reloadSocialView = 1;
         [self updateAllFavorites:dataArray];
     }
     else if([dataArray[0] isEqualToString:@"leastFavoriteForBabies"]) {
+        _reloadSocialView = 1;
         [self updateLeastFavorites:dataArray];
     }
     else if([dataArray[0] isEqualToString:@"multipleLeastFavoritesForBaby"]) {
+        _reloadSocialView = 1;
         [self updateAllLeastFavorites:dataArray];
     }
     else {

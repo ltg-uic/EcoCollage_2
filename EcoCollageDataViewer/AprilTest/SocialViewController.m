@@ -222,13 +222,25 @@ int                         dynamic_cd_width = 0;
     
     _StormPlayBack.minimumValue = 0;
     _StormPlayBack.maximumValue = 48;
-    [_StormPlayBack addTarget:self action:@selector(StormHoursChanged:) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
+
+    [_StormPlayBack addTarget:self
+                       action:@selector(StormHoursChanged:)
+             forControlEvents:UIControlEventValueChanged];
     [_StormPlayBack addTarget:self
                        action:@selector(StormHoursChosen:)
-             forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
+             forControlEvents:UIControlEventTouchUpInside];
+    [_StormPlayBack addTarget:self
+                       action:@selector(StormHoursChosen:)
+             forControlEvents:UIControlEventTouchCancel];
+    [_StormPlayBack addTarget:self
+                       action:@selector(StormHoursChosen:)
+             forControlEvents:UIControlEventTouchUpOutside];
+    
+    
     [_StormPlayBack addTarget:self
                        action:@selector(changeHoursLabel)
              forControlEvents:(UIControlEventValueChanged)];
+
     _StormPlayBack.continuous = YES;
     _StormPlayBack.value = hours_social;
     
@@ -407,10 +419,13 @@ int                         dynamic_cd_width = 0;
 - (void)viewDidAppear:(BOOL)animated {
     //log switch in screens to log file
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    
     thresh_social = tabControl.threshVal;
     
     NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To Social View Screen"];
     [tabControl writeToLogFileString:logEntry];
+
+    if(tabControl.reloadSocialView == 0) return;
     
     [self profileUpdate];
     [self drawScoreBarVisualizationHelper];
@@ -441,24 +456,8 @@ int                         dynamic_cd_width = 0;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice6tapped" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice7tapped" object:nil];
     
-    // empty _usernamesWindow and _profilesWindow to free memory
-    for (UIView *view in [_usernamesWindow subviews]) {
-        for (UIView *subsubview in [view subviews])
-            [subsubview removeFromSuperview];
-        [view removeFromSuperview];
-    }
-    for (UIView *view in [_profilesWindow subviews]) {
-        if (view.tag != 9005) {
-            for (UIView *subsubview in [view subviews])
-                [subsubview removeFromSuperview];
-            [view removeFromSuperview];
-        }
-    }
-    for (UIView *view in [bottomOfMapWindow subviews]) {
-        for (UIView *subsubview in [view subviews])
-            [subsubview removeFromSuperview];
-        [view removeFromSuperview];
-    }
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    tabControl.reloadSocialView = 0;
     
     [super viewWillDisappear:animated];
 }

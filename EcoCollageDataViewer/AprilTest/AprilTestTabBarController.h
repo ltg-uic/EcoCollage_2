@@ -34,6 +34,7 @@
 @property int   studyNum;
 @property int   trialNum;
 @property int   logNum;
+@property int   reloadSocialView;
 @property float threshVal;
 @property int   showProfile;
 @property int   budget;
