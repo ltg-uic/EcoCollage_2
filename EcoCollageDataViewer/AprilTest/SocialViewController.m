@@ -2543,6 +2543,31 @@ int                         dynamic_cd_width = 0;
 
 #pragma mark Drawing Functions
 
+-(void)resizeImage:(UITapGestureRecognizer*)sender {
+    
+    float resizeAmount = 1.3;
+    float moveX = (115 * resizeAmount - 115) / 2;
+    float moveY = (125 * resizeAmount - 125) / 2;
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    if (sender.view.frame.size.width <= 120 ) { //grow
+        [sender.view setFrame:CGRectMake(sender.view.frame.origin.x - moveX, sender.view.frame.origin.y - moveY, sender.view.frame.size.width * resizeAmount, sender.view.frame.size.height * resizeAmount)];
+        [[sender.view superview] addSubview:sender.view];
+    }
+    else{ //shrink
+        [sender.view setFrame:CGRectMake(sender.view.frame.origin.x + moveX, sender.view.frame.origin.y + moveY, sender.view.frame.size.width / resizeAmount, sender.view.frame.size.height / resizeAmount)];
+        [[sender.view superview] addSubview:sender.view];
+    }
+    [UIView commitAnimations];
+}
+
+
+
+
 /*
  Method Description: Draws the trial information.
  Inputs: trial - trial number, currentProfileIndex - index of profile within tabControl.profiles, viewIndex - index of which view to draw the trial information into within _usernamesWindow and _profilesWindow
@@ -2644,8 +2669,13 @@ int                         dynamic_cd_width = 0;
             ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh_social;
             [[tabControl.waterDisplaysInTab objectAtIndex:trial] fastUpdateView:hoursAfterStorm_social];
             
-            UIImageView *waterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, 60, 115, 125)];
+            UIImageView *waterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 52, 60, 115, 125)];
             waterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:trial]];
+            [waterDisplayView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resizeImage:)];
+            tap.numberOfTapsRequired = 1;
+            [waterDisplayView addGestureRecognizer:tap];
+
             [[_profilesWindow viewWithTag:viewIndex + 1]addSubview:waterDisplayView];
             
             [imageViewsToRemove addObject:waterDisplayView];
@@ -2654,8 +2684,13 @@ int                         dynamic_cd_width = 0;
             ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh_social;
             [[tabControl.maxWaterDisplaysInTab objectAtIndex:trial] updateView:48];
             
-            UIImageView *maxWaterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, 60, 115, 125)];
+            UIImageView *maxWaterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 52, 60, 115, 125)];
             maxWaterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]];
+            [maxWaterDisplayView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resizeImage:)];
+            tap.numberOfTapsRequired = 1;
+            [maxWaterDisplayView addGestureRecognizer:tap];
+
             [[_profilesWindow viewWithTag:viewIndex + 1]addSubview:maxWaterDisplayView];
             
             [imageViewsToRemove addObject:maxWaterDisplayView];

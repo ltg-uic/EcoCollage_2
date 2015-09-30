@@ -1702,6 +1702,30 @@ float maxPublicInstallNorm;
 
 #pragma mark Trial Drawing Functions
 
+-(void)resizeImage:(UITapGestureRecognizer*)sender {
+    
+    float resizeAmount = 1.3;
+    float moveX = (115 * resizeAmount - 115) / 2;
+    float moveY = (125 * resizeAmount - 125) / 2;
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    if (sender.view.frame.size.width <= 120 ) { //grow
+        [sender.view setFrame:CGRectMake(sender.view.frame.origin.x - moveX, sender.view.frame.origin.y - moveY, sender.view.frame.size.width * resizeAmount, sender.view.frame.size.height * resizeAmount)];
+        [[sender.view superview] addSubview:sender.view];
+    }
+    else{ //shrink
+        [sender.view setFrame:CGRectMake(sender.view.frame.origin.x + moveX, sender.view.frame.origin.y + moveY, sender.view.frame.size.width / resizeAmount, sender.view.frame.size.height / resizeAmount)];
+        [[sender.view superview] addSubview:sender.view];
+    }
+    [UIView commitAnimations];
+}
+
+
+
 
 -(void) drawTrial: (int) trial{
     UILabel *maintenance;
@@ -1736,6 +1760,11 @@ float maxPublicInstallNorm;
         
         interventionImageView = [[UIImageView alloc] initWithFrame:(CGRectMake(20, 175 * (trial) + 40, 115, 125))];
         interventionImageView.image = [interventionView viewToImage];
+        [interventionImageView setUserInteractionEnabled:YES];
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resizeImage:)];
+        tap.numberOfTapsRequired = 1;
+        [interventionImageView addGestureRecognizer:tap];
+        
         [interventionViews addObject:interventionImageView];
         [_mapWindow addSubview:interventionImageView];
     }
@@ -1744,7 +1773,7 @@ float maxPublicInstallNorm;
         interventionImageView.frame = CGRectMake(20, 175 * (trial) + 40, 115, 125);
         [_mapWindow addSubview:interventionImageView];
     }
-    [_mapWindow setContentSize: CGSizeMake(_mapWindow.contentSize.width, (trial+1)*175)];
+    [_mapWindow setContentSize: CGSizeMake(_mapWindow.contentSize.width, (trial+1)*175 +30)];
     
     //int scoreBar=0;
     
@@ -1870,8 +1899,12 @@ float maxPublicInstallNorm;
             ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh;
             [[tabControl.maxWaterDisplaysInTab objectAtIndex:trial] updateView:48];
             
-            MaxWaterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
+            MaxWaterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 52, trial * 175 + 40, 115, 125)];
             MaxWaterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:simRun.trialNum]];
+            [MaxWaterDepthView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resizeImage:)];
+            tap.numberOfTapsRequired = 1;
+            [MaxWaterDepthView addGestureRecognizer:tap];
             [_dataWindow addSubview:MaxWaterDepthView];
             
         } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
@@ -1881,9 +1914,13 @@ float maxPublicInstallNorm;
             //Moved to creating UIImageViews... to minimize lag in scrolling
             ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]).thresholdValue = thresh;
             [[tabControl.waterDisplaysInTab objectAtIndex:trial] fastUpdateView:hoursAfterStorm];
-            
-            waterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 10, (trial)*175 + 40, 115, 125)];
+
+            waterDepthView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 52, (trial)*175 + 40, 115, 125)];
             waterDepthView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]];
+            [waterDepthView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resizeImage:)];
+            tap.numberOfTapsRequired = 1;
+            [waterDepthView addGestureRecognizer:tap];
             [_dataWindow addSubview:waterDepthView];
 
             
@@ -1947,7 +1984,7 @@ float maxPublicInstallNorm;
     }
     //NSLog(@"\n");
     
-    [_dataWindow setContentSize:CGSizeMake(width+=100, (trial+1)*175)];
+    [_dataWindow setContentSize:CGSizeMake(width+=100, (trial+1)*175 +30)];
     for(UILabel * bgCol in bgCols){
         if(_dataWindow.contentSize.height > _dataWindow.frame.size.height){
             [bgCol setFrame: CGRectMake(bgCol.frame.origin.x, bgCol.frame.origin.y, bgCol.frame.size.width, _dataWindow.contentSize.height + 1)];
@@ -2479,16 +2516,26 @@ float maxPublicInstallNorm;
         
         [favoriteLabel setFrame:CGRectMake(148, 175 * i + 105, 114, 20)];
         
-        [self OffsetView:InterventionImageView toX:InterventionImageView.frame.origin.x andY:175 * (i) + 40];
+        
+        if(InterventionImageView.frame.size.width < 120)
+            [self OffsetView:InterventionImageView toX:InterventionImageView.frame.origin.x andY:175 * (i) + 40];
+        else
+            [self OffsetView:InterventionImageView toX:InterventionImageView.frame.origin.x andY:175 * (i) + ((int)InterventionImageView.frame.origin.y % 175)];
         
         
         [self OffsetView:ev toX:ev.frame.origin.x andY:175*i + 40];
         //[ev updateViewForHour: StormPlaybackInterv.value];
         
-        [self OffsetView:wd toX:wd.frame.origin.x andY:175*i + 40];
+        if(wd.frame.size.width < 120)
+            [self OffsetView:wd toX:wd.frame.origin.x andY:175*i + 40];
+        else
+            [self OffsetView:wd toX:wd.frame.origin.x andY:175*i + ((int)wd.frame.origin.y % 175)];
         //[wd fastUpdateView: StormPlaybackWater.value];
         
-        [self OffsetView:mwd toX:mwd.frame.origin.x andY:175*i + 40];
+        if(mwd.frame.size.width < 120)
+            [self OffsetView:mwd toX:mwd.frame.origin.x andY:175*i + 40];
+        else
+            [self OffsetView:mwd toX:mwd.frame.origin.x andY:175*i + ((int)mwd.frame.origin.y % 175)];
         //[mwd updateView:48];
         
         //move over the private damage labels
