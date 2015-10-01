@@ -41,6 +41,9 @@ NSMutableArray              *arrStatus_social;
 NSMutableArray              *efficiencySocial;
 NSMutableArray              *imageViewsToRemove;
 NSMutableArray              *scoreBars;
+NSMutableArray              *waterDisplays;
+NSMutableArray              *maxWaterDisplays;
+NSMutableArray              *orderOfFavorites;
 
 NSArray                     *sliceColors;
 
@@ -79,7 +82,7 @@ int                         smallSizeOfMapWindow = 50;
 int                         largeSizeOfMapWindow = 220;
 int                         widthOfUsernamesWindowWhenOpen;
 int                         widthOfTitleVisualization = 220;
-int                         heightOfVisualization = 200;
+int                         heightOfVisualization = 220;
 int                         dynamic_cd_width = 0;
 
 #pragma mark View Lifecycle Functions
@@ -101,6 +104,10 @@ int                         dynamic_cd_width = 0;
     // make scorebar visualization
     scoreBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 108, 283 + 769, 540)];
     [self.view addSubview:scoreBarView];
+    
+    waterDisplays = [[NSMutableArray alloc]init];
+    maxWaterDisplays = [[NSMutableArray alloc]init];
+    orderOfFavorites = [[NSMutableArray alloc]init];
 
     
     corePlotView = [[UIScrollView alloc] initWithFrame:CGRectMake(1100, 108, 1052, 540)];
@@ -2132,6 +2139,7 @@ int                         dynamic_cd_width = 0;
     }
     
     [efficiencySocial removeAllObjects];
+    [orderOfFavorites removeAllObjects];
     
     int indexOfProfileInTabControlProfiles = -1;
     
@@ -2261,6 +2269,7 @@ int                         dynamic_cd_width = 0;
         }
         
         [self drawTrialForSpecificTrial:trialNum forProfile:indexOfProfileInTabControlProfiles withViewIndex:i];
+        [orderOfFavorites addObject:[NSNumber numberWithInt:trialNum ]];
     }
     
     [_profilesWindow setContentSize:CGSizeMake(widthOfTitleVisualization * 8 + 10, tabControl.favorites.count * heightOfVisualization + 10)];
@@ -2313,6 +2322,7 @@ int                         dynamic_cd_width = 0;
     }
     
     [efficiencySocial removeAllObjects];
+    [orderOfFavorites removeAllObjects];
     
     
     // sort favorites so that the user of the device is at the top
@@ -2456,6 +2466,7 @@ int                         dynamic_cd_width = 0;
         }
         
         [self drawTrialForSpecificTrial:trialNum forProfile:indexOfProfileInTabControlProfiles withViewIndex:i];
+        [orderOfFavorites addObject:[NSNumber numberWithInt:trialNum ]];
     }
     
     
@@ -2512,6 +2523,7 @@ int                         dynamic_cd_width = 0;
         AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:trialChosen];
         
         [bottomOfMapWindow setContentSize:CGSizeMake(_mapWindow.frame.size.width, bottomOfMapWindow.frame.size.height)];
+        
         
         FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(mapWindowLabel.frame.origin.x + 20, mapWindowLabel.frame.size.height + 5, 115, 125))];
         interventionView.view = [[bottomOfMapWindow subviews] objectAtIndex:0];
@@ -2669,12 +2681,23 @@ int                         dynamic_cd_width = 0;
             ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh_social;
             [[tabControl.waterDisplaysInTab objectAtIndex:trial] fastUpdateView:hoursAfterStorm_social];
             
-            UIImageView *waterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 52, 60, 115, 125)];
+            UIImageView* waterDisplayView;
+            
+            if(viewIndex >= waterDisplays.count) { //create new maxWaterDisplayView
+                waterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 52, 67, 115, 125)];
+                [waterDisplays addObject:waterDisplayView];
+                [waterDisplayView setUserInteractionEnabled:YES];
+                UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resizeImage:)];
+                tap.numberOfTapsRequired = 1;
+                [waterDisplayView addGestureRecognizer:tap];
+            }
+            else { // get the old one
+                waterDisplayView = [waterDisplays objectAtIndex:viewIndex];
+            }
+         
             waterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:trial]];
-            [waterDisplayView setUserInteractionEnabled:YES];
-            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resizeImage:)];
-            tap.numberOfTapsRequired = 1;
-            [waterDisplayView addGestureRecognizer:tap];
+            
+            [waterDisplays replaceObjectAtIndex:viewIndex withObject:waterDisplayView];
 
             [[_profilesWindow viewWithTag:viewIndex + 1]addSubview:waterDisplayView];
             
@@ -2684,13 +2707,24 @@ int                         dynamic_cd_width = 0;
             ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh_social;
             [[tabControl.maxWaterDisplaysInTab objectAtIndex:trial] updateView:48];
             
-            UIImageView *maxWaterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 52, 60, 115, 125)];
-            maxWaterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]];
-            [maxWaterDisplayView setUserInteractionEnabled:YES];
-            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resizeImage:)];
-            tap.numberOfTapsRequired = 1;
-            [maxWaterDisplayView addGestureRecognizer:tap];
+            UIImageView *maxWaterDisplayView;
+            
+            if(viewIndex >= maxWaterDisplays.count) { //create new maxWaterDisplayView
+                maxWaterDisplayView = [[UIImageView alloc]initWithFrame:CGRectMake(width + 52, 67, 115, 125)];
+                [maxWaterDisplays addObject:maxWaterDisplayView];
+                [maxWaterDisplayView setUserInteractionEnabled:YES];
+                UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resizeImage:)];
+                tap.numberOfTapsRequired = 1;
+                [maxWaterDisplayView addGestureRecognizer:tap];
+            }
+            else { // get the old one
+                maxWaterDisplayView = [maxWaterDisplays objectAtIndex:viewIndex];
+            }
 
+            maxWaterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]];
+
+            [maxWaterDisplays replaceObjectAtIndex:viewIndex withObject:maxWaterDisplayView];
+            
             [[_profilesWindow viewWithTag:viewIndex + 1]addSubview:maxWaterDisplayView];
             
             [imageViewsToRemove addObject:maxWaterDisplayView];
@@ -2971,20 +3005,63 @@ int                         dynamic_cd_width = 0;
     
     if (tabControl.trialNum == trialChosen) {
         if (tabControl.trialNum > 0) {
-            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
-            [self loadFavorites];
-            [_loadingIndicator stopAnimating];
+            int i;
+            UIImageView* waterDisplayView;
+            for(i = 0; i < orderOfFavorites.count; i++) {
+                int trialToUpdate = [[orderOfFavorites objectAtIndex:i]integerValue];
+                
+                // loop through all waterDisplays and update them
+                ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:trialToUpdate]).thresholdValue = thresh_social;
+                [[tabControl.waterDisplaysInTab objectAtIndex:trialToUpdate] fastUpdateView:hoursAfterStorm_social];
+                
+                waterDisplayView = [waterDisplays objectAtIndex:i];
+                
+                waterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:trialToUpdate]];
+                
+                [waterDisplays replaceObjectAtIndex:i withObject:waterDisplayView];
+                
+                [[_profilesWindow viewWithTag:i + 1]addSubview:waterDisplayView];
+            }
         }
     }
-    if (tabControl.trialNum + 1 == trialChosen) {
+    else if (tabControl.trialNum + 1 == trialChosen) {
         if (tabControl.trialNum > 0) {
-            [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
-            [self loadLeastFavorites];
-            [_loadingIndicator stopAnimating];
+            int i;
+            UIImageView* waterDisplayView;
+            for(i = 0; i < orderOfFavorites.count; i++) {
+                int trialToUpdate = [[orderOfFavorites objectAtIndex:i]integerValue];
+                
+                // loop through all waterDisplays and update them
+                ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:trialToUpdate]).thresholdValue = thresh_social;
+                [[tabControl.waterDisplaysInTab objectAtIndex:trialToUpdate] fastUpdateView:hoursAfterStorm_social];
+                
+                waterDisplayView = [waterDisplays objectAtIndex:i];
+                
+                waterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:trialToUpdate]];
+                
+                [waterDisplays replaceObjectAtIndex:i withObject:waterDisplayView];
+                
+                [[_profilesWindow viewWithTag:i + 1]addSubview:waterDisplayView];
+            }
         }
     }
-    else
-        [self profileUpdate];
+    else {
+        // loop through all waterDisplays and update them
+        ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:trialChosen]).thresholdValue = thresh_social;
+        [[tabControl.waterDisplaysInTab objectAtIndex:trialChosen] fastUpdateView:hoursAfterStorm_social];
+        
+        int i;
+        UIImageView* waterDisplayView;
+        for(i = 0; i < waterDisplays.count; i++) {
+            waterDisplayView = [waterDisplays objectAtIndex:i];
+            
+            waterDisplayView.image = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:trialChosen]];
+            
+            [waterDisplays replaceObjectAtIndex:i withObject:waterDisplayView];
+            
+            [[_profilesWindow viewWithTag:i + 1]addSubview:waterDisplayView];
+        }
+    }
     
     
     
