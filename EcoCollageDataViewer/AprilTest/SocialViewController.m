@@ -1397,7 +1397,9 @@ int                         heightMultiplier = 5;
     int widthOfBar = (100 / numOfTrials) + (50 / numOfProfiles);
     int spaceBetweenTrials = 30;
     
-    int withContainers = 0;
+    int withContainers = 1;
+    int scaledToScreen = 1;
+    float scaleSize = 0;
 
     
     
@@ -1440,18 +1442,28 @@ int                         heightMultiplier = 5;
         }
     }
     
+    scaleSize = heightMultiplier * (maxInvestment + maxDamageReduction + maxImpact + maxGroundwaterInfiltration + maxWaterFlow + maxMaxFlood + maxCapacity + maxEfficiency);
+    scaleSize = scoreBarView.frame.size.height / scaleSize;
     int maxHeight = heightMultiplier * (maxInvestment + maxDamageReduction + maxImpact + maxGroundwaterInfiltration + maxWaterFlow + maxMaxFlood + maxCapacity + maxEfficiency) + 40;
     if(withContainers) scoreBarView.contentSize = CGSizeMake(scoreBarView.frame.size.width, maxHeight);
     else scoreBarView.contentSize = scoreBarView.frame.size;
     int x = 15;
     
+    int orderedStrictly = 1;
     
+
     // order the individual scores based on this users concerns
     NSMutableArray *userConcerns = [[NSMutableArray alloc]init];
-    for(int i = 3; i < [[tabControl.profiles objectAtIndex:0] count]; i++) {
-        [userConcerns addObject:[concernNames objectForKey:[[tabControl.profiles objectAtIndex:0]objectAtIndex:i]]];
-    }
     
+    if(orderedStrictly) { // order the individual bars based on the concerns of this user
+        for(int i = 3; i < [[tabControl.profiles objectAtIndex:0] count]; i++) {
+            if([[[tabControl.profiles objectAtIndex:0] objectAtIndex:i] isEqualToString:@"Damage Reduction"])
+                [userConcerns addObject:@"privateCostD"];
+            else
+            [userConcerns addObject:[concernNames objectForKey:[[tabControl.profiles objectAtIndex:0]objectAtIndex:i]]];
+        }
+    }
+
     
     for(int i = 0; i < numOfTrials; i++) {
         
@@ -1499,6 +1511,12 @@ int                         heightMultiplier = 5;
         
             int currHeight = scoreBarView.contentSize.height - 20;
         
+            if(!orderedStrictly) {
+                [userConcerns removeAllObjects];
+                for(int k = 3; k < [[tabControl.profiles objectAtIndex:j] count]; k++) {
+                    [userConcerns addObject:[concernNames objectForKey:[[tabControl.profiles objectAtIndex:j]objectAtIndex:k]]];
+                }
+            }
             
             for(int k = 0; k < scoreVisNames.count; k++) {
                 int heightOfThisCategory;
@@ -1513,88 +1531,184 @@ int                         heightMultiplier = 5;
                 }
                 heightOfThisCategory = [[scoreVisVals objectAtIndex:indexOfScore]floatValue] * 100;
                 heightOfThisCategory *= heightMultiplier;
+                if(scaledToScreen) heightOfThisCategory = heightOfThisCategory * scaleSize;
                 if (heightOfThisCategory < 0) heightOfThisCategory = 0;
                 
                 if([visName isEqualToString:@"publicCost"]) {
-                    if(withContainers)
-                        [investmentContainer setFrame:CGRectMake(x, currHeight - (maxInvestment * heightMultiplier), widthOfBar, maxInvestment * heightMultiplier + 1)];
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            [investmentContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxInvestment * heightMultiplier), widthOfBar, scaleSize * maxInvestment * heightMultiplier + 1)];
+                        else
+                            [investmentContainer setFrame:CGRectMake(x, currHeight - (maxInvestment * heightMultiplier), widthOfBar, maxInvestment * heightMultiplier + 1)];
+                    }
                     [investment setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
                     [investment setBackgroundColor:[scoreColors objectForKey:@"publicCost"]];
-                    
-                    if(withContainers)
-                        currHeight -= maxInvestment * heightMultiplier + 2;
-                    else
-                        currHeight -= heightOfThisCategory;
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * maxInvestment * heightMultiplier + 2;
+                        else
+                            currHeight -= maxInvestment * heightMultiplier + 2;
+                    }
+                    else {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * heightOfThisCategory;
+                        else
+                            currHeight -= heightOfThisCategory;
+                    }
                 } else if([visName isEqualToString:@"privateCost"]) {
-                    if(withContainers)
-                        [damageReductionContainer setFrame:CGRectMake(x, currHeight - (maxDamageReduction * heightMultiplier), widthOfBar, maxDamageReduction * heightMultiplier + 1)];
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            [damageReductionContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxDamageReduction * heightMultiplier), widthOfBar, scaleSize * maxDamageReduction * heightMultiplier + 1)];
+                        else
+                            [damageReductionContainer setFrame:CGRectMake(x, currHeight - (maxDamageReduction * heightMultiplier), widthOfBar, maxDamageReduction * heightMultiplier + 1)];
+                    }
                     [damageReduction setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
                     [damageReduction setBackgroundColor:[scoreColors objectForKey:@"privateCost"]];
                     
-                    if(withContainers)
-                        currHeight -= maxDamageReduction * heightMultiplier + 2;
-                    else
-                        currHeight -= heightOfThisCategory;
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * maxDamageReduction * heightMultiplier + 2;
+                        else
+                            currHeight -= maxDamageReduction * heightMultiplier + 2;
+                    }
+                    else {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * heightOfThisCategory;
+                        else
+                            currHeight -= heightOfThisCategory;
+                    }
                 } else if([visName isEqualToString:@"impactingMyNeighbors"]) {
-                    if(withContainers)
-                        [impactContainer setFrame:CGRectMake(x, currHeight - (maxImpact * heightMultiplier), widthOfBar, maxImpact * heightMultiplier + 1)];
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            [impactContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxImpact * heightMultiplier), widthOfBar, scaleSize * maxImpact * heightMultiplier + 1)];
+                        else
+                            [impactContainer setFrame:CGRectMake(x, currHeight - (maxImpact * heightMultiplier), widthOfBar, maxImpact * heightMultiplier + 1)];
+                    }
                     [impact setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
                     [impact setBackgroundColor:[scoreColors objectForKey:@"impactingMyNeighbors"]];
                     
-                    if(withContainers)
-                        currHeight -= maxImpact * heightMultiplier + 2;
-                    else
-                        currHeight -= heightOfThisCategory;
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * maxImpact * heightMultiplier + 2;
+                        else
+                            currHeight -= maxImpact * heightMultiplier + 2;
+                    }
+                    else {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * heightOfThisCategory;
+                        else
+                            currHeight -= heightOfThisCategory;
+                    }
                 } else if([visName isEqualToString:@"groundwaterInfiltration"]) {
-                    if(withContainers)
-                        [groundwaterInfiltrationContainer setFrame:CGRectMake(x, currHeight - (maxGroundwaterInfiltration * heightMultiplier), widthOfBar, maxGroundwaterInfiltration * heightMultiplier + 1)];
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            [groundwaterInfiltrationContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxGroundwaterInfiltration * heightMultiplier), widthOfBar, scaleSize * maxGroundwaterInfiltration * heightMultiplier + 1)];
+                        else
+                            [groundwaterInfiltrationContainer setFrame:CGRectMake(x, currHeight - (maxGroundwaterInfiltration * heightMultiplier), widthOfBar, maxGroundwaterInfiltration * heightMultiplier + 1)];
+                    }
                     [groundwaterInfiltration setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
                     [groundwaterInfiltration setBackgroundColor:[scoreColors objectForKey:@"groundwaterInfiltration"]];
                     
-                    if(withContainers)
-                        currHeight -= maxGroundwaterInfiltration * heightMultiplier + 2;
-                    else
-                        currHeight -= heightOfThisCategory;
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * maxGroundwaterInfiltration * heightMultiplier + 2;
+                        else
+                            currHeight -= maxGroundwaterInfiltration * heightMultiplier + 2;
+                    }
+                    else {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * heightOfThisCategory;
+                        else
+                            currHeight -= heightOfThisCategory;
+                    }
                 } else if([visName isEqualToString:@"puddleTime"]) {
-                    if(withContainers)
-                        [waterFlowContainer setFrame:CGRectMake(x, currHeight - maxWaterFlow * heightMultiplier, widthOfBar, maxWaterFlow * heightMultiplier + 1)];
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            [waterFlowContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxWaterFlow * heightMultiplier), widthOfBar, scaleSize * maxWaterFlow * heightMultiplier + 1)];
+                        else
+                            [waterFlowContainer setFrame:CGRectMake(x, currHeight - (maxWaterFlow * heightMultiplier), widthOfBar, maxWaterFlow * heightMultiplier + 1)];
+                    }
                     [waterFlow setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
                     [waterFlow setBackgroundColor:[scoreColors objectForKey:@"puddleTime"]];
                     
-                    if(withContainers)
-                        currHeight -= maxWaterFlow * heightMultiplier + 2;
-                    else
-                        currHeight -= heightOfThisCategory;
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * maxWaterFlow * heightMultiplier + 2;
+                        else
+                            currHeight -= maxWaterFlow * heightMultiplier + 2;
+                    }
+                    else {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * heightOfThisCategory;
+                        else
+                            currHeight -= heightOfThisCategory;
+                    }
                 } else if([visName isEqualToString:@"puddleMax"]) {
-                    if(withContainers)
-                        [maxFloodContainer setFrame:CGRectMake(x, currHeight - maxMaxFlood * heightMultiplier, widthOfBar, maxMaxFlood * heightMultiplier + 1)];
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            [maxFloodContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxMaxFlood * heightMultiplier), widthOfBar, scaleSize * maxMaxFlood * heightMultiplier + 1)];
+                        else
+                            [maxFloodContainer setFrame:CGRectMake(x, currHeight - (maxMaxFlood * heightMultiplier), widthOfBar, maxMaxFlood * heightMultiplier + 1)];
+                    }
                     [maxFlood setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
                     [maxFlood setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
                     
-                    if(withContainers)
-                        currHeight -= maxMaxFlood * heightMultiplier + 2;
-                    else
-                        currHeight -= heightOfThisCategory;
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * maxMaxFlood * heightMultiplier + 2;
+                        else
+                            currHeight -= maxMaxFlood * heightMultiplier + 2;
+                    }
+                    else {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * heightOfThisCategory;
+                        else
+                            currHeight -= heightOfThisCategory;
+                    }
                 } else if([visName isEqualToString:@"capacity"]) {
-                    if(withContainers)
-                        [capacityContainer setFrame:CGRectMake(x, currHeight - maxCapacity * heightMultiplier, widthOfBar, maxCapacity * heightMultiplier + 1)];
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            [capacityContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxCapacity * heightMultiplier), widthOfBar, scaleSize * maxCapacity * heightMultiplier + 1)];
+                        else
+                            [capacityContainer setFrame:CGRectMake(x, currHeight - (maxCapacity * heightMultiplier), widthOfBar, maxCapacity * heightMultiplier + 1)];
+                    }
                     [capacity setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
                     [capacity setBackgroundColor:[scoreColors objectForKey:@"capacity"]];
                     
-                    if(withContainers)
-                        currHeight -= maxCapacity * heightMultiplier + 2;
-                    else
-                        currHeight -= heightOfThisCategory;
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * maxCapacity * heightMultiplier + 2;
+                        else
+                            currHeight -= maxCapacity * heightMultiplier + 2;
+                    }
+                    else {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * heightOfThisCategory;
+                        else
+                            currHeight -= heightOfThisCategory;
+                    }
                 } else if([visName isEqualToString:@"efficiencyOfIntervention"]){
-                    if(withContainers)
-                        [efficiencyContainer setFrame:CGRectMake(x, currHeight - (maxEfficiency * heightMultiplier), widthOfBar, maxEfficiency * heightMultiplier + 1)];
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            [efficiencyContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxEfficiency * heightMultiplier), widthOfBar, scaleSize * maxEfficiency * heightMultiplier + 1)];
+                        else
+                            [efficiencyContainer setFrame:CGRectMake(x, currHeight - (maxEfficiency * heightMultiplier), widthOfBar, maxEfficiency * heightMultiplier + 1)];
+                    }
                     [efficiency setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
                     [efficiency setBackgroundColor:[scoreColors objectForKey:@"efficiencyOfIntervention"]];
                     
-                    if(withContainers)
-                        currHeight -= maxEfficiency * heightMultiplier + 2;
-                    else
-                        currHeight -= heightOfThisCategory;
+                    if(withContainers) {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * maxEfficiency * heightMultiplier + 2;
+                        else
+                            currHeight -= maxEfficiency * heightMultiplier + 2;
+                    }
+                    else {
+                        if(scaledToScreen)
+                            currHeight -= scaleSize * heightOfThisCategory;
+                        else
+                            currHeight -= heightOfThisCategory;
+                    }
                 }
             }
             score.frame = CGRectMake(x, currHeight - 20, widthOfBar, 20);
