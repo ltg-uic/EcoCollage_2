@@ -1433,6 +1433,7 @@ float maxPublicInstallNorm;
     }
     
     int width = 0;
+    int investmentWidth = 0;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
@@ -1457,6 +1458,7 @@ float maxPublicInstallNorm;
             [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN))]];
             //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN))]];
             
+            investmentWidth = width;
             [scoreVisNames addObject: @"publicCostI"];
             //[scoreVisNames addObject: @"publicCostM"];
         }
@@ -1520,7 +1522,6 @@ float maxPublicInstallNorm;
         width+= currentVar.widthOfVisualization;
         if (currentVar.widthOfVisualization > 0) visibleIndex++;
     }
-    
 
     
     //border around component score
@@ -1534,10 +1535,37 @@ float maxPublicInstallNorm;
     float maxX = 150;
     float totalScore = 0;
     
+    AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([tabControl.trialRuns objectAtIndex:trial]);
+    
+    int investmentIndex = 0;
+    for(int i = 0; i < scoreVisNames.count; i++) {
+        if([[scoreVisNames objectAtIndex:i] isEqualToString:@"publicCostI"])
+            investmentIndex = i;
+    }
+    UILabel *scorePenalty;
+    scorePenalty = [[trialRunSubViews objectAtIndex:trial] objectForKey:@"ScorePenalty"];
     UILabel * componentScore;
+    // calculate amount of budget for use in resizing each score
+    int amountOverBudget = simRun.publicInstallCost - setBudget;
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
+        
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
+        if(amountOverBudget > 0) {// recalculate each score width
+            // scoreWidth = scoreWidth * log(posInOutcomeCategoryArray + 2) / (log(amountOverBudget)-2)
+            /*
+            double importance = log10(investmentIndex + 3);
+            double overBudgetDeduction = log10(amountOverBudget) - 2;
+            if(overBudgetDeduction == 0)overBudgetDeduction = 0.0000001;
+            scoreWidth = scoreWidth * (importance / overBudgetDeduction);
+            */
+            float modifier = (investmentIndex + 0.5) / (2 * log10(amountOverBudget));
+            if(modifier > 1) modifier = 1;
+            
+            [scorePenalty removeFromSuperview];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", 1 - modifier] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
+            scoreWidth *= modifier;
+        }
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
         componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 75, floor(scoreWidth), 22)];
@@ -1820,6 +1848,7 @@ float maxPublicInstallNorm;
 
 -(void) drawTrial: (int) trial{
     UILabel *maintenance;
+    UILabel *scorePenalty;
     UILabel *damage;
     UILabel *damageReduced;
     UILabel *stormsToMakeUpCost;
@@ -1900,6 +1929,7 @@ float maxPublicInstallNorm;
     }
     
     int width = 0;
+    int investmentWidth = 0;
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setGroupingSeparator:@","];
@@ -1933,6 +1963,7 @@ float maxPublicInstallNorm;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             CGRect frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
             
+            investmentWidth = width;
             
             if(publicCostDisplays.count <= trial){
                 //NSLog(@"Drawing water display for first time");
@@ -2174,11 +2205,41 @@ float maxPublicInstallNorm;
     float totalScore = 0;
     UILabel *componentScore;
     
+    int investmentIndex = 0;
+    for(int i = 0; i < scoreVisNames.count; i++) {
+        if([[scoreVisNames objectAtIndex:i] isEqualToString:@"publicCostI"])
+            investmentIndex = i;
+    }
+    
+    // calculate amount of budget for use in resizing each score
+    int amountOverBudget = simRun.publicInstallCost - setBudget;
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
-        //NSLog(@"%@ has width %f",[scoreVisNames objectAtIndex:i], scoreWidth );
+        if(amountOverBudget > 0) {// recalculate each score width
+            // scoreWidth = scoreWidth * log(posInOutcomeCategoryArray + 2) / (log(amountOverBudget)-2)
+            /*
+             double importance = log10(investmentIndex + 3);
+             double overBudgetDeduction = log10(amountOverBudget) - 2;
+             if(overBudgetDeduction == 0)overBudgetDeduction = 0.0000001;
+             scoreWidth = scoreWidth * (importance / overBudgetDeduction);
+             */
+            float modifier = (investmentIndex + 0.5) / (2 * log10(amountOverBudget));
+            if(modifier > 1) modifier = 1;
+            
+            if(trial >= trialRunSubViews.count) // create a new one
+                [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", 1 - modifier] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
+            else {// get old one, change text
+                scorePenalty = [[trialRunSubViews objectAtIndex:trial] objectForKey:@"ScorePenalty"];
+                scorePenalty.text = [NSString stringWithFormat:@"Score penalized by %.2f%%", 1 - modifier];
+            }
+            
+            scoreWidth *= modifier;
+        }
+        else {
+            scorePenalty = [[UILabel alloc]init];
+        }
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
         componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 75, floor(scoreWidth), 22)];
@@ -2281,6 +2342,7 @@ float maxPublicInstallNorm;
                                    //@"MWaterDisplay"     : mwd,
                                    //@"EfficiencyView"      : ev,
                                    @"Maintenance"         : maintenance,
+                                   @"ScorePenalty"        : scorePenalty,
                                    @"InterventionImgView" : interventionImageView,
                                    @"WaterDepthView"      : waterDepthView,
                                    @"MWaterDepthView"     : MaxWaterDepthView,
