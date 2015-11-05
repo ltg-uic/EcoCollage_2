@@ -1,0 +1,10 @@
+Category Descriptions
+
+Music: Quality and genre of music
+Parking or Public Transit Access: The ability for people to get to the party
+Seating: Amount and comfort of the places to sit
+Food: Amount and quality of the food
+Beverages:  Amount and quality of the drinks
+Lighting: Amount and qualities of the lights
+Venue: Amount of space, ceiling height
+Decorations: Theme of the decorations, amount of decoration

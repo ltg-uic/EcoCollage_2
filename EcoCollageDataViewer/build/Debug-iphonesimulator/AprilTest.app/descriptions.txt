@@ -1,0 +1,13 @@
+Investment: Cost to install and maintain new green infrastructure on both city and private property.
+
+Damage Reduction: The amount of damages reduced by the investment.
+
+Efficiency of Intervention: ($/Gallon) The amount of money spent per gallon of rainwater stored or infiltrated by green infrastructure installations.
+
+Capacity Used: The amount of intervention capacity used
+
+Water Flow Path: The amount of rainwater in the streets and on property over the course of the entire storm.
+
+Groundwater Infiltration: The percentage of rainwater that is returned to the groundwater supply.
+
+Impact on my Neighbors: The amount of rainwater that passes from my neighborhood to the next neighborhood.

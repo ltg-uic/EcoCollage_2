@@ -1385,6 +1385,11 @@ int                         heightMultiplier = 5;
 - (void)drawScoreStackedBarGraph {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
+    StackedBarGraph *SBG = [[StackedBarGraph alloc]initWithFrame:scoreBarView.frame andTabController:tabControl];
+    [scoreBarView addSubview:SBG];
+    
+    /*
+    
     [stackedBars removeAllObjects];
     for(UIView *subview in [scoreBarView subviews])
         [subview removeFromSuperview];
@@ -1804,6 +1809,8 @@ int                         heightMultiplier = 5;
     scoreBarView.contentSize = CGSizeMake(x, scoreBarView.contentSize.height);
     
     [scoreBarView setContentOffset:CGPointMake(0, scoreBarView.contentSize.height - scoreBarView.frame.size.height)];
+     
+     */
 }
 
 

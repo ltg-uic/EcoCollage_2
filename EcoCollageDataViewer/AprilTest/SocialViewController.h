@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <GameKit/GameKit.h>
+#import "StackedBarGraph.h"
 
 @interface SocialViewController : UIViewController <UIScrollViewDelegate>
 @property int studyNum;

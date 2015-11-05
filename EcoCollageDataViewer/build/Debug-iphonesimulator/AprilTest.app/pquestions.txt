@@ -1,0 +1,8 @@
+Music	music
+Parking or Public Transit Access	transitAccess
+Seating	seating
+Food	food
+Beverages	drinks
+Lighting	lighting
+Decorations	decorations
+Venue	venue
