@@ -26,13 +26,13 @@
     
     _stackedBars = [[NSMutableArray alloc]init];
     
-    int x = 0;
-    int y;
+
     
     // fill this with the max scores for each outcome category over the span of all trials and all users
     NSMutableArray *maxScores = [[NSMutableArray alloc]init];
     
     int maxInvestment = 0, maxDamageReduction = 0, maxEfficiency = 0, maxCapacity = 0, maxWaterFlow = 0, maxMaxFlood = 0, maxGroundwaterInfiltration = 0, maxImpact = 0;
+    
     
     // find the max value for each outcome category
     // this will determine the "height" for that category
@@ -81,22 +81,56 @@
     [maxScores addObject:[NSNumber numberWithInt:maxGroundwaterInfiltration]];
     [maxScores addObject:[NSNumber numberWithInt:maxImpact]];
     
+    int x_initial = 125;
+    int x = x_initial;
+    int y = frame.size.height - 150;
+    int width = 40;
+    int spaceBetweenTrials = 25;
+    
+    // draw lines for x and y axis
+    int xAxisLength = (width * tabControl.profiles.count + spaceBetweenTrials) * tabControl.trialRuns.count + 100;
+    UIView *xAxis = [[UIView alloc]initWithFrame:CGRectMake(x_initial, y, xAxisLength, 1)];
+    [xAxis setBackgroundColor:[UIColor blackColor]];
+    [self addSubview:xAxis];
+    
+    int yAxisHeight = (maxInvestment + maxDamageReduction + maxEfficiency + maxCapacity + maxWaterFlow + maxMaxFlood + maxGroundwaterInfiltration + maxImpact) * 4 + 70;
+    UIView *yAxis = [[UIView alloc]initWithFrame:CGRectMake(x_initial, y - yAxisHeight, 1, yAxisHeight)];
+    [yAxis setBackgroundColor:[UIColor blackColor]];
+    [self addSubview:yAxis];
+
     // create a stackedBar for each trial for each profile
     for(int i = 0; i < tabControl.trialNum; i++) {
-        y = self.frame.size.height;
+        
         for(int j = 0; j < tabControl.profiles.count; j++) {
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
             UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resize:)];
             tapRecognizer.numberOfTapsRequired = 1;
             
-            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, 30, 100) andProfile:[tabControl.profiles objectAtIndex:j] andWidth:30 andScores:scores andScaleSize:1 andMaxScores:maxScores];
+            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, 100) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andMaxScores:maxScores];
             [_stackedBars addObject:bar];
             
             [bar setUserInteractionEnabled:YES];
             [bar addGestureRecognizer:tapRecognizer];
+            
+            x += width+1;
         }
-        x += 40;
+        x += spaceBetweenTrials;
     }
+    
+    UILabel *xAxisLabel = [[UILabel alloc]initWithFrame:CGRectMake(x_initial, y, x - x_initial, 50)];
+    [xAxisLabel setText:@"Trials"];
+    [xAxisLabel setTextAlignment:NSTextAlignmentCenter];
+    
+    [self addSubview:xAxisLabel];
+    
+    UILabel *yAxisLabel = [[UILabel alloc]init];
+    [yAxisLabel setText:@"Performance"];
+    [yAxisLabel setTextAlignment:NSTextAlignmentCenter];
+    [yAxisLabel sizeToFit];
+    [yAxisLabel setFrame:CGRectMake(x_initial - yAxisLabel.frame.size.width - 20, y - yAxisHeight, yAxisLabel.frame.size.width, yAxisHeight)];
+    
+    [self addSubview:yAxisLabel];
+    
     
     // add all the bars to this view
     for(StackedBar *s in _stackedBars) {

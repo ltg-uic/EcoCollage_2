@@ -39,7 +39,7 @@
 @property int shrunk;
 
 
-- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andWidth:(int)width andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andMaxScores:(NSMutableArray *)maxScores;
+- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andMaxScores:(NSMutableArray *)maxScores;
 
 - (void)changeText:(NSString *)text;
 

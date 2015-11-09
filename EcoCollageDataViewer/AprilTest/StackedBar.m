@@ -60,11 +60,13 @@ int heightMultiplier;
 */
 
 
-- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andWidth:(int) width andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andMaxScores:(NSMutableArray *)maxScores
+- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andMaxScores:(NSMutableArray *)maxScores
 {
     self = [super initWithFrame:frame];
     
     _shrunk = 0;
+    
+    int width = frame.size.width;
  
     concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
     
@@ -92,7 +94,7 @@ int heightMultiplier;
     orderedStrictly = 1;
     withContainers = 1;
     scaledToScreen = 1;
-    heightMultiplier = 5;
+    heightMultiplier = 4;
     
     
     // order the individual scores based on this users concerns
@@ -145,7 +147,7 @@ int heightMultiplier;
     _impactContainer.layer.borderColor = [UIColor grayColor].CGColor;
 
     
-    int currHeight = self.superview.frame.size.height - 20;
+    int currHeight = self.superview.frame.size.height;
     
     if(!orderedStrictly) {
         [userConcerns removeAllObjects];
@@ -202,7 +204,7 @@ int heightMultiplier;
                 else
                     currHeight -= heightOfThisCategory;
             }
-        } else if([visName isEqualToString:@"privateCost"]) {
+        } else if([visName isEqualToString:@"privateCostD"]) {
             if(withContainers) {
                 if(scaledToScreen)
                     [_damageReductionContainer setFrame:CGRectMake(0, currHeight - scaleSize * (maxDamageReduction * heightMultiplier), width, scaleSize * maxDamageReduction * heightMultiplier + 1)];

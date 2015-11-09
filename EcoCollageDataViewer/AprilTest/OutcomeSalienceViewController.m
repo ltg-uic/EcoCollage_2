@@ -1563,7 +1563,7 @@ float maxPublicInstallNorm;
             if(modifier > 1) modifier = 1;
             
             [scorePenalty removeFromSuperview];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", 1 - modifier] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", (1 - modifier) * 100] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
             scoreWidth *= modifier;
         }
         if (scoreWidth < 0) scoreWidth = 0.0;
@@ -2229,7 +2229,7 @@ float maxPublicInstallNorm;
             if(modifier > 1) modifier = 1;
             
             if(trial >= trialRunSubViews.count) // create a new one
-                [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", 1 - modifier] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
+                [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", (1 - modifier) * 100] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
             else {// get old one, change text
                 scorePenalty = [[trialRunSubViews objectAtIndex:trial] objectForKey:@"ScorePenalty"];
                 scorePenalty.text = [NSString stringWithFormat:@"Score penalized by %.2f%%", 1 - modifier];
