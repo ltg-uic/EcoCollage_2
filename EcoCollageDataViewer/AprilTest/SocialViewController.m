@@ -17,6 +17,7 @@
 #import "AprilTestNormalizedVariable.h"
 #import "XYPieChart.h"
 #import <QuartzCore/QuartzCore.h>
+#import "StackedBarGraph.h"
 
 @interface SocialViewController ()
 @end
@@ -73,6 +74,8 @@ UILabel                     *lastLabelTapped;
 UILabel                     *maxLabelStorm;
 
 UIPickerView                *SortType_social;
+
+StackedBarGraph             *SBG;
 
 
 float                       thresh_social;
@@ -1387,9 +1390,11 @@ int                         heightMultiplier = 5;
     
     for(UIView *view in [scoreBarView subviews])
         [view removeFromSuperview];
+    [scoreBarView removeFromSuperview];
     
-    StackedBarGraph *SBG = [[StackedBarGraph alloc]initWithFrame:scoreBarView.frame andTabController:tabControl];
-    [scoreBarView addSubview:SBG];
+    [SBG removeFromSuperview];
+    SBG = [[StackedBarGraph alloc]initWithFrame:CGRectMake(0, 108, 283 + 769, 540) andTabController:tabControl withContainers:_stackedBarSwitch.isOn];
+    [self.view addSubview:SBG];
 
     // draw maps in _mapWindow
     for (UIView *subview in [bottomOfMapWindow subviews]) {
@@ -1414,6 +1419,451 @@ int                         heightMultiplier = 5;
         interventionView.view = mapWindowLabel;
         [interventionView updateView];
     }
+    
+    
+    /*
+     
+     [stackedBars removeAllObjects];
+     for(UIView *subview in [scoreBarView subviews])
+     [subview removeFromSuperview];
+     
+     [scoreBars removeAllObjects];
+     
+     int numOfTrials = [tabControl.trialRuns count];
+     int numOfProfiles = [tabControl.profiles count];
+     
+     int widthOfBar = (100 / numOfTrials) + (50 / numOfProfiles);
+     int spaceBetweenTrials = 30;
+     
+     int withContainers = 1;
+     int scaledToScreen = 1;
+     float scaleSize = 0;
+     
+     
+     
+     int maxInvestment = 0, maxDamageReduction = 0, maxEfficiency = 0, maxCapacity = 0, maxWaterFlow = 0, maxMaxFlood = 0, maxGroundwaterInfiltration = 0, maxImpact = 0;
+     
+     // find the max value for each outcome category
+     // this will determine the "height" for that category
+     for(int i = 0; i < numOfTrials; i++) {
+     for(int j = 0; j < numOfProfiles; j++) {
+     NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
+     NSMutableArray* scoreVisVals = [scores objectAtIndex:0];
+     NSMutableArray* scoreVisNames = [scores objectAtIndex:1];
+     
+     for(int k = 0; k < scoreVisNames.count; k++) {
+     if([[scoreVisNames objectAtIndex:k] isEqualToString:@"publicCost"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxInvestment)) {
+     maxInvestment = [[scoreVisVals objectAtIndex:k]floatValue] * 100;
+     }
+     else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"privateCostD"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxDamageReduction)) {
+     maxDamageReduction = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
+     }
+     else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"impactingMyNeighbors"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxImpact)) {
+     maxImpact = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
+     }
+     else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"groundwaterInfiltration"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxGroundwaterInfiltration)) {
+     maxGroundwaterInfiltration = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
+     }
+     else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"puddleTime"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxWaterFlow)) {
+     maxWaterFlow = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
+     }
+     else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"puddleMax"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxMaxFlood)) {
+     maxMaxFlood = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
+     }
+     else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"capacity"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxCapacity)) {
+     maxCapacity = [[scoreVisVals objectAtIndex:k] floatValue] * 100 ;
+     }
+     else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"efficiencyOfIntervention"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxEfficiency)) {
+     maxEfficiency = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
+     }
+     }
+     }
+     // draw maps in _mapWindow
+     for (UIView *subview in [bottomOfMapWindow subviews]) {
+     [subview removeFromSuperview];
+     }
+     
+     scaleSize = heightMultiplier * (maxInvestment + maxDamageReduction + maxImpact + maxGroundwaterInfiltration + maxWaterFlow + maxMaxFlood + maxCapacity + maxEfficiency);
+     scaleSize = scoreBarView.frame.size.height / scaleSize;
+     int maxHeight = heightMultiplier * (maxInvestment + maxDamageReduction + maxImpact + maxGroundwaterInfiltration + maxWaterFlow + maxMaxFlood + maxCapacity + maxEfficiency) + 40;
+     if(withContainers) scoreBarView.contentSize = CGSizeMake(scoreBarView.frame.size.width, maxHeight);
+     else scoreBarView.contentSize = scoreBarView.frame.size;
+     int x = 15;
+     
+     int orderedStrictly = 1;
+     
+     
+     // order the individual scores based on this users concerns
+     NSMutableArray *userConcerns = [[NSMutableArray alloc]init];
+     
+     if(orderedStrictly) { // order the individual bars based on the concerns of this user
+     for(int i = 3; i < [[tabControl.profiles objectAtIndex:0] count]; i++) {
+     if([[[tabControl.profiles objectAtIndex:0] objectAtIndex:i] isEqualToString:@"Damage Reduction"])
+     [userConcerns addObject:@"privateCostD"];
+     else
+     [userConcerns addObject:[concernNames objectForKey:[[tabControl.profiles objectAtIndex:0]objectAtIndex:i]]];
+     }
+     }
+     
+     
+     for(int i = 0; i < numOfTrials; i++) {
+     
+     x += spaceBetweenTrials;
+     for(int j = 0; j < numOfProfiles; j++) {
+     UIView *investmentContainer                 = [[UIView alloc]init];
+     UIView *investment                          = [[UIView alloc]init];
+     UIView *damageReductionContainer            = [[UIView alloc]init];
+     UIView *damageReduction                     = [[UIView alloc]init];
+     UIView *efficiencyContainer                 = [[UIView alloc]init];
+     UIView *efficiency                          = [[UIView alloc]init];
+     UIView *capacityContainer                   = [[UIView alloc]init];
+     UIView *capacity                            = [[UIView alloc]init];
+     UIView *waterFlowContainer                  = [[UIView alloc]init];
+     UIView *waterFlow                           = [[UIView alloc]init];
+     UIView *maxFloodContainer                   = [[UIView alloc]init];
+     UIView *maxFlood                            = [[UIView alloc]init];
+     UIView *groundwaterInfiltrationContainer    = [[UIView alloc]init];
+     UIView *groundwaterInfiltration             = [[UIView alloc]init];
+     UIView *impactContainer                     = [[UIView alloc]init];
+     UIView *impact                              = [[UIView alloc]init];
+     UILabel*score                               = [[UILabel alloc]init];
+     
+     NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
+     NSMutableArray* scoreVisVals = [scores objectAtIndex:0];
+     NSMutableArray* scoreVisNames = [scores objectAtIndex:1];
+     
+     investmentContainer.layer.borderWidth = 1;
+     damageReductionContainer.layer.borderWidth = 1;
+     efficiencyContainer.layer.borderWidth = 1;
+     capacityContainer.layer.borderWidth = 1;
+     waterFlowContainer.layer.borderWidth = 1;
+     maxFloodContainer.layer.borderWidth = 1;
+     groundwaterInfiltrationContainer.layer.borderWidth = 1;
+     impactContainer.layer.borderWidth = 1;
+     
+     investmentContainer.layer.borderColor = [UIColor grayColor].CGColor;
+     damageReductionContainer.layer.borderColor = [UIColor grayColor].CGColor;
+     efficiencyContainer.layer.borderColor = [UIColor grayColor].CGColor;
+     capacityContainer.layer.borderColor = [UIColor grayColor].CGColor;
+     waterFlowContainer.layer.borderColor = [UIColor grayColor].CGColor;
+     maxFloodContainer.layer.borderColor = [UIColor grayColor].CGColor;
+     groundwaterInfiltrationContainer.layer.borderColor = [UIColor grayColor].CGColor;
+     impactContainer.layer.borderColor = [UIColor grayColor].CGColor;
+     
+     int currHeight = scoreBarView.contentSize.height - 20;
+     
+     if(!orderedStrictly) {
+     [userConcerns removeAllObjects];
+     for(int k = 3; k < [[tabControl.profiles objectAtIndex:j] count]; k++) {
+     [userConcerns addObject:[concernNames objectForKey:[[tabControl.profiles objectAtIndex:j]objectAtIndex:k]]];
+     }
+     }
+     
+     for(int k = 0; k < scoreVisNames.count; k++) {
+     int heightOfThisCategory;
+     int indexOfScore = 0;
+     NSString *visName = [[NSString alloc]init];
+     for(int l = 0; l < [userConcerns count]; l++) {
+     if([[scoreVisNames objectAtIndex:l ]isEqualToString:[userConcerns objectAtIndex:k]]) {
+     indexOfScore = l;
+     visName = [scoreVisNames objectAtIndex:l];
+     break;
+     }
+     }
+     heightOfThisCategory = [[scoreVisVals objectAtIndex:indexOfScore]floatValue] * 100;
+     heightOfThisCategory *= heightMultiplier;
+     if(scaledToScreen) heightOfThisCategory = heightOfThisCategory * scaleSize;
+     if (heightOfThisCategory < 0) heightOfThisCategory = 0;
+     
+     if([visName isEqualToString:@"publicCost"]) {
+     if(withContainers) {
+     if(scaledToScreen)
+     [investmentContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxInvestment * heightMultiplier), widthOfBar, scaleSize * maxInvestment * heightMultiplier + 1)];
+     else
+     [investmentContainer setFrame:CGRectMake(x, currHeight - (maxInvestment * heightMultiplier), widthOfBar, maxInvestment * heightMultiplier + 1)];
+     }
+     [investment setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
+     [investment setBackgroundColor:[scoreColors objectForKey:@"publicCost"]];
+     if(withContainers) {
+     if(scaledToScreen)
+     currHeight -= scaleSize * maxInvestment * heightMultiplier + 2;
+     else
+     currHeight -= maxInvestment * heightMultiplier + 2;
+     }
+     else {
+     if(scaledToScreen)
+     currHeight -= scaleSize * heightOfThisCategory;
+     else
+     currHeight -= heightOfThisCategory;
+     }
+     } else if([visName isEqualToString:@"privateCost"]) {
+     if(withContainers) {
+     if(scaledToScreen)
+     [damageReductionContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxDamageReduction * heightMultiplier), widthOfBar, scaleSize * maxDamageReduction * heightMultiplier + 1)];
+     else
+     [damageReductionContainer setFrame:CGRectMake(x, currHeight - (maxDamageReduction * heightMultiplier), widthOfBar, maxDamageReduction * heightMultiplier + 1)];
+     }
+     [damageReduction setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
+     [damageReduction setBackgroundColor:[scoreColors objectForKey:@"privateCost"]];
+     
+     if(withContainers) {
+     if(scaledToScreen)
+     currHeight -= scaleSize * maxDamageReduction * heightMultiplier + 2;
+     else
+     currHeight -= maxDamageReduction * heightMultiplier + 2;
+     }
+     else {
+     if(scaledToScreen)
+     currHeight -= scaleSize * heightOfThisCategory;
+     else
+     currHeight -= heightOfThisCategory;
+     }
+     } else if([visName isEqualToString:@"impactingMyNeighbors"]) {
+     if(withContainers) {
+     if(scaledToScreen)
+     [impactContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxImpact * heightMultiplier), widthOfBar, scaleSize * maxImpact * heightMultiplier + 1)];
+     else
+     [impactContainer setFrame:CGRectMake(x, currHeight - (maxImpact * heightMultiplier), widthOfBar, maxImpact * heightMultiplier + 1)];
+     }
+     [impact setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
+     [impact setBackgroundColor:[scoreColors objectForKey:@"impactingMyNeighbors"]];
+     
+     if(withContainers) {
+     if(scaledToScreen)
+     currHeight -= scaleSize * maxImpact * heightMultiplier + 2;
+     else
+     currHeight -= maxImpact * heightMultiplier + 2;
+     }
+     else {
+     if(scaledToScreen)
+     currHeight -= scaleSize * heightOfThisCategory;
+     else
+     currHeight -= heightOfThisCategory;
+     }
+     } else if([visName isEqualToString:@"groundwaterInfiltration"]) {
+     if(withContainers) {
+     if(scaledToScreen)
+     [groundwaterInfiltrationContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxGroundwaterInfiltration * heightMultiplier), widthOfBar, scaleSize * maxGroundwaterInfiltration * heightMultiplier + 1)];
+     else
+     [groundwaterInfiltrationContainer setFrame:CGRectMake(x, currHeight - (maxGroundwaterInfiltration * heightMultiplier), widthOfBar, maxGroundwaterInfiltration * heightMultiplier + 1)];
+     }
+     [groundwaterInfiltration setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
+     [groundwaterInfiltration setBackgroundColor:[scoreColors objectForKey:@"groundwaterInfiltration"]];
+     
+     if(withContainers) {
+     if(scaledToScreen)
+     currHeight -= scaleSize * maxGroundwaterInfiltration * heightMultiplier + 2;
+     else
+     currHeight -= maxGroundwaterInfiltration * heightMultiplier + 2;
+     }
+     else {
+     if(scaledToScreen)
+     currHeight -= scaleSize * heightOfThisCategory;
+     else
+     currHeight -= heightOfThisCategory;
+     }
+     } else if([visName isEqualToString:@"puddleTime"]) {
+     if(withContainers) {
+     if(scaledToScreen)
+     [waterFlowContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxWaterFlow * heightMultiplier), widthOfBar, scaleSize * maxWaterFlow * heightMultiplier + 1)];
+     else
+     [waterFlowContainer setFrame:CGRectMake(x, currHeight - (maxWaterFlow * heightMultiplier), widthOfBar, maxWaterFlow * heightMultiplier + 1)];
+     }
+     [waterFlow setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
+     [waterFlow setBackgroundColor:[scoreColors objectForKey:@"puddleTime"]];
+     
+     if(withContainers) {
+     if(scaledToScreen)
+     currHeight -= scaleSize * maxWaterFlow * heightMultiplier + 2;
+     else
+     currHeight -= maxWaterFlow * heightMultiplier + 2;
+     }
+     else {
+     if(scaledToScreen)
+     currHeight -= scaleSize * heightOfThisCategory;
+     else
+     currHeight -= heightOfThisCategory;
+     }
+     } else if([visName isEqualToString:@"puddleMax"]) {
+     if(withContainers) {
+     if(scaledToScreen)
+     [maxFloodContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxMaxFlood * heightMultiplier), widthOfBar, scaleSize * maxMaxFlood * heightMultiplier + 1)];
+     else
+     [maxFloodContainer setFrame:CGRectMake(x, currHeight - (maxMaxFlood * heightMultiplier), widthOfBar, maxMaxFlood * heightMultiplier + 1)];
+     }
+     [maxFlood setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
+     [maxFlood setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
+     
+     if(withContainers) {
+     if(scaledToScreen)
+     currHeight -= scaleSize * maxMaxFlood * heightMultiplier + 2;
+     else
+     currHeight -= maxMaxFlood * heightMultiplier + 2;
+     }
+     else {
+     if(scaledToScreen)
+     currHeight -= scaleSize * heightOfThisCategory;
+     else
+     currHeight -= heightOfThisCategory;
+     }
+     } else if([visName isEqualToString:@"capacity"]) {
+     if(withContainers) {
+     if(scaledToScreen)
+     [capacityContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxCapacity * heightMultiplier), widthOfBar, scaleSize * maxCapacity * heightMultiplier + 1)];
+     else
+     [capacityContainer setFrame:CGRectMake(x, currHeight - (maxCapacity * heightMultiplier), widthOfBar, maxCapacity * heightMultiplier + 1)];
+     }
+     [capacity setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
+     [capacity setBackgroundColor:[scoreColors objectForKey:@"capacity"]];
+     
+     if(withContainers) {
+     if(scaledToScreen)
+     currHeight -= scaleSize * maxCapacity * heightMultiplier + 2;
+     else
+     currHeight -= maxCapacity * heightMultiplier + 2;
+     }
+     else {
+     if(scaledToScreen)
+     currHeight -= scaleSize * heightOfThisCategory;
+     else
+     currHeight -= heightOfThisCategory;
+     }
+     } else if([visName isEqualToString:@"efficiencyOfIntervention"]){
+     if(withContainers) {
+     if(scaledToScreen)
+     [efficiencyContainer setFrame:CGRectMake(x, currHeight - scaleSize * (maxEfficiency * heightMultiplier), widthOfBar, scaleSize * maxEfficiency * heightMultiplier + 1)];
+     else
+     [efficiencyContainer setFrame:CGRectMake(x, currHeight - (maxEfficiency * heightMultiplier), widthOfBar, maxEfficiency * heightMultiplier + 1)];
+     }
+     [efficiency setFrame:CGRectMake(x, currHeight - heightOfThisCategory, widthOfBar, heightOfThisCategory)];
+     [efficiency setBackgroundColor:[scoreColors objectForKey:@"efficiencyOfIntervention"]];
+     
+     if(withContainers) {
+     if(scaledToScreen)
+     currHeight -= scaleSize * maxEfficiency * heightMultiplier + 2;
+     else
+     currHeight -= maxEfficiency * heightMultiplier + 2;
+     }
+     else {
+     if(scaledToScreen)
+     currHeight -= scaleSize * heightOfThisCategory;
+     else
+     currHeight -= heightOfThisCategory;
+     }
+     }
+     }
+     score.frame = CGRectMake(x, currHeight - 20, widthOfBar, 20);
+     score.text = @"";
+     score.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+     [score setTextAlignment:NSTextAlignmentCenter];
+     
+     [scoreBarView addSubview:score];
+     
+     x += widthOfBar+1;
+     
+     UITapGestureRecognizer *impactRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
+     impactRecognizer.numberOfTapsRequired = 1;
+     UITapGestureRecognizer *groundwaterRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(groundwaterTapped)];
+     groundwaterRecognizer.numberOfTapsRequired = 1;
+     UITapGestureRecognizer *maxFloodRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(maxFloodTapped)];
+     maxFloodRecognizer.numberOfTapsRequired = 1;
+     UITapGestureRecognizer *waterFlowRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
+     waterFlowRecognizer.numberOfTapsRequired = 1;
+     UITapGestureRecognizer *interventionCapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(interventionCapTapped)];
+     interventionCapRecognizer.numberOfTapsRequired = 1;
+     UITapGestureRecognizer *efficiencyRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(efficiencyTapped)];
+     efficiencyRecognizer.numberOfTapsRequired = 1;
+     UITapGestureRecognizer *damageReducRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(damageReducTapped)];
+     damageReducRecognizer.numberOfTapsRequired = 1;
+     UITapGestureRecognizer *investmentRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(investmentTapped)];
+     investmentRecognizer.numberOfTapsRequired = 1;
+     
+     
+     if(withContainers) {
+     impactContainer.userInteractionEnabled = YES;
+     groundwaterInfiltrationContainer.userInteractionEnabled = YES;
+     maxFloodContainer.userInteractionEnabled = YES;
+     waterFlowContainer.userInteractionEnabled = YES;
+     capacityContainer.userInteractionEnabled = YES;
+     efficiencyContainer.userInteractionEnabled = YES;
+     damageReductionContainer.userInteractionEnabled = YES;
+     investmentContainer.userInteractionEnabled = YES;
+     
+     [impactContainer addGestureRecognizer:impactRecognizer];
+     [groundwaterInfiltrationContainer addGestureRecognizer:groundwaterRecognizer];
+     [maxFloodContainer addGestureRecognizer:maxFloodRecognizer];
+     [waterFlowContainer addGestureRecognizer:waterFlowRecognizer];
+     [capacityContainer addGestureRecognizer:interventionCapRecognizer];
+     [efficiencyContainer addGestureRecognizer:efficiencyRecognizer];
+     [damageReductionContainer addGestureRecognizer:damageReducRecognizer];
+     [investmentContainer addGestureRecognizer:investmentRecognizer];
+     }
+     else {
+     impact.userInteractionEnabled = YES;
+     groundwaterInfiltration.userInteractionEnabled = YES;
+     maxFlood.userInteractionEnabled = YES;
+     waterFlow.userInteractionEnabled = YES;
+     capacity.userInteractionEnabled = YES;
+     efficiency.userInteractionEnabled = YES;
+     damageReduction.userInteractionEnabled = YES;
+     investment.userInteractionEnabled = YES;
+     
+     [impact addGestureRecognizer:impactRecognizer];
+     [groundwaterInfiltration addGestureRecognizer:groundwaterRecognizer];
+     [maxFlood addGestureRecognizer:maxFloodRecognizer];
+     [waterFlow addGestureRecognizer:waterFlowRecognizer];
+     [capacity addGestureRecognizer:interventionCapRecognizer];
+     [efficiency addGestureRecognizer:efficiencyRecognizer];
+     [damageReduction addGestureRecognizer:damageReducRecognizer];
+     [investment addGestureRecognizer:investmentRecognizer];
+     }
+     
+     NSMutableDictionary *barDictionary = [[NSMutableDictionary alloc]initWithObjects:[NSArray arrayWithObjects:impact, groundwaterInfiltration, maxFlood, waterFlow, capacity, efficiency, damageReduction, investment, score, nil] forKeys:[NSArray arrayWithObjects:@"impact", @"groundwaterInfiltration", @"maxFlood", @"waterFlow", @"capacity", @"efficiency", @"damageReduction", @"investment", @"score", nil]];
+     
+     
+     [scoreBars addObject:barDictionary];
+     
+     [scoreBarView addSubview:impact];
+     [scoreBarView addSubview:impactContainer];
+     [scoreBarView addSubview:groundwaterInfiltration];
+     [scoreBarView addSubview:groundwaterInfiltrationContainer];
+     [scoreBarView addSubview:maxFlood];
+     [scoreBarView addSubview:maxFloodContainer];
+     [scoreBarView addSubview:waterFlow];
+     [scoreBarView addSubview:waterFlowContainer];
+     [scoreBarView addSubview:capacity];
+     [scoreBarView addSubview:capacityContainer];
+     [scoreBarView addSubview:efficiency];
+     [scoreBarView addSubview:efficiencyContainer];
+     [scoreBarView addSubview:damageReduction];
+     [scoreBarView addSubview:damageReductionContainer];
+     [scoreBarView addSubview:investment];
+     [scoreBarView addSubview:investmentContainer];
+     }
+     // load the maps for the trial numbers in uniqueTrialNumbers
+     for (int i = 0; i < tabControl.trialRuns.count; i++) {
+     
+     UILabel *mapWindowLabel = [[UILabel alloc]init];
+     mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", i + 1];
+     mapWindowLabel.font = [UIFont systemFontOfSize:15.3];
+     [mapWindowLabel sizeToFit];
+     mapWindowLabel.frame = CGRectMake(200 * i, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
+     [bottomOfMapWindow addSubview:mapWindowLabel];
+     
+     [bottomOfMapWindow setContentSize:CGSizeMake(mapWindowLabel.frame.origin.x + 250, bottomOfMapWindow.frame.size.height)];
+     
+     AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:i];
+     
+     FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, mapWindowLabel.frame.size.height + 5, 115, 125))];
+     interventionView.view = mapWindowLabel;
+     [interventionView updateView];
+     }
+     
+     scoreBarView.contentSize = CGSizeMake(x, scoreBarView.contentSize.height);
+     
+     [scoreBarView setContentOffset:CGPointMake(0, scoreBarView.contentSize.height - scoreBarView.frame.size.height)];
+     
+     */
     
 }
 
@@ -3258,4 +3708,7 @@ int                         heightMultiplier = 5;
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)stackedbarswitch:(id)sender {
+    [self drawScoreStackedBarGraph];
+}
 @end

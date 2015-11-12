@@ -422,6 +422,13 @@
                                     <action selector="loadBarGraph:" destination="Xor-Qe-PFj" eventType="touchUpInside" id="cQx-ag-aLx"/>
                                 </connections>
                             </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="piu-VP-ixx">
+                                <rect key="frame" x="179" y="653" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="stackedbarswitch:" destination="Xor-Qe-PFj" eventType="valueChanged" id="7my-BF-yN6"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -431,6 +438,7 @@
                         <outlet property="StormPlayBack" destination="lAH-2v-pHo" id="VYn-CQ-mWd"/>
                         <outlet property="mapWindow" destination="7Hg-Ai-r1h" id="Pn0-Sz-Hw8"/>
                         <outlet property="profilesWindow" destination="uay-AJ-gq5" id="Hcn-ad-Bmf"/>
+                        <outlet property="stackedBarSwitch" destination="piu-VP-ixx" id="EIQ-Hk-YKd"/>
                         <outlet property="trialPickerTextField" destination="8Qk-of-IHh" id="D7T-TP-MR8"/>
                         <outlet property="usernamesWindow" destination="JaZ-ep-sEQ" id="aSi-33-HKH"/>
                         <outlet property="viewSegmentController" destination="Wz7-nK-Kzi" id="1lF-Tp-nUm"/>

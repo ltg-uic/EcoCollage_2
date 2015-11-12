@@ -60,7 +60,7 @@ int heightMultiplier;
 */
 
 
-- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andMaxScores:(NSMutableArray *)maxScores
+- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andMaxScores:(NSMutableArray *)maxScores withContainers:(int)wC withHeightMultipler:(int)hM
 {
     self = [super initWithFrame:frame];
     
@@ -92,9 +92,9 @@ int heightMultiplier;
     NSMutableArray* scoreVisNames = [scores objectAtIndex:1];
     
     orderedStrictly = 1;
-    withContainers = 1;
+    withContainers = wC;
     scaledToScreen = 1;
-    heightMultiplier = 4;
+    heightMultiplier = hM;
     
     
     // order the individual scores based on this users concerns
@@ -366,7 +366,7 @@ int heightMultiplier;
     [_score setTextAlignment:NSTextAlignmentCenter];
     
     
-    /*
+/*
     UITapGestureRecognizer *impactRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
     impactRecognizer.numberOfTapsRequired = 1;
     UITapGestureRecognizer *groundwaterRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(groundwaterTapped)];
@@ -423,7 +423,7 @@ int heightMultiplier;
         [_damageReduction addGestureRecognizer:damageReducRecognizer];
         [_investment addGestureRecognizer:investmentRecognizer];
     }
-     */
+*/
     
     [self addSubview:_impact];
     [self addSubview:_impactContainer];
@@ -451,7 +451,53 @@ int heightMultiplier;
     _score.text = text;
 }
 
+- (void)shrink {
+    int shrinkFactor = 2;
+    [self setFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width / shrinkFactor, self.frame.size.height)];
+    [_impact setFrame:CGRectMake(_impact.frame.origin.x, _impact.frame.origin.y, _impact.frame.size.width / shrinkFactor, _impact.frame.size.height)];
+    [_impactContainer setFrame:CGRectMake(_impactContainer.frame.origin.x, _impactContainer.frame.origin.y, _impactContainer.frame.size.width / shrinkFactor, _impactContainer.frame.size.height)];
+    [_investment setFrame:CGRectMake(_investment.frame.origin.x, _investment.frame.origin.y, _investment.frame.size.width / shrinkFactor, _investment.frame.size.height)];
+    [_investmentContainer setFrame:CGRectMake(_investmentContainer.frame.origin.x, _investmentContainer.frame.origin.y, _investmentContainer.frame.size.width / shrinkFactor, _investmentContainer.frame.size.height)];
+    [_groundwaterInfiltration setFrame:CGRectMake(_groundwaterInfiltration.frame.origin.x, _groundwaterInfiltration.frame.origin.y, _groundwaterInfiltration.frame.size.width / shrinkFactor, _groundwaterInfiltration.frame.size.height)];
+    [_groundwaterInfiltrationContainer setFrame:CGRectMake(_groundwaterInfiltrationContainer.frame.origin.x, _groundwaterInfiltrationContainer.frame.origin.y, _groundwaterInfiltrationContainer.frame.size.width / shrinkFactor, _groundwaterInfiltrationContainer.frame.size.height)];
+    [_maxFlood setFrame:CGRectMake(_maxFlood.frame.origin.x, _maxFlood.frame.origin.y, _maxFlood.frame.size.width / shrinkFactor, _maxFlood.frame.size.height)];
+    [_maxFloodContainer setFrame:CGRectMake(_maxFloodContainer.frame.origin.x, _maxFloodContainer.frame.origin.y, _maxFloodContainer.frame.size.width / shrinkFactor, _maxFloodContainer.frame.size.height)];
+    [_efficiency setFrame:CGRectMake(_efficiency.frame.origin.x, _efficiency.frame.origin.y, _efficiency.frame.size.width / shrinkFactor, _efficiency.frame.size.height)];
+    [_efficiencyContainer setFrame:CGRectMake(_efficiencyContainer.frame.origin.x, _efficiencyContainer.frame.origin.y, _efficiencyContainer.frame.size.width / shrinkFactor, _efficiencyContainer.frame.size.height)];
+    [_damageReduction setFrame:CGRectMake(_damageReduction.frame.origin.x, _damageReduction.frame.origin.y, _damageReduction.frame.size.width / shrinkFactor, _damageReduction.frame.size.height)];
+    [_damageReductionContainer setFrame:CGRectMake(_damageReductionContainer.frame.origin.x, _damageReductionContainer.frame.origin.y, _damageReductionContainer.frame.size.width / shrinkFactor, _damageReductionContainer.frame.size.height)];
+    [_waterFlow setFrame:CGRectMake(_waterFlow.frame.origin.x, _waterFlow.frame.origin.y, _waterFlow.frame.size.width / shrinkFactor, _waterFlow.frame.size.height)];
+    [_waterFlowContainer setFrame:CGRectMake(_waterFlowContainer.frame.origin.x, _waterFlowContainer.frame.origin.y, _waterFlowContainer.frame.size.width / shrinkFactor, _waterFlowContainer.frame.size.height)];
+    [_capacity setFrame:CGRectMake(_capacity.frame.origin.x, _capacity.frame.origin.y, _capacity.frame.size.width / shrinkFactor, _capacity.frame.size.height)];
+    [_capacityContainer setFrame:CGRectMake(_capacityContainer.frame.origin.x, _capacityContainer.frame.origin.y, _capacityContainer.frame.size.width / shrinkFactor, _capacityContainer.frame.size.height)];
+    
+    
+    [_score setFrame:CGRectMake(_score.frame.origin.x, _score.frame.origin.y, _score.frame.size.width / shrinkFactor, _score.frame.size.height)];
+    [_score sizeToFit];
+}
 
+- (void)grow {
+    int growFactor = 2;
+    [self setFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width * growFactor, self.frame.size.height)];
+    [_impact setFrame:CGRectMake(_impact.frame.origin.x, _impact.frame.origin.y, _impact.frame.size.width * growFactor, _impact.frame.size.height)];
+    [_impactContainer setFrame:CGRectMake(_impactContainer.frame.origin.x, _impactContainer.frame.origin.y, _impactContainer.frame.size.width * growFactor, _impactContainer.frame.size.height)];
+    [_investment setFrame:CGRectMake(_investment.frame.origin.x, _investment.frame.origin.y, _investment.frame.size.width * growFactor, _investment.frame.size.height)];
+    [_investmentContainer setFrame:CGRectMake(_investmentContainer.frame.origin.x, _investmentContainer.frame.origin.y, _investmentContainer.frame.size.width * growFactor, _investmentContainer.frame.size.height)];
+    [_groundwaterInfiltration setFrame:CGRectMake(_groundwaterInfiltration.frame.origin.x, _groundwaterInfiltration.frame.origin.y, _groundwaterInfiltration.frame.size.width * growFactor, _groundwaterInfiltration.frame.size.height)];
+    [_groundwaterInfiltrationContainer setFrame:CGRectMake(_groundwaterInfiltrationContainer.frame.origin.x, _groundwaterInfiltrationContainer.frame.origin.y, _groundwaterInfiltrationContainer.frame.size.width * growFactor, _groundwaterInfiltrationContainer.frame.size.height)];
+    [_maxFlood setFrame:CGRectMake(_maxFlood.frame.origin.x, _maxFlood.frame.origin.y, _maxFlood.frame.size.width * growFactor, _maxFlood.frame.size.height)];
+    [_maxFloodContainer setFrame:CGRectMake(_maxFloodContainer.frame.origin.x, _maxFloodContainer.frame.origin.y, _maxFloodContainer.frame.size.width * growFactor, _maxFloodContainer.frame.size.height)];
+    [_efficiency setFrame:CGRectMake(_efficiency.frame.origin.x, _efficiency.frame.origin.y, _efficiency.frame.size.width * growFactor, _efficiency.frame.size.height)];
+    [_efficiencyContainer setFrame:CGRectMake(_efficiencyContainer.frame.origin.x, _efficiencyContainer.frame.origin.y, _efficiencyContainer.frame.size.width * growFactor, _efficiencyContainer.frame.size.height)];
+    [_damageReduction setFrame:CGRectMake(_damageReduction.frame.origin.x, _damageReduction.frame.origin.y, _damageReduction.frame.size.width * growFactor, _damageReduction.frame.size.height)];
+    [_damageReductionContainer setFrame:CGRectMake(_damageReductionContainer.frame.origin.x, _damageReductionContainer.frame.origin.y, _damageReductionContainer.frame.size.width * growFactor, _damageReductionContainer.frame.size.height)];
+    [_waterFlow setFrame:CGRectMake(_waterFlow.frame.origin.x, _waterFlow.frame.origin.y, _waterFlow.frame.size.width * growFactor, _waterFlow.frame.size.height)];
+    [_waterFlowContainer setFrame:CGRectMake(_waterFlowContainer.frame.origin.x, _waterFlowContainer.frame.origin.y, _waterFlowContainer.frame.size.width * growFactor, _waterFlowContainer.frame.size.height)];
+    [_capacity setFrame:CGRectMake(_capacity.frame.origin.x, _capacity.frame.origin.y, _capacity.frame.size.width * growFactor, _capacity.frame.size.height)];
+    [_capacityContainer setFrame:CGRectMake(_capacityContainer.frame.origin.x, _capacityContainer.frame.origin.y, _capacityContainer.frame.size.width * growFactor, _capacityContainer.frame.size.height)];
+    
+    [_score setFrame:CGRectMake(_score.frame.origin.x, _score.frame.origin.y, _score.frame.size.width * growFactor, _score.frame.size.height)];
+}
 
 
 @end

@@ -10,10 +10,10 @@
 #import "AprilTestTabBarController.h"
 #import "StackedBar.h"
 
-@interface StackedBarGraph : UIView
+@interface StackedBarGraph : UIScrollView
 
 @property NSMutableArray *stackedBars;
 
-- (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl;
+- (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl withContainers:(int)wC;
 
 @end

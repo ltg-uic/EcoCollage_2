@@ -39,8 +39,12 @@
 @property int shrunk;
 
 
-- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andMaxScores:(NSMutableArray *)maxScores;
+- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andMaxScores:(NSMutableArray *)maxScores withContainers:(int)wC withHeightMultipler:(int)hM;
 
 - (void)changeText:(NSString *)text;
+
+- (void)shrink;
+
+- (void)grow;
 
 @end

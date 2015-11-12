@@ -22,5 +22,7 @@
 
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *viewSegmentController;
+- (IBAction)stackedbarswitch:(id)sender;
+@property (strong, nonatomic) IBOutlet UISwitch *stackedBarSwitch;
 
 @end

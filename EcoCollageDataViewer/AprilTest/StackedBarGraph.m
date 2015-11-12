@@ -12,6 +12,9 @@
 
 @synthesize stackedBars = _stackedBars;
 
+NSMutableArray *trialGroups;
+
+int barHeightMultiplier = 4;
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
@@ -20,7 +23,7 @@
 }
 */
 
-- (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl {
+- (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl withContainers:(int)wC{
     self = [super initWithFrame:frame];
     
     
@@ -81,9 +84,12 @@
     [maxScores addObject:[NSNumber numberWithInt:maxGroundwaterInfiltration]];
     [maxScores addObject:[NSNumber numberWithInt:maxImpact]];
     
+    int sumMaxScores = maxInvestment + maxDamageReduction + maxEfficiency + maxCapacity + maxWaterFlow + maxMaxFlood + maxGroundwaterInfiltration + maxImpact;
+    sumMaxScores *= barHeightMultiplier;
+    
     int x_initial = 125;
     int x = x_initial;
-    int y = frame.size.height - 150;
+    int y = frame.size.height;
     int width = 40;
     int spaceBetweenTrials = 25;
     
@@ -97,31 +103,112 @@
     UIView *yAxis = [[UIView alloc]initWithFrame:CGRectMake(x_initial, y - yAxisHeight, 1, yAxisHeight)];
     [yAxis setBackgroundColor:[UIColor blackColor]];
     [self addSubview:yAxis];
+    
+    trialGroups = [[NSMutableArray alloc]init];
 
     // create a stackedBar for each trial for each profile
     for(int i = 0; i < tabControl.trialNum; i++) {
+        
+        NSMutableArray *trialGroup = [[NSMutableArray alloc]init];
         
         for(int j = 0; j < tabControl.profiles.count; j++) {
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
             UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resize:)];
             tapRecognizer.numberOfTapsRequired = 1;
             
-            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, 100) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andMaxScores:maxScores];
+            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, -sumMaxScores) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andMaxScores:maxScores withContainers:wC withHeightMultipler:barHeightMultiplier];
+            
+            
+            
+            UITapGestureRecognizer *impactRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
+            impactRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *groundwaterRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(groundwaterTapped)];
+            groundwaterRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *maxFloodRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(maxFloodTapped)];
+            maxFloodRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *waterFlowRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
+            waterFlowRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *interventionCapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(interventionCapTapped)];
+            interventionCapRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *efficiencyRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(efficiencyTapped)];
+            efficiencyRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *damageReducRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(damageReducTapped)];
+            damageReducRecognizer.numberOfTapsRequired = 1;
+            UITapGestureRecognizer *investmentRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(investmentTapped)];
+            investmentRecognizer.numberOfTapsRequired = 1;
+            
+            
+            if(wC) {
+                bar.impactContainer.userInteractionEnabled = YES;
+                bar.groundwaterInfiltrationContainer.userInteractionEnabled = YES;
+                bar.maxFloodContainer.userInteractionEnabled = YES;
+                bar.waterFlowContainer.userInteractionEnabled = YES;
+                bar.capacityContainer.userInteractionEnabled = YES;
+                bar.efficiencyContainer.userInteractionEnabled = YES;
+                bar.damageReductionContainer.userInteractionEnabled = YES;
+                bar.investmentContainer.userInteractionEnabled = YES;
+                
+                [bar.impactContainer addGestureRecognizer:impactRecognizer];
+                [bar.groundwaterInfiltrationContainer addGestureRecognizer:groundwaterRecognizer];
+                [bar.maxFloodContainer addGestureRecognizer:maxFloodRecognizer];
+                [bar.waterFlowContainer addGestureRecognizer:waterFlowRecognizer];
+                [bar.capacityContainer addGestureRecognizer:interventionCapRecognizer];
+                [bar.efficiencyContainer addGestureRecognizer:efficiencyRecognizer];
+                [bar.damageReductionContainer addGestureRecognizer:damageReducRecognizer];
+                [bar.investmentContainer addGestureRecognizer:investmentRecognizer];
+            }
+            else {
+                bar.impact.userInteractionEnabled = YES;
+                bar.groundwaterInfiltration.userInteractionEnabled = YES;
+                bar.maxFlood.userInteractionEnabled = YES;
+                bar.waterFlow.userInteractionEnabled = YES;
+                bar.capacity.userInteractionEnabled = YES;
+                bar.efficiency.userInteractionEnabled = YES;
+                bar.damageReduction.userInteractionEnabled = YES;
+                bar.investment.userInteractionEnabled = YES;
+                
+                [bar.impact addGestureRecognizer:impactRecognizer];
+                [bar.groundwaterInfiltration addGestureRecognizer:groundwaterRecognizer];
+                [bar.maxFlood addGestureRecognizer:maxFloodRecognizer];
+                [bar.waterFlow addGestureRecognizer:waterFlowRecognizer];
+                [bar.capacity addGestureRecognizer:interventionCapRecognizer];
+                [bar.efficiency addGestureRecognizer:efficiencyRecognizer];
+                [bar.damageReduction addGestureRecognizer:damageReducRecognizer];
+                [bar.investment addGestureRecognizer:investmentRecognizer];
+            }
+            
             [_stackedBars addObject:bar];
             
-            [bar setUserInteractionEnabled:YES];
-            [bar addGestureRecognizer:tapRecognizer];
+            //[bar setUserInteractionEnabled:YES];
+            //[bar addGestureRecognizer:tapRecognizer];
+            
+            [trialGroup addObject:bar];
             
             x += width+1;
         }
+        [trialGroups addObject: trialGroup];
         x += spaceBetweenTrials;
     }
     
-    UILabel *xAxisLabel = [[UILabel alloc]initWithFrame:CGRectMake(x_initial, y, x - x_initial, 50)];
-    [xAxisLabel setText:@"Trials"];
-    [xAxisLabel setTextAlignment:NSTextAlignmentCenter];
-    
-    [self addSubview:xAxisLabel];
+    // create UILabel for each trial
+    int i = 0;
+    for(NSMutableArray *mArray in trialGroups) {
+        if(mArray.count == 0) break;
+        StackedBar *fBar = [mArray objectAtIndex:0];
+        StackedBar *lBar = [mArray objectAtIndex:mArray.count - 1];
+        UILabel *trialLabel = [[UILabel alloc]initWithFrame:CGRectMake(fBar.frame.origin.x, fBar.frame.origin.y + fBar.frame.size.height + 50, lBar.frame.origin.x + lBar.frame.size.width - fBar.frame.origin.x, 20)];
+        trialLabel.tag = i;
+        [trialLabel setText:[NSString stringWithFormat:@"Trial %d", i+1]];
+        [trialLabel setTextAlignment:NSTextAlignmentCenter];
+        [trialLabel setUserInteractionEnabled:YES];
+        UITapGestureRecognizer *trialTapped = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(trialTapped:)];
+        trialTapped.numberOfTapsRequired = 1;
+        [trialLabel addGestureRecognizer:trialTapped];
+        
+        [self addSubview:trialLabel];
+        
+        i++;
+    }
     
     UILabel *yAxisLabel = [[UILabel alloc]init];
     [yAxisLabel setText:@"Performance"];
@@ -136,30 +223,114 @@
     for(StackedBar *s in _stackedBars) {
         [self addSubview:s];
     }
+    
+    [self setContentSize:CGSizeMake(x + 40, self.frame.size.height + y)];
  
     return self;
+}
+
+- (void) trialTapped:(UITapGestureRecognizer *)gr {
+    UILabel *trialLabel = (UILabel*)gr.view;
+    
+    NSMutableArray *mArray = [trialGroups objectAtIndex:trialLabel.tag];
+    for(StackedBar *bar in mArray) {
+        CGPoint center = bar.center;
+        
+        // if it is shrunk, we need to grow it
+        if(bar.shrunk == 1) {
+            [bar grow];
+            [bar setCenter:center];
+            bar.shrunk = 0;
+        }
+        else { // otherwise, we need to shrink it
+            [bar shrink];
+            [bar setCenter:center];
+            bar.shrunk = 1;
+        }
+    }
 }
 
 - (void)resize:(UITapGestureRecognizer *)gr {
     StackedBar *sb = (StackedBar*)gr.view;
     
-    int resizeFactor = 2;
     CGPoint center = sb.center;
     
     // if it is shrunk, we need to grow it
     if(sb.shrunk == 1) {
-        [sb setFrame:CGRectMake(sb.frame.origin.x, sb.frame.origin.y, sb.frame.size.width * resizeFactor, sb.frame.size.height)];
+        [sb grow];
         [sb setCenter:center];
         sb.shrunk = 0;
     }
     else { // otherwise, we need to shrink it
-        [sb setFrame:CGRectMake(sb.frame.origin.x, sb.frame.origin.y, sb.frame.size.width / resizeFactor, sb.frame.size.height)];
+        [sb shrink];
         [sb setCenter:center];
         sb.shrunk = 1;
     }
 }
 
 
+- (void) impactTapped {
+    for(StackedBar *bar in _stackedBars) {
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.impact.frame.size.height/barHeightMultiplier];
+        [bar changeText:text];
+    }
+}
+
+
+- (void) groundwaterTapped {
+    for(StackedBar *bar in _stackedBars) {
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.groundwaterInfiltration.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+    }
+}
+
+
+- (void) maxFloodTapped {
+    for(StackedBar *bar in _stackedBars) {
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.maxFlood.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+    }
+}
+
+
+- (void) waterDepthTapped {
+    for(StackedBar *bar in _stackedBars) {
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.waterFlow.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+    }
+}
+
+
+- (void) interventionCapTapped {
+    for(StackedBar *bar in _stackedBars) {
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.capacity.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+    }
+}
+
+
+- (void) efficiencyTapped {
+    for(StackedBar *bar in _stackedBars) {
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.efficiency.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+    }
+}
+
+
+- (void) damageReducTapped {
+    for(StackedBar *bar in _stackedBars) {
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.damageReduction.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+    }
+}
+
+
+- (void) investmentTapped {
+    for(StackedBar *bar in _stackedBars) {
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.investment.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+    }
+}
 
 
 @end
