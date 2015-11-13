@@ -473,7 +473,6 @@ int heightMultiplier;
     
     
     [_score setFrame:CGRectMake(_score.frame.origin.x, _score.frame.origin.y, _score.frame.size.width / shrinkFactor, _score.frame.size.height)];
-    [_score sizeToFit];
 }
 
 - (void)grow {

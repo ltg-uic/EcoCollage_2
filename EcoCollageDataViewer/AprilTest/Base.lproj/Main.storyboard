@@ -432,7 +432,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Social View" image="social24.png" id="hZF-be-X3G"/>
+                    <tabBarItem key="tabBarItem" title="Comparison Viewer" image="Scales Filled-32.png" id="hZF-be-X3G"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
                         <outlet property="StormPlayBack" destination="lAH-2v-pHo" id="VYn-CQ-mWd"/>
@@ -1045,6 +1045,7 @@
     </scenes>
     <resources>
         <image name="DuPage_May.png" width="575" height="625"/>
+        <image name="Scales Filled-32.png" width="32" height="32"/>
         <image name="builder-1x.png" width="30" height="30"/>
         <image name="greenalley.png" width="124" height="124"/>
         <image name="greenroof.png" width="142" height="138"/>
@@ -1052,7 +1053,6 @@
         <image name="landcover.png" width="45" height="280"/>
         <image name="rainbarrel.png" width="113" height="131"/>
         <image name="sim-1x.png" width="30" height="30"/>
-        <image name="social24.png" width="24" height="24"/>
         <image name="survey-1x.png" width="30" height="30"/>
         <image name="swale.png" width="143" height="135"/>
     </resources>

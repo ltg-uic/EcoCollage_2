@@ -225,6 +225,7 @@ int barHeightMultiplier = 4;
     }
     
     [self setContentSize:CGSizeMake(x + 40, self.frame.size.height + y)];
+    [self setContentOffset:CGPointMake(0, y - self.frame.size.height)];
  
     return self;
 }
