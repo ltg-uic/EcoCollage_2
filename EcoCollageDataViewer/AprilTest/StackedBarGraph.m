@@ -13,6 +13,7 @@
 @synthesize stackedBars = _stackedBars;
 
 NSMutableArray *trialGroups;
+NSMutableArray *trialLabels;
 
 int barHeightMultiplier = 4;
 /*
@@ -73,6 +74,7 @@ int barHeightMultiplier = 4;
             }
         }
     }
+
     
     // must be added in this specific order
     [maxScores addObject:[NSNumber numberWithInt:maxInvestment]];
@@ -87,9 +89,11 @@ int barHeightMultiplier = 4;
     int sumMaxScores = maxInvestment + maxDamageReduction + maxEfficiency + maxCapacity + maxWaterFlow + maxMaxFlood + maxGroundwaterInfiltration + maxImpact;
     sumMaxScores *= barHeightMultiplier;
     
+    
+    
     int x_initial = 125;
     int x = x_initial;
-    int y = frame.size.height;
+    int y = sumMaxScores + 100; // start at the bottom and work up
     int width = 40;
     int spaceBetweenTrials = 25;
     
@@ -190,13 +194,15 @@ int barHeightMultiplier = 4;
         x += spaceBetweenTrials;
     }
     
+    trialLabels = [[NSMutableArray alloc]init];
+    
     // create UILabel for each trial
     int i = 0;
     for(NSMutableArray *mArray in trialGroups) {
         if(mArray.count == 0) break;
         StackedBar *fBar = [mArray objectAtIndex:0];
         StackedBar *lBar = [mArray objectAtIndex:mArray.count - 1];
-        UILabel *trialLabel = [[UILabel alloc]initWithFrame:CGRectMake(fBar.frame.origin.x, fBar.frame.origin.y + fBar.frame.size.height + 50, lBar.frame.origin.x + lBar.frame.size.width - fBar.frame.origin.x, 20)];
+        UILabel *trialLabel = [[UILabel alloc]initWithFrame:CGRectMake(fBar.frame.origin.x, fBar.frame.origin.y + fBar.frame.size.height + 30, lBar.frame.origin.x + lBar.frame.size.width - fBar.frame.origin.x, 30)];
         trialLabel.tag = i;
         [trialLabel setText:[NSString stringWithFormat:@"Trial %d", i+1]];
         [trialLabel setTextAlignment:NSTextAlignmentCenter];
@@ -204,7 +210,11 @@ int barHeightMultiplier = 4;
         UITapGestureRecognizer *trialTapped = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(trialTapped:)];
         trialTapped.numberOfTapsRequired = 1;
         [trialLabel addGestureRecognizer:trialTapped];
-        
+        trialLabel.backgroundColor = [UIColor colorWithRed:73.0f/255.0f green:235.0f/255.0f blue:232.0f/255.0f alpha:.5];
+        [trialLabel.layer setBorderColor:[UIColor blackColor].CGColor];
+        [trialLabel.layer setBorderWidth:1];
+
+        [trialLabels addObject:trialLabel];
         [self addSubview:trialLabel];
         
         i++;
@@ -224,7 +234,7 @@ int barHeightMultiplier = 4;
         [self addSubview:s];
     }
     
-    [self setContentSize:CGSizeMake(x + 40, self.frame.size.height + y)];
+    [self setContentSize:CGSizeMake(xAxisLength + 150, yAxisHeight + 150)];
     [self setContentOffset:CGPointMake(0, 50)];
  
     return self;
@@ -234,20 +244,49 @@ int barHeightMultiplier = 4;
     UILabel *trialLabel = (UILabel*)gr.view;
     
     NSMutableArray *mArray = [trialGroups objectAtIndex:trialLabel.tag];
+    int shrunk = ((StackedBar*)[mArray objectAtIndex:0]).shrunk;
+    
+    /*
+    if(shrunk){ // if shrunken, we gotta grow it
+        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y, trialLabel.frame.size.width * 2, trialLabel.frame.size.height)];
+    }
+    else { // otherwise we shrink it
+        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x - trialLabel.frame.size.width / 8, trialLabel.frame.origin.y, trialLabel.frame.size.width / 2, trialLabel.frame.size.height)];
+    }
+     */
+    
+    int i = 0;
     for(StackedBar *bar in mArray) {
         CGPoint center = bar.center;
         
         // if it is shrunk, we need to grow it
         if(bar.shrunk == 1) {
+            
+            if(i == 0) {
+                [bar setFrame:CGRectMake(bar.frame.origin.x + bar.frame.size.width / 2, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+            }
+            else {
+                [bar setFrame:CGRectMake(bar.frame.origin.x - bar.frame.size.width, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+            }
+            
             [bar grow];
-            [bar setCenter:center];
+            //[bar setCenter:center];
             bar.shrunk = 0;
         }
         else { // otherwise, we need to shrink it
             [bar shrink];
-            [bar setCenter:center];
+            //[bar setCenter:center];
             bar.shrunk = 1;
+            
+            if(i == 0) {
+                [bar setFrame:CGRectMake(bar.frame.origin.x - bar.frame.size.width / 2, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+            }
+            else {
+                [bar setFrame:CGRectMake(bar.frame.origin.x - bar.frame.size.width, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+            }
+            
         }
+        i++;
     }
 }
 
@@ -331,6 +370,10 @@ int barHeightMultiplier = 4;
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.investment.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
     }
+}
+
+- (void) shiftLeft {
+    
 }
 
 
