@@ -15,6 +15,8 @@
 NSMutableArray *trialGroups;
 NSMutableArray *trialLabels;
 
+int widthOfBar = 40;
+
 int barHeightMultiplier = 4;
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -94,7 +96,7 @@ int barHeightMultiplier = 4;
     int x_initial = 125;
     int x = x_initial;
     int y = sumMaxScores + 100; // start at the bottom and work up
-    int width = 40;
+    int width = widthOfBar;
     int spaceBetweenTrials = 25;
     
     // draw lines for x and y axis
@@ -117,8 +119,6 @@ int barHeightMultiplier = 4;
         
         for(int j = 0; j < tabControl.profiles.count; j++) {
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
-            UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resize:)];
-            tapRecognizer.numberOfTapsRequired = 1;
             
             StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, -sumMaxScores) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andMaxScores:maxScores withContainers:wC withHeightMultipler:barHeightMultiplier];
             
@@ -202,10 +202,13 @@ int barHeightMultiplier = 4;
         if(mArray.count == 0) break;
         StackedBar *fBar = [mArray objectAtIndex:0];
         StackedBar *lBar = [mArray objectAtIndex:mArray.count - 1];
-        UILabel *trialLabel = [[UILabel alloc]initWithFrame:CGRectMake(fBar.frame.origin.x, fBar.frame.origin.y + fBar.frame.size.height + 30, lBar.frame.origin.x + lBar.frame.size.width - fBar.frame.origin.x, 30)];
+        UIView *trialLabel = [[UIView alloc]initWithFrame:CGRectMake(fBar.frame.origin.x, fBar.frame.origin.y + fBar.frame.size.height + 30, lBar.frame.origin.x + lBar.frame.size.width - fBar.frame.origin.x, 30)];
         trialLabel.tag = i;
-        [trialLabel setText:[NSString stringWithFormat:@"Trial %d", i+1]];
-        [trialLabel setTextAlignment:NSTextAlignmentCenter];
+        UILabel *trialText = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, lBar.frame.origin.x + lBar.frame.size.width - fBar.frame.origin.x, 30)];
+        [trialText setText:[NSString stringWithFormat:@"Trial %d", i+1]];
+        [trialText sizeToFit];
+        [trialText setCenter:CGPointMake(trialLabel.frame.size.width / 2, trialLabel.frame.size.height / 2)];
+        trialText.tag = 101;
         [trialLabel setUserInteractionEnabled:YES];
         UITapGestureRecognizer *trialTapped = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(trialTapped:)];
         trialTapped.numberOfTapsRequired = 1;
@@ -214,6 +217,7 @@ int barHeightMultiplier = 4;
         [trialLabel.layer setBorderColor:[UIColor blackColor].CGColor];
         [trialLabel.layer setBorderWidth:1];
 
+        [trialLabel addSubview:trialText];
         [trialLabels addObject:trialLabel];
         [self addSubview:trialLabel];
         
@@ -235,79 +239,81 @@ int barHeightMultiplier = 4;
     }
     
     [self setContentSize:CGSizeMake(xAxisLength + 150, yAxisHeight + 150)];
-    [self setContentOffset:CGPointMake(0, 50)];
+    [self setContentOffset:CGPointMake(0, self.contentSize.height - self.frame.size.height)];
  
     return self;
 }
 
 - (void) trialTapped:(UITapGestureRecognizer *)gr {
-    UILabel *trialLabel = (UILabel*)gr.view;
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:.5];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    UIView *trialLabel = (UIView*)gr.view;
+    UILabel *trialText = [trialLabel viewWithTag:101];
     
     NSMutableArray *mArray = [trialGroups objectAtIndex:trialLabel.tag];
     int shrunk = ((StackedBar*)[mArray objectAtIndex:0]).shrunk;
     
-    /*
-    if(shrunk){ // if shrunken, we gotta grow it
-        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y, trialLabel.frame.size.width * 2, trialLabel.frame.size.height)];
-    }
-    else { // otherwise we shrink it
-        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x - trialLabel.frame.size.width / 8, trialLabel.frame.origin.y, trialLabel.frame.size.width / 2, trialLabel.frame.size.height)];
-    }
-     */
-    
+
     int i = 0;
     for(StackedBar *bar in mArray) {
-        CGPoint center = bar.center;
         
         // if it is shrunk, we need to grow it
         if(bar.shrunk == 1) {
-            
-            if(i == 0) {
-                [bar setFrame:CGRectMake(bar.frame.origin.x + bar.frame.size.width / 2, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
-            }
-            else {
-                [bar setFrame:CGRectMake(bar.frame.origin.x - bar.frame.size.width, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
-            }
+            [bar setFrame:CGRectMake(bar.frame.origin.x + bar.frame.size.width * i, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
             
             [bar grow];
-            //[bar setCenter:center];
             bar.shrunk = 0;
         }
         else { // otherwise, we need to shrink it
             [bar shrink];
-            //[bar setCenter:center];
             bar.shrunk = 1;
             
-            if(i == 0) {
-                [bar setFrame:CGRectMake(bar.frame.origin.x - bar.frame.size.width / 2, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
-            }
-            else {
-                [bar setFrame:CGRectMake(bar.frame.origin.x - bar.frame.size.width, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
-            }
-            
+            [bar setFrame:CGRectMake(bar.frame.origin.x - bar.frame.size.width * i, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
         }
         i++;
     }
+    
+    if(shrunk){ // if shrunken, we gotta grow it
+        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y, trialLabel.frame.size.width * 2, trialLabel.frame.size.height)];
+        [trialText setCenter:CGPointMake(trialLabel.frame.size.width / 2, trialLabel.frame.size.height / 2)];
+    }
+    else { // otherwise we shrink it
+        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y, trialLabel.frame.size.width / 2, trialLabel.frame.size.height)];
+        [trialText setCenter:CGPointMake(trialLabel.frame.size.width / 2, trialLabel.frame.size.height / 2)];
+    }
+    
+    int shiftAmount = mArray.count * (widthOfBar / 2);
+    if(shrunk)
+        for(i = (int)trialLabel.tag + 1; i < trialGroups.count; i++) {
+            [self shiftRight:[trialGroups objectAtIndex:i] amount:shiftAmount];
+            UILabel *trialLabel = [trialLabels objectAtIndex:i];
+            [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x + shiftAmount, trialLabel.frame.origin.y, trialLabel.frame.size.width, trialLabel.frame.size.height)];
+        }
+    else
+        for(i = (int)trialLabel.tag + 1; i < trialGroups.count; i++) {
+            [self shiftLeft:[trialGroups objectAtIndex:i] amount:shiftAmount];
+            UILabel *trialLabel = [trialLabels objectAtIndex:i];
+            [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x - shiftAmount, trialLabel.frame.origin.y, trialLabel.frame.size.width, trialLabel.frame.size.height)];
+        }
+    
+    
+    [UIView commitAnimations];
 }
 
-- (void)resize:(UITapGestureRecognizer *)gr {
-    StackedBar *sb = (StackedBar*)gr.view;
-    
-    CGPoint center = sb.center;
-    
-    // if it is shrunk, we need to grow it
-    if(sb.shrunk == 1) {
-        [sb grow];
-        [sb setCenter:center];
-        sb.shrunk = 0;
-    }
-    else { // otherwise, we need to shrink it
-        [sb shrink];
-        [sb setCenter:center];
-        sb.shrunk = 1;
+- (void)shiftLeft:(NSMutableArray*)mArray amount:(int)shiftAmount{
+    for(StackedBar *bar in mArray) {
+        [bar setFrame:CGRectMake(bar.frame.origin.x - shiftAmount, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
     }
 }
 
+- (void)shiftRight:(NSMutableArray*)mArray amount:(int)shiftAmount{
+    for(StackedBar *bar in mArray) {
+        [bar setFrame:CGRectMake(bar.frame.origin.x + shiftAmount, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+    }
+}
 
 - (void) impactTapped {
     for(StackedBar *bar in _stackedBars) {
