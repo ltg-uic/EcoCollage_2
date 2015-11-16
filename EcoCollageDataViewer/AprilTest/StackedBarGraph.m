@@ -105,6 +105,7 @@ int barHeightMultiplier = 4;
     [xAxis setBackgroundColor:[UIColor blackColor]];
     [self addSubview:xAxis];
     
+    
     int yAxisHeight = (maxInvestment + maxDamageReduction + maxEfficiency + maxCapacity + maxWaterFlow + maxMaxFlood + maxGroundwaterInfiltration + maxImpact) * 4 + 70;
     UIView *yAxis = [[UIView alloc]initWithFrame:CGRectMake(x_initial, y - yAxisHeight, 1, yAxisHeight)];
     [yAxis setBackgroundColor:[UIColor blackColor]];
@@ -121,6 +122,9 @@ int barHeightMultiplier = 4;
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
             
             StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, -sumMaxScores) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andMaxScores:maxScores withContainers:wC withHeightMultipler:barHeightMultiplier];
+            
+            [bar.name setFrame:CGRectMake(x, yAxis.frame.origin.y + yAxis.frame.size.height, width, 20)];
+            [self addSubview:bar.name];
             
             
             
@@ -245,16 +249,26 @@ int barHeightMultiplier = 4;
 }
 
 - (void) trialTapped:(UITapGestureRecognizer *)gr {
+        UIView *trialLabel = (UIView*)gr.view;
+    UILabel *trialText = [trialLabel viewWithTag:101];
+    
+    NSMutableArray *mArray = [trialGroups objectAtIndex:trialLabel.tag];
+    int shrunk = ((StackedBar*)[mArray objectAtIndex:0]).shrunk;
+    
+    for(StackedBar *bar in mArray) {
+        
+        // if we are going to shrink it, hide name
+        if(bar.shrunk != 1) {
+            [bar.name setHidden:YES];
+        }
+    }
+    
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
-    UIView *trialLabel = (UIView*)gr.view;
-    UILabel *trialText = [trialLabel viewWithTag:101];
-    
-    NSMutableArray *mArray = [trialGroups objectAtIndex:trialLabel.tag];
-    int shrunk = ((StackedBar*)[mArray objectAtIndex:0]).shrunk;
+
     
 
     int i = 0;
@@ -301,17 +315,36 @@ int barHeightMultiplier = 4;
     
     
     [UIView commitAnimations];
+    
+    [self performSelector:@selector(showName:)
+               withObject:mArray
+               afterDelay:(0.5f)];
+
+}
+
+- (void) showName:(NSMutableArray *)mArray {
+    for(StackedBar *bar in mArray) {
+        
+        // if we just shrunk it, do nothing
+        if(bar.shrunk == 1) {
+        }
+        else { // otherwise, we need to display it
+            [bar.name setHidden:NO];
+        }
+    }
 }
 
 - (void)shiftLeft:(NSMutableArray*)mArray amount:(int)shiftAmount{
     for(StackedBar *bar in mArray) {
         [bar setFrame:CGRectMake(bar.frame.origin.x - shiftAmount, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+        [bar.name setFrame:CGRectMake(bar.name.frame.origin.x - shiftAmount, bar.name.frame.origin.y, bar.name.frame.size.width, bar.name.frame.size.height)];
     }
 }
 
 - (void)shiftRight:(NSMutableArray*)mArray amount:(int)shiftAmount{
     for(StackedBar *bar in mArray) {
         [bar setFrame:CGRectMake(bar.frame.origin.x + shiftAmount, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+        [bar.name setFrame:CGRectMake(bar.name.frame.origin.x + shiftAmount, bar.name.frame.origin.y, bar.name.frame.size.width, bar.name.frame.size.height)];
     }
 }
 
@@ -376,10 +409,6 @@ int barHeightMultiplier = 4;
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.investment.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
     }
-}
-
-- (void) shiftLeft {
-    
 }
 
 

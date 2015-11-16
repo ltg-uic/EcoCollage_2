@@ -14,6 +14,9 @@
 		571EC6DB1BF5640B00F65A3D /* Scales-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 571EC6DA1BF5640B00F65A3D /* Scales-32.png */; };
 		571EC6DD1BF5643E00F65A3D /* Scales Filled-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 571EC6DC1BF5643E00F65A3D /* Scales Filled-32.png */; };
 		571EC6DF1BF564AB00F65A3D /* Scales Filled-64.png in Resources */ = {isa = PBXBuildFile; fileRef = 571EC6DE1BF564AB00F65A3D /* Scales Filled-64.png */; };
+		571EC6E11BFA835600F65A3D /* Dot-pattern-free-vector.png in Resources */ = {isa = PBXBuildFile; fileRef = 571EC6E01BFA835600F65A3D /* Dot-pattern-free-vector.png */; };
+		571EC6E31BFA846600F65A3D /* dot-grid-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 571EC6E21BFA846600F65A3D /* dot-grid-1.png */; };
+		571EC6E51BFA851500F65A3D /* Polka_dot_pattern.png in Resources */ = {isa = PBXBuildFile; fileRef = 571EC6E41BFA851500F65A3D /* Polka_dot_pattern.png */; };
 		574737081B14E52C00D5EED8 /* MommaBirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 574737071B14E52C00D5EED8 /* MommaBirdViewController.m */; };
 		5759D44F1B9F8120000C7B72 /* BabyBird.m in Sources */ = {isa = PBXBuildFile; fileRef = 5759D44E1B9F8120000C7B72 /* BabyBird.m */; };
 		5759DC5F1BA75E4D000C7B72 /* pedvpolStudy.png in Resources */ = {isa = PBXBuildFile; fileRef = 5759DC5E1BA75E4D000C7B72 /* pedvpolStudy.png */; };
@@ -107,6 +110,9 @@
 		571EC6DA1BF5640B00F65A3D /* Scales-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Scales-32.png"; sourceTree = "<group>"; };
 		571EC6DC1BF5643E00F65A3D /* Scales Filled-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Scales Filled-32.png"; sourceTree = "<group>"; };
 		571EC6DE1BF564AB00F65A3D /* Scales Filled-64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Scales Filled-64.png"; sourceTree = "<group>"; };
+		571EC6E01BFA835600F65A3D /* Dot-pattern-free-vector.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dot-pattern-free-vector.png"; sourceTree = "<group>"; };
+		571EC6E21BFA846600F65A3D /* dot-grid-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dot-grid-1.png"; sourceTree = "<group>"; };
+		571EC6E41BFA851500F65A3D /* Polka_dot_pattern.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Polka_dot_pattern.png; sourceTree = "<group>"; };
 		574737061B14E52C00D5EED8 /* MommaBirdViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MommaBirdViewController.h; path = ../MommaBirdViewController.h; sourceTree = "<group>"; };
 		574737071B14E52C00D5EED8 /* MommaBirdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MommaBirdViewController.m; path = ../MommaBirdViewController.m; sourceTree = "<group>"; };
 		5759D44D1B9F8120000C7B72 /* BabyBird.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyBird.h; sourceTree = "<group>"; };
@@ -349,6 +355,9 @@
 		8453FA5918F2FC8F0010D12F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				571EC6E41BFA851500F65A3D /* Polka_dot_pattern.png */,
+				571EC6E21BFA846600F65A3D /* dot-grid-1.png */,
+				571EC6E01BFA835600F65A3D /* Dot-pattern-free-vector.png */,
 				57FF57031B6AB03200543C93 /* favorite_active_large.png */,
 				57FF57041B6AB03200543C93 /* favorite_inactive_large.png */,
 				57FF57051B6AB03200543C93 /* least_favorite_active_large.png */,
@@ -487,6 +496,7 @@
 				846B972618FE0B1F0008BD59 /* sewer.png in Resources */,
 				571EC6DB1BF5640B00F65A3D /* Scales-32.png in Resources */,
 				842D4CC41B0271A7002B351B /* DuPage_May.png in Resources */,
+				571EC6E31BFA846600F65A3D /* dot-grid-1.png in Resources */,
 				84BCFDB51A3B6BC200D37103 /* pquestions.txt in Resources */,
 				84DE92F11993E2D7006525F4 /* guidebook-2x.png in Resources */,
 				8453FA6E18F2FC8F0010D12F /* Images.xcassets in Resources */,
@@ -499,6 +509,7 @@
 				846B972718FE0B1F0008BD59 /* swale.png in Resources */,
 				841C0A201A16744500ED7A2E /* questions1.txt in Resources */,
 				57FF57071B6AB03200543C93 /* favorite_active_large.png in Resources */,
+				571EC6E51BFA851500F65A3D /* Polka_dot_pattern.png in Resources */,
 				57FF57091B6AB03200543C93 /* least_favorite_active_large.png in Resources */,
 				57A31DC01B6960AC007F6CDC /* favorite_active.png in Resources */,
 				841C0A231A16749000ED7A2E /* descriptions.txt in Resources */,
@@ -519,6 +530,7 @@
 				8453FA8E18F2FECC0010D12F /* builder-2x.png in Resources */,
 				84DE92F31993EC3D006525F4 /* blueIslandOverlay.png in Resources */,
 				848479CF18F59F3E00BAD981 /* sim-2x.png in Resources */,
+				571EC6E11BFA835600F65A3D /* Dot-pattern-free-vector.png in Resources */,
 				571EC6DF1BF564AB00F65A3D /* Scales Filled-64.png in Resources */,
 				846B972518FE0B1F0008BD59 /* rainbarrel.png in Resources */,
 				57A31DC21B6960AC007F6CDC /* least_favorite_active.png in Resources */,

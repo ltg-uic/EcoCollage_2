@@ -608,6 +608,7 @@ int                         heightMultiplier = 5;
         scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y + sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height - sizeOfChange);
         
         corePlotView.frame = CGRectMake(corePlotView.frame.origin.x, corePlotView.frame.origin.y + sizeOfChange, corePlotView.frame.size.width, corePlotView.frame.size.height - sizeOfChange);
+        SBG.frame = CGRectMake(SBG.frame.origin.x, SBG.frame.origin.y + sizeOfChange, SBG.frame.size.width, SBG.frame.size.height - sizeOfChange);
     }
     else {
         AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
@@ -623,6 +624,7 @@ int                         heightMultiplier = 5;
         scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y - sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height + sizeOfChange);
         
         corePlotView.frame = CGRectMake(corePlotView.frame.origin.x, corePlotView.frame.origin.y - sizeOfChange, corePlotView.frame.size.width, corePlotView.frame.size.height + sizeOfChange);
+        SBG.frame = CGRectMake(SBG.frame.origin.x, SBG.frame.origin.y - sizeOfChange, SBG.frame.size.width, SBG.frame.size.height + sizeOfChange);
     }
     [UIView commitAnimations];
 }
