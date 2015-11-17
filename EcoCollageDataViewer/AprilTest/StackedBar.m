@@ -53,6 +53,7 @@
 
 NSMutableDictionary *concernNames;
 NSMutableDictionary *scoreColors;
+NSMutableDictionary *scoreColorsDesaturated;
 
 
 int orderedStrictly;
@@ -102,6 +103,23 @@ int heightMultiplier;
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
                     [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
+    
+    scoreColorsDesaturated = [[NSMutableDictionary alloc] initWithObjects:
+                   [NSArray arrayWithObjects:
+                    [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.25],
+                    [UIColor colorWithHue:.31 saturation:.6 brightness:.91 alpha: 0.25],
+                    [UIColor colorWithHue:.32 saturation:.6 brightness:.92 alpha: 0.25],
+                    [UIColor colorWithHue:.33 saturation:.6 brightness:.93 alpha: 0.25],
+                    [UIColor colorWithHue:.35 saturation:.8 brightness:.6 alpha: 0.25],
+                    [UIColor colorWithHue:.36 saturation:.8 brightness:.61 alpha: 0.25],
+                    [UIColor colorWithHue:.37 saturation:.8 brightness:.62 alpha: 0.25],
+                    [UIColor colorWithHue:.38 saturation:.8 brightness:.63 alpha: 0.25],
+                    [UIColor colorWithHue:.4 saturation:.8 brightness:.3 alpha: 0.25],
+                    [UIColor colorWithHue:.65 saturation:.8 brightness:.6 alpha: 0.25],
+                    [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.25],
+                    [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.25],
+                    [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.25],
+                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.25], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
 
     NSMutableArray* scoreVisVals = [scores objectAtIndex:0];
@@ -207,24 +225,27 @@ int heightMultiplier;
         if(scaledToScreen) heightOfThisCategory = heightOfThisCategory * scaleSize;
         if (heightOfThisCategory < 0) heightOfThisCategory = 0;
         
+        int containerSize = [[maxScores objectAtIndex:k]integerValue];
+        
         if([visName isEqualToString:@"publicCost"]) {
             if(withContainers) {
                 if(scaledToScreen) {
-                    [_investmentContainer setFrame:CGRectMake(0, currHeight - scaleSize * (maxInvestment * heightMultiplier), width, scaleSize * maxInvestment * heightMultiplier + 1)];
-                    [_investmentEmpty setFrame:CGRectMake(0, _investmentContainer.frame.origin.y, width, scaleSize * (maxInvestment * heightMultiplier - heightOfThisCategory))];
+                    [_investmentContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_investmentEmpty setFrame:CGRectMake(0, _investmentContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
                 }
                 else {
-                    [_investmentContainer setFrame:CGRectMake(0, currHeight - (maxInvestment * heightMultiplier), width, maxInvestment * heightMultiplier + 1)];
-                    [_investmentEmpty setFrame:CGRectMake(0, _investmentContainer.frame.origin.y, width, (maxInvestment  * heightMultiplier - heightOfThisCategory))];
+                    [_investmentContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_investmentEmpty setFrame:CGRectMake(0, _investmentContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
                 }
             }
             [_investment setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
             [_investment setBackgroundColor:[scoreColors objectForKey:@"publicCost"]];
+            [_investmentContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"publicCost"]];
             if(withContainers) {
                 if(scaledToScreen)
-                    currHeight -= scaleSize * maxInvestment * heightMultiplier + 2;
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
                 else
-                    currHeight -= maxInvestment * heightMultiplier + 2;
+                    currHeight -= containerSize * heightMultiplier + 2;
             }
             else {
                 if(scaledToScreen)
@@ -235,22 +256,23 @@ int heightMultiplier;
         } else if([visName isEqualToString:@"privateCostD"]) {
             if(withContainers) {
                 if(scaledToScreen) {
-                    [_damageReductionContainer setFrame:CGRectMake(0, currHeight - scaleSize * (maxDamageReduction * heightMultiplier), width, scaleSize * maxDamageReduction * heightMultiplier + 1)];
-                    [_damageReductionEmpty setFrame:CGRectMake(0, _damageReductionContainer.frame.origin.y, width, scaleSize * (maxDamageReduction * heightMultiplier - heightOfThisCategory))];
+                    [_damageReductionContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_damageReductionEmpty setFrame:CGRectMake(0, _damageReductionContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
                 }
                 else {
-                    [_damageReductionContainer setFrame:CGRectMake(0, currHeight - (maxDamageReduction * heightMultiplier), width, maxDamageReduction * heightMultiplier + 1)];
-                    [_damageReductionEmpty setFrame:CGRectMake(0, _damageReductionContainer.frame.origin.y, width, (maxDamageReduction  * heightMultiplier - heightOfThisCategory))];
+                    [_damageReductionContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_damageReductionEmpty setFrame:CGRectMake(0, _damageReductionContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
                 }
             }
             [_damageReduction setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
             [_damageReduction setBackgroundColor:[scoreColors objectForKey:@"privateCost"]];
+            [_damageReductionContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"privateCost"]];
             
             if(withContainers) {
                 if(scaledToScreen)
-                    currHeight -= scaleSize * maxDamageReduction * heightMultiplier + 2;
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
                 else
-                    currHeight -= maxDamageReduction * heightMultiplier + 2;
+                    currHeight -= containerSize * heightMultiplier + 2;
             }
             else {
                 if(scaledToScreen)
@@ -261,22 +283,23 @@ int heightMultiplier;
         } else if([visName isEqualToString:@"impactingMyNeighbors"]) {
             if(withContainers) {
                 if(scaledToScreen) {
-                    [_impactContainer setFrame:CGRectMake(0, currHeight - scaleSize * (maxImpact * heightMultiplier), width, scaleSize * maxImpact * heightMultiplier + 1)];
-                    [_impactEmpty setFrame:CGRectMake(0, _impactContainer.frame.origin.y, width, scaleSize * (maxImpact * heightMultiplier - heightOfThisCategory))];
+                    [_impactContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_impactEmpty setFrame:CGRectMake(0, _impactContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
                 }
                 else {
-                    [_impactContainer setFrame:CGRectMake(0, currHeight - (maxImpact * heightMultiplier), width, maxImpact * heightMultiplier + 1)];
-                    [_impactEmpty setFrame:CGRectMake(0, _impactContainer.frame.origin.y, width, (maxImpact  * heightMultiplier - heightOfThisCategory))];
+                    [_impactContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_impactEmpty setFrame:CGRectMake(0, _impactContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
                 }
             }
             [_impact setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
             [_impact setBackgroundColor:[scoreColors objectForKey:@"impactingMyNeighbors"]];
+            [_impactContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"impactingMyNeighbors"]];
             
             if(withContainers) {
                 if(scaledToScreen)
-                    currHeight -= scaleSize * maxImpact * heightMultiplier + 2;
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
                 else
-                    currHeight -= maxImpact * heightMultiplier + 2;
+                    currHeight -= containerSize * heightMultiplier + 2;
             }
             else {
                 if(scaledToScreen)
@@ -287,22 +310,23 @@ int heightMultiplier;
         } else if([visName isEqualToString:@"groundwaterInfiltration"]) {
             if(withContainers) {
                 if(scaledToScreen) {
-                    [_groundwaterInfiltrationContainer setFrame:CGRectMake(0, currHeight - scaleSize * (maxGroundwaterInfiltration * heightMultiplier), width, scaleSize * maxGroundwaterInfiltration * heightMultiplier + 1)];
-                    [_groundwaterInfiltrationEmpty setFrame:CGRectMake(0, _groundwaterInfiltrationContainer.frame.origin.y, width, scaleSize * (maxGroundwaterInfiltration * heightMultiplier - heightOfThisCategory))];
+                    [_groundwaterInfiltrationContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_groundwaterInfiltrationEmpty setFrame:CGRectMake(0, _groundwaterInfiltrationContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
                 }
                 else {
-                    [_groundwaterInfiltrationContainer setFrame:CGRectMake(0, currHeight - (maxGroundwaterInfiltration * heightMultiplier), width, maxGroundwaterInfiltration * heightMultiplier + 1)];
-                    [_groundwaterInfiltrationEmpty setFrame:CGRectMake(0, _groundwaterInfiltrationContainer.frame.origin.y, width, (maxGroundwaterInfiltration  * heightMultiplier - heightOfThisCategory))];
+                    [_groundwaterInfiltrationContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_groundwaterInfiltrationEmpty setFrame:CGRectMake(0, _groundwaterInfiltrationContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
                 }
             }
             [_groundwaterInfiltration setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
             [_groundwaterInfiltration setBackgroundColor:[scoreColors objectForKey:@"groundwaterInfiltration"]];
+            [_groundwaterInfiltrationContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"groundwaterInfiltration"]];
             
             if(withContainers) {
                 if(scaledToScreen)
-                    currHeight -= scaleSize * maxGroundwaterInfiltration * heightMultiplier + 2;
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
                 else
-                    currHeight -= maxGroundwaterInfiltration * heightMultiplier + 2;
+                    currHeight -= containerSize * heightMultiplier + 2;
             }
             else {
                 if(scaledToScreen)
@@ -313,22 +337,23 @@ int heightMultiplier;
         } else if([visName isEqualToString:@"puddleTime"]) {
             if(withContainers) {
                 if(scaledToScreen) {
-                    [_waterFlowContainer setFrame:CGRectMake(0, currHeight - scaleSize * (maxWaterFlow * heightMultiplier), width, scaleSize * maxWaterFlow * heightMultiplier + 1)];
-                    [_waterFlowEmpty setFrame:CGRectMake(0, _waterFlowContainer.frame.origin.y, width, scaleSize * (maxWaterFlow * heightMultiplier - heightOfThisCategory))];
+                    [_waterFlowContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_waterFlowEmpty setFrame:CGRectMake(0, _waterFlowContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
                 }
                 else {
-                    [_waterFlowContainer setFrame:CGRectMake(0, currHeight - (maxWaterFlow * heightMultiplier), width, maxWaterFlow * heightMultiplier + 1)];
-                    [_waterFlowEmpty setFrame:CGRectMake(0, _waterFlowContainer.frame.origin.y, width, (maxWaterFlow  * heightMultiplier - heightOfThisCategory))];
+                    [_waterFlowContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_waterFlowEmpty setFrame:CGRectMake(0, _waterFlowContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
                 }
             }
             [_waterFlow setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
             [_waterFlow setBackgroundColor:[scoreColors objectForKey:@"puddleTime"]];
+            [_waterFlowContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"puddleTime"]];
             
             if(withContainers) {
                 if(scaledToScreen)
-                    currHeight -= scaleSize * maxWaterFlow * heightMultiplier + 2;
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
                 else
-                    currHeight -= maxWaterFlow * heightMultiplier + 2;
+                    currHeight -= containerSize * heightMultiplier + 2;
             }
             else {
                 if(scaledToScreen)
@@ -339,22 +364,23 @@ int heightMultiplier;
         } else if([visName isEqualToString:@"puddleMax"]) {
             if(withContainers) {
                 if(scaledToScreen) {
-                    [_maxFloodContainer setFrame:CGRectMake(0, currHeight - scaleSize * (maxMaxFlood * heightMultiplier), width, scaleSize * maxMaxFlood * heightMultiplier + 1)];
-                    [_maxFloodEmpty setFrame:CGRectMake(0, _maxFloodContainer.frame.origin.y, width, scaleSize * (maxMaxFlood * heightMultiplier - heightOfThisCategory))];
+                    [_maxFloodContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_maxFloodEmpty setFrame:CGRectMake(0, _maxFloodContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
                 }
                 else {
-                    [_maxFloodContainer setFrame:CGRectMake(0, currHeight - (maxMaxFlood * heightMultiplier), width, maxMaxFlood * heightMultiplier + 1)];
-                    [_maxFloodEmpty setFrame:CGRectMake(0, _maxFloodContainer.frame.origin.y, width, (maxMaxFlood  * heightMultiplier - heightOfThisCategory))];
+                    [_maxFloodContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_maxFloodEmpty setFrame:CGRectMake(0, _maxFloodContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
                 }
             }
             [_maxFlood setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
             [_maxFlood setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
+            [_maxFloodContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"puddleMax"]];
             
             if(withContainers) {
                 if(scaledToScreen)
-                    currHeight -= scaleSize * maxMaxFlood * heightMultiplier + 2;
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
                 else
-                    currHeight -= maxMaxFlood * heightMultiplier + 2;
+                    currHeight -= containerSize * heightMultiplier + 2;
             }
             else {
                 if(scaledToScreen)
@@ -365,22 +391,23 @@ int heightMultiplier;
         } else if([visName isEqualToString:@"capacity"]) {
             if(withContainers) {
                 if(scaledToScreen) {
-                    [_capacityContainer setFrame:CGRectMake(0, currHeight - scaleSize * (maxCapacity * heightMultiplier), width, scaleSize * maxCapacity * heightMultiplier + 1)];
-                    [_capacityEmpty setFrame:CGRectMake(0, _capacityContainer.frame.origin.y, width, scaleSize * (maxCapacity * heightMultiplier - heightOfThisCategory))];
+                    [_capacityContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_capacityEmpty setFrame:CGRectMake(0, _capacityContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
                 }
                 else {
-                    [_capacityContainer setFrame:CGRectMake(0, currHeight - (maxCapacity * heightMultiplier), width, maxCapacity * heightMultiplier + 1)];
-                    [_capacityEmpty setFrame:CGRectMake(0, _capacityContainer.frame.origin.y, width, (maxCapacity  * heightMultiplier - heightOfThisCategory))];
+                    [_capacityContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_capacityEmpty setFrame:CGRectMake(0, _capacityContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
                 }
             }
             [_capacity setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
             [_capacity setBackgroundColor:[scoreColors objectForKey:@"capacity"]];
+            [_capacityContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"capacity"]];
             
             if(withContainers) {
                 if(scaledToScreen)
-                    currHeight -= scaleSize * maxCapacity * heightMultiplier + 2;
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
                 else
-                    currHeight -= maxCapacity * heightMultiplier + 2;
+                    currHeight -= containerSize * heightMultiplier + 2;
             }
             else {
                 if(scaledToScreen)
@@ -391,22 +418,23 @@ int heightMultiplier;
         } else if([visName isEqualToString:@"efficiencyOfIntervention"]){
             if(withContainers) {
                 if(scaledToScreen) {
-                    [_efficiencyContainer setFrame:CGRectMake(0, currHeight - scaleSize * (maxEfficiency * heightMultiplier), width, scaleSize * maxEfficiency * heightMultiplier + 1)];
-                    [_efficiencyEmpty setFrame:CGRectMake(0, _efficiencyContainer.frame.origin.y, width, scaleSize * (maxEfficiency * heightMultiplier - heightOfThisCategory))];
+                    [_efficiencyContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_efficiencyEmpty setFrame:CGRectMake(0, _efficiencyContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
                 }
                 else {
-                    [_efficiencyContainer setFrame:CGRectMake(0, currHeight - (maxEfficiency * heightMultiplier), width, maxEfficiency * heightMultiplier + 1)];
-                    [_efficiencyEmpty setFrame:CGRectMake(0, _efficiencyContainer.frame.origin.y, width, (maxEfficiency  * heightMultiplier - heightOfThisCategory))];
+                    [_efficiencyContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_efficiencyEmpty setFrame:CGRectMake(0, _efficiencyContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
                 }
             }
             [_efficiency setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
             [_efficiency setBackgroundColor:[scoreColors objectForKey:@"efficiencyOfIntervention"]];
+            [_efficiencyContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"efficiencyOfIntervention"]];
             
             if(withContainers) {
                 if(scaledToScreen)
-                    currHeight -= scaleSize * maxEfficiency * heightMultiplier + 2;
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
                 else
-                    currHeight -= maxEfficiency * heightMultiplier + 2;
+                    currHeight -= containerSize * heightMultiplier + 2;
             }
             else {
                 if(scaledToScreen)
@@ -421,14 +449,14 @@ int heightMultiplier;
     _score.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     [_score setTextAlignment:NSTextAlignmentCenter];
     
-    [_investmentEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
-    [_impactEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
-    [_groundwaterInfiltrationEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
-    [_maxFloodEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
-    [_waterFlowEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
-    [_capacityEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
-    [_efficiencyEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
-    [_damageReductionEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
+    [_investmentEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
+    [_impactEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
+    [_groundwaterInfiltrationEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
+    [_maxFloodEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
+    [_waterFlowEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
+    [_capacityEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
+    [_efficiencyEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
+    [_damageReductionEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
     
 /*
     UITapGestureRecognizer *impactRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
@@ -527,7 +555,7 @@ int heightMultiplier;
 }
 
 - (void)shrink {
-    int shrinkFactor = 2;
+    int shrinkFactor = 4;
     [self setFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width / shrinkFactor, self.frame.size.height)];
     [_impact setFrame:CGRectMake(_impact.frame.origin.x, _impact.frame.origin.y, _impact.frame.size.width / shrinkFactor, _impact.frame.size.height)];
     [_impactEmpty setFrame:CGRectMake(_impactEmpty.frame.origin.x, _impactEmpty.frame.origin.y, _impactEmpty.frame.size.width / shrinkFactor, _impactEmpty.frame.size.height)];
@@ -559,7 +587,7 @@ int heightMultiplier;
 }
 
 - (void)grow {
-    int growFactor = 2;
+    int growFactor = 4;
     [self setFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width * growFactor, self.frame.size.height)];
     [_impact setFrame:CGRectMake(_impact.frame.origin.x, _impact.frame.origin.y, _impact.frame.size.width * growFactor, _impact.frame.size.height)];
     [_impactEmpty setFrame:CGRectMake(_impactEmpty.frame.origin.x, _impactEmpty.frame.origin.y, _impactEmpty.frame.size.width * growFactor, _impactEmpty.frame.size.height)];

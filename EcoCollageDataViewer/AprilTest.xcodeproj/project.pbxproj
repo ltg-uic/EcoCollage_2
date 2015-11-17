@@ -17,6 +17,7 @@
 		571EC6E11BFA835600F65A3D /* Dot-pattern-free-vector.png in Resources */ = {isa = PBXBuildFile; fileRef = 571EC6E01BFA835600F65A3D /* Dot-pattern-free-vector.png */; };
 		571EC6E31BFA846600F65A3D /* dot-grid-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 571EC6E21BFA846600F65A3D /* dot-grid-1.png */; };
 		571EC6E51BFA851500F65A3D /* Polka_dot_pattern.png in Resources */ = {isa = PBXBuildFile; fileRef = 571EC6E41BFA851500F65A3D /* Polka_dot_pattern.png */; };
+		571EC6E71BFBA99E00F65A3D /* dotted_pattern.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 571EC6E61BFBA99E00F65A3D /* dotted_pattern.jpg */; };
 		574737081B14E52C00D5EED8 /* MommaBirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 574737071B14E52C00D5EED8 /* MommaBirdViewController.m */; };
 		5759D44F1B9F8120000C7B72 /* BabyBird.m in Sources */ = {isa = PBXBuildFile; fileRef = 5759D44E1B9F8120000C7B72 /* BabyBird.m */; };
 		5759DC5F1BA75E4D000C7B72 /* pedvpolStudy.png in Resources */ = {isa = PBXBuildFile; fileRef = 5759DC5E1BA75E4D000C7B72 /* pedvpolStudy.png */; };
@@ -113,6 +114,7 @@
 		571EC6E01BFA835600F65A3D /* Dot-pattern-free-vector.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dot-pattern-free-vector.png"; sourceTree = "<group>"; };
 		571EC6E21BFA846600F65A3D /* dot-grid-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dot-grid-1.png"; sourceTree = "<group>"; };
 		571EC6E41BFA851500F65A3D /* Polka_dot_pattern.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Polka_dot_pattern.png; sourceTree = "<group>"; };
+		571EC6E61BFBA99E00F65A3D /* dotted_pattern.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dotted_pattern.jpg; sourceTree = "<group>"; };
 		574737061B14E52C00D5EED8 /* MommaBirdViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MommaBirdViewController.h; path = ../MommaBirdViewController.h; sourceTree = "<group>"; };
 		574737071B14E52C00D5EED8 /* MommaBirdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MommaBirdViewController.m; path = ../MommaBirdViewController.m; sourceTree = "<group>"; };
 		5759D44D1B9F8120000C7B72 /* BabyBird.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyBird.h; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 		8453FA5918F2FC8F0010D12F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				571EC6E61BFBA99E00F65A3D /* dotted_pattern.jpg */,
 				571EC6E41BFA851500F65A3D /* Polka_dot_pattern.png */,
 				571EC6E21BFA846600F65A3D /* dot-grid-1.png */,
 				571EC6E01BFA835600F65A3D /* Dot-pattern-free-vector.png */,
@@ -505,6 +508,7 @@
 				848479C518F3289400BAD981 /* onCheckbox.png in Resources */,
 				84DE92E61993CA79006525F4 /* BlueIsland_AugStudy.png in Resources */,
 				848479C418F3289400BAD981 /* offCheckbox.png in Resources */,
+				571EC6E71BFBA99E00F65A3D /* dotted_pattern.jpg in Resources */,
 				846B972418FE0B1F0008BD59 /* greenroof.png in Resources */,
 				846B972718FE0B1F0008BD59 /* swale.png in Resources */,
 				841C0A201A16744500ED7A2E /* questions1.txt in Resources */,

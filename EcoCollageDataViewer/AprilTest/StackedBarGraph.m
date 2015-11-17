@@ -15,7 +15,7 @@
 NSMutableArray *trialGroups;
 NSMutableArray *trialLabels;
 
-int widthOfBar = 40;
+int widthOfBar = 36;
 
 int barHeightMultiplier = 4;
 /*
@@ -36,9 +36,24 @@ int barHeightMultiplier = 4;
     
     // fill this with the max scores for each outcome category over the span of all trials and all users
     NSMutableArray *maxScores = [[NSMutableArray alloc]init];
+    NSMutableArray *tierSizes = [[NSMutableArray alloc]init];
     
     int maxInvestment = 0, maxDamageReduction = 0, maxEfficiency = 0, maxCapacity = 0, maxWaterFlow = 0, maxMaxFlood = 0, maxGroundwaterInfiltration = 0, maxImpact = 0;
     
+    int tierArr[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    
+    
+    // find max value for each tier
+    for(int i = 0; i < tabControl.trialRuns.count; i++) {
+        for(int j = 0; j < tabControl.profiles.count; j++) {
+            NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
+            NSMutableArray* scoreVisVals = [scores objectAtIndex:0];
+            for(int k = 0; k < scoreVisVals.count; k++) {
+                if([[scoreVisVals objectAtIndex:k] floatValue] * 100 > tierArr[k])
+                    tierArr[k] = [[scoreVisVals objectAtIndex:k]floatValue] * 100;
+            }
+        }
+    }
     
     // find the max value for each outcome category
     // this will determine the "height" for that category
@@ -88,14 +103,24 @@ int barHeightMultiplier = 4;
     [maxScores addObject:[NSNumber numberWithInt:maxGroundwaterInfiltration]];
     [maxScores addObject:[NSNumber numberWithInt:maxImpact]];
     
+    for(int i = 0; i < 8; i++) {
+        [tierSizes addObject:[NSNumber numberWithInt:tierArr[i]]];
+    }
+    
     int sumMaxScores = maxInvestment + maxDamageReduction + maxEfficiency + maxCapacity + maxWaterFlow + maxMaxFlood + maxGroundwaterInfiltration + maxImpact;
     sumMaxScores *= barHeightMultiplier;
+    
+    int sumTierSizes = 0;
+    for(int i = 0; i < 8; i++) {
+        sumTierSizes += tierArr[i];
+    }
+    sumTierSizes *= barHeightMultiplier;
     
     
     
     int x_initial = 125;
     int x = x_initial;
-    int y = sumMaxScores + 100; // start at the bottom and work up
+    int y = sumTierSizes + 100; // start at the bottom and work up
     int width = widthOfBar;
     int spaceBetweenTrials = 25;
     
@@ -106,7 +131,7 @@ int barHeightMultiplier = 4;
     [self addSubview:xAxis];
     
     
-    int yAxisHeight = (maxInvestment + maxDamageReduction + maxEfficiency + maxCapacity + maxWaterFlow + maxMaxFlood + maxGroundwaterInfiltration + maxImpact) * 4 + 70;
+    int yAxisHeight = sumTierSizes + 70;
     UIView *yAxis = [[UIView alloc]initWithFrame:CGRectMake(x_initial, y - yAxisHeight, 1, yAxisHeight)];
     [yAxis setBackgroundColor:[UIColor blackColor]];
     [self addSubview:yAxis];
@@ -121,7 +146,7 @@ int barHeightMultiplier = 4;
         for(int j = 0; j < tabControl.profiles.count; j++) {
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
             
-            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, -sumMaxScores) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andMaxScores:maxScores withContainers:wC withHeightMultipler:barHeightMultiplier];
+            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, -sumMaxScores) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andMaxScores:tierSizes withContainers:wC withHeightMultipler:barHeightMultiplier];
             
             [bar.name setFrame:CGRectMake(x, yAxis.frame.origin.y + yAxis.frame.size.height, width, 20)];
             [self addSubview:bar.name];
@@ -210,6 +235,7 @@ int barHeightMultiplier = 4;
         trialLabel.tag = i;
         UILabel *trialText = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, lBar.frame.origin.x + lBar.frame.size.width - fBar.frame.origin.x, 30)];
         [trialText setText:[NSString stringWithFormat:@"Trial %d", i+1]];
+        [trialText setFont:[UIFont systemFontOfSize:16]];
         [trialText sizeToFit];
         [trialText setCenter:CGPointMake(trialLabel.frame.size.width / 2, trialLabel.frame.size.height / 2)];
         trialText.tag = 101;
@@ -251,6 +277,7 @@ int barHeightMultiplier = 4;
 - (void) trialTapped:(UITapGestureRecognizer *)gr {
         UIView *trialLabel = (UIView*)gr.view;
     UILabel *trialText = [trialLabel viewWithTag:101];
+    int resizeFactor = 4;
     
     NSMutableArray *mArray = [trialGroups objectAtIndex:trialLabel.tag];
     int shrunk = ((StackedBar*)[mArray objectAtIndex:0]).shrunk;
@@ -276,30 +303,36 @@ int barHeightMultiplier = 4;
         
         // if it is shrunk, we need to grow it
         if(bar.shrunk == 1) {
-            [bar setFrame:CGRectMake(bar.frame.origin.x + bar.frame.size.width * i, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+            [bar setFrame:CGRectMake(bar.frame.origin.x + (widthOfBar - widthOfBar /resizeFactor) * i, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
             
+            [bar.score setHidden:NO];
             [bar grow];
             bar.shrunk = 0;
         }
         else { // otherwise, we need to shrink it
+            [bar.score setHidden:YES];
             [bar shrink];
             bar.shrunk = 1;
             
-            [bar setFrame:CGRectMake(bar.frame.origin.x - bar.frame.size.width * i, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+            [bar setFrame:CGRectMake(bar.frame.origin.x - (widthOfBar - widthOfBar /resizeFactor) * i, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
         }
         i++;
     }
     
     if(shrunk){ // if shrunken, we gotta grow it
-        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y, trialLabel.frame.size.width * 2, trialLabel.frame.size.height)];
+        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y, trialLabel.frame.size.width * resizeFactor, trialLabel.frame.size.height)];
+        [trialText setFont:[UIFont systemFontOfSize:16]];
+        [trialText sizeToFit];
         [trialText setCenter:CGPointMake(trialLabel.frame.size.width / 2, trialLabel.frame.size.height / 2)];
     }
     else { // otherwise we shrink it
-        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y, trialLabel.frame.size.width / 2, trialLabel.frame.size.height)];
+        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y, trialLabel.frame.size.width / resizeFactor, trialLabel.frame.size.height)];
+        [trialText setFont:[UIFont systemFontOfSize:10]];
+        [trialText sizeToFit];
         [trialText setCenter:CGPointMake(trialLabel.frame.size.width / 2, trialLabel.frame.size.height / 2)];
     }
     
-    int shiftAmount = mArray.count * (widthOfBar / 2);
+    int shiftAmount = mArray.count * (widthOfBar - widthOfBar / resizeFactor);
     if(shrunk)
         for(i = (int)trialLabel.tag + 1; i < trialGroups.count; i++) {
             [self shiftRight:[trialGroups objectAtIndex:i] amount:shiftAmount];
