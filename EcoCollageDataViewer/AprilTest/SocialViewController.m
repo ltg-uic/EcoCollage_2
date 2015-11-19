@@ -110,15 +110,17 @@ int                         heightMultiplier = 5;
     // Do any additional setup after loading the view.
     
     // make scorebar visualization
+    /*
     scoreBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 108, 283 + 769, 540)];
     [self.view addSubview:scoreBarView];
+     */
     
     waterDisplays = [[NSMutableArray alloc]init];
     maxWaterDisplays = [[NSMutableArray alloc]init];
     capacityDisplays = [[NSMutableArray alloc]init];
     orderOfFavorites = [[NSMutableArray alloc]init];
 
-    
+    /*
     corePlotView = [[UIScrollView alloc] initWithFrame:CGRectMake(1100, 108, 1052, 540)];
     [corePlotView setContentSize:CGSizeMake(879, 540)];
     UIImageView* plotView= [[UIImageView alloc]initWithFrame:CGRectMake(72, 0, 879, 540)];
@@ -126,6 +128,7 @@ int                         heightMultiplier = 5;
     [corePlotView addSubview:plotView];
     
     [self.view addSubview:corePlotView];
+     */
     
     [_viewSegmentController setSelectedSegmentIndex:1];
     
@@ -3483,7 +3486,9 @@ int                         heightMultiplier = 5;
  Outputs: None
  */
 - (void)drawMinMaxSliderLabels {
-    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+
+    
+    /*AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     NSNumberFormatter *formatter = [NSNumberFormatter new];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -3520,6 +3525,8 @@ int                         heightMultiplier = 5;
     budgetLabel.frame = CGRectMake(maxLabelStorm.frame.origin.x + maxLabelStorm.frame.size.width - budgetLabel.frame.size.width, maxLabelStorm.frame.origin.y - budgetLabel.frame.size.height - 4, budgetLabel.frame.size.width, budgetLabel.frame.size.height);
     [budgetLabel setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:budgetLabel];
+     
+     */
 }
 
 
@@ -3711,6 +3718,12 @@ int                         heightMultiplier = 5;
 }
 
 - (IBAction)stackedbarswitch:(id)sender {
-    [self drawScoreStackedBarGraph];
+    if(SBG.stackedBars.count <= 0) {
+        [self drawScoreStackedBarGraph];
+    }
+    else {
+        AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+        [SBG reloadGraph:tabControl withContainers:_stackedBarSwitch.isOn];
+    }
 }
 @end

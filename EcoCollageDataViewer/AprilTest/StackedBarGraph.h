@@ -16,4 +16,6 @@
 
 - (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl withContainers:(int)wC;
 
+- (void) reloadGraph:(AprilTestTabBarController *)tabControl withContainers:(int)wC;
+
 @end

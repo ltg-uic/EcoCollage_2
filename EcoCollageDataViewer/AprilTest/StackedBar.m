@@ -70,7 +70,7 @@ int heightMultiplier;
 */
 
 
-- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andMaxScores:(NSMutableArray *)maxScores withContainers:(int)wC withHeightMultipler:(int)hM
+- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM
 {
     self = [super initWithFrame:frame];
     
@@ -198,16 +198,6 @@ int heightMultiplier;
         }
     }
     
-    // get the max values with which to make the container sizes
-    int maxInvestment = [[maxScores objectAtIndex:0]integerValue];
-    int maxDamageReduction = [[maxScores objectAtIndex:1]integerValue];
-    int maxEfficiency = [[maxScores objectAtIndex:2]integerValue];
-    int maxCapacity = [[maxScores objectAtIndex:3]integerValue];
-    int maxWaterFlow = [[maxScores objectAtIndex:4]integerValue];
-    int maxMaxFlood = [[maxScores objectAtIndex:5]integerValue];
-    int maxGroundwaterInfiltration = [[maxScores objectAtIndex:6]integerValue];
-    int maxImpact = [[maxScores objectAtIndex:7]integerValue];
-    
     
     for(int k = 0; k < scoreVisNames.count; k++) {
         int heightOfThisCategory;
@@ -225,7 +215,7 @@ int heightMultiplier;
         if(scaledToScreen) heightOfThisCategory = heightOfThisCategory * scaleSize;
         if (heightOfThisCategory < 0) heightOfThisCategory = 0;
         
-        int containerSize = [[maxScores objectAtIndex:k]integerValue];
+        int containerSize = [[tierSizes objectAtIndex:k]integerValue];
         
         if([visName isEqualToString:@"publicCost"]) {
             if(withContainers) {
@@ -457,65 +447,7 @@ int heightMultiplier;
     [_capacityEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
     [_efficiencyEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
     [_damageReductionEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
-    
-/*
-    UITapGestureRecognizer *impactRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
-    impactRecognizer.numberOfTapsRequired = 1;
-    UITapGestureRecognizer *groundwaterRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(groundwaterTapped)];
-    groundwaterRecognizer.numberOfTapsRequired = 1;
-    UITapGestureRecognizer *maxFloodRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(maxFloodTapped)];
-    maxFloodRecognizer.numberOfTapsRequired = 1;
-    UITapGestureRecognizer *waterFlowRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
-    waterFlowRecognizer.numberOfTapsRequired = 1;
-    UITapGestureRecognizer *interventionCapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(interventionCapTapped)];
-    interventionCapRecognizer.numberOfTapsRequired = 1;
-    UITapGestureRecognizer *efficiencyRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(efficiencyTapped)];
-    efficiencyRecognizer.numberOfTapsRequired = 1;
-    UITapGestureRecognizer *damageReducRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(damageReducTapped)];
-    damageReducRecognizer.numberOfTapsRequired = 1;
-    UITapGestureRecognizer *investmentRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(investmentTapped)];
-    investmentRecognizer.numberOfTapsRequired = 1;
-    
-    
-    if(withContainers) {
-        _impactContainer.userInteractionEnabled = YES;
-        _groundwaterInfiltrationContainer.userInteractionEnabled = YES;
-        _maxFloodContainer.userInteractionEnabled = YES;
-        _waterFlowContainer.userInteractionEnabled = YES;
-        _capacityContainer.userInteractionEnabled = YES;
-        _efficiencyContainer.userInteractionEnabled = YES;
-        _damageReductionContainer.userInteractionEnabled = YES;
-        _investmentContainer.userInteractionEnabled = YES;
-        
-        [_impactContainer addGestureRecognizer:impactRecognizer];
-        [_groundwaterInfiltrationContainer addGestureRecognizer:groundwaterRecognizer];
-        [_maxFloodContainer addGestureRecognizer:maxFloodRecognizer];
-        [_waterFlowContainer addGestureRecognizer:waterFlowRecognizer];
-        [_capacityContainer addGestureRecognizer:interventionCapRecognizer];
-        [_efficiencyContainer addGestureRecognizer:efficiencyRecognizer];
-        [_damageReductionContainer addGestureRecognizer:damageReducRecognizer];
-        [_investmentContainer addGestureRecognizer:investmentRecognizer];
-    }
-    else {
-        _impact.userInteractionEnabled = YES;
-        _groundwaterInfiltration.userInteractionEnabled = YES;
-        _maxFlood.userInteractionEnabled = YES;
-        _waterFlow.userInteractionEnabled = YES;
-        _capacity.userInteractionEnabled = YES;
-        _efficiency.userInteractionEnabled = YES;
-        _damageReduction.userInteractionEnabled = YES;
-        _investment.userInteractionEnabled = YES;
-        
-        [_impact addGestureRecognizer:impactRecognizer];
-        [_groundwaterInfiltration addGestureRecognizer:groundwaterRecognizer];
-        [_maxFlood addGestureRecognizer:maxFloodRecognizer];
-        [_waterFlow addGestureRecognizer:waterFlowRecognizer];
-        [_capacity addGestureRecognizer:interventionCapRecognizer];
-        [_efficiency addGestureRecognizer:efficiencyRecognizer];
-        [_damageReduction addGestureRecognizer:damageReducRecognizer];
-        [_investment addGestureRecognizer:investmentRecognizer];
-    }
-*/
+
     
     [self addSubview:_impact];
     [self addSubview:_groundwaterInfiltration];
@@ -548,6 +480,355 @@ int heightMultiplier;
 
     
     return self;
+}
+
+- (void) reloadBar:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM {
+
+    
+    [_impact removeFromSuperview];
+    [_groundwaterInfiltration removeFromSuperview];
+    [_maxFlood removeFromSuperview];
+    [_waterFlow removeFromSuperview];
+    [_capacity removeFromSuperview];
+    [_efficiency removeFromSuperview];
+    [_damageReduction removeFromSuperview];
+    [_investment removeFromSuperview];
+    [_score removeFromSuperview];
+    
+    [_impactEmpty removeFromSuperview];
+    [_impactContainer removeFromSuperview];
+    [_groundwaterInfiltrationEmpty removeFromSuperview];
+    [_groundwaterInfiltrationContainer removeFromSuperview];
+    [_maxFloodEmpty removeFromSuperview];
+    [_maxFloodContainer removeFromSuperview];
+    [_waterFlowEmpty removeFromSuperview];
+    [_waterFlowContainer removeFromSuperview];
+    [_capacityEmpty removeFromSuperview];
+    [_capacityContainer removeFromSuperview];
+    [_efficiencyEmpty removeFromSuperview];
+    [_efficiencyContainer removeFromSuperview];
+    [_damageReductionEmpty removeFromSuperview];
+    [_damageReductionContainer removeFromSuperview];
+    [_investmentEmpty removeFromSuperview];
+    [_investmentContainer removeFromSuperview];
+    
+    int width = self.frame.size.width;
+    
+    [_name removeFromSuperview];
+    
+    [_name setText:[[profile objectAtIndex:2]substringWithRange:NSMakeRange(0, 3)]];
+    [_name setFont:[UIFont systemFontOfSize:12]];
+    [_name sizeToFit];
+    [_name setTextAlignment:NSTextAlignmentCenter];
+    
+    [self addSubview:_name];
+    
+    NSMutableArray* scoreVisVals = [scores objectAtIndex:0];
+    NSMutableArray* scoreVisNames = [scores objectAtIndex:1];
+    
+    orderedStrictly = 1;
+    withContainers = wC;
+    scaledToScreen = 1;
+    heightMultiplier = hM;
+    
+    
+    // order the individual scores based on this users concerns
+    NSMutableArray *userConcerns = [[NSMutableArray alloc]init];
+    
+    if(orderedStrictly) { // order the individual bars based on the concerns of this user
+        for(int i = 3; i < profile.count; i++) {
+            if([[profile objectAtIndex:i] isEqualToString:@"Damage Reduction"])
+                [userConcerns addObject:@"privateCostD"];
+            else
+                [userConcerns addObject:[concernNames objectForKey:[profile objectAtIndex:i]]];
+        }
+    }
+    
+    
+    
+    int currHeight = self.superview.frame.size.height;
+    
+    if(!orderedStrictly) {
+        [userConcerns removeAllObjects];
+        for(int k = 3; k < [profile count]; k++) {
+            [userConcerns addObject:[concernNames objectForKey:[profile objectAtIndex:k]]];
+        }
+    }
+    
+    for(int k = 0; k < scoreVisNames.count; k++) {
+        int heightOfThisCategory;
+        int indexOfScore = 0;
+        NSString *visName = [[NSString alloc]init];
+        for(int l = 0; l < [userConcerns count]; l++) {
+            if([[scoreVisNames objectAtIndex:l ]isEqualToString:[userConcerns objectAtIndex:k]]) {
+                indexOfScore = l;
+                visName = [scoreVisNames objectAtIndex:l];
+                break;
+            }
+        }
+        heightOfThisCategory = [[scoreVisVals objectAtIndex:indexOfScore]floatValue] * 100;
+        heightOfThisCategory *= heightMultiplier;
+        if(scaledToScreen) heightOfThisCategory = heightOfThisCategory * scaleSize;
+        if (heightOfThisCategory < 0) heightOfThisCategory = 0;
+        
+        int containerSize = [[tierSizes objectAtIndex:k]integerValue];
+        
+        if([visName isEqualToString:@"publicCost"]) {
+            if(withContainers) {
+                if(scaledToScreen) {
+                    [_investmentContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_investmentEmpty setFrame:CGRectMake(0, _investmentContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
+                }
+                else {
+                    [_investmentContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_investmentEmpty setFrame:CGRectMake(0, _investmentContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
+                }
+            }
+            [_investment setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
+            [_investment setBackgroundColor:[scoreColors objectForKey:@"publicCost"]];
+            [_investmentContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"publicCost"]];
+            if(withContainers) {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
+                else
+                    currHeight -= containerSize * heightMultiplier + 2;
+            }
+            else {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * heightOfThisCategory;
+                else
+                    currHeight -= heightOfThisCategory;
+            }
+        } else if([visName isEqualToString:@"privateCostD"]) {
+            if(withContainers) {
+                if(scaledToScreen) {
+                    [_damageReductionContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_damageReductionEmpty setFrame:CGRectMake(0, _damageReductionContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
+                }
+                else {
+                    [_damageReductionContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_damageReductionEmpty setFrame:CGRectMake(0, _damageReductionContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
+                }
+            }
+            [_damageReduction setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
+            [_damageReduction setBackgroundColor:[scoreColors objectForKey:@"privateCost"]];
+            [_damageReductionContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"privateCost"]];
+            
+            if(withContainers) {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
+                else
+                    currHeight -= containerSize * heightMultiplier + 2;
+            }
+            else {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * heightOfThisCategory;
+                else
+                    currHeight -= heightOfThisCategory;
+            }
+        } else if([visName isEqualToString:@"impactingMyNeighbors"]) {
+            if(withContainers) {
+                if(scaledToScreen) {
+                    [_impactContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_impactEmpty setFrame:CGRectMake(0, _impactContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
+                }
+                else {
+                    [_impactContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_impactEmpty setFrame:CGRectMake(0, _impactContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
+                }
+            }
+            [_impact setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
+            [_impact setBackgroundColor:[scoreColors objectForKey:@"impactingMyNeighbors"]];
+            [_impactContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"impactingMyNeighbors"]];
+            
+            if(withContainers) {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
+                else
+                    currHeight -= containerSize * heightMultiplier + 2;
+            }
+            else {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * heightOfThisCategory;
+                else
+                    currHeight -= heightOfThisCategory;
+            }
+        } else if([visName isEqualToString:@"groundwaterInfiltration"]) {
+            if(withContainers) {
+                if(scaledToScreen) {
+                    [_groundwaterInfiltrationContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_groundwaterInfiltrationEmpty setFrame:CGRectMake(0, _groundwaterInfiltrationContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
+                }
+                else {
+                    [_groundwaterInfiltrationContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_groundwaterInfiltrationEmpty setFrame:CGRectMake(0, _groundwaterInfiltrationContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
+                }
+            }
+            [_groundwaterInfiltration setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
+            [_groundwaterInfiltration setBackgroundColor:[scoreColors objectForKey:@"groundwaterInfiltration"]];
+            [_groundwaterInfiltrationContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"groundwaterInfiltration"]];
+            
+            if(withContainers) {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
+                else
+                    currHeight -= containerSize * heightMultiplier + 2;
+            }
+            else {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * heightOfThisCategory;
+                else
+                    currHeight -= heightOfThisCategory;
+            }
+        } else if([visName isEqualToString:@"puddleTime"]) {
+            if(withContainers) {
+                if(scaledToScreen) {
+                    [_waterFlowContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_waterFlowEmpty setFrame:CGRectMake(0, _waterFlowContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
+                }
+                else {
+                    [_waterFlowContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_waterFlowEmpty setFrame:CGRectMake(0, _waterFlowContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
+                }
+            }
+            [_waterFlow setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
+            [_waterFlow setBackgroundColor:[scoreColors objectForKey:@"puddleTime"]];
+            [_waterFlowContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"puddleTime"]];
+            
+            if(withContainers) {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
+                else
+                    currHeight -= containerSize * heightMultiplier + 2;
+            }
+            else {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * heightOfThisCategory;
+                else
+                    currHeight -= heightOfThisCategory;
+            }
+        } else if([visName isEqualToString:@"puddleMax"]) {
+            if(withContainers) {
+                if(scaledToScreen) {
+                    [_maxFloodContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_maxFloodEmpty setFrame:CGRectMake(0, _maxFloodContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
+                }
+                else {
+                    [_maxFloodContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_maxFloodEmpty setFrame:CGRectMake(0, _maxFloodContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
+                }
+            }
+            [_maxFlood setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
+            [_maxFlood setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
+            [_maxFloodContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"puddleMax"]];
+            
+            if(withContainers) {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
+                else
+                    currHeight -= containerSize * heightMultiplier + 2;
+            }
+            else {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * heightOfThisCategory;
+                else
+                    currHeight -= heightOfThisCategory;
+            }
+        } else if([visName isEqualToString:@"capacity"]) {
+            if(withContainers) {
+                if(scaledToScreen) {
+                    [_capacityContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_capacityEmpty setFrame:CGRectMake(0, _capacityContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
+                }
+                else {
+                    [_capacityContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_capacityEmpty setFrame:CGRectMake(0, _capacityContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
+                }
+            }
+            [_capacity setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
+            [_capacity setBackgroundColor:[scoreColors objectForKey:@"capacity"]];
+            [_capacityContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"capacity"]];
+            
+            if(withContainers) {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
+                else
+                    currHeight -= containerSize * heightMultiplier + 2;
+            }
+            else {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * heightOfThisCategory;
+                else
+                    currHeight -= heightOfThisCategory;
+            }
+        } else if([visName isEqualToString:@"efficiencyOfIntervention"]){
+            if(withContainers) {
+                if(scaledToScreen) {
+                    [_efficiencyContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
+                    [_efficiencyEmpty setFrame:CGRectMake(0, _efficiencyContainer.frame.origin.y, width, scaleSize * (containerSize * heightMultiplier - heightOfThisCategory))];
+                }
+                else {
+                    [_efficiencyContainer setFrame:CGRectMake(0, currHeight - (containerSize * heightMultiplier), width, containerSize * heightMultiplier + 1)];
+                    [_efficiencyEmpty setFrame:CGRectMake(0, _efficiencyContainer.frame.origin.y, width, (containerSize  * heightMultiplier - heightOfThisCategory))];
+                }
+            }
+            [_efficiency setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
+            [_efficiency setBackgroundColor:[scoreColors objectForKey:@"efficiencyOfIntervention"]];
+            [_efficiencyContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"efficiencyOfIntervention"]];
+            
+            if(withContainers) {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * containerSize * heightMultiplier + 2;
+                else
+                    currHeight -= containerSize * heightMultiplier + 2;
+            }
+            else {
+                if(scaledToScreen)
+                    currHeight -= scaleSize * heightOfThisCategory;
+                else
+                    currHeight -= heightOfThisCategory;
+            }
+        }
+    }
+    
+    [_score removeFromSuperview];
+    
+    _score.frame = CGRectMake(0, currHeight - 20, width, 20);
+    _score.text = @"";
+    _score.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    [_score setTextAlignment:NSTextAlignmentCenter];
+    
+    [self addSubview:_score];
+    
+    [self addSubview:_impact];
+    [self addSubview:_groundwaterInfiltration];
+    [self addSubview:_maxFlood];
+    [self addSubview:_waterFlow];
+    [self addSubview:_capacity];
+    [self addSubview:_efficiency];
+    [self addSubview:_damageReduction];
+    [self addSubview:_investment];
+    [self addSubview:_score];
+    
+    if(wC) {
+        [self addSubview:_impactEmpty];
+        [self addSubview:_impactContainer];
+        [self addSubview:_groundwaterInfiltrationEmpty];
+        [self addSubview:_groundwaterInfiltrationContainer];
+        [self addSubview:_maxFloodEmpty];
+        [self addSubview:_maxFloodContainer];
+        [self addSubview:_waterFlowEmpty];
+        [self addSubview:_waterFlowContainer];
+        [self addSubview:_capacityEmpty];
+        [self addSubview:_capacityContainer];
+        [self addSubview:_efficiencyEmpty];
+        [self addSubview:_efficiencyContainer];
+        [self addSubview:_damageReductionEmpty];
+        [self addSubview:_damageReductionContainer];
+        [self addSubview:_investmentEmpty];
+        [self addSubview:_investmentContainer];
+    }
+
 }
 
 - (void) changeText:(NSString *)text {
