@@ -79,7 +79,9 @@ int heightMultiplier;
     int width = frame.size.width;
     
     _name = [[UILabel alloc]init];
-    [_name setText:[[profile objectAtIndex:2]substringWithRange:NSMakeRange(0, 3)]];
+    
+    NSString *name = [profile objectAtIndex:2];
+    [_name setText:[name substringWithRange:NSMakeRange(0, (name.length > 3) ? 3 : name.length)]];
     [_name setFont:[UIFont systemFontOfSize:12]];
     [_name sizeToFit];
     [_name setTextAlignment:NSTextAlignmentCenter];
@@ -439,14 +441,14 @@ int heightMultiplier;
     _score.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     [_score setTextAlignment:NSTextAlignmentCenter];
     
-    [_investmentEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
-    [_impactEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
-    [_groundwaterInfiltrationEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
-    [_maxFloodEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
-    [_waterFlowEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
-    [_capacityEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
-    [_efficiencyEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
-    [_damageReductionEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"dotted_pattern.jpg"]]];
+    [_investmentEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
+    [_impactEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
+    [_groundwaterInfiltrationEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
+    [_maxFloodEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
+    [_waterFlowEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
+    [_capacityEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
+    [_efficiencyEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
+    [_damageReductionEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"Polka_dot_pattern.png"]]];
 
     
     [self addSubview:_impact];
@@ -516,7 +518,8 @@ int heightMultiplier;
     
     [_name removeFromSuperview];
     
-    [_name setText:[[profile objectAtIndex:2]substringWithRange:NSMakeRange(0, 3)]];
+    NSString *name = [profile objectAtIndex:2];
+    [_name setText:[name substringWithRange:NSMakeRange(0, (name.length > 3) ? 3 : name.length)]];
     [_name setFont:[UIFont systemFontOfSize:12]];
     [_name sizeToFit];
     [_name setTextAlignment:NSTextAlignmentCenter];

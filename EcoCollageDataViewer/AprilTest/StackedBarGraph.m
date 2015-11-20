@@ -30,6 +30,8 @@ int barHeightMultiplier = 4;
 */
 
 - (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl withContainers:(int)wC{
+    if(tabControl.profiles.count == 0 || tabControl.trialRuns.count == 0) return NULL;
+    
     self = [super initWithFrame:frame];
     
     
@@ -37,11 +39,13 @@ int barHeightMultiplier = 4;
 
     
     // fill this with the max scores for each outcome category over the span of all trials and all users
-    NSMutableArray *maxScores = [[NSMutableArray alloc]init];
+    //NSMutableArray *maxScores = [[NSMutableArray alloc]init];
     NSMutableArray *tierSizes = [[NSMutableArray alloc]init];
     
+    /*
     int maxInvestment = 0, maxDamageReduction = 0, maxEfficiency = 0, maxCapacity = 0, maxWaterFlow = 0, maxMaxFlood = 0, maxGroundwaterInfiltration = 0, maxImpact = 0;
-    
+    */
+     
     int tierArr[8] = {0, 0, 0, 0, 0, 0, 0, 0};
     
     
@@ -57,6 +61,7 @@ int barHeightMultiplier = 4;
         }
     }
     
+    /*
     // find the max value for each outcome category
     // this will determine the "height" for that category
     for(int i = 0; i < tabControl.trialRuns.count; i++) {
@@ -104,13 +109,16 @@ int barHeightMultiplier = 4;
     [maxScores addObject:[NSNumber numberWithInt:maxMaxFlood]];
     [maxScores addObject:[NSNumber numberWithInt:maxGroundwaterInfiltration]];
     [maxScores addObject:[NSNumber numberWithInt:maxImpact]];
+     */
     
     for(int i = 0; i < 8; i++) {
         [tierSizes addObject:[NSNumber numberWithInt:tierArr[i]]];
     }
     
+    /*
     int sumMaxScores = maxInvestment + maxDamageReduction + maxEfficiency + maxCapacity + maxWaterFlow + maxMaxFlood + maxGroundwaterInfiltration + maxImpact;
     sumMaxScores *= barHeightMultiplier;
+     */
     
     int sumTierSizes = 0;
     for(int i = 0; i < 8; i++) {
@@ -127,7 +135,7 @@ int barHeightMultiplier = 4;
     int spaceBetweenTrials = 25;
     
     // draw lines for x and y axis
-    int xAxisLength = (width * tabControl.profiles.count + spaceBetweenTrials) * tabControl.trialRuns.count + 100;
+    int xAxisLength = (width + 1) * tabControl.profiles.count * tabControl.trialRuns.count + spaceBetweenTrials * (tabControl.trialRuns.count - 1) + 50;
     xAxis = [[UIView alloc]initWithFrame:CGRectMake(x_initial, y, xAxisLength, 1)];
     [xAxis setBackgroundColor:[UIColor blackColor]];
     [self addSubview:xAxis];
@@ -214,9 +222,6 @@ int barHeightMultiplier = 4;
             
             [_stackedBars addObject:bar];
             
-            //[bar setUserInteractionEnabled:YES];
-            //[bar addGestureRecognizer:tapRecognizer];
-            
             [trialGroup addObject:bar];
             
             x += width+1;
@@ -270,7 +275,7 @@ int barHeightMultiplier = 4;
         [self addSubview:s];
     }
     
-    [self setContentSize:CGSizeMake(xAxisLength + xAxis.frame.origin.x + 10, yAxisHeight + 125)];
+    [self setContentSize:CGSizeMake(xAxis.frame.size.width + xAxis.frame.origin.x + 60, yAxisHeight + 125)];
     [self setContentOffset:CGPointMake(0, self.contentSize.height - self.frame.size.height)];
  
     return self;
@@ -326,7 +331,7 @@ int barHeightMultiplier = 4;
     [yAxis setBackgroundColor:[UIColor blackColor]];
     [self addSubview:yAxis];
     
-    trialGroups = [[NSMutableArray alloc]init];
+    //trialGroups = [[NSMutableArray alloc]init];
     
     for(int i = 0; i < tabControl.trialRuns.count; i++) {
         NSMutableArray *trialGroup = [[NSMutableArray alloc]init];
@@ -335,18 +340,24 @@ int barHeightMultiplier = 4;
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
             
             StackedBar *bar = [_stackedBars objectAtIndex:i * j + j];
-            [bar reloadBar:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andTierSizes:tierSizes withContainers:wC withHeightMultipler:barHeightMultiplier];
+            //[bar reloadBar:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andTierSizes:tierSizes withContainers:wC withHeightMultipler:barHeightMultiplier];
             
-            [bar.name setFrame:CGRectMake(x, yAxis.frame.origin.y + yAxis.frame.size.height, width, 20)];
             
-            [trialGroup addObject:bar];
+            [bar.name setText:[NSString stringWithFormat:@"%d", i * j + j]];
+            //[bar.name setFrame:CGRectMake(x, yAxis.frame.origin.y + yAxis.frame.size.height, width, 20)];
+            
+            //[trialGroup addObject:bar];
+            
+            x += width+1;
         }
         
-        [trialGroups addObject:trialGroup];
+        //[trialGroups addObject:trialGroup];
+        
+        x += spaceBetweenTrials;
     }
     
     
-    [trialLabels removeAllObjects];
+    //[trialLabels removeAllObjects];
     
     // create UILabel for each trial
     int i = 0;
