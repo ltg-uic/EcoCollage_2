@@ -558,6 +558,34 @@ NSMutableDictionary         *scoreColors;
             [scoreVisNames addObject:currentVar.name];
         }
     }
+    
+    int setBudget = _budget;
+    
+    int investmentIndex = 0;
+    for(int k = 0; k < scoreVisNames.count; k++) {
+        if([[scoreVisNames objectAtIndex:k] isEqualToString:@"publicCost"])
+            investmentIndex = k;
+    }
+    
+    // calculate amount of budget for use in resizing each score
+    int amountOverBudget = simRun.publicInstallCost - setBudget;
+    
+    //computing each score with log skew due to over-investment cost
+    for(int k =  0; k < scoreVisVals.count; k++){
+        
+        float scoreWidth = [[scoreVisVals objectAtIndex: k] floatValue];
+        if(amountOverBudget > 0) { // recalculate each score width
+            
+            float modifier = (investmentIndex + 0.5) / (2 * log10(amountOverBudget));
+            if(modifier > 1) modifier = 1;
+            
+            scoreWidth *= modifier;
+        }
+        if (scoreWidth < 0) scoreWidth = 0.0;
+        [scoreVisVals replaceObjectAtIndex:k withObject:[NSNumber numberWithFloat:scoreWidth]];
+    }
+    
+    
     [scores addObject:scoreVisVals];
     [scores addObject:scoreVisNames];
     return scores;

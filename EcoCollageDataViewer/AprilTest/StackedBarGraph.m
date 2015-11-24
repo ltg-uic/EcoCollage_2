@@ -43,33 +43,34 @@ int barHeightMultiplier = 4;
     _stackedBars = [[NSMutableArray alloc]init];
     
     
+    // REDUCING SCORE BY LOGARITHM OF AMOUNT OVER BUDGET
     
-    /* REDUCING SCORE BY LOGARITHM OF AMOUNT OF BUDGET
-    NSMutableArray *scores = [[NSMutableArray alloc]init];
+    NSMutableArray *allScores = [[NSMutableArray alloc]init];
     
     for(int i = 0; i < tabControl.trialRuns.count; i++) {
+        AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:i];
         for(int j = 0; j < tabControl.profiles.count; j++) {
             
             NSMutableArray* score = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
             NSMutableArray* scoreVisVals = [score objectAtIndex:0];
             NSMutableArray* scoreVisNames = [score objectAtIndex:1];
             
-            AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:i];
             int setBudget = tabControl.budget;
             
             int investmentIndex = 0;
-            for(int i = 0; i < scoreVisNames.count; i++) {
-                if([[scoreVisNames objectAtIndex:i] isEqualToString:@"publicCostI"])
-                    investmentIndex = i;
+            for(int k = 0; k < scoreVisNames.count; k++) {
+                if([[scoreVisNames objectAtIndex:k] isEqualToString:@"publicCostI"])
+                    investmentIndex = k;
             }
             
             // calculate amount of budget for use in resizing each score
             int amountOverBudget = simRun.publicInstallCost - setBudget;
-            //computing and drawing the final component score
-            for(int i =  0; i < scoreVisVals.count; i++){
+            
+            //computing each score with log skew due to over-investment cost
+            for(int k =  0; k < scoreVisVals.count; k++){
                 
-                float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
-                if(amountOverBudget > 0) {// recalculate each score width
+                float scoreWidth = [[scoreVisVals objectAtIndex: k] floatValue];
+                if(amountOverBudget > 0) { // recalculate each score width
 
                     float modifier = (investmentIndex + 0.5) / (2 * log10(amountOverBudget));
                     if(modifier > 1) modifier = 1;
@@ -77,14 +78,17 @@ int barHeightMultiplier = 4;
                     scoreWidth *= modifier;
                 }
                 if (scoreWidth < 0) scoreWidth = 0.0;
-                [scoreVisVals replaceObjectAtIndex:i withObject:[NSNumber numberWithFloat:scoreWidth]];
+                [scoreVisVals replaceObjectAtIndex:k withObject:[NSNumber numberWithFloat:scoreWidth]];
             }
             
-            [score replaceObjectAtIndex:0 withObject:scoreVisVals];
-            [scores addObject:score];
+            //[score replaceObjectAtIndex:0 withObject:scoreVisVals];
+            NSMutableArray *newScore = [[NSMutableArray alloc]init];
+            [newScore addObject:scoreVisVals];
+            [newScore addObject:scoreVisNames];
+            [allScores addObject:newScore];
         }
     }
-     */
+
 
     
     // fill this with the max scores for each outcome category over the span of all trials and all users
@@ -101,6 +105,7 @@ int barHeightMultiplier = 4;
     // find max value for each tier
     for(int i = 0; i < tabControl.trialRuns.count; i++) {
         for(int j = 0; j < tabControl.profiles.count; j++) {
+            NSMutableArray *score = [allScores objectAtIndex:i * j + j];
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
             NSMutableArray* scoreVisVals = [scores objectAtIndex:0];
             for(int k = 0; k < scoreVisVals.count; k++) {
@@ -207,6 +212,7 @@ int barHeightMultiplier = 4;
         
         for(int j = 0; j < tabControl.profiles.count; j++) {
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
+            NSMutableArray *score = [allScores objectAtIndex:i * j + j];
             
             StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, - sumTierSizes) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andTierSizes:tierSizes withContainers:wC withHeightMultipler:barHeightMultiplier];
             
