@@ -22,6 +22,7 @@
 		5759DC5F1BA75E4D000C7B72 /* pedvpolStudy.png in Resources */ = {isa = PBXBuildFile; fileRef = 5759DC5E1BA75E4D000C7B72 /* pedvpolStudy.png */; };
 		5767434F1B7E8C98003F1227 /* social24.png in Resources */ = {isa = PBXBuildFile; fileRef = 5767434E1B7E8C98003F1227 /* social24.png */; };
 		579A157C1B1CE7D4009FBBD0 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579A15781B1CE4F4009FBBD0 /* GameKit.framework */; };
+		579AD9781C03CD4800F4750D /* pattern3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 579AD9771C03CD4800F4750D /* pattern3.jpg */; };
 		57A09C161BF0188600AA1920 /* slash-pattern.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A09C151BF0188600AA1920 /* slash-pattern.png */; };
 		57A31DB71B695FA6007F6CDC /* FavoriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A31DB61B695FA6007F6CDC /* FavoriteView.m */; };
 		57A31DC01B6960AC007F6CDC /* favorite_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A31DBC1B6960AC007F6CDC /* favorite_active.png */; };
@@ -121,6 +122,7 @@
 		5767434E1B7E8C98003F1227 /* social24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = social24.png; sourceTree = "<group>"; };
 		579A15781B1CE4F4009FBBD0 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		579A157A1B1CE591009FBBD0 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
+		579AD9771C03CD4800F4750D /* pattern3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = pattern3.jpg; sourceTree = "<group>"; };
 		57A09C151BF0188600AA1920 /* slash-pattern.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "slash-pattern.png"; sourceTree = "<group>"; };
 		57A31DB51B695FA6007F6CDC /* FavoriteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavoriteView.h; sourceTree = "<group>"; };
 		57A31DB61B695FA6007F6CDC /* FavoriteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavoriteView.m; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 		8453FA5918F2FC8F0010D12F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				579AD9771C03CD4800F4750D /* pattern3.jpg */,
 				571EC6E61BFBA99E00F65A3D /* dotted_pattern.jpg */,
 				571EC6E41BFA851500F65A3D /* Polka_dot_pattern.png */,
 				571EC6E21BFA846600F65A3D /* dot-grid-1.png */,
@@ -494,6 +497,7 @@
 				57A31DC11B6960AC007F6CDC /* favorite_inactive.png in Resources */,
 				5759DC5F1BA75E4D000C7B72 /* pedvpolStudy.png in Resources */,
 				846B972618FE0B1F0008BD59 /* sewer.png in Resources */,
+				579AD9781C03CD4800F4750D /* pattern3.jpg in Resources */,
 				571EC6DB1BF5640B00F65A3D /* Scales-32.png in Resources */,
 				842D4CC41B0271A7002B351B /* DuPage_May.png in Resources */,
 				571EC6E31BFA846600F65A3D /* dot-grid-1.png in Resources */,

@@ -7,6 +7,7 @@
 //
 
 #import "StackedBarGraph.h"
+#import "AprilTestSimRun.h"
 
 @implementation StackedBarGraph
 
@@ -21,6 +22,10 @@ UIView *yAxis;
 int widthOfBar = 36;
 
 int barHeightMultiplier = 4;
+
+#define screen_width 1052
+
+
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
@@ -36,6 +41,50 @@ int barHeightMultiplier = 4;
     
     
     _stackedBars = [[NSMutableArray alloc]init];
+    
+    
+    
+    /* REDUCING SCORE BY LOGARITHM OF AMOUNT OF BUDGET
+    NSMutableArray *scores = [[NSMutableArray alloc]init];
+    
+    for(int i = 0; i < tabControl.trialRuns.count; i++) {
+        for(int j = 0; j < tabControl.profiles.count; j++) {
+            
+            NSMutableArray* score = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
+            NSMutableArray* scoreVisVals = [score objectAtIndex:0];
+            NSMutableArray* scoreVisNames = [score objectAtIndex:1];
+            
+            AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:i];
+            int setBudget = tabControl.budget;
+            
+            int investmentIndex = 0;
+            for(int i = 0; i < scoreVisNames.count; i++) {
+                if([[scoreVisNames objectAtIndex:i] isEqualToString:@"publicCostI"])
+                    investmentIndex = i;
+            }
+            
+            // calculate amount of budget for use in resizing each score
+            int amountOverBudget = simRun.publicInstallCost - setBudget;
+            //computing and drawing the final component score
+            for(int i =  0; i < scoreVisVals.count; i++){
+                
+                float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
+                if(amountOverBudget > 0) {// recalculate each score width
+
+                    float modifier = (investmentIndex + 0.5) / (2 * log10(amountOverBudget));
+                    if(modifier > 1) modifier = 1;
+                    
+                    scoreWidth *= modifier;
+                }
+                if (scoreWidth < 0) scoreWidth = 0.0;
+                [scoreVisVals replaceObjectAtIndex:i withObject:[NSNumber numberWithFloat:scoreWidth]];
+            }
+            
+            [score replaceObjectAtIndex:0 withObject:scoreVisVals];
+            [scores addObject:score];
+        }
+    }
+     */
 
     
     // fill this with the max scores for each outcome category over the span of all trials and all users
@@ -60,6 +109,7 @@ int barHeightMultiplier = 4;
             }
         }
     }
+    
     
     /*
     // find the max value for each outcome category
@@ -131,8 +181,10 @@ int barHeightMultiplier = 4;
     int x_initial = 125;
     int x = x_initial;
     int y = sumTierSizes + 100; // start at the bottom and work up
-    int width = widthOfBar;
     int spaceBetweenTrials = 25;
+    widthOfBar = (screen_width - spaceBetweenTrials * tabControl.trialRuns.count) / (tabControl.trialRuns.count * tabControl.profiles.count + 2);
+    int width = widthOfBar;
+    
     
     // draw lines for x and y axis
     int xAxisLength = (width + 1) * tabControl.profiles.count * tabControl.trialRuns.count + spaceBetweenTrials * (tabControl.trialRuns.count - 1) + 50;
@@ -276,7 +328,7 @@ int barHeightMultiplier = 4;
     }
     
     [self setContentSize:CGSizeMake(xAxis.frame.size.width + xAxis.frame.origin.x + 60, yAxisHeight + 125)];
-    [self setContentOffset:CGPointMake(0, self.contentSize.height - self.frame.size.height)];
+    //[self setContentOffset:CGPointMake(0, self.contentSize.height - self.frame.size.height)];
  
     return self;
 }
@@ -313,11 +365,13 @@ int barHeightMultiplier = 4;
     sumTierSizes *= barHeightMultiplier;
     
     
+    
     int x_initial = 125;
     int x = x_initial;
     int y = sumTierSizes + 100; // start at the bottom and work up
-    int width = widthOfBar;
     int spaceBetweenTrials = 25;
+    widthOfBar = (screen_width - spaceBetweenTrials * tabControl.trialRuns.count) / (tabControl.trialRuns.count * tabControl.profiles.count + 2);
+    int width = widthOfBar;
     
     // draw lines for x and y axis
     int xAxisLength = (width * tabControl.profiles.count + spaceBetweenTrials) * tabControl.trialRuns.count + 100;
@@ -503,6 +557,10 @@ int barHeightMultiplier = 4;
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.impact.frame.size.height/barHeightMultiplier];
         [bar changeText:text];
     }
+    
+    [self performSelector:@selector(hideScores)
+               withObject:nil
+               afterDelay:3.0];
 }
 
 
@@ -511,6 +569,10 @@ int barHeightMultiplier = 4;
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.groundwaterInfiltration.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
     }
+    
+    [self performSelector:@selector(hideScores)
+               withObject:nil
+               afterDelay:3.0];
 }
 
 
@@ -519,6 +581,10 @@ int barHeightMultiplier = 4;
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.maxFlood.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
     }
+    
+    [self performSelector:@selector(hideScores)
+               withObject:nil
+               afterDelay:3.0];
 }
 
 
@@ -527,6 +593,10 @@ int barHeightMultiplier = 4;
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.waterFlow.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
     }
+    
+    [self performSelector:@selector(hideScores)
+               withObject:nil
+               afterDelay:3.0];
 }
 
 
@@ -535,6 +605,10 @@ int barHeightMultiplier = 4;
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.capacity.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
     }
+    
+    [self performSelector:@selector(hideScores)
+               withObject:nil
+               afterDelay:3.0];
 }
 
 
@@ -543,6 +617,10 @@ int barHeightMultiplier = 4;
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.efficiency.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
     }
+    
+    [self performSelector:@selector(hideScores)
+               withObject:nil
+               afterDelay:3.0];
 }
 
 
@@ -551,6 +629,10 @@ int barHeightMultiplier = 4;
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.damageReduction.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
     }
+    
+    [self performSelector:@selector(hideScores)
+               withObject:nil
+               afterDelay:3.0];
 }
 
 
@@ -558,6 +640,16 @@ int barHeightMultiplier = 4;
     for(StackedBar *bar in _stackedBars) {
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.investment.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
+    }
+    
+    [self performSelector:@selector(hideScores)
+               withObject:nil
+               afterDelay:3.0];
+}
+
+- (void) hideScores {
+    for(StackedBar *bar in _stackedBars) {
+        [bar changeText:@""];
     }
 }
 
