@@ -1402,6 +1402,51 @@ int                         heightMultiplier = 5;
        // AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
         //[SBG reloadGraph:tabControl withContainers:_stackedBarSwitch.isOn];
     //}
+    
+    
+    
+    if(_stackedBarSwitch.isOn) {
+        NSDate *myDate = [[NSDate alloc] init];
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat:@"HH:mm:ss"];
+        NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+        
+        NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tSwitched to Expanded View for Stacked Bar Graph", prettyVersion]];
+        
+        [content appendString:@"\n\n"];
+        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
+        
+        //create file if it doesn't exist
+        if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
+            [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
+        
+        NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
+        [file seekToEndOfFile];
+        [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+        [file closeFile];
+    }
+    else {
+        NSDate *myDate = [[NSDate alloc] init];
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat:@"HH:mm:ss"];
+        NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+        
+        NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tSwitched to Condensed View for Stacked Bar Graph", prettyVersion]];
+        
+        [content appendString:@"\n\n"];
+        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
+        
+        //create file if it doesn't exist
+        if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
+            [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
+        
+        NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
+        [file seekToEndOfFile];
+        [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+        [file closeFile];
+    }
 }
 
 /*
