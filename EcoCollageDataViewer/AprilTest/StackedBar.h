@@ -55,6 +55,8 @@
 
 - (void)changeText:(NSString *)text;
 
+- (void) changeTextColor:(UIColor *)color;
+
 - (void)shrink;
 
 - (void)grow;

@@ -47,6 +47,7 @@ NSMutableArray              *maxWaterDisplays;
 NSMutableArray              *capacityDisplays;
 NSMutableArray              *orderOfFavorites;
 NSMutableArray              *stackedBars;
+NSMutableArray              *profileStorage;
 
 NSArray                     *sliceColors;
 
@@ -119,6 +120,7 @@ int                         heightMultiplier = 5;
     maxWaterDisplays = [[NSMutableArray alloc]init];
     capacityDisplays = [[NSMutableArray alloc]init];
     orderOfFavorites = [[NSMutableArray alloc]init];
+    profileStorage = [[NSMutableArray alloc]init];
 
     /*
     corePlotView = [[UIScrollView alloc] initWithFrame:CGRectMake(1100, 108, 1052, 540)];
@@ -428,6 +430,12 @@ int                         heightMultiplier = 5;
     
     
     [self updatePicker];
+    
+    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
+    // check if a concern profile has changed since we were last in this view. if so, update stacked bar graph
+    if(![profileStorage isEqualToArray:tabControl.profiles])
+        [self drawScoreStackedBarGraph];
 }
 
 /*
@@ -450,6 +458,7 @@ int                         heightMultiplier = 5;
     [self drawScoreBarVisualizationHelper];
     
     [self drawCorePlot];
+    
 }
 
 /*
@@ -478,7 +487,13 @@ int                         heightMultiplier = 5;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     tabControl.reloadSocialView = 0;
     
+    [profileStorage removeAllObjects];
+    for(NSMutableArray *mArr in tabControl.profiles) {
+        [profileStorage addObject:[mArr mutableCopy]];
+    }
     [super viewWillDisappear:animated];
+    
+
 }
 
 

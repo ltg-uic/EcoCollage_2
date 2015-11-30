@@ -368,7 +368,7 @@ int barHeightMultiplier = 4;
     [highPriority setNumberOfLines:2];
     [_legendView addSubview:highPriority];
     
-    UILabel *lowPriority = [[UILabel alloc]initWithFrame:CGRectMake(0, yAxis.frame.origin.y - 20, legend_width, 40)];
+    UILabel *lowPriority = [[UILabel alloc]initWithFrame:CGRectMake(0, yAxis.frame.origin.y + 40, legend_width, 40)];
     [lowPriority setText:@"Lowest priority categories"];
     [lowPriority setFont:[UIFont systemFontOfSize:14.0]];
     [lowPriority setTextAlignment:NSTextAlignmentCenter];
@@ -744,8 +744,10 @@ int barHeightMultiplier = 4;
     for(StackedBar *bar in _stackedBars) {
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.impact.frame.size.height/barHeightMultiplier];
         [bar changeText:text];
+        [bar changeTextColor:[scoreColors objectForKey:@"impactingMyNeighbors"]];
     }
     
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
                afterDelay:3.0];
@@ -777,8 +779,10 @@ int barHeightMultiplier = 4;
     for(StackedBar *bar in _stackedBars) {
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.groundwaterInfiltration.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
+        [bar changeTextColor:[scoreColors objectForKey:@"groundwaterInfiltration"]];
     }
     
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
                afterDelay:3.0];
@@ -810,8 +814,10 @@ int barHeightMultiplier = 4;
     for(StackedBar *bar in _stackedBars) {
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.maxFlood.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
+        [bar changeTextColor:[scoreColors objectForKey:@"puddleMax"]];
     }
     
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
                afterDelay:3.0];
@@ -843,8 +849,10 @@ int barHeightMultiplier = 4;
     for(StackedBar *bar in _stackedBars) {
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.waterFlow.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
+        [bar changeTextColor:[scoreColors objectForKey:@"puddleTime"]];
     }
     
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
                afterDelay:3.0];
@@ -876,8 +884,10 @@ int barHeightMultiplier = 4;
     for(StackedBar *bar in _stackedBars) {
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.capacity.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
+        [bar changeTextColor:[scoreColors objectForKey:@"capacity"]];
     }
     
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
                afterDelay:3.0];
@@ -909,8 +919,10 @@ int barHeightMultiplier = 4;
     for(StackedBar *bar in _stackedBars) {
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.efficiency.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
+        [bar changeTextColor:[scoreColors objectForKey:@"efficiencyOfIntervention"]];
     }
     
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
                afterDelay:3.0];
@@ -942,8 +954,10 @@ int barHeightMultiplier = 4;
     for(StackedBar *bar in _stackedBars) {
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.damageReduction.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
+        [bar changeTextColor:[scoreColors objectForKey:@"privateCost"]];
     }
     
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
                afterDelay:3.0];
@@ -975,8 +989,10 @@ int barHeightMultiplier = 4;
     for(StackedBar *bar in _stackedBars) {
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.investment.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
+        [bar changeTextColor:[scoreColors objectForKey:@"publicCost"]];
     }
     
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
                afterDelay:3.0];
@@ -1006,6 +1022,7 @@ int barHeightMultiplier = 4;
 - (void) hideScores {
     for(StackedBar *bar in _stackedBars) {
         [bar changeText:@""];
+        [bar changeTextColor:[UIColor clearColor]];
     }
 }
 

@@ -436,7 +436,10 @@ int heightMultiplier;
             }
         }
     }
-    _score.frame = CGRectMake(0, currHeight - 20, width, 20);
+    if(wC)
+        _score.frame = CGRectMake(0, currHeight - 21, width, 20);
+    else
+        _score.frame = CGRectMake(0, currHeight - 25, width, 20);
     _score.text = @"";
     _score.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     [_score setTextAlignment:NSTextAlignmentCenter];
@@ -836,6 +839,12 @@ int heightMultiplier;
 
 - (void) changeText:(NSString *)text {
     _score.text = text;
+}
+
+- (void) changeTextColor:(UIColor *)color {
+    _score.backgroundColor = color;
+    if([color isEqual:[UIColor clearColor]]) [_score.layer setBorderWidth:0];
+    else [_score.layer setBorderWidth:1];
 }
 
 - (void)shrink {
