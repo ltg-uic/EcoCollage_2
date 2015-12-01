@@ -553,8 +553,8 @@ float maxPublicInstallNorm;
  */
 - (void) logVisibleTrialsandVariables{
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = @"";
-    logEntry = [logEntry stringByAppendingString:@"\nTrials Visible Are:\t"];
+    
+    NSString *logEntry = @"\tTrials Visible Are\t";
     
     CGRect mapWindow = [self getRectPositionsFrom:_mapWindow.bounds];
     //determine which trials are visible by viewing if intervention views are visible within the bounds of the scrollview
@@ -576,7 +576,11 @@ float maxPublicInstallNorm;
         
     }
     
-    logEntry = [logEntry stringByAppendingString:@"\nVisible Concern Rankings:\t"];
+    logEntry = [tabControl generateLogEntryWith:logEntry];
+    
+    [tabControl writeToLogFileString:logEntry];
+    
+    NSString *logEntry2 = @"\tVisible Concern Rankings\t";
     
     CGRect dataWindowRect = [self getRectPositionsFrom:_dataWindow.bounds];
     //determine which concern rankings are visible
@@ -588,13 +592,14 @@ float maxPublicInstallNorm;
             (dataWindowRect.size.width  >= currLabelRect.size.width)   &&
             (dataWindowRect.size.height >= currLabelRect.size.height))  {
             
-            logEntry = [logEntry stringByAppendingString:[NSString stringWithFormat:@"%@,", currLabel.text]];
+            logEntry2 = [logEntry2 stringByAppendingString:[NSString stringWithFormat:@"%@,", currLabel.text]];
         }
 
     }
     
-    NSString *resultingEntry = [tabControl generateLogEntryWith:logEntry];
-    [tabControl writeToLogFileString:resultingEntry];
+    logEntry2 = [tabControl generateLogEntryWith:logEntry2];
+    
+    [tabControl writeToLogFileString:logEntry2];
 }
 
 #pragma mark Gesture Recognizers

@@ -103,7 +103,7 @@ int                         heightMultiplier = 5;
     stackedBars = [[NSMutableArray alloc]init];
     
     //AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To \tSocial View"];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tLoaded Comparison View"];
     [tabControl writeToLogFileString:logEntry];
     
     
@@ -449,7 +449,7 @@ int                         heightMultiplier = 5;
     
     thresh_social = tabControl.threshVal;
     
-    NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To Social View Screen"];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched To Comparison View Screen"];
     [tabControl writeToLogFileString:logEntry];
 
     if(tabControl.reloadSocialView == 0) return;
@@ -613,7 +613,7 @@ int                         heightMultiplier = 5;
     [UIView setAnimationBeginsFromCurrentState:YES];
     if (_mapWindow.frame.size.height < largeSizeOfMapWindow) {
         AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-        NSString *logEntry = [tabControl generateLogEntryWith:@"\tShowed maps in social view"];
+        NSString *logEntry = [tabControl generateLogEntryWith:@"\tShowed maps in Comparison View"];
         [tabControl writeToLogFileString:logEntry];
         mapWindowStatusLabel.text = @"Tap to hide map(s)";
         _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y + sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height - sizeOfChange);
@@ -630,7 +630,7 @@ int                         heightMultiplier = 5;
     }
     else {
         AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-        NSString *logEntry = [tabControl generateLogEntryWith:@"\tHid maps in social view"];
+        NSString *logEntry = [tabControl generateLogEntryWith:@"\tHid maps in Comparison View"];
         [tabControl writeToLogFileString:logEntry];
         mapWindowStatusLabel.text = @"Tap to view map(s)";
         _usernamesWindow.frame = CGRectMake(_usernamesWindow.frame.origin.x, _usernamesWindow.frame.origin.y - sizeOfChange, _usernamesWindow.frame.size.width, _usernamesWindow.frame.size.height + sizeOfChange);
@@ -1087,6 +1087,7 @@ int                         heightMultiplier = 5;
  Outputs: None
  */
 - (void)drawScoreBarVisualizationHelper {
+    /*
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     if (tabControl.trialNum == 0) return;
@@ -1267,11 +1268,13 @@ int                         heightMultiplier = 5;
     
     UIView *lineAcrossScoreBarView = [self.view viewWithTag:9003];
     lineAcrossScoreBarView.frame = CGRectMake(0, lineAcrossScoreBarView.frame.origin.y, scoreBarView.contentSize.width, 1);
+     */
 }
 
 #pragma mark CorePlot Visualization Functions
 
 - (void)drawCorePlot {
+    /*
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     int i, j;
@@ -1400,6 +1403,7 @@ int                         heightMultiplier = 5;
 
         
     }
+     */
 }
 
 #pragma mark Stacked Bar Graph Functions
@@ -1418,49 +1422,15 @@ int                         heightMultiplier = 5;
         //[SBG reloadGraph:tabControl withContainers:_stackedBarSwitch.isOn];
     //}
     
-    
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     if(_stackedBarSwitch.isOn) {
-        NSDate *myDate = [[NSDate alloc] init];
-        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-        [dateFormat setDateFormat:@"HH:mm:ss"];
-        NSString *prettyVersion = [dateFormat stringFromDate:myDate];
-        
-        NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tSwitched to Expanded View for Stacked Bar Graph", prettyVersion]];
-        
-        [content appendString:@"\n\n"];
-        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-        NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-        
-        //create file if it doesn't exist
-        if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-            [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-        
-        NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-        [file seekToEndOfFile];
-        [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-        [file closeFile];
+        NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched to Expanded View for Stacked Bar Graph"];
+        [tabControl writeToLogFileString:logEntry];
     }
     else {
-        NSDate *myDate = [[NSDate alloc] init];
-        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-        [dateFormat setDateFormat:@"HH:mm:ss"];
-        NSString *prettyVersion = [dateFormat stringFromDate:myDate];
-        
-        NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tSwitched to Condensed View for Stacked Bar Graph", prettyVersion]];
-        
-        [content appendString:@"\n\n"];
-        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-        NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-        
-        //create file if it doesn't exist
-        if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-            [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-        
-        NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-        [file seekToEndOfFile];
-        [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-        [file closeFile];
+        NSString *logEntry = [tabControl generateLogEntryWith:@"\tSwitched to Condensed View for Stacked Bar Graph"];
+        [tabControl writeToLogFileString:logEntry];
     }
 }
 
@@ -2680,6 +2650,7 @@ int                         heightMultiplier = 5;
 // create a new subview for each map with frame.origin.x = i * heightOfVisualization
 // fill subview in _mapWindow with map visualization
 - (void)loadVisualizationForNewTrial {
+    /*
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     int numberOfProfiles = tabControl.profiles.count;
     
@@ -2747,6 +2718,7 @@ int                         heightMultiplier = 5;
     
     [_usernamesWindow setContentSize: CGSizeMake(_usernamesWindow.frame.size.width, numberOfProfiles * heightOfVisualization + 10)];
     [_profilesWindow setContentSize: CGSizeMake(widthOfTitleVisualization * 8 + 10, numberOfProfiles * heightOfVisualization + 10)];
+     */
 }
 
 

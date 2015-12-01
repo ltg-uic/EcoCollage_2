@@ -15,7 +15,7 @@
 @synthesize legendView = _legendView;
 @synthesize scoreBarsView = _scoreBarsView;
 
-
+AprilTestTabBarController *tabController;
 NSMutableArray *trialGroups;
 NSMutableArray *trialLabels;
 
@@ -43,6 +43,8 @@ int barHeightMultiplier = 4;
 - (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl withContainers:(int)wC{
     if(tabControl.profiles.count == 0 || tabControl.trialRuns.count == 0) return NULL;
     
+    
+    tabController = tabControl;
     self = [super initWithFrame:frame];
     _legendView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, legend_width, frame.size.height)];
     [_legendView.layer setBorderWidth:1];
@@ -641,26 +643,9 @@ int barHeightMultiplier = 4;
         [trialText sizeToFit];
         [trialText setCenter:CGPointMake(trialLabel.frame.size.width / 2, trialLabel.frame.size.height / 2)];
         
-    
-        NSDate *myDate = [[NSDate alloc] init];
-        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-        [dateFormat setDateFormat:@"HH:mm:ss"];
-        NSString *prettyVersion = [dateFormat stringFromDate:myDate];
-        
-        NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tGrew %@ in Comparison Viewer", prettyVersion, trialText.text]];
-        
-        [content appendString:@"\n\n"];
-        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-        NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-        
-        //create file if it doesn't exist
-        if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-            [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-        
-        NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-        [file seekToEndOfFile];
-        [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-        [file closeFile];
+
+        NSString *logEntry = [tabController generateLogEntryWith:[NSString stringWithFormat:@"\tGrew Trial \t%@", [trialText.text substringFromIndex:6]]];
+        [tabController writeToLogFileString:logEntry];
     }
     else { // otherwise we shrink it
         [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y, trialLabel.frame.size.width / resizeFactor, trialLabel.frame.size.height)];
@@ -670,25 +655,8 @@ int barHeightMultiplier = 4;
         [trialText setCenter:CGPointMake(trialLabel.frame.size.width / 2, trialLabel.frame.size.height / 2)];
         
         
-        NSDate *myDate = [[NSDate alloc] init];
-        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-        [dateFormat setDateFormat:@"HH:mm:ss"];
-        NSString *prettyVersion = [dateFormat stringFromDate:myDate];
-        
-        NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tShrunk trial %@ in Comparison Viewer", prettyVersion, trialText.text]];
-        
-        [content appendString:@"\n\n"];
-        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-        NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-        
-        //create file if it doesn't exist
-        if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-            [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-        
-        NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-        [file seekToEndOfFile];
-        [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-        [file closeFile];
+        NSString *logEntry = [tabController generateLogEntryWith:[NSString stringWithFormat:@"\tShrunk trial\t%@", trialText.text]];
+        [tabController writeToLogFileString:logEntry];
     }
     
     int shiftAmount = mArray.count * (widthOfBar - widthOfBar / resizeFactor);
@@ -753,25 +721,9 @@ int barHeightMultiplier = 4;
                afterDelay:3.0];
     
     
-    NSDate *myDate = [[NSDate alloc] init];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"HH:mm:ss"];
-    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+    NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tImpact on my Neighbors"];
+    [tabController writeToLogFileString:logEntry];
     
-    NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tInspected the performance of Impact on my Neighbors in Comparison Viewer", prettyVersion]];
-    
-    [content appendString:@"\n\n"];
-    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-    
-    //create file if it doesn't exist
-    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-    
-    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-    [file seekToEndOfFile];
-    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [file closeFile];
 }
 
 
@@ -788,25 +740,9 @@ int barHeightMultiplier = 4;
                afterDelay:3.0];
     
     
-    NSDate *myDate = [[NSDate alloc] init];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"HH:mm:ss"];
-    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+    NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tGroundwater Infiltration"];
+    [tabController writeToLogFileString:logEntry];
     
-    NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tInspected the performance of Groundwater Infiltration in Comparison Viewer", prettyVersion]];
-    
-    [content appendString:@"\n\n"];
-    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-    
-    //create file if it doesn't exist
-    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-    
-    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-    [file seekToEndOfFile];
-    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [file closeFile];
 }
 
 
@@ -823,25 +759,9 @@ int barHeightMultiplier = 4;
                afterDelay:3.0];
     
     
-    NSDate *myDate = [[NSDate alloc] init];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"HH:mm:ss"];
-    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+    NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tMaximum Flooded Area"];
+    [tabController writeToLogFileString:logEntry];
     
-    NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tInspected the performance of Maximum Flooded Area in Comparison Viewer", prettyVersion]];
-    
-    [content appendString:@"\n\n"];
-    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-    
-    //create file if it doesn't exist
-    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-    
-    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-    [file seekToEndOfFile];
-    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [file closeFile];
 }
 
 
@@ -858,25 +778,9 @@ int barHeightMultiplier = 4;
                afterDelay:3.0];
     
     
-    NSDate *myDate = [[NSDate alloc] init];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"HH:mm:ss"];
-    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+    NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tWater Flow"];
+    [tabController writeToLogFileString:logEntry];
     
-    NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tInspected the performance of Water Flow in Comparison Viewer", prettyVersion]];
-    
-    [content appendString:@"\n\n"];
-    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-    
-    //create file if it doesn't exist
-    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-    
-    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-    [file seekToEndOfFile];
-    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [file closeFile];
 }
 
 
@@ -893,25 +797,9 @@ int barHeightMultiplier = 4;
                afterDelay:3.0];
     
     
-    NSDate *myDate = [[NSDate alloc] init];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"HH:mm:ss"];
-    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+    NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tIntervention Capacity"];
+    [tabController writeToLogFileString:logEntry];
     
-    NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tInspected the performance of Intervention Capacity in Comparison Viewer", prettyVersion]];
-    
-    [content appendString:@"\n\n"];
-    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-    
-    //create file if it doesn't exist
-    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-    
-    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-    [file seekToEndOfFile];
-    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [file closeFile];
 }
 
 
@@ -928,25 +816,9 @@ int barHeightMultiplier = 4;
                afterDelay:3.0];
     
     
-    NSDate *myDate = [[NSDate alloc] init];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"HH:mm:ss"];
-    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+    NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tEfficiency of Intervention"];
+    [tabController writeToLogFileString:logEntry];
     
-    NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tInspected the performance of Efficiency of Intervention in Comparison Viewer", prettyVersion]];
-    
-    [content appendString:@"\n\n"];
-    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-    
-    //create file if it doesn't exist
-    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-    
-    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-    [file seekToEndOfFile];
-    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [file closeFile];
 }
 
 
@@ -963,25 +835,9 @@ int barHeightMultiplier = 4;
                afterDelay:3.0];
     
     
-    NSDate *myDate = [[NSDate alloc] init];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"HH:mm:ss"];
-    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+    NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tDamage Reduction"];
+    [tabController writeToLogFileString:logEntry];
     
-    NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tInspected the performance of Damage Reduction in Comparison Viewer", prettyVersion]];
-    
-    [content appendString:@"\n\n"];
-    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-    
-    //create file if it doesn't exist
-    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-    
-    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-    [file seekToEndOfFile];
-    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [file closeFile];
 }
 
 
@@ -991,32 +847,16 @@ int barHeightMultiplier = 4;
         [bar changeText:text];
         [bar changeTextColor:[scoreColors objectForKey:@"publicCost"]];
     }
-    
+
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
                afterDelay:3.0];
     
     
-    NSDate *myDate = [[NSDate alloc] init];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"HH:mm:ss"];
-    NSString *prettyVersion = [dateFormat stringFromDate:myDate];
+    NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tInvestment"];
+    [tabController writeToLogFileString:logEntry];
     
-    NSMutableString * content = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"%@\tInspected the performance of Investment in Comparison Viewer", prettyVersion]];
-    
-    [content appendString:@"\n\n"];
-    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"logfile_simResults.txt"];
-    
-    //create file if it doesn't exist
-    if(![[NSFileManager defaultManager] fileExistsAtPath:fileName])
-        [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
-    
-    NSFileHandle *file = [NSFileHandle fileHandleForUpdatingAtPath:fileName];
-    [file seekToEndOfFile];
-    [file writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
-    [file closeFile];
 }
 
 - (void) hideScores {
