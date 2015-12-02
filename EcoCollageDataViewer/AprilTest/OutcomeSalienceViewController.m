@@ -1547,11 +1547,13 @@ float maxPublicInstallNorm;
         if([[scoreVisNames objectAtIndex:i] isEqualToString:@"publicCostI"])
             investmentIndex = i;
     }
+    [[[trialRunSubViews objectAtIndex:trial] objectForKey:@"ScorePenalty"] removeFromSuperview];
     UILabel *scorePenalty;
-    scorePenalty = [[trialRunSubViews objectAtIndex:trial] objectForKey:@"ScorePenalty"];
     UILabel * componentScore;
     // calculate amount of budget for use in resizing each score
     int amountOverBudget = simRun.publicInstallCost - setBudget;
+    float modifier = (investmentIndex + .5) / (log10(amountOverBudget));
+    if(modifier > 1) modifier = 1;
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         
@@ -1564,11 +1566,7 @@ float maxPublicInstallNorm;
             if(overBudgetDeduction == 0)overBudgetDeduction = 0.0000001;
             scoreWidth = scoreWidth * (importance / overBudgetDeduction);
             */
-            float modifier = (investmentIndex + 0.5) / (2 * log10(amountOverBudget));
-            if(modifier > 1) modifier = 1;
-            
-            [scorePenalty removeFromSuperview];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", (1 - modifier) * 100] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
+
             scoreWidth *= modifier;
         }
         if (scoreWidth < 0) scoreWidth = 0.0;
@@ -1578,6 +1576,44 @@ float maxPublicInstallNorm;
         [_mapWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
     }
+    if(amountOverBudget > 0) {
+        [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", (1 - modifier) * 100] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
+    }
+    else {
+        [self drawTextBasedVar: @"" withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
+    }
+    
+    NSDictionary *oldDict = [trialRunSubViews objectAtIndex:trial];
+    
+    NSDictionary *trialRunInfo = @{@"TrialNum"            : [oldDict objectForKey:@"TrialNum"],
+                                   @"TrialRun"            : [oldDict objectForKey:@"TrialRun"],
+                                   @"TrialStatic"         : [oldDict objectForKey:@"TrialStatic"],
+                                   @"TrialDynamic"        : [oldDict objectForKey:@"TrialDynamic"],
+                                   @"TrialTxTBox"         : [oldDict objectForKey:@"TrialTxTBox"],
+                                   @"PerformanceScore"    : [oldDict objectForKey:@"PerformanceScore"],
+                                   //@"WaterDisplay"      : wd,
+                                   //@"MWaterDisplay"     : mwd,
+                                   //@"EfficiencyView"      : ev,
+                                   @"Maintenance"         : [oldDict objectForKey:@"Maintenance"],
+                                   @"ScorePenalty"        : scorePenalty,
+                                   @"InterventionImgView" : [oldDict objectForKey:@"InterventionImgView"],
+                                   @"WaterDepthView"      : [oldDict objectForKey:@"WaterDepthView"],
+                                   @"MWaterDepthView"     : [oldDict objectForKey:@"MWaterDepthView"],
+                                   @"EfficiencyView"      : [oldDict objectForKey:@"EfficiencyView"],
+                                   @"Damage"              : [oldDict objectForKey:@"Damage"],
+                                   @"DamageReduced"       : [oldDict objectForKey:@"DamageReduced"],
+                                   @"SewerLoad"           : [oldDict objectForKey:@"SewerLoad"],
+                                   @"WaterInfiltration"   : [oldDict objectForKey:@"WaterInfiltration"],
+                                   @"Efficiency_Interv"   : [oldDict objectForKey:@"Efficiency_Interv"],
+                                   @"ImpactNeighbor"      : [oldDict objectForKey:@"ImpactNeighbor"],
+                                   @"CostDisplay"         : [oldDict objectForKey:@"CostDisplay"],
+                                   @"FavoriteLabel"       : [oldDict objectForKey:@"FavoriteLabel"],
+                                   @"FavoriteView"        : [oldDict objectForKey:@"FavoriteView"],
+                                   @"LeastFavoriteView"   : [oldDict objectForKey:@"LeastFavoriteView"],
+                                   @"StormsForCost"       : [oldDict objectForKey:@"StormsForCost"]
+                                   };
+    
+    [trialRunSubViews replaceObjectAtIndex:trial withObject:trialRunInfo];
     
     //update the length of the component (performance) score in order to be able to sort by best score
     NSNumber *newPerformanceScore = [NSNumber numberWithFloat:totalScore];
@@ -2218,6 +2254,8 @@ float maxPublicInstallNorm;
     
     // calculate amount of budget for use in resizing each score
     int amountOverBudget = simRun.publicInstallCost - setBudget;
+    float modifier = (investmentIndex + 0.5) / (log10(amountOverBudget));
+    if(modifier > 1) modifier = 1;
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         
@@ -2230,21 +2268,10 @@ float maxPublicInstallNorm;
              if(overBudgetDeduction == 0)overBudgetDeduction = 0.0000001;
              scoreWidth = scoreWidth * (importance / overBudgetDeduction);
              */
-            float modifier = (investmentIndex + 0.5) / (2 * log10(amountOverBudget));
-            if(modifier > 1) modifier = 1;
-            
-            if(trial >= trialRunSubViews.count) // create a new one
-                [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", (1 - modifier) * 100] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
-            else {// get old one, change text
-                scorePenalty = [[trialRunSubViews objectAtIndex:trial] objectForKey:@"ScorePenalty"];
-                scorePenalty.text = [NSString stringWithFormat:@"Score penalized by %.2f%%", 1 - modifier];
-            }
             
             scoreWidth *= modifier;
         }
-        else {
-            scorePenalty = [[UILabel alloc]init];
-        }
+
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
         componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 75, floor(scoreWidth), 22)];
@@ -2252,6 +2279,14 @@ float maxPublicInstallNorm;
         [_mapWindow addSubview:componentScore];
         maxX+=floor(scoreWidth);
     }
+    
+    if(amountOverBudget > 0) {
+        [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", (1 - modifier) * 100] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
+    }
+    else {
+        [self drawTextBasedVar: @"" withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
+    }
+    
     //NSLog(@"\n");
     
     [_dataWindow setContentSize:CGSizeMake(width+=100, (trial+1)*175 +30)];

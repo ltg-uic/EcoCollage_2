@@ -108,20 +108,20 @@ int heightMultiplier;
     
     scoreColorsDesaturated = [[NSMutableDictionary alloc] initWithObjects:
                    [NSArray arrayWithObjects:
-                    [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.15],
-                    [UIColor colorWithHue:.31 saturation:.6 brightness:.91 alpha: 0.15],
-                    [UIColor colorWithHue:.32 saturation:.6 brightness:.92 alpha: 0.15],
-                    [UIColor colorWithHue:.33 saturation:.6 brightness:.93 alpha: 0.15],
-                    [UIColor colorWithHue:.35 saturation:.8 brightness:.6 alpha: 0.15],
-                    [UIColor colorWithHue:.36 saturation:.8 brightness:.61 alpha: 0.15],
-                    [UIColor colorWithHue:.37 saturation:.8 brightness:.62 alpha: 0.15],
-                    [UIColor colorWithHue:.38 saturation:.8 brightness:.63 alpha: 0.15],
-                    [UIColor colorWithHue:.4 saturation:.8 brightness:.3 alpha: 0.15],
-                    [UIColor colorWithHue:.65 saturation:.8 brightness:.6 alpha: 0.15],
-                    [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.15],
-                    [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.15],
-                    [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.15],
-                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.15], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
+                    [UIColor colorWithHue:.3 saturation:.6 brightness:.9 alpha: 0.25],
+                    [UIColor colorWithHue:.31 saturation:.6 brightness:.91 alpha: 0.25],
+                    [UIColor colorWithHue:.32 saturation:.6 brightness:.92 alpha: 0.25],
+                    [UIColor colorWithHue:.33 saturation:.6 brightness:.93 alpha: 0.25],
+                    [UIColor colorWithHue:.35 saturation:.8 brightness:.6 alpha: 0.25],
+                    [UIColor colorWithHue:.36 saturation:.8 brightness:.61 alpha: 0.25],
+                    [UIColor colorWithHue:.37 saturation:.8 brightness:.62 alpha: 0.25],
+                    [UIColor colorWithHue:.38 saturation:.8 brightness:.63 alpha: 0.25],
+                    [UIColor colorWithHue:.4 saturation:.8 brightness:.3 alpha: 0.25],
+                    [UIColor colorWithHue:.65 saturation:.8 brightness:.6 alpha: 0.25],
+                    [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.25],
+                    [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.25],
+                    [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.25],
+                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.25], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
 
     NSMutableArray* scoreVisVals = [scores objectAtIndex:0];
@@ -444,14 +444,15 @@ int heightMultiplier;
     _score.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     [_score setTextAlignment:NSTextAlignmentCenter];
     
-    [_investmentEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern3.jpg"]]];
-    [_impactEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern3.jpg"]]];
-    [_groundwaterInfiltrationEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern3.jpg"]]];
-    [_maxFloodEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern3.jpg"]]];
-    [_waterFlowEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern3.jpg"]]];
-    [_capacityEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern3.jpg"]]];
-    [_efficiencyEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern3.jpg"]]];
-    [_damageReductionEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern3.jpg"]]];
+
+    [_investmentEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
+    [_impactEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
+    [_groundwaterInfiltrationEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
+    [_maxFloodEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
+    [_waterFlowEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
+    [_capacityEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
+    [_efficiencyEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
+    [_damageReductionEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
 
     
     [self addSubview:_impact];

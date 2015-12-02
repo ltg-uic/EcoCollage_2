@@ -576,7 +576,7 @@ NSMutableDictionary         *scoreColors;
         float scoreWidth = [[scoreVisVals objectAtIndex: k] floatValue];
         if(amountOverBudget > 0) { // recalculate each score width
             
-            float modifier = (investmentIndex + 0.5) / (2 * log10(amountOverBudget));
+            float modifier = (investmentIndex + 0.5) / (log10(amountOverBudget));
             if(modifier > 1) modifier = 1;
             
             scoreWidth *= modifier;

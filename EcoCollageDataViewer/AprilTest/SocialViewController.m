@@ -1690,6 +1690,7 @@ int                         heightMultiplier = 5;
  Outputs: None
  */
 - (void)profileUpdate {
+    /*
     // check to see if we should load the favorites
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     if (tabControl.trialNum == trialChosen) {
@@ -1719,6 +1720,7 @@ int                         heightMultiplier = 5;
     
     
     NSLog(@"Updated profile in Social View");
+     */
 }
 
 /*
@@ -2052,6 +2054,8 @@ int                         heightMultiplier = 5;
     //   [SortType_social removeFromSuperview];
     //   return;
     //}
+    
+    /*
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     trialChosen = (int)row;
     
@@ -2094,6 +2098,7 @@ int                         heightMultiplier = 5;
     
     [self profileUpdate];
     [self drawScoreBarVisualizationHelper];
+     */
     
 }
 
@@ -3160,7 +3165,7 @@ int                         heightMultiplier = 5;
     
     [self changeBudgetLabel:tabControl.budget];
     
-    
+    /*
     if (tabControl.trialNum == trialChosen) {
         if (tabControl.trialNum > 0) {
             [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
@@ -3180,6 +3185,7 @@ int                         heightMultiplier = 5;
         [self profileUpdate];
         [self drawScoreBarVisualizationHelper];
     }
+     */
 }
 
 /*
