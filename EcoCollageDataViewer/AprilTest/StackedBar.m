@@ -444,7 +444,7 @@ int heightMultiplier;
     _score.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     [_score setTextAlignment:NSTextAlignmentCenter];
     
-
+/*
     [_investmentEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
     [_impactEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
     [_groundwaterInfiltrationEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
@@ -453,7 +453,7 @@ int heightMultiplier;
     [_capacityEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
     [_efficiencyEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
     [_damageReductionEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
-
+*/
     
     [self addSubview:_impact];
     [self addSubview:_groundwaterInfiltration];
