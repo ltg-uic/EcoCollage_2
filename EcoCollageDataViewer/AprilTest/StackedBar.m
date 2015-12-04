@@ -70,7 +70,7 @@ int heightMultiplier;
 */
 
 
-- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM
+- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM withTotalScore:(float*)total
 {
     self = [super initWithFrame:frame];
     
@@ -200,6 +200,7 @@ int heightMultiplier;
         }
     }
     
+    float totalScore = 0;
     
     for(int k = 0; k < scoreVisNames.count - 1; k++) {
         int heightOfThisCategory;
@@ -216,6 +217,7 @@ int heightMultiplier;
         heightOfThisCategory *= heightMultiplier;
         if(scaledToScreen) heightOfThisCategory = heightOfThisCategory * scaleSize;
         if (heightOfThisCategory < 0) heightOfThisCategory = 0;
+        totalScore += heightOfThisCategory;
         
         int containerSize = [[tierSizes objectAtIndex:k]integerValue];
         
@@ -436,6 +438,9 @@ int heightMultiplier;
             }
         }
     }
+    
+    *total = totalScore;
+    
     if(wC)
         _score.frame = CGRectMake(0, currHeight - 21, width, 20);
     else
