@@ -235,7 +235,6 @@ int barHeightMultiplier = 4;
     [_scoreBarsView addSubview:yAxis];
     
     trialGroups = [[NSMutableArray alloc]init];
-    NSMutableArray *myTotalScores = [[NSMutableArray alloc]init];
 
     // create a stackedBar for each trial for each profile
     for(int i = 0; i < tabControl.trialNum; i++) {
@@ -246,14 +245,7 @@ int barHeightMultiplier = 4;
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
             NSMutableArray *score = [allScores objectAtIndex:i * j + j];
             
-            float *total = malloc(sizeof(float));
-            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, - sumTierSizes) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andTierSizes:tierSizes withContainers:wC withHeightMultipler:barHeightMultiplier withTotalScore:total];
-            
-            // if this is our bar, add the total score to array of my total scores
-            if(j == 0) {
-                [myTotalScores addObject:[NSNumber numberWithFloat: *total]];
-            }
-            free(total);
+            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, - sumTierSizes) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andTierSizes:tierSizes withContainers:wC withHeightMultipler:barHeightMultiplier];
             
             [bar.name setFrame:CGRectMake(x, yAxis.frame.origin.y + yAxis.frame.size.height, width, 20)];
             [_scoreBarsView addSubview:bar.name];
@@ -327,29 +319,6 @@ int barHeightMultiplier = 4;
         x += spaceBetweenTrials;
     }
     
-    float max = 0.0;
-    int maxTrialNumber = -1;
-    for(int i = 0; i < myTotalScores.count; i++) {
-        NSNumber *num = [myTotalScores objectAtIndex:i];
-        if([num floatValue] > max) {
-            max = [num floatValue];
-            maxTrialNumber = i;
-        }
-    }
-    
-    
-    float min = sumTierSizes;
-    int minTrialNumber = -1;
-    for(int i = 0; i < myTotalScores.count; i++) {
-        NSNumber *num = [myTotalScores objectAtIndex:i];
-        if([num floatValue] < min) {
-            min = [num floatValue];
-            minTrialNumber = i;
-        }
-    }
-    
-    
-        
     trialLabels = [[NSMutableArray alloc]init];
     
     // create UILabel for each trial
@@ -749,7 +718,7 @@ int barHeightMultiplier = 4;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:5.0];
+               afterDelay:3.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tImpact on my Neighbors"];
@@ -768,7 +737,7 @@ int barHeightMultiplier = 4;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:5.0];
+               afterDelay:3.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tGroundwater Infiltration"];
@@ -787,7 +756,7 @@ int barHeightMultiplier = 4;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:5.0];
+               afterDelay:3.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tMaximum Flooded Area"];
@@ -806,7 +775,7 @@ int barHeightMultiplier = 4;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:5.0];
+               afterDelay:3.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tWater Flow"];
@@ -825,7 +794,7 @@ int barHeightMultiplier = 4;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:5.0];
+               afterDelay:3.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tIntervention Capacity"];
@@ -844,7 +813,7 @@ int barHeightMultiplier = 4;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:5.0];
+               afterDelay:3.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tEfficiency of Intervention"];
@@ -863,7 +832,7 @@ int barHeightMultiplier = 4;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:5.0];
+               afterDelay:3.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tDamage Reduction"];
@@ -882,7 +851,7 @@ int barHeightMultiplier = 4;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:5.0];
+               afterDelay:3.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tInvestment"];
