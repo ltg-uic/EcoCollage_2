@@ -166,7 +166,7 @@ float maxPublicInstallNorm;
     _loadingIndicator.color = [UIColor blueColor];
     [self.view addSubview:_loadingIndicator];
 
-     arrStatus = [[NSArray alloc] initWithObjects:@"Trial Number", @"Best Score", @"Investment", @"Damage Reduction",@"Intervention Capacity", @"Water Flow", @"Max Flooded Area", @"Impact on my Neighbors", @"Efficiency of Intervention", @"Groundwater Infiltration", nil];
+     arrStatus = [[NSArray alloc] initWithObjects:@"Trial Number", @"My Score", @"Investment", @"Damage Reduction",@"Intervention Capacity", @"Water Flow", @"Max Flooded Area", @"Impact on my Neighbors", @"Efficiency of Intervention", @"Groundwater Infiltration", nil];
     
 
     if (tabControl.SortingEnabled == YES){
@@ -2663,7 +2663,7 @@ float maxPublicInstallNorm;
     if ([arrStatus[row] isEqual: @"Trial Number"]){
         [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"TrialNum" ascending:YES]]];
     }
-    else if ([arrStatus[row] isEqual: @"Best Score"]){
+    else if ([arrStatus[row] isEqual: @"My Score"]){
         [trialRunSubViews sortUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"PerformanceScore" ascending:NO]]];
     }
     
@@ -2904,7 +2904,7 @@ float maxPublicInstallNorm;
     else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Impact on my Neighbors"]){
         SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"impactingMyNeighbors"];
     }
-    else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Best Score"]){
+    else if ([[arrStatus objectAtIndex:row] isEqualToString:@"My Score"]){
         SortPickerTextField.backgroundColor = [UIColor orangeColor];
     }
     else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Trial Number"]){
@@ -2970,7 +2970,7 @@ float maxPublicInstallNorm;
     else if ([tView.text isEqualToString:@"Impact on my Neighbors"]){
         tView.backgroundColor = [scoreColors objectForKey:@"impactingMyNeighbors"];
     }
-    else if ([tView.text isEqualToString:@"Best Score"]){
+    else if ([tView.text isEqualToString:@"My Score"]){
         tView.backgroundColor = [UIColor orangeColor];
     }
     else if ([tView.text isEqualToString:@"Trial Number"]){

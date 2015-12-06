@@ -23,6 +23,10 @@ NSMutableDictionary *scoreColors;
 
 UIView *xAxis;
 UIView *yAxis;
+UILabel *bestForMe;
+UILabel *worstForMe;
+int bestTrialForMe;
+int worstTrialForMe;
 
 int widthOfBar = 36;
 
@@ -72,6 +76,36 @@ int barHeightMultiplier = 4;
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
                     [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
+    
+    int investmentIndex = -1;
+    int damageReductionIndex = -1;
+    int efficiencyIndex = -1;
+    int waterFlowIndex = -1;
+    int maxFloodIndex = -1;
+    int groundwaterInfiltrationIndex = -1;
+    int impactIndex = -1;
+    int capacityIndex = -1;
+    
+    // find order of the users concerns to be used when building the legend
+    NSMutableArray *primaryUser = [tabControl.profiles objectAtIndex:0];
+    for(int i = 3; i < primaryUser.count; i++) {
+        if([[primaryUser objectAtIndex:i] isEqualToString:@"Investment"])
+            investmentIndex = (int)primaryUser.count - (i + 1);
+        if([[primaryUser objectAtIndex:i] isEqualToString:@"Damage Reduction"])
+            damageReductionIndex = (int)primaryUser.count - (i + 1);
+        if([[primaryUser objectAtIndex:i] isEqualToString:@"Efficiency of Intervention ($/Gallon)"])
+            efficiencyIndex = (int)primaryUser.count - (i + 1);
+        if([[primaryUser objectAtIndex:i] isEqualToString:@"Capacity Used"])
+            capacityIndex = (int)primaryUser.count - (i + 1);
+        if([[primaryUser objectAtIndex:i] isEqualToString:@"Water Flow Path"])
+            waterFlowIndex = (int)primaryUser.count - (i + 1);
+        if([[primaryUser objectAtIndex:i] isEqualToString:@"Maximum Flooded Area"])
+            maxFloodIndex = (int)primaryUser.count - (i + 1);
+        if([[primaryUser objectAtIndex:i] isEqualToString:@"Groundwater Infiltration"])
+            groundwaterInfiltrationIndex = (int)primaryUser.count - (i + 1);
+        if([[primaryUser objectAtIndex:i] isEqualToString:@"Impact on my Neighbors"])
+            impactIndex = (int)primaryUser.count - (i + 1);
+    }
     
     
     // REDUCING SCORE BY LOGARITHM OF AMOUNT OVER BUDGET
@@ -235,6 +269,8 @@ int barHeightMultiplier = 4;
     [_scoreBarsView addSubview:yAxis];
     
     trialGroups = [[NSMutableArray alloc]init];
+    
+    NSMutableArray *trialScores = [[NSMutableArray alloc]init];
 
     // create a stackedBar for each trial for each profile
     for(int i = 0; i < tabControl.trialNum; i++) {
@@ -245,7 +281,13 @@ int barHeightMultiplier = 4;
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
             NSMutableArray *score = [allScores objectAtIndex:i * j + j];
             
-            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, - sumTierSizes) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andTierSizes:tierSizes withContainers:wC withHeightMultipler:barHeightMultiplier];
+            float *totalScore = malloc(sizeof(float));
+            *totalScore = 0.0;
+            
+            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, - sumTierSizes) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andTierSizes:tierSizes withContainers:wC withHeightMultipler:barHeightMultiplier withScore:totalScore];
+            
+            [trialScores addObject:[NSNumber numberWithFloat:*totalScore]];
+            free(totalScore);
             
             [bar.name setFrame:CGRectMake(x, yAxis.frame.origin.y + yAxis.frame.size.height, width, 20)];
             [_scoreBarsView addSubview:bar.name];
@@ -319,6 +361,27 @@ int barHeightMultiplier = 4;
         x += spaceBetweenTrials;
     }
     
+    
+    float max = 0;
+    bestTrialForMe = -1;
+    for(int i = 0; i < trialScores.count; i++) {
+        NSNumber *num = [trialScores objectAtIndex:i];
+        if([num floatValue] > max) {
+            max = [num floatValue];
+            bestTrialForMe = i;
+        }
+    }
+    
+    float min = sumTierSizes;
+    worstTrialForMe = -1;
+    for(int i = 0; i < trialScores.count; i++) {
+        NSNumber *num = [trialScores objectAtIndex:i];
+        if([num floatValue] < min) {
+            min = [num floatValue];
+            worstTrialForMe = i;
+        }
+    }
+    
     trialLabels = [[NSMutableArray alloc]init];
     
     // create UILabel for each trial
@@ -346,6 +409,21 @@ int barHeightMultiplier = 4;
         [trialLabel addSubview:trialText];
         [trialLabels addObject:trialLabel];
         [_scoreBarsView addSubview:trialLabel];
+        
+        if(i == bestTrialForMe && i != worstTrialForMe) {
+            bestForMe = [[UILabel alloc]initWithFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y + trialLabel.frame.size.height + 5, trialLabel.frame.size.width, 20)];
+            [bestForMe setTextAlignment:NSTextAlignmentCenter];
+            [bestForMe setText:@"Best for me"];
+            [bestForMe setFont:[UIFont systemFontOfSize:12.0]];
+            [_scoreBarsView addSubview:bestForMe];
+        }
+        if(i == worstTrialForMe && i != bestTrialForMe) {
+            worstForMe = [[UILabel alloc]initWithFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y + trialLabel.frame.size.height + 5, trialLabel.frame.size.width, 20)];
+            [worstForMe setTextAlignment:NSTextAlignmentCenter];
+            [worstForMe setText:@"Worst for me"];
+            [worstForMe setFont:[UIFont systemFontOfSize:12.0]];
+            [_scoreBarsView addSubview:worstForMe];
+        }
         
         i++;
     }
@@ -394,73 +472,60 @@ int barHeightMultiplier = 4;
     // figure out how much space we have between our lowPriority and highPriority labels
     int spaceBetweenLegendLabels = 5;
     int heightOfLegendLabels = (legend.frame.size.height - spaceBetweenLegendLabels * 8 - 30) / 8;
-    int currentHeight = 25;
+    int startHeight = 25;
+    int heightMultiplier = spaceBetweenLegendLabels + heightOfLegendLabels;
     
     // labels for the legend to distinguish which color is which category
-    UILabel *investmentLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, currentHeight, legend_width, heightOfLegendLabels)];
+    UILabel *investmentLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * investmentIndex, legend_width, heightOfLegendLabels)];
     [investmentLabel setText:@"Investment"];
     [investmentLabel setFont:[UIFont systemFontOfSize:12.0]];
     [investmentLabel setBackgroundColor:[scoreColors objectForKey:@"publicCost"]];
     [investmentLabel setTextAlignment:NSTextAlignmentCenter];
     [legend addSubview:investmentLabel];
     
-    currentHeight += spaceBetweenLegendLabels + heightOfLegendLabels;
-    
-    UILabel *damageReductionLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, currentHeight, legend_width, heightOfLegendLabels)];
+    UILabel *damageReductionLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * damageReductionIndex, legend_width, heightOfLegendLabels)];
     [damageReductionLabel setText:@"Damage Reduction"];
     [damageReductionLabel setFont:[UIFont systemFontOfSize:12.0]];
     [damageReductionLabel setBackgroundColor:[scoreColors objectForKey:@"privateCost"]];
     [damageReductionLabel setTextAlignment:NSTextAlignmentCenter];
     [legend addSubview:damageReductionLabel];
     
-    currentHeight += spaceBetweenLegendLabels + heightOfLegendLabels;
-    
-    UILabel *efficiencyLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, currentHeight, legend_width, heightOfLegendLabels)];
+    UILabel *efficiencyLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * efficiencyIndex, legend_width, heightOfLegendLabels)];
     [efficiencyLabel setText:@"Efficiency of Intervention"];
     [efficiencyLabel setFont:[UIFont systemFontOfSize:12.0]];
     [efficiencyLabel setBackgroundColor:[scoreColors objectForKey:@"efficiencyOfIntervention"]];
     [efficiencyLabel setTextAlignment:NSTextAlignmentCenter];
     [legend addSubview:efficiencyLabel];
     
-    currentHeight += spaceBetweenLegendLabels + heightOfLegendLabels;
-    
-    UILabel *capacityLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, currentHeight, legend_width, heightOfLegendLabels)];
+    UILabel *capacityLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * capacityIndex, legend_width, heightOfLegendLabels)];
     [capacityLabel setText:@"Intervention Capacity"];
     [capacityLabel setFont:[UIFont systemFontOfSize:12.0]];
     [capacityLabel setBackgroundColor:[scoreColors objectForKey:@"capacity"]];
     [capacityLabel setTextAlignment:NSTextAlignmentCenter];
     [legend addSubview:capacityLabel];
     
-    currentHeight += spaceBetweenLegendLabels + heightOfLegendLabels;
-    
-    UILabel *waterFlowLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, currentHeight, legend_width, heightOfLegendLabels)];
+    UILabel *waterFlowLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * waterFlowIndex, legend_width, heightOfLegendLabels)];
     [waterFlowLabel setText:@"Water Flow"];
     [waterFlowLabel setFont:[UIFont systemFontOfSize:12.0]];
     [waterFlowLabel setBackgroundColor:[scoreColors objectForKey:@"puddleTime"]];
     [waterFlowLabel setTextAlignment:NSTextAlignmentCenter];
     [legend addSubview:waterFlowLabel];
     
-    currentHeight += spaceBetweenLegendLabels + heightOfLegendLabels;
-    
-    UILabel *maxFloodLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, currentHeight, legend_width, heightOfLegendLabels)];
+    UILabel *maxFloodLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * maxFloodIndex, legend_width, heightOfLegendLabels)];
     [maxFloodLabel setText:@"Maximum Flooded Area"];
     [maxFloodLabel setFont:[UIFont systemFontOfSize:12.0]];
     [maxFloodLabel setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
     [maxFloodLabel setTextAlignment:NSTextAlignmentCenter];
     [legend addSubview:maxFloodLabel];
     
-    currentHeight += spaceBetweenLegendLabels + heightOfLegendLabels;
-    
-    UILabel *groundwaterInfiltrationLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, currentHeight, legend_width, heightOfLegendLabels)];
+    UILabel *groundwaterInfiltrationLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * groundwaterInfiltrationIndex, legend_width, heightOfLegendLabels)];
     [groundwaterInfiltrationLabel setText:@"Groundwater Infiltration"];
     [groundwaterInfiltrationLabel setFont:[UIFont systemFontOfSize:12.0]];
     [groundwaterInfiltrationLabel setBackgroundColor:[scoreColors objectForKey:@"groundwaterInfiltration"]];
     [groundwaterInfiltrationLabel setTextAlignment:NSTextAlignmentCenter];
     [legend addSubview:groundwaterInfiltrationLabel];
     
-    currentHeight += spaceBetweenLegendLabels + heightOfLegendLabels;
-    
-    UILabel *impactLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, currentHeight, legend_width, heightOfLegendLabels)];
+    UILabel *impactLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * impactIndex, legend_width, heightOfLegendLabels)];
     [impactLabel setText:@"Impact on my Neighbors"];
     [impactLabel setFont:[UIFont systemFontOfSize:12.0]];
     [impactLabel setBackgroundColor:[scoreColors objectForKey:@"impactingMyNeighbors"]];
@@ -599,6 +664,23 @@ int barHeightMultiplier = 4;
     NSMutableArray *mArray = [trialGroups objectAtIndex:trialLabel.tag];
     int shrunk = ((StackedBar*)[mArray objectAtIndex:0]).shrunk;
     
+    if(trialLabel.tag == bestTrialForMe && bestForMe != NULL) {
+        if([bestForMe isHidden])
+            [self performSelector:@selector(toggleHidden:)
+                   withObject:bestForMe
+                   afterDelay:(0.5f)];
+        else
+            [self toggleHidden:bestForMe];
+    }
+    if(trialLabel.tag == worstTrialForMe && worstForMe != NULL) {
+        if([worstForMe isHidden])
+            [self performSelector:@selector(toggleHidden:)
+                   withObject:worstForMe
+                   afterDelay:(0.5f)];
+        else
+            [self toggleHidden:worstForMe];
+    }
+    
     for(StackedBar *bar in mArray) {
         
         // if we are going to shrink it, hide name
@@ -660,18 +742,33 @@ int barHeightMultiplier = 4;
     }
     
     int shiftAmount = mArray.count * (widthOfBar - widthOfBar / resizeFactor);
-    if(shrunk)
+    if(shrunk) {
         for(i = (int)trialLabel.tag + 1; i < trialGroups.count; i++) {
             [self shiftRight:[trialGroups objectAtIndex:i] amount:shiftAmount];
             UILabel *trialLabel = [trialLabels objectAtIndex:i];
             [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x + shiftAmount, trialLabel.frame.origin.y, trialLabel.frame.size.width, trialLabel.frame.size.height)];
         }
-    else
+        if(bestTrialForMe > trialLabel.tag && bestForMe != NULL) {
+            [bestForMe setFrame:CGRectMake(bestForMe.frame.origin.x + shiftAmount, bestForMe.frame.origin.y, bestForMe.frame.size.width, bestForMe.frame.size.height)];
+        }
+        if(worstTrialForMe > trialLabel.tag && worstForMe != NULL) {
+            [worstForMe setFrame:CGRectMake(worstForMe.frame.origin.x + shiftAmount, worstForMe.frame.origin.y, worstForMe.frame.size.width, worstForMe.frame.size.height)];
+        }
+        
+    }
+    else {
         for(i = (int)trialLabel.tag + 1; i < trialGroups.count; i++) {
             [self shiftLeft:[trialGroups objectAtIndex:i] amount:shiftAmount];
             UILabel *trialLabel = [trialLabels objectAtIndex:i];
             [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x - shiftAmount, trialLabel.frame.origin.y, trialLabel.frame.size.width, trialLabel.frame.size.height)];
         }
+        if(bestTrialForMe > trialLabel.tag && bestForMe != NULL) {
+            [bestForMe setFrame:CGRectMake(bestForMe.frame.origin.x - shiftAmount, bestForMe.frame.origin.y, bestForMe.frame.size.width, bestForMe.frame.size.height)];
+        }
+        if(worstTrialForMe > trialLabel.tag && worstForMe != NULL) {
+            [worstForMe setFrame:CGRectMake(worstForMe.frame.origin.x - shiftAmount, worstForMe.frame.origin.y, worstForMe.frame.size.width, worstForMe.frame.size.height)];
+        }
+    }
     
     
     [UIView commitAnimations];
@@ -681,6 +778,14 @@ int barHeightMultiplier = 4;
                afterDelay:(0.5f)];
 
 }
+
+- (void) toggleHidden:(UILabel*)label{
+    if([label isHidden])
+        [label setHidden:NO];
+    else
+        [label setHidden:YES];
+}
+
 
 - (void) showName:(NSMutableArray *)mArray {
     for(StackedBar *bar in mArray) {
