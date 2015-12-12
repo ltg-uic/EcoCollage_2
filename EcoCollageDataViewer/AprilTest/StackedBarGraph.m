@@ -455,7 +455,7 @@ int barHeightMultiplier = 4;
     [lowPriority setNumberOfLines:2];
     [_legendView addSubview:lowPriority];
     
-    int legendHeight = (highPriority.frame.origin.y - (lowPriority.frame.origin.y + lowPriority.frame.size.height)) * 2 / 3;
+    int legendHeight = (highPriority.frame.origin.y - (lowPriority.frame.origin.y + lowPriority.frame.size.height)) * 4 / 5;
     UIView *legend = [[UIView alloc]initWithFrame:CGRectMake(0, 0, legend_width, legendHeight)];
     int centerOfLegendY = (highPriority.frame.origin.y - (lowPriority.frame.origin.y + lowPriority.frame.size.height)) / 2 + lowPriority.frame.origin.y + lowPriority.frame.size.height;
     [legend setCenter:CGPointMake(legend_width / 2, centerOfLegendY)];
@@ -471,7 +471,7 @@ int barHeightMultiplier = 4;
     
     // figure out how much space we have between our lowPriority and highPriority labels
     int spaceBetweenLegendLabels = 5;
-    int heightOfLegendLabels = (legend.frame.size.height - spaceBetweenLegendLabels * 8 - 30) / 8;
+    int heightOfLegendLabels = (legend.frame.size.height - (spaceBetweenLegendLabels * 9) - legendLabel.frame.size.height) / 8;
     int startHeight = 25;
     int heightMultiplier = spaceBetweenLegendLabels + heightOfLegendLabels;
     
@@ -481,6 +481,10 @@ int barHeightMultiplier = 4;
     [investmentLabel setFont:[UIFont systemFontOfSize:12.0]];
     [investmentLabel setBackgroundColor:[scoreColors objectForKey:@"publicCost"]];
     [investmentLabel setTextAlignment:NSTextAlignmentCenter];
+    [investmentLabel setUserInteractionEnabled:YES];
+    UITapGestureRecognizer *investmentTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(investmentTapped)];
+    investmentTapRecognizer.numberOfTapsRequired = 1;
+    [investmentLabel addGestureRecognizer:investmentTapRecognizer];
     [legend addSubview:investmentLabel];
     
     UILabel *damageReductionLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * damageReductionIndex, legend_width, heightOfLegendLabels)];
@@ -488,6 +492,10 @@ int barHeightMultiplier = 4;
     [damageReductionLabel setFont:[UIFont systemFontOfSize:12.0]];
     [damageReductionLabel setBackgroundColor:[scoreColors objectForKey:@"privateCost"]];
     [damageReductionLabel setTextAlignment:NSTextAlignmentCenter];
+    [damageReductionLabel setUserInteractionEnabled:YES];
+    UITapGestureRecognizer *damageReducTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(damageReducTapped)];
+    damageReducTapRecognizer.numberOfTapsRequired = 1;
+    [damageReductionLabel addGestureRecognizer:damageReducTapRecognizer];
     [legend addSubview:damageReductionLabel];
     
     UILabel *efficiencyLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * efficiencyIndex, legend_width, heightOfLegendLabels)];
@@ -495,6 +503,10 @@ int barHeightMultiplier = 4;
     [efficiencyLabel setFont:[UIFont systemFontOfSize:12.0]];
     [efficiencyLabel setBackgroundColor:[scoreColors objectForKey:@"efficiencyOfIntervention"]];
     [efficiencyLabel setTextAlignment:NSTextAlignmentCenter];
+    [efficiencyLabel setUserInteractionEnabled:YES];
+    UITapGestureRecognizer *efficiencyTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(efficiencyTapped)];
+    efficiencyTapRecognizer.numberOfTapsRequired = 1;
+    [efficiencyLabel addGestureRecognizer:efficiencyTapRecognizer];
     [legend addSubview:efficiencyLabel];
     
     UILabel *capacityLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * capacityIndex, legend_width, heightOfLegendLabels)];
@@ -502,6 +514,10 @@ int barHeightMultiplier = 4;
     [capacityLabel setFont:[UIFont systemFontOfSize:12.0]];
     [capacityLabel setBackgroundColor:[scoreColors objectForKey:@"capacity"]];
     [capacityLabel setTextAlignment:NSTextAlignmentCenter];
+    [capacityLabel setUserInteractionEnabled:YES];
+    UITapGestureRecognizer *capacityTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(interventionCapTapped)];
+    capacityTapRecognizer.numberOfTapsRequired = 1;
+    [capacityLabel addGestureRecognizer:capacityTapRecognizer];
     [legend addSubview:capacityLabel];
     
     UILabel *waterFlowLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * waterFlowIndex, legend_width, heightOfLegendLabels)];
@@ -509,6 +525,10 @@ int barHeightMultiplier = 4;
     [waterFlowLabel setFont:[UIFont systemFontOfSize:12.0]];
     [waterFlowLabel setBackgroundColor:[scoreColors objectForKey:@"puddleTime"]];
     [waterFlowLabel setTextAlignment:NSTextAlignmentCenter];
+    [waterFlowLabel setUserInteractionEnabled:YES];
+    UITapGestureRecognizer *waterDepthTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
+    waterDepthTapRecognizer.numberOfTapsRequired = 1;
+    [waterFlowLabel addGestureRecognizer:waterDepthTapRecognizer];
     [legend addSubview:waterFlowLabel];
     
     UILabel *maxFloodLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * maxFloodIndex, legend_width, heightOfLegendLabels)];
@@ -516,6 +536,10 @@ int barHeightMultiplier = 4;
     [maxFloodLabel setFont:[UIFont systemFontOfSize:12.0]];
     [maxFloodLabel setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
     [maxFloodLabel setTextAlignment:NSTextAlignmentCenter];
+    [maxFloodLabel setUserInteractionEnabled:YES];
+    UITapGestureRecognizer *maxFloodTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(maxFloodTapped)];
+    maxFloodTapRecognizer.numberOfTapsRequired = 1;
+    [maxFloodLabel addGestureRecognizer:maxFloodTapRecognizer];
     [legend addSubview:maxFloodLabel];
     
     UILabel *groundwaterInfiltrationLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * groundwaterInfiltrationIndex, legend_width, heightOfLegendLabels)];
@@ -523,6 +547,10 @@ int barHeightMultiplier = 4;
     [groundwaterInfiltrationLabel setFont:[UIFont systemFontOfSize:12.0]];
     [groundwaterInfiltrationLabel setBackgroundColor:[scoreColors objectForKey:@"groundwaterInfiltration"]];
     [groundwaterInfiltrationLabel setTextAlignment:NSTextAlignmentCenter];
+    [groundwaterInfiltrationLabel setUserInteractionEnabled:YES];
+    UITapGestureRecognizer *groundwaterTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(groundwaterTapped)];
+    groundwaterTapRecognizer.numberOfTapsRequired = 1;
+    [groundwaterInfiltrationLabel addGestureRecognizer:groundwaterTapRecognizer];
     [legend addSubview:groundwaterInfiltrationLabel];
     
     UILabel *impactLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * impactIndex, legend_width, heightOfLegendLabels)];
@@ -530,6 +558,10 @@ int barHeightMultiplier = 4;
     [impactLabel setFont:[UIFont systemFontOfSize:12.0]];
     [impactLabel setBackgroundColor:[scoreColors objectForKey:@"impactingMyNeighbors"]];
     [impactLabel setTextAlignment:NSTextAlignmentCenter];
+    [impactLabel setUserInteractionEnabled:YES];
+    UITapGestureRecognizer *impactTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
+    impactTapRecognizer.numberOfTapsRequired = 1;
+    [impactLabel addGestureRecognizer:impactTapRecognizer];
     [legend addSubview:impactLabel];
     
     
@@ -820,10 +852,57 @@ int barHeightMultiplier = 4;
         [bar changeTextColor:[scoreColors objectForKey:@"impactingMyNeighbors"]];
     }
     
+    
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    
+    for(StackedBar *bar in _stackedBars) {
+        CGFloat hue;
+        CGFloat saturation;
+        CGFloat brightness;
+        CGFloat alpha;
+        [bar.impact.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        [bar.impact setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        if(bar.hasContainers) {
+            [bar.impact.layer setBorderWidth:0.0];
+            [bar.impactContainer.layer setBorderWidth:1.0];
+        }
+        else {
+            [bar.impact.layer setBorderWidth:1.0];
+            [bar.impactContainer.layer setBorderWidth:0.0];
+        }
+        
+        for(UIView *category in bar.outcomeCategoryViews) {
+            if(![category isEqual:bar.impact]) {
+                [category.layer setBorderWidth:0.0];
+                CGFloat hue;
+                CGFloat saturation;
+                CGFloat brightness;
+                CGFloat alpha;
+                [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+                [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            }
+        }
+        
+        for(UIView *categoryContainer in bar.outcomeCategoryContainers) {
+            if(![categoryContainer  isEqual:bar.impactContainer]) {
+                [categoryContainer.layer setBorderWidth:0.0];
+            }
+        }
+    }
+    
+    [UIView commitAnimations];
+    
+    
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:3.0];
+               afterDelay:5.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tImpact on my Neighbors"];
@@ -839,10 +918,57 @@ int barHeightMultiplier = 4;
         [bar changeTextColor:[scoreColors objectForKey:@"groundwaterInfiltration"]];
     }
     
+    
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    
+    for(StackedBar *bar in _stackedBars) {
+        CGFloat hue;
+        CGFloat saturation;
+        CGFloat brightness;
+        CGFloat alpha;
+        [bar.groundwaterInfiltration.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        [bar.groundwaterInfiltration setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        if(bar.hasContainers) {
+            [bar.groundwaterInfiltration.layer setBorderWidth:0.0];
+            [bar.groundwaterInfiltrationContainer.layer setBorderWidth:1.0];
+        }
+        else {
+            [bar.groundwaterInfiltration.layer setBorderWidth:1.0];
+            [bar.groundwaterInfiltrationContainer.layer setBorderWidth:0.0];
+        }
+        
+        for(UIView *category in bar.outcomeCategoryViews) {
+            if(![category isEqual:bar.groundwaterInfiltration]) {
+                [category.layer setBorderWidth:0.0];
+                CGFloat hue;
+                CGFloat saturation;
+                CGFloat brightness;
+                CGFloat alpha;
+                [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+                [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            }
+        }
+        
+        for(UIView *categoryContainer in bar.outcomeCategoryContainers) {
+            if(![categoryContainer  isEqual:bar.groundwaterInfiltrationContainer]) {
+                [categoryContainer.layer setBorderWidth:0.0];
+            }
+        }
+    }
+    
+    [UIView commitAnimations];
+    
+    
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:3.0];
+               afterDelay:5.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tGroundwater Infiltration"];
@@ -858,10 +984,55 @@ int barHeightMultiplier = 4;
         [bar changeTextColor:[scoreColors objectForKey:@"puddleMax"]];
     }
     
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    
+    for(StackedBar *bar in _stackedBars) {
+        CGFloat hue;
+        CGFloat saturation;
+        CGFloat brightness;
+        CGFloat alpha;
+        [bar.maxFlood.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        [bar.maxFlood setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        if(bar.hasContainers) {
+            [bar.maxFlood.layer setBorderWidth:0.0];
+            [bar.maxFloodContainer.layer setBorderWidth:1.0];
+        }
+        else {
+            [bar.maxFlood.layer setBorderWidth:1.0];
+            [bar.maxFloodContainer.layer setBorderWidth:0.0];
+        }
+        
+        for(UIView *category in bar.outcomeCategoryViews) {
+            if(![category isEqual:bar.maxFlood]) {
+                [category.layer setBorderWidth:0.0];
+                CGFloat hue;
+                CGFloat saturation;
+                CGFloat brightness;
+                CGFloat alpha;
+                [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+                [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            }
+        }
+        
+        for(UIView *categoryContainer in bar.outcomeCategoryContainers) {
+            if(![categoryContainer  isEqual:bar.maxFloodContainer]) {
+                [categoryContainer.layer setBorderWidth:0.0];
+            }
+        }
+    }
+    
+    [UIView commitAnimations];
+    
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:3.0];
+               afterDelay:5.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tMaximum Flooded Area"];
@@ -877,10 +1048,55 @@ int barHeightMultiplier = 4;
         [bar changeTextColor:[scoreColors objectForKey:@"puddleTime"]];
     }
     
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    
+    for(StackedBar *bar in _stackedBars) {
+        CGFloat hue;
+        CGFloat saturation;
+        CGFloat brightness;
+        CGFloat alpha;
+        [bar.waterFlow.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        [bar.waterFlow setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        if(bar.hasContainers) {
+            [bar.waterFlow.layer setBorderWidth:0.0];
+            [bar.waterFlowContainer.layer setBorderWidth:1.0];
+        }
+        else {
+            [bar.waterFlow.layer setBorderWidth:1.0];
+            [bar.waterFlowContainer.layer setBorderWidth:0.0];
+        }
+        
+        for(UIView *category in bar.outcomeCategoryViews) {
+            if(![category isEqual:bar.waterFlow]) {
+                [category.layer setBorderWidth:0.0];
+                CGFloat hue;
+                CGFloat saturation;
+                CGFloat brightness;
+                CGFloat alpha;
+                [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+                [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            }
+        }
+        
+        for(UIView *categoryContainer in bar.outcomeCategoryContainers) {
+            if(![categoryContainer  isEqual:bar.waterFlowContainer]) {
+                [categoryContainer.layer setBorderWidth:0.0];
+            }
+        }
+    }
+    
+    [UIView commitAnimations];
+    
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:3.0];
+               afterDelay:5.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tWater Flow"];
@@ -896,10 +1112,56 @@ int barHeightMultiplier = 4;
         [bar changeTextColor:[scoreColors objectForKey:@"capacity"]];
     }
     
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    
+    for(StackedBar *bar in _stackedBars) {
+        CGFloat hue;
+        CGFloat saturation;
+        CGFloat brightness;
+        CGFloat alpha;
+        [bar.capacity.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        [bar.capacity setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        if(bar.hasContainers) {
+            [bar.capacity.layer setBorderWidth:0.0];
+            [bar.capacityContainer.layer setBorderWidth:1.0];
+        }
+        else {
+            [bar.capacity.layer setBorderWidth:1.0];
+            [bar.capacityContainer.layer setBorderWidth:0.0];
+        }
+        
+        for(UIView *category in bar.outcomeCategoryViews) {
+            if(![category isEqual:bar.capacity]) {
+                [category.layer setBorderWidth:0.0];
+                CGFloat hue;
+                CGFloat saturation;
+                CGFloat brightness;
+                CGFloat alpha;
+                [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+                [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            }
+        }
+        
+        
+        for(UIView *categoryContainer in bar.outcomeCategoryContainers) {
+            if(![categoryContainer  isEqual:bar.capacityContainer]) {
+                [categoryContainer.layer setBorderWidth:0.0];
+            }
+        }
+    }
+    
+    [UIView commitAnimations];
+    
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:3.0];
+               afterDelay:5.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tIntervention Capacity"];
@@ -915,10 +1177,55 @@ int barHeightMultiplier = 4;
         [bar changeTextColor:[scoreColors objectForKey:@"efficiencyOfIntervention"]];
     }
     
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    
+    for(StackedBar *bar in _stackedBars) {
+        CGFloat hue;
+        CGFloat saturation;
+        CGFloat brightness;
+        CGFloat alpha;
+        [bar.efficiency.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        [bar.efficiency setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        if(bar.hasContainers) {
+            [bar.efficiency.layer setBorderWidth:0.0];
+            [bar.efficiencyContainer.layer setBorderWidth:1.0];
+        }
+        else {
+            [bar.efficiency.layer setBorderWidth:1.0];
+            [bar.efficiencyContainer.layer setBorderWidth:0.0];
+        }
+        
+        for(UIView *category in bar.outcomeCategoryViews) {
+            if(![category isEqual:bar.efficiency]) {
+                [category.layer setBorderWidth:0.0];
+                CGFloat hue;
+                CGFloat saturation;
+                CGFloat brightness;
+                CGFloat alpha;
+                [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+                [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            }
+        }
+        
+        for(UIView *categoryContainer in bar.outcomeCategoryContainers) {
+            if(![categoryContainer  isEqual:bar.efficiencyContainer]) {
+                [categoryContainer.layer setBorderWidth:0.0];
+            }
+        }
+    }
+    
+    [UIView commitAnimations];
+    
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:3.0];
+               afterDelay:5.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tEfficiency of Intervention"];
@@ -934,10 +1241,56 @@ int barHeightMultiplier = 4;
         [bar changeTextColor:[scoreColors objectForKey:@"privateCost"]];
     }
     
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    
+    for(StackedBar *bar in _stackedBars) {
+        CGFloat hue;
+        CGFloat saturation;
+        CGFloat brightness;
+        CGFloat alpha;
+        [bar.damageReduction.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        [bar.damageReduction setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        if(bar.hasContainers) {
+            [bar.damageReduction.layer setBorderWidth:0.0];
+            [bar.damageReductionContainer.layer setBorderWidth:1.0];
+        }
+        else {
+            [bar.damageReduction.layer setBorderWidth:1.0];
+            [bar.damageReductionContainer.layer setBorderWidth:0.0];
+        }
+        
+        for(UIView *category in bar.outcomeCategoryViews) {
+            if(![category isEqual:bar.damageReduction]) {
+                [category.layer setBorderWidth:0.0];
+                CGFloat hue;
+                CGFloat saturation;
+                CGFloat brightness;
+                CGFloat alpha;
+                [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+                [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            }
+        }
+        
+        
+        for(UIView *categoryContainer in bar.outcomeCategoryContainers) {
+            if(![categoryContainer  isEqual:bar.damageReductionContainer]) {
+                [categoryContainer.layer setBorderWidth:0.0];
+            }
+        }
+    }
+    
+    [UIView commitAnimations];
+    
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:3.0];
+               afterDelay:5.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tDamage Reduction"];
@@ -952,11 +1305,56 @@ int barHeightMultiplier = 4;
         [bar changeText:text];
         [bar changeTextColor:[scoreColors objectForKey:@"publicCost"]];
     }
+    
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    
+    for(StackedBar *bar in _stackedBars) {
+        CGFloat hue;
+        CGFloat saturation;
+        CGFloat brightness;
+        CGFloat alpha;
+        [bar.investment.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        [bar.investment setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        if(bar.hasContainers) {
+            [bar.investment.layer setBorderWidth:0.0];
+            [bar.investmentContainer.layer setBorderWidth:1.0];
+        }
+        else {
+            [bar.investment.layer setBorderWidth:1.0];
+            [bar.investmentContainer.layer setBorderWidth:0.0];
+        }
+    
+    
+        for(UIView *category in bar.outcomeCategoryViews) {
+            if(![category isEqual:bar.investment]) {
+                [category.layer setBorderWidth:0.0];
+                CGFloat hue;
+                CGFloat saturation;
+                CGFloat brightness;
+                CGFloat alpha;
+                [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+                [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            }
+        }
+        
+        for(UIView *categoryContainer in bar.outcomeCategoryContainers) {
+            if(![categoryContainer  isEqual:bar.investmentContainer]) {
+                [categoryContainer.layer setBorderWidth:0.0];
+            }
+        }
+    }
 
+    [UIView commitAnimations];
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
-               afterDelay:3.0];
+               afterDelay:5.0];
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tInvestment"];

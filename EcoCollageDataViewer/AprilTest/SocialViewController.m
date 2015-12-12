@@ -1458,9 +1458,13 @@ int                         heightMultiplier = 5;
     }
     
     [SBG removeFromSuperview];
-    SBG = [[StackedBarGraph alloc]initWithFrame:SBG_frame andTabController:tabControl withContainers:_stackedBarSwitch.isOn];
+    SBG = [[StackedBarGraph alloc]initWithFrame:CGRectMake(0, 108, 1052, 572) andTabController:tabControl withContainers:_stackedBarSwitch.isOn];
     [self.view addSubview:SBG];
     [SBG setContentOffset:offset];
+    
+    if(_mapWindow.frame.size.height == largeSizeOfMapWindow) {
+        [SBG setFrame:CGRectMake(0, 278, 1052, 402)];
+    }
 
     // remove all intervention displays so they can be redrawn
     for (UIView *subview in [bottomOfMapWindow subviews]) {

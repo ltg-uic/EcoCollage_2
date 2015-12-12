@@ -45,10 +45,16 @@
 @synthesize impactEmpty = _impactEmpty;
 @synthesize impact = _impact;
 
+@synthesize outcomeCategoryViews = _outcomeCategoryViews;
+@synthesize outcomeCategoryContainers = _outcomeCategoryContainers;
+@synthesize outcomeCategoryEmpties = _outcomeCategoryEmpties;
+
 @synthesize score = _score;
 
 @synthesize shrunk = _shrunk;
 @synthesize name = _name;
+
+@synthesize hasContainers = _hasContainers;
 
 
 NSMutableDictionary *concernNames;
@@ -60,6 +66,7 @@ int orderedStrictly;
 int withContainers;
 int scaledToScreen;
 int heightMultiplier;
+int width;
 
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -74,9 +81,15 @@ int heightMultiplier;
 {
     self = [super initWithFrame:frame];
     
+    _hasContainers = wC;
+    
+    _outcomeCategoryViews = [[NSMutableArray alloc]init];
+    _outcomeCategoryContainers = [[NSMutableArray alloc]init];
+    _outcomeCategoryEmpties = [[NSMutableArray alloc]init];
+    
     _shrunk = 0;
     
-    int width = frame.size.width;
+    width = frame.size.width;
     
     _name = [[UILabel alloc]init];
     
@@ -445,6 +458,32 @@ int heightMultiplier;
     _score.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     [_score setTextAlignment:NSTextAlignmentCenter];
     
+    [_outcomeCategoryViews addObject:_investment];
+    [_outcomeCategoryViews addObject:_impact];
+    [_outcomeCategoryViews addObject:_groundwaterInfiltration];
+    [_outcomeCategoryViews addObject:_maxFlood];
+    [_outcomeCategoryViews addObject:_waterFlow];
+    [_outcomeCategoryViews addObject:_capacity];
+    [_outcomeCategoryViews addObject:_efficiency];
+    [_outcomeCategoryViews addObject:_damageReduction];
+    
+    [_outcomeCategoryContainers addObject:_investmentContainer];
+    [_outcomeCategoryContainers addObject:_impactContainer];
+    [_outcomeCategoryContainers addObject:_groundwaterInfiltrationContainer];
+    [_outcomeCategoryContainers addObject:_maxFloodContainer];
+    [_outcomeCategoryContainers addObject:_waterFlowContainer];
+    [_outcomeCategoryContainers addObject:_capacityContainer];
+    [_outcomeCategoryContainers addObject:_efficiencyContainer];
+    [_outcomeCategoryContainers addObject:_damageReductionContainer];
+    
+    [_outcomeCategoryEmpties addObject:_investmentEmpty];
+    [_outcomeCategoryEmpties addObject:_impactEmpty];
+    [_outcomeCategoryEmpties addObject:_groundwaterInfiltrationEmpty];
+    [_outcomeCategoryEmpties addObject:_maxFloodEmpty];
+    [_outcomeCategoryEmpties addObject:_waterFlowEmpty];
+    [_outcomeCategoryEmpties addObject:_capacityEmpty];
+    [_outcomeCategoryEmpties addObject:_efficiencyEmpty];
+    [_outcomeCategoryEmpties addObject:_damageReductionEmpty];
 /*
     [_investmentEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
     [_impactEmpty setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"diag_hatch.jpg"]]];
@@ -489,47 +528,14 @@ int heightMultiplier;
     return self;
 }
 
-- (void) reloadBar:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM {
+- (void) reloadBar:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM withScore:(float*)totalScore{
 
-    
-    [_impact removeFromSuperview];
-    [_groundwaterInfiltration removeFromSuperview];
-    [_maxFlood removeFromSuperview];
-    [_waterFlow removeFromSuperview];
-    [_capacity removeFromSuperview];
-    [_efficiency removeFromSuperview];
-    [_damageReduction removeFromSuperview];
-    [_investment removeFromSuperview];
-    [_score removeFromSuperview];
-    
-    [_impactEmpty removeFromSuperview];
-    [_impactContainer removeFromSuperview];
-    [_groundwaterInfiltrationEmpty removeFromSuperview];
-    [_groundwaterInfiltrationContainer removeFromSuperview];
-    [_maxFloodEmpty removeFromSuperview];
-    [_maxFloodContainer removeFromSuperview];
-    [_waterFlowEmpty removeFromSuperview];
-    [_waterFlowContainer removeFromSuperview];
-    [_capacityEmpty removeFromSuperview];
-    [_capacityContainer removeFromSuperview];
-    [_efficiencyEmpty removeFromSuperview];
-    [_efficiencyContainer removeFromSuperview];
-    [_damageReductionEmpty removeFromSuperview];
-    [_damageReductionContainer removeFromSuperview];
-    [_investmentEmpty removeFromSuperview];
-    [_investmentContainer removeFromSuperview];
-    
-    int width = self.frame.size.width;
-    
-    [_name removeFromSuperview];
-    
     NSString *name = [profile objectAtIndex:2];
     [_name setText:[name substringWithRange:NSMakeRange(0, (name.length > 3) ? 3 : name.length)]];
     [_name setFont:[UIFont systemFontOfSize:12]];
     [_name sizeToFit];
     [_name setTextAlignment:NSTextAlignmentCenter];
     
-    [self addSubview:_name];
     
     NSMutableArray* scoreVisVals = [scores objectAtIndex:0];
     NSMutableArray* scoreVisNames = [scores objectAtIndex:1];
@@ -552,8 +558,6 @@ int heightMultiplier;
         }
     }
     
-    
-    
     int currHeight = self.superview.frame.size.height;
     
     if(!orderedStrictly) {
@@ -563,7 +567,7 @@ int heightMultiplier;
         }
     }
     
-    for(int k = 0; k < scoreVisNames.count; k++) {
+    for(int k = 0; k < scoreVisNames.count - 1; k++) {
         int heightOfThisCategory;
         int indexOfScore = 0;
         NSString *visName = [[NSString alloc]init];
@@ -578,6 +582,7 @@ int heightMultiplier;
         heightOfThisCategory *= heightMultiplier;
         if(scaledToScreen) heightOfThisCategory = heightOfThisCategory * scaleSize;
         if (heightOfThisCategory < 0) heightOfThisCategory = 0;
+        *totalScore += heightOfThisCategory;
         
         int containerSize = [[tierSizes objectAtIndex:k]integerValue];
         
@@ -799,44 +804,13 @@ int heightMultiplier;
         }
     }
     
-    [_score removeFromSuperview];
-    
-    _score.frame = CGRectMake(0, currHeight - 20, width, 20);
+    if(wC)
+        _score.frame = CGRectMake(0, currHeight - 21, width, 20);
+    else
+        _score.frame = CGRectMake(0, currHeight - 25, width, 20);
     _score.text = @"";
     _score.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     [_score setTextAlignment:NSTextAlignmentCenter];
-    
-    [self addSubview:_score];
-    
-    [self addSubview:_impact];
-    [self addSubview:_groundwaterInfiltration];
-    [self addSubview:_maxFlood];
-    [self addSubview:_waterFlow];
-    [self addSubview:_capacity];
-    [self addSubview:_efficiency];
-    [self addSubview:_damageReduction];
-    [self addSubview:_investment];
-    [self addSubview:_score];
-    
-    if(wC) {
-        [self addSubview:_impactEmpty];
-        [self addSubview:_impactContainer];
-        [self addSubview:_groundwaterInfiltrationEmpty];
-        [self addSubview:_groundwaterInfiltrationContainer];
-        [self addSubview:_maxFloodEmpty];
-        [self addSubview:_maxFloodContainer];
-        [self addSubview:_waterFlowEmpty];
-        [self addSubview:_waterFlowContainer];
-        [self addSubview:_capacityEmpty];
-        [self addSubview:_capacityContainer];
-        [self addSubview:_efficiencyEmpty];
-        [self addSubview:_efficiencyContainer];
-        [self addSubview:_damageReductionEmpty];
-        [self addSubview:_damageReductionContainer];
-        [self addSubview:_investmentEmpty];
-        [self addSubview:_investmentContainer];
-    }
-
 }
 
 - (void) changeText:(NSString *)text {

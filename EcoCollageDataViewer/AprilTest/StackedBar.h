@@ -42,15 +42,21 @@
 @property UIView *impactEmpty;
 @property UIView *impact;
 
+@property NSMutableArray *outcomeCategoryViews;
+@property NSMutableArray *outcomeCategoryContainers;
+@property NSMutableArray *outcomeCategoryEmpties;
+
 @property UILabel *score;
 @property UILabel *name;
+
+@property BOOL hasContainers;
 
 @property int shrunk;
 
 
 - (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM withScore:(float*)totalScore;
 
-- (void) reloadBar:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM;
+- (void) reloadBar:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM withScore:(float*)totalScore;
     
 
 - (void)changeText:(NSString *)text;
