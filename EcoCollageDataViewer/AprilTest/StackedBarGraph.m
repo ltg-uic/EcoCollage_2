@@ -21,6 +21,17 @@ NSMutableArray *trialLabels;
 
 NSMutableDictionary *scoreColors;
 
+UILabel *investmentLegendLabel;
+UILabel *damageReductionLegendLabel;
+UILabel *waterFlowLegendLabel;
+UILabel *capacityLegendLabel;
+UILabel *efficiencyLegendLabel;
+UILabel *impactLegendLabel;
+UILabel *groundwaterLegendLabel;
+UILabel *maxFloodLegendLabel;
+
+NSMutableArray *legendLabels;
+
 UIView *xAxis;
 UIView *yAxis;
 UILabel *bestForMe;
@@ -292,7 +303,20 @@ int barHeightMultiplier = 4;
             [bar.name setFrame:CGRectMake(x, yAxis.frame.origin.y + yAxis.frame.size.height, width, 20)];
             [_scoreBarsView addSubview:bar.name];
             
-            
+            if(bar.hasContainers) {
+                for(UIView *container in bar.outcomeCategoryContainers) {
+                    UITapGestureRecognizer *resetCategories = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resetAllCategories)];
+                    resetCategories.numberOfTapsRequired = 2;
+                    [container addGestureRecognizer:resetCategories];
+                }
+            }
+            else {
+                for(UIView *category in bar.outcomeCategoryViews) {
+                    UITapGestureRecognizer *resetCategories = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resetAllCategories)];
+                    resetCategories.numberOfTapsRequired = 2;
+                    [category addGestureRecognizer:resetCategories];
+                }
+            }
             
             UITapGestureRecognizer *impactRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
             impactRecognizer.numberOfTapsRequired = 1;
@@ -475,95 +499,121 @@ int barHeightMultiplier = 4;
     int startHeight = 25;
     int heightMultiplier = spaceBetweenLegendLabels + heightOfLegendLabels;
     
+    UITapGestureRecognizer *resetLabels1 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
+    resetLabels1.numberOfTapsRequired = 2;
+    UITapGestureRecognizer *resetLabels2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
+    resetLabels2.numberOfTapsRequired = 2;
+    UITapGestureRecognizer *resetLabels3 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
+    resetLabels3.numberOfTapsRequired = 2;
+    UITapGestureRecognizer *resetLabels4 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
+    resetLabels4.numberOfTapsRequired = 2;
+    UITapGestureRecognizer *resetLabels5 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
+    resetLabels5.numberOfTapsRequired = 2;
+    UITapGestureRecognizer *resetLabels6 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
+    resetLabels6.numberOfTapsRequired = 2;
+    UITapGestureRecognizer *resetLabels7 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
+    resetLabels7.numberOfTapsRequired = 2;
+    UITapGestureRecognizer *resetLabels8 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
+    resetLabels8.numberOfTapsRequired = 2;
+    
     // labels for the legend to distinguish which color is which category
-    UILabel *investmentLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * investmentIndex, legend_width, heightOfLegendLabels)];
-    [investmentLabel setText:@"Investment"];
-    [investmentLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [investmentLabel setBackgroundColor:[scoreColors objectForKey:@"publicCost"]];
-    [investmentLabel setTextAlignment:NSTextAlignmentCenter];
-    [investmentLabel setUserInteractionEnabled:YES];
+    investmentLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * investmentIndex, legend_width, heightOfLegendLabels)];
+    [investmentLegendLabel setText:@"Investment"];
+    [investmentLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
+    [investmentLegendLabel setBackgroundColor:[scoreColors objectForKey:@"publicCost"]];
+    [investmentLegendLabel setTextAlignment:NSTextAlignmentCenter];
+    [investmentLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *investmentTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(investmentTapped)];
     investmentTapRecognizer.numberOfTapsRequired = 1;
-    [investmentLabel addGestureRecognizer:investmentTapRecognizer];
-    [legend addSubview:investmentLabel];
+    [investmentLegendLabel addGestureRecognizer:investmentTapRecognizer];
+    [investmentLegendLabel addGestureRecognizer:resetLabels1];
+    [legend addSubview:investmentLegendLabel];
     
-    UILabel *damageReductionLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * damageReductionIndex, legend_width, heightOfLegendLabels)];
-    [damageReductionLabel setText:@"Damage Reduction"];
-    [damageReductionLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [damageReductionLabel setBackgroundColor:[scoreColors objectForKey:@"privateCost"]];
-    [damageReductionLabel setTextAlignment:NSTextAlignmentCenter];
-    [damageReductionLabel setUserInteractionEnabled:YES];
+    damageReductionLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * damageReductionIndex, legend_width, heightOfLegendLabels)];
+    [damageReductionLegendLabel setText:@"Damage Reduction"];
+    [damageReductionLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
+    [damageReductionLegendLabel setBackgroundColor:[scoreColors objectForKey:@"privateCost"]];
+    [damageReductionLegendLabel setTextAlignment:NSTextAlignmentCenter];
+    [damageReductionLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *damageReducTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(damageReducTapped)];
     damageReducTapRecognizer.numberOfTapsRequired = 1;
-    [damageReductionLabel addGestureRecognizer:damageReducTapRecognizer];
-    [legend addSubview:damageReductionLabel];
+    [damageReductionLegendLabel addGestureRecognizer:damageReducTapRecognizer];
+    [damageReductionLegendLabel addGestureRecognizer:resetLabels2];
+    [legend addSubview:damageReductionLegendLabel];
     
-    UILabel *efficiencyLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * efficiencyIndex, legend_width, heightOfLegendLabels)];
-    [efficiencyLabel setText:@"Efficiency of Intervention"];
-    [efficiencyLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [efficiencyLabel setBackgroundColor:[scoreColors objectForKey:@"efficiencyOfIntervention"]];
-    [efficiencyLabel setTextAlignment:NSTextAlignmentCenter];
-    [efficiencyLabel setUserInteractionEnabled:YES];
+    efficiencyLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * efficiencyIndex, legend_width, heightOfLegendLabels)];
+    [efficiencyLegendLabel setText:@"Efficiency of Intervention"];
+    [efficiencyLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
+    [efficiencyLegendLabel setBackgroundColor:[scoreColors objectForKey:@"efficiencyOfIntervention"]];
+    [efficiencyLegendLabel setTextAlignment:NSTextAlignmentCenter];
+    [efficiencyLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *efficiencyTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(efficiencyTapped)];
     efficiencyTapRecognizer.numberOfTapsRequired = 1;
-    [efficiencyLabel addGestureRecognizer:efficiencyTapRecognizer];
-    [legend addSubview:efficiencyLabel];
+    [efficiencyLegendLabel addGestureRecognizer:efficiencyTapRecognizer];
+    [efficiencyLegendLabel addGestureRecognizer:resetLabels3];
+    [legend addSubview:efficiencyLegendLabel];
     
-    UILabel *capacityLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * capacityIndex, legend_width, heightOfLegendLabels)];
-    [capacityLabel setText:@"Intervention Capacity"];
-    [capacityLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [capacityLabel setBackgroundColor:[scoreColors objectForKey:@"capacity"]];
-    [capacityLabel setTextAlignment:NSTextAlignmentCenter];
-    [capacityLabel setUserInteractionEnabled:YES];
+    capacityLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * capacityIndex, legend_width, heightOfLegendLabels)];
+    [capacityLegendLabel setText:@"Intervention Capacity"];
+    [capacityLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
+    [capacityLegendLabel setBackgroundColor:[scoreColors objectForKey:@"capacity"]];
+    [capacityLegendLabel setTextAlignment:NSTextAlignmentCenter];
+    [capacityLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *capacityTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(interventionCapTapped)];
     capacityTapRecognizer.numberOfTapsRequired = 1;
-    [capacityLabel addGestureRecognizer:capacityTapRecognizer];
-    [legend addSubview:capacityLabel];
+    [capacityLegendLabel addGestureRecognizer:capacityTapRecognizer];
+    [capacityLegendLabel addGestureRecognizer:resetLabels4];
+    [legend addSubview:capacityLegendLabel];
     
-    UILabel *waterFlowLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * waterFlowIndex, legend_width, heightOfLegendLabels)];
-    [waterFlowLabel setText:@"Water Flow"];
-    [waterFlowLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [waterFlowLabel setBackgroundColor:[scoreColors objectForKey:@"puddleTime"]];
-    [waterFlowLabel setTextAlignment:NSTextAlignmentCenter];
-    [waterFlowLabel setUserInteractionEnabled:YES];
+    waterFlowLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * waterFlowIndex, legend_width, heightOfLegendLabels)];
+    [waterFlowLegendLabel setText:@"Water Flow"];
+    [waterFlowLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
+    [waterFlowLegendLabel setBackgroundColor:[scoreColors objectForKey:@"puddleTime"]];
+    [waterFlowLegendLabel setTextAlignment:NSTextAlignmentCenter];
+    [waterFlowLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *waterDepthTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
     waterDepthTapRecognizer.numberOfTapsRequired = 1;
-    [waterFlowLabel addGestureRecognizer:waterDepthTapRecognizer];
-    [legend addSubview:waterFlowLabel];
+    [waterFlowLegendLabel addGestureRecognizer:waterDepthTapRecognizer];
+    [waterFlowLegendLabel addGestureRecognizer:resetLabels5];
+    [legend addSubview:waterFlowLegendLabel];
     
-    UILabel *maxFloodLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * maxFloodIndex, legend_width, heightOfLegendLabels)];
-    [maxFloodLabel setText:@"Maximum Flooded Area"];
-    [maxFloodLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [maxFloodLabel setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
-    [maxFloodLabel setTextAlignment:NSTextAlignmentCenter];
-    [maxFloodLabel setUserInteractionEnabled:YES];
+    maxFloodLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * maxFloodIndex, legend_width, heightOfLegendLabels)];
+    [maxFloodLegendLabel setText:@"Maximum Flooded Area"];
+    [maxFloodLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
+    [maxFloodLegendLabel setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
+    [maxFloodLegendLabel setTextAlignment:NSTextAlignmentCenter];
+    [maxFloodLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *maxFloodTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(maxFloodTapped)];
     maxFloodTapRecognizer.numberOfTapsRequired = 1;
-    [maxFloodLabel addGestureRecognizer:maxFloodTapRecognizer];
-    [legend addSubview:maxFloodLabel];
+    [maxFloodLegendLabel addGestureRecognizer:maxFloodTapRecognizer];
+    [maxFloodLegendLabel addGestureRecognizer:resetLabels6];
+    [legend addSubview:maxFloodLegendLabel];
     
-    UILabel *groundwaterInfiltrationLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * groundwaterInfiltrationIndex, legend_width, heightOfLegendLabels)];
-    [groundwaterInfiltrationLabel setText:@"Groundwater Infiltration"];
-    [groundwaterInfiltrationLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [groundwaterInfiltrationLabel setBackgroundColor:[scoreColors objectForKey:@"groundwaterInfiltration"]];
-    [groundwaterInfiltrationLabel setTextAlignment:NSTextAlignmentCenter];
-    [groundwaterInfiltrationLabel setUserInteractionEnabled:YES];
+    groundwaterLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * groundwaterInfiltrationIndex, legend_width, heightOfLegendLabels)];
+    [groundwaterLegendLabel setText:@"Groundwater Infiltration"];
+    [groundwaterLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
+    [groundwaterLegendLabel setBackgroundColor:[scoreColors objectForKey:@"groundwaterInfiltration"]];
+    [groundwaterLegendLabel setTextAlignment:NSTextAlignmentCenter];
+    [groundwaterLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *groundwaterTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(groundwaterTapped)];
     groundwaterTapRecognizer.numberOfTapsRequired = 1;
-    [groundwaterInfiltrationLabel addGestureRecognizer:groundwaterTapRecognizer];
-    [legend addSubview:groundwaterInfiltrationLabel];
+    [groundwaterLegendLabel addGestureRecognizer:groundwaterTapRecognizer];
+    [groundwaterLegendLabel addGestureRecognizer:resetLabels7];
+    [legend addSubview:groundwaterLegendLabel];
     
-    UILabel *impactLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * impactIndex, legend_width, heightOfLegendLabels)];
-    [impactLabel setText:@"Impact on my Neighbors"];
-    [impactLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [impactLabel setBackgroundColor:[scoreColors objectForKey:@"impactingMyNeighbors"]];
-    [impactLabel setTextAlignment:NSTextAlignmentCenter];
-    [impactLabel setUserInteractionEnabled:YES];
+    impactLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * impactIndex, legend_width, heightOfLegendLabels)];
+    [impactLegendLabel setText:@"Impact on my Neighbors"];
+    [impactLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
+    [impactLegendLabel setBackgroundColor:[scoreColors objectForKey:@"impactingMyNeighbors"]];
+    [impactLegendLabel setTextAlignment:NSTextAlignmentCenter];
+    [impactLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *impactTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
     impactTapRecognizer.numberOfTapsRequired = 1;
-    [impactLabel addGestureRecognizer:impactTapRecognizer];
-    [legend addSubview:impactLabel];
+    [impactLegendLabel addGestureRecognizer:impactTapRecognizer];
+    [impactLegendLabel addGestureRecognizer:resetLabels8];
+    [legend addSubview:impactLegendLabel];
     
+    legendLabels = [[NSMutableArray alloc]initWithObjects:impactLegendLabel, investmentLegendLabel, damageReductionLegendLabel, efficiencyLegendLabel, capacityLegendLabel, waterFlowLegendLabel, maxFloodLegendLabel, groundwaterLegendLabel, nil];
     
     
     // add all the bars to this view
@@ -859,6 +909,26 @@ int barHeightMultiplier = 4;
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
+    [impactLegendLabel.layer setBorderWidth:2.0];
+    
+    CGFloat hue;
+    CGFloat saturation;
+    CGFloat brightness;
+    CGFloat alpha;
+    [impactLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+    [impactLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    
+    for(UILabel *legendLabel in legendLabels) {
+        if(![legendLabel isEqual:impactLegendLabel]) {
+            CGFloat hue;
+            CGFloat saturation;
+            CGFloat brightness;
+            CGFloat alpha;
+            [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+            [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            [legendLabel.layer setBorderWidth:0.0];
+        }
+    }
     
     for(StackedBar *bar in _stackedBars) {
         CGFloat hue;
@@ -911,6 +981,7 @@ int barHeightMultiplier = 4;
 }
 
 
+
 - (void) groundwaterTapped {
     for(StackedBar *bar in _stackedBars) {
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.groundwaterInfiltration.frame.size.height/ barHeightMultiplier];
@@ -925,6 +996,26 @@ int barHeightMultiplier = 4;
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
+    [groundwaterLegendLabel.layer setBorderWidth:2.0];
+    
+    CGFloat hue;
+    CGFloat saturation;
+    CGFloat brightness;
+    CGFloat alpha;
+    [groundwaterLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+    [groundwaterLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    
+    for(UILabel *legendLabel in legendLabels) {
+        if(![legendLabel isEqual:groundwaterLegendLabel]) {
+            CGFloat hue;
+            CGFloat saturation;
+            CGFloat brightness;
+            CGFloat alpha;
+            [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+            [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            [legendLabel.layer setBorderWidth:0.0];
+        }
+    }
     
     for(StackedBar *bar in _stackedBars) {
         CGFloat hue;
@@ -990,6 +1081,26 @@ int barHeightMultiplier = 4;
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
+    [maxFloodLegendLabel.layer setBorderWidth:2.0];
+    
+    CGFloat hue;
+    CGFloat saturation;
+    CGFloat brightness;
+    CGFloat alpha;
+    [maxFloodLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+    [maxFloodLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    
+    for(UILabel *legendLabel in legendLabels) {
+        if(![legendLabel isEqual:maxFloodLegendLabel]) {
+            CGFloat hue;
+            CGFloat saturation;
+            CGFloat brightness;
+            CGFloat alpha;
+            [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+            [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            [legendLabel.layer setBorderWidth:0.0];
+        }
+    }
     
     for(StackedBar *bar in _stackedBars) {
         CGFloat hue;
@@ -1054,6 +1165,26 @@ int barHeightMultiplier = 4;
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
+    [waterFlowLegendLabel.layer setBorderWidth:2.0];
+    
+    CGFloat hue;
+    CGFloat saturation;
+    CGFloat brightness;
+    CGFloat alpha;
+    [waterFlowLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+    [waterFlowLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    
+    for(UILabel *legendLabel in legendLabels) {
+        if(![legendLabel isEqual:waterFlowLegendLabel]) {
+            CGFloat hue;
+            CGFloat saturation;
+            CGFloat brightness;
+            CGFloat alpha;
+            [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+            [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            [legendLabel.layer setBorderWidth:0.0];
+        }
+    }
     
     for(StackedBar *bar in _stackedBars) {
         CGFloat hue;
@@ -1118,6 +1249,26 @@ int barHeightMultiplier = 4;
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
+    [capacityLegendLabel.layer setBorderWidth:2.0];
+    
+    CGFloat hue;
+    CGFloat saturation;
+    CGFloat brightness;
+    CGFloat alpha;
+    [capacityLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+    [capacityLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    
+    for(UILabel *legendLabel in legendLabels) {
+        if(![legendLabel isEqual:capacityLegendLabel]) {
+            CGFloat hue;
+            CGFloat saturation;
+            CGFloat brightness;
+            CGFloat alpha;
+            [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+            [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            [legendLabel.layer setBorderWidth:0.0];
+        }
+    }
     
     for(StackedBar *bar in _stackedBars) {
         CGFloat hue;
@@ -1182,6 +1333,27 @@ int barHeightMultiplier = 4;
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    [efficiencyLegendLabel.layer setBorderWidth:2.0];
+    
+    CGFloat hue;
+    CGFloat saturation;
+    CGFloat brightness;
+    CGFloat alpha;
+    [efficiencyLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+    [efficiencyLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    
+    for(UILabel *legendLabel in legendLabels) {
+        if(![legendLabel isEqual:efficiencyLegendLabel]) {
+            CGFloat hue;
+            CGFloat saturation;
+            CGFloat brightness;
+            CGFloat alpha;
+            [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+            [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            [legendLabel.layer setBorderWidth:0.0];
+        }
+    }
     
     
     for(StackedBar *bar in _stackedBars) {
@@ -1248,6 +1420,28 @@ int barHeightMultiplier = 4;
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     
+    [damageReductionLegendLabel.layer setBorderWidth:2.0];
+    
+    CGFloat hue;
+    CGFloat saturation;
+    CGFloat brightness;
+    CGFloat alpha;
+    [damageReductionLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+    [damageReductionLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    
+    for(UILabel *legendLabel in legendLabels) {
+        if(![legendLabel isEqual:damageReductionLegendLabel]) {
+            CGFloat hue;
+            CGFloat saturation;
+            CGFloat brightness;
+            CGFloat alpha;
+            [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+            [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            [legendLabel.layer setBorderWidth:0.0];
+        }
+    }
+    
+    
     for(StackedBar *bar in _stackedBars) {
         CGFloat hue;
         CGFloat saturation;
@@ -1312,6 +1506,26 @@ int barHeightMultiplier = 4;
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
+    [investmentLegendLabel.layer setBorderWidth:2.0];
+    
+    CGFloat hue;
+    CGFloat saturation;
+    CGFloat brightness;
+    CGFloat alpha;
+    [investmentLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+    [investmentLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    
+    for(UILabel *legendLabel in legendLabels) {
+        if(![legendLabel isEqual:investmentLegendLabel]) {
+            CGFloat hue;
+            CGFloat saturation;
+            CGFloat brightness;
+            CGFloat alpha;
+            [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+            [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
+            [legendLabel.layer setBorderWidth:0.0];
+        }
+    }
     
     for(StackedBar *bar in _stackedBars) {
         CGFloat hue;
@@ -1360,6 +1574,44 @@ int barHeightMultiplier = 4;
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tInvestment"];
     [tabController writeToLogFileString:logEntry];
     
+}
+
+- (void)resetAllCategories {
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    for(StackedBar *bar in _stackedBars) {
+        for(UIView *category in bar.outcomeCategoryViews) {
+            CGFloat hue;
+            CGFloat saturation;
+            CGFloat brightness;
+            CGFloat alpha;
+            [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+            [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.5]];
+            [category.layer setBorderWidth:0.0];
+        }
+        
+        for(UIView *container in bar.outcomeCategoryContainers) {
+            [container.layer setBorderWidth:0.0];
+        }
+        
+        [self hideScores];
+    }
+    
+    for(UILabel *legendLabel in legendLabels) {
+        CGFloat hue;
+        CGFloat saturation;
+        CGFloat brightness;
+        CGFloat alpha;
+        [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.5]];
+        [legendLabel.layer setBorderWidth:0.0];
+    }
+    
+    [UIView commitAnimations];
 }
 
 - (void) hideScores {
