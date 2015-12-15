@@ -424,7 +424,7 @@ NSMutableDictionary         *scoreColors;
     else if ([dataArray[0] isEqualToString:@"trialRequestToBaby"]) {
         [self sendTrialRequestToMomma:dataArray];
     }
-    else if([dataArray[0] isEqualToString:@"favoriteForBabies"]) {
+    else if([dataArray[0] isEqualToString:@"favoriteForBabies"] || [dataArray[0] isEqualToString:@"unselectedFavoriteForBabies"]) {
         _reloadSocialView = 1;
         [self updateFavorites:dataArray];
     }
@@ -432,7 +432,7 @@ NSMutableDictionary         *scoreColors;
         _reloadSocialView = 1;
         [self updateAllFavorites:dataArray];
     }
-    else if([dataArray[0] isEqualToString:@"leastFavoriteForBabies"]) {
+    else if([dataArray[0] isEqualToString:@"leastFavoriteForBabies"] || [dataArray[0] isEqualToString:@"unselectedLeastFavoriteForBabies"]) {
         _reloadSocialView = 1;
         [self updateLeastFavorites:dataArray];
     }
@@ -602,6 +602,7 @@ NSMutableDictionary         *scoreColors;
         [self updateLeastFavorites:[dataArray objectAtIndex:i]];
     }
 }
+
 
 - (void)updateFavorites:(NSArray*)dataArray {
     BOOL favoriteIsAnUpdate = NO;

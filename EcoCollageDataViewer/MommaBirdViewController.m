@@ -320,11 +320,45 @@ NSData *ping;
     }
 }
 
+- (void)addFavorite:(NSArray *)dataArray {
+    // check if the favorite to be added is already in the list. if so, don't add it
+    BOOL isPresent = FALSE;
+    for(int i = 0; i < favorites.count; i++) {
+        NSArray *favorite = [favorites objectAtIndex:i];
+        if([[dataArray objectAtIndex:1] isEqualToString:[favorite objectAtIndex:1]] && [[dataArray objectAtIndex:2] isEqualToNumber:[favorite objectAtIndex:2]])
+            isPresent = TRUE;
+    }
+    
+    if(!isPresent) { // if this favorite is not already present, add it to the list
+        [favorites addObject:dataArray];
+    }
+}
+
+- (void)removeFavorite:(NSArray *)dataArray {
+    // check if the favorite to be remove is in the list. if so, remove it
+    for(int i = 0; i < favorites.count; i++) {
+        NSArray *favorite = [favorites objectAtIndex:i];
+        if([[dataArray objectAtIndex:1] isEqualToString:[favorite objectAtIndex:1]] && [[dataArray objectAtIndex:2] isEqualToNumber:[favorite objectAtIndex:2]])
+            [favorites removeObjectAtIndex:i];
+    }
+}
+
 - (void)updateFavoriteTrials:(NSArray *)dataArray {
     BOOL profileHasAFavorite = NO;
     
     NSLog(@"Received favorite information for %@", dataArray[1]);
     
+    BOOL isUnfavorited;
+    if([[dataArray objectAtIndex:0] isEqualToString:@"unselectedFavoriteForMomma"]) {
+        isUnfavorited = TRUE;
+        [self removeFavorite:dataArray];
+    } else {
+        isUnfavorited = FALSE;
+        [self addFavorite:dataArray];
+    }
+    
+    
+    /*
     for (NSArray *favorite in favorites) {
         if ([[dataArray objectAtIndex:1] isEqualToString:[favorite objectAtIndex:1]]) {
             profileHasAFavorite = YES;
@@ -341,11 +375,17 @@ NSData *ping;
     
     if(!profileHasAFavorite)
         [favorites addObject:dataArray];
+    */
+    
     
     if (_session) {
         // send update to all baby birds
         NSMutableArray* favoriteUpdateForBabies = [[NSMutableArray alloc]init];
-        [favoriteUpdateForBabies addObject:@"favoriteForBabies"];
+        
+        if(isUnfavorited)
+            [favoriteUpdateForBabies addObject:@"unselectedFavoriteForBabies"];
+        else
+            [favoriteUpdateForBabies addObject:@"favoriteForBabies"];
         [favoriteUpdateForBabies addObject:[dataArray objectAtIndex:1]];
         [favoriteUpdateForBabies addObject:[dataArray objectAtIndex:2]];
     
@@ -359,11 +399,45 @@ NSData *ping;
     }
 }
 
+
+- (void)addLeastFavorite:(NSArray *)dataArray {
+    // check if the favorite to be added is already in the list. if so, don't add it
+    BOOL isPresent = FALSE;
+    for(int i = 0; i < leastFavorites.count; i++) {
+        NSArray *leastFavorite = [leastFavorites objectAtIndex:i];
+        if([[dataArray objectAtIndex:1] isEqualToString:[leastFavorite objectAtIndex:1]] && [[dataArray objectAtIndex:2] isEqualToNumber:[leastFavorite objectAtIndex:2]])
+            isPresent = TRUE;
+    }
+    
+    if(!isPresent) { // if this favorite is not already present, add it to the list
+        [leastFavorites addObject:dataArray];
+    }
+}
+
+- (void)removeLeastFavorite:(NSArray *)dataArray {
+    // check if the favorite to be remove is in the list. if so, remove it
+    for(int i = 0; i < leastFavorites.count; i++) {
+        NSArray *leastFavorite = [leastFavorites objectAtIndex:i];
+        if([[dataArray objectAtIndex:1] isEqualToString:[leastFavorite objectAtIndex:1]] && [[dataArray objectAtIndex:2] isEqualToNumber:[leastFavorite objectAtIndex:2]])
+            [leastFavorites removeObjectAtIndex:i];
+    }
+}
+
 - (void)updateLeastFavoriteTrials:(NSArray*)dataArray {
     BOOL profileHasALeastFavorite = NO;
     
     NSLog(@"Received least favorite information for %@", dataArray[1]);
     
+    BOOL isUnfavorited;
+    if([[dataArray objectAtIndex:0] isEqualToString:@"unselectedLeastFavoriteForMomma"]) {
+        isUnfavorited = TRUE;
+        [self removeLeastFavorite:dataArray];
+    } else {
+        isUnfavorited = FALSE;
+        [self addLeastFavorite:dataArray];
+    }
+    
+    /*
     for (NSArray *leastFavorite in leastFavorites) {
         if ([[dataArray objectAtIndex:1] isEqualToString:[leastFavorite objectAtIndex:1]]) {
             profileHasALeastFavorite = YES;
@@ -381,11 +455,16 @@ NSData *ping;
     
     if(!profileHasALeastFavorite)
         [leastFavorites addObject:dataArray];
+    */
     
     if (_session) {
         // send update to all baby birds
         NSMutableArray* leastFavoriteUpdateForBabies = [[NSMutableArray alloc]init];
-        [leastFavoriteUpdateForBabies addObject:@"leastFavoriteForBabies"];
+        
+        if(isUnfavorited)
+            [leastFavoriteUpdateForBabies addObject:@"unselectedLeastFavoriteForBabies"];
+        else
+            [leastFavoriteUpdateForBabies addObject:@"leastFavoriteForBabies"];
         [leastFavoriteUpdateForBabies addObject:[dataArray objectAtIndex:1]];
         [leastFavoriteUpdateForBabies addObject:[dataArray objectAtIndex:2]];
         

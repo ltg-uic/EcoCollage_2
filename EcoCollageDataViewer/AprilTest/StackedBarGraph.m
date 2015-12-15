@@ -896,17 +896,10 @@ int barHeightMultiplier = 4;
 }
 
 - (void) impactTapped {
-    for(StackedBar *bar in _stackedBars) {
-        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.impact.frame.size.height/barHeightMultiplier];
-        [bar changeText:text];
-        [bar changeTextColor:[scoreColors objectForKey:@"impactingMyNeighbors"]];
-    }
-    
-    
     
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationDuration:0.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [impactLegendLabel.layer setBorderWidth:2.0];
@@ -937,6 +930,11 @@ int barHeightMultiplier = 4;
         CGFloat alpha;
         [bar.impact.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar.impact setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.impact.frame.size.height/barHeightMultiplier];
+        [bar changeText:text];
+        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        
         if(bar.hasContainers) {
             [bar.impact.layer setBorderWidth:0.0];
             [bar.impactContainer.layer setBorderWidth:1.0];
@@ -983,17 +981,10 @@ int barHeightMultiplier = 4;
 
 
 - (void) groundwaterTapped {
-    for(StackedBar *bar in _stackedBars) {
-        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.groundwaterInfiltration.frame.size.height/ barHeightMultiplier];
-        [bar changeText:text];
-        [bar changeTextColor:[scoreColors objectForKey:@"groundwaterInfiltration"]];
-    }
-    
-    
-    
+
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationDuration:0.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [groundwaterLegendLabel.layer setBorderWidth:2.0];
@@ -1003,7 +994,7 @@ int barHeightMultiplier = 4;
     CGFloat brightness;
     CGFloat alpha;
     [groundwaterLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [groundwaterLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    [groundwaterLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.85]];
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:groundwaterLegendLabel]) {
@@ -1023,7 +1014,12 @@ int barHeightMultiplier = 4;
         CGFloat brightness;
         CGFloat alpha;
         [bar.groundwaterInfiltration.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.groundwaterInfiltration setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        [bar.groundwaterInfiltration setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.85]];
+        
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.groundwaterInfiltration.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.85]];
+        
         if(bar.hasContainers) {
             [bar.groundwaterInfiltration.layer setBorderWidth:0.0];
             [bar.groundwaterInfiltrationContainer.layer setBorderWidth:1.0];
@@ -1069,16 +1065,10 @@ int barHeightMultiplier = 4;
 
 
 - (void) maxFloodTapped {
-    for(StackedBar *bar in _stackedBars) {
-        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.maxFlood.frame.size.height/ barHeightMultiplier];
-        [bar changeText:text];
-        [bar changeTextColor:[scoreColors objectForKey:@"puddleMax"]];
-    }
-    
-    
+
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationDuration:0.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [maxFloodLegendLabel.layer setBorderWidth:2.0];
@@ -1088,7 +1078,7 @@ int barHeightMultiplier = 4;
     CGFloat brightness;
     CGFloat alpha;
     [maxFloodLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [maxFloodLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    [maxFloodLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:maxFloodLegendLabel]) {
@@ -1108,7 +1098,12 @@ int barHeightMultiplier = 4;
         CGFloat brightness;
         CGFloat alpha;
         [bar.maxFlood.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.maxFlood setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        [bar.maxFlood setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.maxFlood.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        
         if(bar.hasContainers) {
             [bar.maxFlood.layer setBorderWidth:0.0];
             [bar.maxFloodContainer.layer setBorderWidth:1.0];
@@ -1153,16 +1148,10 @@ int barHeightMultiplier = 4;
 
 
 - (void) waterDepthTapped {
-    for(StackedBar *bar in _stackedBars) {
-        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.waterFlow.frame.size.height/ barHeightMultiplier];
-        [bar changeText:text];
-        [bar changeTextColor:[scoreColors objectForKey:@"puddleTime"]];
-    }
-    
-    
+
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationDuration:0.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [waterFlowLegendLabel.layer setBorderWidth:2.0];
@@ -1172,7 +1161,7 @@ int barHeightMultiplier = 4;
     CGFloat brightness;
     CGFloat alpha;
     [waterFlowLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [waterFlowLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    [waterFlowLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.80]];
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:waterFlowLegendLabel]) {
@@ -1192,7 +1181,12 @@ int barHeightMultiplier = 4;
         CGFloat brightness;
         CGFloat alpha;
         [bar.waterFlow.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.waterFlow setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        [bar.waterFlow setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.waterFlow.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        
         if(bar.hasContainers) {
             [bar.waterFlow.layer setBorderWidth:0.0];
             [bar.waterFlowContainer.layer setBorderWidth:1.0];
@@ -1237,16 +1231,10 @@ int barHeightMultiplier = 4;
 
 
 - (void) interventionCapTapped {
-    for(StackedBar *bar in _stackedBars) {
-        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.capacity.frame.size.height/ barHeightMultiplier];
-        [bar changeText:text];
-        [bar changeTextColor:[scoreColors objectForKey:@"capacity"]];
-    }
-    
-    
+
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationDuration:0.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [capacityLegendLabel.layer setBorderWidth:2.0];
@@ -1277,6 +1265,10 @@ int barHeightMultiplier = 4;
         CGFloat alpha;
         [bar.capacity.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar.capacity setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.capacity.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        
         if(bar.hasContainers) {
             [bar.capacity.layer setBorderWidth:0.0];
             [bar.capacityContainer.layer setBorderWidth:1.0];
@@ -1322,16 +1314,10 @@ int barHeightMultiplier = 4;
 
 
 - (void) efficiencyTapped {
-    for(StackedBar *bar in _stackedBars) {
-        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.efficiency.frame.size.height/ barHeightMultiplier];
-        [bar changeText:text];
-        [bar changeTextColor:[scoreColors objectForKey:@"efficiencyOfIntervention"]];
-    }
-    
-    
+
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationDuration:0.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [efficiencyLegendLabel.layer setBorderWidth:2.0];
@@ -1341,7 +1327,7 @@ int barHeightMultiplier = 4;
     CGFloat brightness;
     CGFloat alpha;
     [efficiencyLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [efficiencyLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+    [efficiencyLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.80]];
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:efficiencyLegendLabel]) {
@@ -1362,7 +1348,12 @@ int barHeightMultiplier = 4;
         CGFloat brightness;
         CGFloat alpha;
         [bar.efficiency.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.efficiency setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        [bar.efficiency setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.efficiency.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        
         if(bar.hasContainers) {
             [bar.efficiency.layer setBorderWidth:0.0];
             [bar.efficiencyContainer.layer setBorderWidth:1.0];
@@ -1407,16 +1398,9 @@ int barHeightMultiplier = 4;
 
 
 - (void) damageReducTapped {
-    for(StackedBar *bar in _stackedBars) {
-        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.damageReduction.frame.size.height/ barHeightMultiplier];
-        [bar changeText:text];
-        [bar changeTextColor:[scoreColors objectForKey:@"privateCost"]];
-    }
-    
-    
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationDuration:0.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     
@@ -1448,7 +1432,12 @@ int barHeightMultiplier = 4;
         CGFloat brightness;
         CGFloat alpha;
         [bar.damageReduction.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.damageReduction setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        [bar.damageReduction setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.9]];
+        
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.damageReduction.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.9]];
+        
         if(bar.hasContainers) {
             [bar.damageReduction.layer setBorderWidth:0.0];
             [bar.damageReductionContainer.layer setBorderWidth:1.0];
@@ -1494,16 +1483,9 @@ int barHeightMultiplier = 4;
 
 
 - (void) investmentTapped {
-    for(StackedBar *bar in _stackedBars) {
-        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.investment.frame.size.height/ barHeightMultiplier];
-        [bar changeText:text];
-        [bar changeTextColor:[scoreColors objectForKey:@"publicCost"]];
-    }
-    
-    
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationDuration:0.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [investmentLegendLabel.layer setBorderWidth:2.0];
@@ -1534,6 +1516,11 @@ int barHeightMultiplier = 4;
         CGFloat alpha;
         [bar.investment.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar.investment setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        
+        NSString *text = [NSString stringWithFormat:@"%d", (int)bar.investment.frame.size.height/ barHeightMultiplier];
+        [bar changeText:text];
+        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        
         if(bar.hasContainers) {
             [bar.investment.layer setBorderWidth:0.0];
             [bar.investmentContainer.layer setBorderWidth:1.0];
@@ -1580,7 +1567,7 @@ int barHeightMultiplier = 4;
     
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationDuration:0.5];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     for(StackedBar *bar in _stackedBars) {

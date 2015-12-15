@@ -1771,6 +1771,8 @@ float maxPublicInstallNorm;
     //NSLog(@"Tapped favorite");
     
     FavoriteView *favoriteView = (FavoriteView *)gestureRecognizer.view;
+    BOOL isUnfavorited = [favoriteView isActive];
+    
     [favoriteView isTouched];
     
     int trial = favoriteView.trialNum;
@@ -1786,6 +1788,8 @@ float maxPublicInstallNorm;
     NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTapped as favorite\t%d", trial]];
     [tabControl writeToLogFileString:logEntry];
     
+    
+    /*
     // loop thru all favorite views and turn off any others
     for (NSDictionary *trialRunInfo in trialRunSubViews) {
         if (![[trialRunInfo objectForKey:@"FavoriteView"] isEqual: favoriteView] && [[trialRunInfo objectForKey:@"FavoriteView"]isActive])
@@ -1793,12 +1797,41 @@ float maxPublicInstallNorm;
         if ([[trialRunInfo objectForKey:@"LeastFavoriteView"]trialNum] == favoriteView.trialNum)
             [[trialRunInfo objectForKey:@"LeastFavoriteView"]setActive:NO];
     }
+     */
+    
+    // if the least favorite is selected for this trial, unselect it
+    for(NSDictionary *trialRunInfo in trialRunSubViews) {
+        if([[trialRunInfo objectForKey:@"LeastFavoriteView"]trialNum] == favoriteView.trialNum) {
+            [[trialRunInfo objectForKey:@"LeastFavoriteView"]setActive:NO];
+            if(tabControl.session) {
+                NSMutableArray *favorite = [[NSMutableArray alloc]init];
+                
+               
+                [favorite addObject:@"unselectedLeastFavoriteForMomma"];
+                [favorite addObject:[[UIDevice currentDevice]name]];
+                
+                [favorite addObject:[NSNumber numberWithInt:trial]];
+                
+                NSDictionary *favoriteToSendToMomma = [NSDictionary dictionaryWithObject:favorite
+                                                                                  forKey:@"data"];
+                
+                if(favoriteToSendToMomma != nil) {
+                    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:favoriteToSendToMomma];
+                    if(tabControl.peerIDForMomma != nil)
+                        [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+                }
+            }
+        }
+    }
     
     
     if(tabControl.session) {
         NSMutableArray *favorite = [[NSMutableArray alloc]init];
         
-        [favorite addObject:@"favoriteForMomma"];
+        if(isUnfavorited)
+            [favorite addObject:@"unselectedFavoriteForMomma"];
+        else
+            [favorite addObject:@"favoriteForMomma"];
         [favorite addObject:[[UIDevice currentDevice]name]];
         
         [favorite addObject:[NSNumber numberWithInt:trial]];
@@ -1818,6 +1851,9 @@ float maxPublicInstallNorm;
     //NSLog(@"Tapped least favorite");
     
     LeastFavoriteView *leastFavoriteView = (LeastFavoriteView *)gestureRecognizer.view;
+    
+    BOOL isUnfavorited = [leastFavoriteView isActive];
+    
     [leastFavoriteView isTouched];
     
     int trial = leastFavoriteView.trialNum;
@@ -1832,7 +1868,7 @@ float maxPublicInstallNorm;
     NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTapped as least favorite\t%d", trial]];
     [tabControl writeToLogFileString:logEntry];
     
-    
+    /*
     // loop thru all favorite views and turn off any others
     for (NSDictionary *trialRunInfo in trialRunSubViews) {
         if (![[trialRunInfo objectForKey:@"LeastFavoriteView"] isEqual: leastFavoriteView] && [[trialRunInfo objectForKey:@"LeastFavoriteView"]isActive])
@@ -1840,11 +1876,40 @@ float maxPublicInstallNorm;
         if ([[trialRunInfo objectForKey:@"FavoriteView"] trialNum] == leastFavoriteView.trialNum)
             [[trialRunInfo objectForKey:@"FavoriteView"] setActive:NO];
     }
+     */
+    
+    // if the least favorite is selected for this trial, unselect it
+    for(NSDictionary *trialRunInfo in trialRunSubViews) {
+        if([[trialRunInfo objectForKey:@"FavoriteView"]trialNum] == leastFavoriteView.trialNum) {
+            [[trialRunInfo objectForKey:@"FavoriteView"]setActive:NO];
+            if(tabControl.session) {
+                NSMutableArray *favorite = [[NSMutableArray alloc]init];
+                
+                
+                [favorite addObject:@"unselectedFavoriteForMomma"];
+                [favorite addObject:[[UIDevice currentDevice]name]];
+                
+                [favorite addObject:[NSNumber numberWithInt:trial]];
+                
+                NSDictionary *favoriteToSendToMomma = [NSDictionary dictionaryWithObject:favorite
+                                                                                  forKey:@"data"];
+                
+                if(favoriteToSendToMomma != nil) {
+                    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:favoriteToSendToMomma];
+                    if(tabControl.peerIDForMomma != nil)
+                        [tabControl.session sendData:data toPeers:@[tabControl.peerIDForMomma] withDataMode:GKSendDataReliable error:nil];
+                }
+            }
+        }
+    }
     
     if(tabControl.session) {
         NSMutableArray *leastFavorite = [[NSMutableArray alloc]init];
         
-        [leastFavorite addObject:@"leastFavoriteForMomma"];
+        if(isUnfavorited)
+            [leastFavorite addObject:@"unselectedLeastFavoriteForMomma"];
+        else
+            [leastFavorite addObject:@"leastFavoriteForMomma"];
         [leastFavorite addObject:[[UIDevice currentDevice]name]];
         
         [leastFavorite addObject:[NSNumber numberWithInt:trial]];
