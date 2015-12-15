@@ -604,10 +604,41 @@ NSMutableDictionary         *scoreColors;
 }
 
 
+- (void)addFavorite:(NSArray *)dataArray {
+    // check if this favorite is already present, if so don't add it
+    BOOL isPresent = FALSE;
+    for(int i = 0; i < _favorites.count; i++) {
+        NSArray *favorite = [_favorites objectAtIndex:i];
+        if([[dataArray objectAtIndex:1] isEqualToString:[favorite objectAtIndex:1]] && [[dataArray objectAtIndex:2] isEqualToNumber:[favorite objectAtIndex:2]])
+            isPresent = TRUE;
+    }
+    if(!isPresent) {
+        [_favorites addObject:dataArray];
+    }
+}
+
+- (void)removeFavorite:(NSArray *)dataArray {
+    // check if this favorite is present, if so remove it
+    for(int i = 0; i < _favorites.count; i++) {
+        NSArray *favorite = [_favorites objectAtIndex:i];
+        if([[dataArray objectAtIndex:1] isEqualToString:[favorite objectAtIndex:1]] && [[dataArray objectAtIndex:2] isEqualToNumber:[favorite objectAtIndex:2]])
+            [_favorites removeObjectAtIndex:i];
+    }
+}
+
 - (void)updateFavorites:(NSArray*)dataArray {
     BOOL favoriteIsAnUpdate = NO;
     int indexOfProfile = -1;
     
+    if([[dataArray objectAtIndex:0] isEqualToString:@"unselectedFavoriteForBabies"])
+        [self removeFavorite:dataArray];
+    else
+        [self addFavorite:dataArray];
+    
+    for(NSArray *favorite in _favorites) {
+        NSLog(@"%@", favorite);
+    }
+    /*
     for (int i = 0; i < _favorites.count; i++) {
         NSArray *favorite = [_favorites objectAtIndex:i];
         
@@ -641,12 +672,49 @@ NSMutableDictionary         *scoreColors;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"updateFavoriteOrLeast" object:self   userInfo:dict];
         [self updatePieChartAtIndex:indexOfProfile forProfile:profile];
     }
+     */
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"favoritesUpdated" object:self   userInfo:nil];
+}
+
+
+- (void)addLeastFavorite:(NSArray *)dataArray {
+    // check if this favorite is already present, if so don't add it
+    BOOL isPresent = FALSE;
+    for(int i = 0; i < _leastFavorites.count; i++) {
+        NSArray *leastFavorite = [_leastFavorites objectAtIndex:i];
+        if([[dataArray objectAtIndex:1] isEqualToString:[leastFavorite objectAtIndex:1]] && [[dataArray objectAtIndex:2] isEqualToNumber:[leastFavorite objectAtIndex:2]])
+            isPresent = TRUE;
+    }
+    if(!isPresent) {
+        [_leastFavorites addObject:dataArray];
+    }
+    
+}
+
+- (void)removeLeastFavorite:(NSArray *)dataArray {
+    // check if this favorite is present, if so remove it
+    for(int i = 0; i < _leastFavorites.count; i++) {
+        NSArray *leastFavorite = [_leastFavorites objectAtIndex:i];
+        if([[dataArray objectAtIndex:1] isEqualToString:[leastFavorite objectAtIndex:1]] && [[dataArray objectAtIndex:2] isEqualToNumber:[leastFavorite objectAtIndex:2]])
+            [_leastFavorites removeObjectAtIndex:i];
+    }
 }
 
 - (void)updateLeastFavorites:(NSArray *)dataArray {
     BOOL leastFavoriteIsAnUpdate = NO;
     int indexOfProfile = -1;
     
+    if([[dataArray objectAtIndex:0] isEqualToString:@"unselectedLeastFavoriteForBabies"])
+        [self removeLeastFavorite:dataArray];
+    else
+        [self addLeastFavorite:dataArray];
+    
+    for(NSArray *leastFavorite in _leastFavorites) {
+        NSLog(@"%@", leastFavorite);
+    }
+    
+    /*
     for (int i = 0; i < _leastFavorites.count; i++) {
         NSArray *leastFavorite = [_leastFavorites objectAtIndex:i];
         
@@ -678,6 +746,10 @@ NSMutableDictionary         *scoreColors;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"updateFavoriteOrLeast" object:self   userInfo:dict];
         [self updatePieChartAtIndex:indexOfProfile forProfile:profile];
     }
+     */
+    
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"leastFavoritesUpdated" object:self   userInfo:nil];
 }
 
 - (void)sendTrialRequestToMomma:(NSArray*)dataArray {

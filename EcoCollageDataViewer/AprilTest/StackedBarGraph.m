@@ -295,7 +295,7 @@ int barHeightMultiplier = 4;
             float *totalScore = malloc(sizeof(float));
             *totalScore = 0.0;
             
-            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, - sumTierSizes) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andTierSizes:tierSizes withContainers:wC withHeightMultipler:barHeightMultiplier withScore:totalScore];
+            StackedBar *bar = [[StackedBar alloc]initWithFrame:CGRectMake(x, y, width, - sumTierSizes) andProfile:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andTierSizes:tierSizes withContainers:wC withHeightMultipler:barHeightMultiplier withScore:totalScore trialNum:i];
             
             [trialScores addObject:[NSNumber numberWithFloat:*totalScore]];
             free(totalScore);
@@ -315,6 +315,30 @@ int barHeightMultiplier = 4;
                     UITapGestureRecognizer *resetCategories = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resetAllCategories)];
                     resetCategories.numberOfTapsRequired = 2;
                     [category addGestureRecognizer:resetCategories];
+                }
+            }
+            
+            int sideLength = (width > 30) ? 30 : width;
+            [bar.favorite setFrame:CGRectMake(x, yAxis.frame.origin.y + yAxis.frame.size.height + 20, sideLength, sideLength)];
+            [bar.favorite setCenter:CGPointMake(x + (width / 2), y + 20 + (sideLength / 2))];
+            [bar.leastFavorite setFrame:CGRectMake(x, yAxis.frame.origin.y + yAxis.frame.size.height + 20, sideLength, sideLength)];
+            [bar.leastFavorite setCenter:CGPointMake(x + (width / 2), y + 20 + (sideLength / 2))];
+            [_scoreBarsView addSubview:bar.favorite];
+            [_scoreBarsView addSubview:bar.leastFavorite];
+            
+            NSArray *profile = [tabControl.profiles objectAtIndex:j];
+            
+            for(NSArray *favorite in tabControl.favorites) {
+                if([[profile objectAtIndex:1] isEqualToString:[favorite objectAtIndex:1]] && [[NSNumber numberWithInt:i] isEqualToNumber:[favorite objectAtIndex:2]]) {
+                    [bar.favorite setHidden:NO];
+                    [bar.favorite setActive:YES];
+                }
+            }
+            
+            for(NSArray *leastFavorite in tabControl.leastFavorites) {
+                if([[profile objectAtIndex:1] isEqualToString:[leastFavorite objectAtIndex:1]] && [[NSNumber numberWithInt:i] isEqualToNumber:[leastFavorite objectAtIndex:2]]) {
+                    [bar.leastFavorite setHidden:NO];
+                    [bar.leastFavorite setActive:YES];
                 }
             }
             
@@ -414,7 +438,7 @@ int barHeightMultiplier = 4;
         if(mArray.count == 0) break;
         StackedBar *fBar = [mArray objectAtIndex:0];
         StackedBar *lBar = [mArray objectAtIndex:mArray.count - 1];
-        UIView *trialLabel = [[UIView alloc]initWithFrame:CGRectMake(fBar.frame.origin.x, fBar.frame.origin.y + fBar.frame.size.height + 30, lBar.frame.origin.x + lBar.frame.size.width - fBar.frame.origin.x, 30)];
+        UIView *trialLabel = [[UIView alloc]initWithFrame:CGRectMake(fBar.frame.origin.x, fBar.frame.origin.y + fBar.frame.size.height + 60, lBar.frame.origin.x + lBar.frame.size.width - fBar.frame.origin.x, 30)];
         trialLabel.tag = i;
         UILabel *trialText = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, lBar.frame.origin.x + lBar.frame.size.width - fBar.frame.origin.x, 30)];
         [trialText setText:[NSString stringWithFormat:@"Trial %d", i+1]];
@@ -789,6 +813,18 @@ int barHeightMultiplier = 4;
             [bar.score setHidden:NO];
             [bar grow];
             bar.shrunk = 0;
+            if(bar.favorite.isActive) {
+                [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(toggleFavoriteHidden:) object:bar.favorite];
+                [self performSelector:@selector(toggleFavoriteHidden:)
+                           withObject:bar.favorite
+                           afterDelay:0.5];
+            }
+            if(bar.leastFavorite.isActive) {
+                [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(toggleLeastFavoriteHidden:) object:bar.leastFavorite];
+                [self performSelector:@selector(toggleLeastFavoriteHidden:)
+                           withObject:bar.leastFavorite
+                           afterDelay:0.5];
+            }
         }
         else { // otherwise, we need to shrink it
             [bar.score setHidden:YES];
@@ -796,6 +832,13 @@ int barHeightMultiplier = 4;
             bar.shrunk = 1;
             
             [bar setFrame:CGRectMake(bar.frame.origin.x - (widthOfBar - widthOfBar /resizeFactor) * i, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+            
+            
+            [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(toggleFavoriteHidden:) object:bar.favorite];
+            [bar.favorite setHidden:YES];
+            
+            [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(toggleLeastFavoriteHidden:) object:bar.leastFavorite];
+            [bar.leastFavorite setHidden:YES];
         }
         i++;
     }
@@ -861,6 +904,20 @@ int barHeightMultiplier = 4;
 
 }
 
+- (void) toggleFavoriteHidden:(FavoriteView *)favorite {
+    if(favorite.isHidden)
+        [favorite setHidden:NO];
+    else
+        [favorite setHidden:YES];
+}
+
+- (void) toggleLeastFavoriteHidden:(LeastFavoriteView *)leastFavorite {
+    if(leastFavorite.isHidden)
+        [leastFavorite setHidden:NO];
+    else
+        [leastFavorite setHidden:YES];
+}
+
 - (void) toggleHidden:(UILabel*)label{
     if([label isHidden])
         [label setHidden:NO];
@@ -885,6 +942,8 @@ int barHeightMultiplier = 4;
     for(StackedBar *bar in mArray) {
         [bar setFrame:CGRectMake(bar.frame.origin.x - shiftAmount, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
         [bar.name setFrame:CGRectMake(bar.name.frame.origin.x - shiftAmount, bar.name.frame.origin.y, bar.name.frame.size.width, bar.name.frame.size.height)];
+        [bar.favorite setFrame:CGRectMake(bar.favorite.frame.origin.x - shiftAmount, bar.favorite.frame.origin.y, bar.favorite.frame.size.width, bar.favorite.frame.size.height)];
+        [bar.leastFavorite setFrame:CGRectMake(bar.leastFavorite.frame.origin.x - shiftAmount, bar.leastFavorite.frame.origin.y, bar.leastFavorite.frame.size.width, bar.leastFavorite.frame.size.height)];
     }
 }
 
@@ -892,6 +951,8 @@ int barHeightMultiplier = 4;
     for(StackedBar *bar in mArray) {
         [bar setFrame:CGRectMake(bar.frame.origin.x + shiftAmount, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
         [bar.name setFrame:CGRectMake(bar.name.frame.origin.x + shiftAmount, bar.name.frame.origin.y, bar.name.frame.size.width, bar.name.frame.size.height)];
+        [bar.favorite setFrame:CGRectMake(bar.favorite.frame.origin.x + shiftAmount, bar.favorite.frame.origin.y, bar.favorite.frame.size.width, bar.favorite.frame.size.height)];
+        [bar.leastFavorite setFrame:CGRectMake(bar.leastFavorite.frame.origin.x + shiftAmount, bar.leastFavorite.frame.origin.y, bar.leastFavorite.frame.size.width, bar.leastFavorite.frame.size.height)];
     }
 }
 

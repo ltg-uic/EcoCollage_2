@@ -54,6 +54,9 @@
 @synthesize shrunk = _shrunk;
 @synthesize name = _name;
 
+@synthesize favorite = _favorite;
+@synthesize leastFavorite = _leastFavorite;
+
 @synthesize hasContainers = _hasContainers;
 
 
@@ -77,7 +80,7 @@ int width;
 */
 
 
-- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM withScore:(float*)totalScore
+- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM withScore:(float*)totalScore trialNum:(int)trialNumber
 {
     self = [super initWithFrame:frame];
     
@@ -145,6 +148,16 @@ int width;
     scaledToScreen = 1;
     heightMultiplier = hM;
     
+    
+    _favorite = [[FavoriteView alloc]initWithFrame:CGRectMake(0, 0, 40, 40) andTrialNumber:trialNumber];
+    [_favorite setUserInteractionEnabled:NO];
+    [_favorite setActive:NO];
+    [_favorite setHidden:YES];
+    
+    _leastFavorite = [[LeastFavoriteView alloc]initWithFrame:CGRectMake(0, 0, 40, 40) andTrialNumber:trialNumber];
+    [_leastFavorite setUserInteractionEnabled:NO];
+    [_leastFavorite setActive:NO];
+    [_leastFavorite setHidden:YES];
     
     // order the individual scores based on this users concerns
     NSMutableArray *userConcerns = [[NSMutableArray alloc]init];

@@ -272,10 +272,10 @@ NSData *ping;
     else if([dataArray[0] isEqualToString:@"requestForTrial"]) {
         [self sendTrialsForRequest:dataArray toPeer:(NSString *)peer];
     }
-    else if([dataArray[0] isEqualToString:@"favoriteForMomma"]) {
+    else if([dataArray[0] isEqualToString:@"favoriteForMomma"] || [dataArray[0] isEqualToString:@"unselectedFavoriteForMomma"]) {
         [self updateFavoriteTrials:dataArray];
     }
-    else if([dataArray[0] isEqualToString:@"leastFavoriteForMomma"]) {
+    else if([dataArray[0] isEqualToString:@"leastFavoriteForMomma"] || [dataArray[0] isEqualToString:@"unselectedLeastFavoriteForMomma"]) {
         [self updateLeastFavoriteTrials:dataArray];
     }
 }

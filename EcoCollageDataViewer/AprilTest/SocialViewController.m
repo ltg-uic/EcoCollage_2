@@ -427,7 +427,15 @@ int                         heightMultiplier = 5;
                                                  name:@"slice7tapped"
                                                object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateFavorites)
+                                                 name:@"favoritesUpdated"
+                                               object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateLeastFavorites)
+                                                 name:@"leastFavoritesUpdate"
+                                               object:nil];
     
     [self updatePicker];
     
@@ -483,6 +491,8 @@ int                         heightMultiplier = 5;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice5tapped" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice6tapped" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice7tapped" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"favoritesUpdated" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"leastFavoritesUpdated" object:nil];
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     tabControl.reloadSocialView = 0;
@@ -1413,6 +1423,15 @@ int                         heightMultiplier = 5;
  Eventually make it so this will call and "update" function which simply updates all the stacked bars
  instead of redrawing them
  */
+
+- (void)updateLeastFavorites {
+    
+}
+
+- (void)updateFavorites {
+    
+}
+
 - (IBAction)stackedbarswitch:(id)sender {
     //if(SBG.stackedBars.count <= 0) {
         [self drawScoreStackedBarGraph];

@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FavoriteView.h"
+#import "LeastFavoriteView.h"
 
 @interface StackedBar : UIView
 
@@ -49,12 +51,15 @@
 @property UILabel *score;
 @property UILabel *name;
 
+@property FavoriteView *favorite;
+@property LeastFavoriteView *leastFavorite;
+
 @property BOOL hasContainers;
 
 @property int shrunk;
 
 
-- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM withScore:(float*)totalScore;
+- (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM withScore:(float*)totalScore trialNum:(int)trialNumber;
 
 - (void) reloadBar:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM withScore:(float*)totalScore;
     
