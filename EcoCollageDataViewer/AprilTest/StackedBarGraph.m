@@ -974,10 +974,6 @@ int barHeightMultiplier = 4;
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:impactLegendLabel]) {
-            CGFloat hue;
-            CGFloat saturation;
-            CGFloat brightness;
-            CGFloat alpha;
             [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
             [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             [legendLabel.layer setBorderWidth:0.0];
@@ -985,10 +981,6 @@ int barHeightMultiplier = 4;
     }
     
     for(StackedBar *bar in _stackedBars) {
-        CGFloat hue;
-        CGFloat saturation;
-        CGFloat brightness;
-        CGFloat alpha;
         [bar.impact.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar.impact setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
         
@@ -1008,10 +1000,6 @@ int barHeightMultiplier = 4;
         for(UIView *category in bar.outcomeCategoryViews) {
             if(![category isEqual:bar.impact]) {
                 [category.layer setBorderWidth:0.0];
-                CGFloat hue;
-                CGFloat saturation;
-                CGFloat brightness;
-                CGFloat alpha;
                 [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
                 [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             }
@@ -1059,10 +1047,6 @@ int barHeightMultiplier = 4;
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:groundwaterLegendLabel]) {
-            CGFloat hue;
-            CGFloat saturation;
-            CGFloat brightness;
-            CGFloat alpha;
             [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
             [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             [legendLabel.layer setBorderWidth:0.0];
@@ -1070,10 +1054,6 @@ int barHeightMultiplier = 4;
     }
     
     for(StackedBar *bar in _stackedBars) {
-        CGFloat hue;
-        CGFloat saturation;
-        CGFloat brightness;
-        CGFloat alpha;
         [bar.groundwaterInfiltration.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar.groundwaterInfiltration setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.85]];
         
@@ -1093,10 +1073,6 @@ int barHeightMultiplier = 4;
         for(UIView *category in bar.outcomeCategoryViews) {
             if(![category isEqual:bar.groundwaterInfiltration]) {
                 [category.layer setBorderWidth:0.0];
-                CGFloat hue;
-                CGFloat saturation;
-                CGFloat brightness;
-                CGFloat alpha;
                 [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
                 [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             }
@@ -1143,10 +1119,6 @@ int barHeightMultiplier = 4;
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:maxFloodLegendLabel]) {
-            CGFloat hue;
-            CGFloat saturation;
-            CGFloat brightness;
-            CGFloat alpha;
             [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
             [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             [legendLabel.layer setBorderWidth:0.0];
@@ -1154,11 +1126,7 @@ int barHeightMultiplier = 4;
     }
     
     for(StackedBar *bar in _stackedBars) {
-        CGFloat hue;
-        CGFloat saturation;
-        CGFloat brightness;
-        CGFloat alpha;
-        [bar.maxFlood.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        [[scoreColors objectForKey:@"puddleMax"] getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar.maxFlood setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
         
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.maxFlood.frame.size.height/ barHeightMultiplier];
@@ -1177,10 +1145,6 @@ int barHeightMultiplier = 4;
         for(UIView *category in bar.outcomeCategoryViews) {
             if(![category isEqual:bar.maxFlood]) {
                 [category.layer setBorderWidth:0.0];
-                CGFloat hue;
-                CGFloat saturation;
-                CGFloat brightness;
-                CGFloat alpha;
                 [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
                 [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             }
@@ -1226,10 +1190,6 @@ int barHeightMultiplier = 4;
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:waterFlowLegendLabel]) {
-            CGFloat hue;
-            CGFloat saturation;
-            CGFloat brightness;
-            CGFloat alpha;
             [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
             [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             [legendLabel.layer setBorderWidth:0.0];
@@ -1237,10 +1197,6 @@ int barHeightMultiplier = 4;
     }
     
     for(StackedBar *bar in _stackedBars) {
-        CGFloat hue;
-        CGFloat saturation;
-        CGFloat brightness;
-        CGFloat alpha;
         [bar.waterFlow.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar.waterFlow setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
         
@@ -1260,10 +1216,6 @@ int barHeightMultiplier = 4;
         for(UIView *category in bar.outcomeCategoryViews) {
             if(![category isEqual:bar.waterFlow]) {
                 [category.layer setBorderWidth:0.0];
-                CGFloat hue;
-                CGFloat saturation;
-                CGFloat brightness;
-                CGFloat alpha;
                 [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
                 [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             }
@@ -1309,10 +1261,6 @@ int barHeightMultiplier = 4;
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:capacityLegendLabel]) {
-            CGFloat hue;
-            CGFloat saturation;
-            CGFloat brightness;
-            CGFloat alpha;
             [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
             [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             [legendLabel.layer setBorderWidth:0.0];
@@ -1320,10 +1268,6 @@ int barHeightMultiplier = 4;
     }
     
     for(StackedBar *bar in _stackedBars) {
-        CGFloat hue;
-        CGFloat saturation;
-        CGFloat brightness;
-        CGFloat alpha;
         [bar.capacity.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar.capacity setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.capacity.frame.size.height/ barHeightMultiplier];
@@ -1342,10 +1286,6 @@ int barHeightMultiplier = 4;
         for(UIView *category in bar.outcomeCategoryViews) {
             if(![category isEqual:bar.capacity]) {
                 [category.layer setBorderWidth:0.0];
-                CGFloat hue;
-                CGFloat saturation;
-                CGFloat brightness;
-                CGFloat alpha;
                 [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
                 [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             }
@@ -1392,10 +1332,6 @@ int barHeightMultiplier = 4;
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:efficiencyLegendLabel]) {
-            CGFloat hue;
-            CGFloat saturation;
-            CGFloat brightness;
-            CGFloat alpha;
             [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
             [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             [legendLabel.layer setBorderWidth:0.0];
@@ -1404,10 +1340,6 @@ int barHeightMultiplier = 4;
     
     
     for(StackedBar *bar in _stackedBars) {
-        CGFloat hue;
-        CGFloat saturation;
-        CGFloat brightness;
-        CGFloat alpha;
         [bar.efficiency.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar.efficiency setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
         
@@ -1427,10 +1359,6 @@ int barHeightMultiplier = 4;
         for(UIView *category in bar.outcomeCategoryViews) {
             if(![category isEqual:bar.efficiency]) {
                 [category.layer setBorderWidth:0.0];
-                CGFloat hue;
-                CGFloat saturation;
-                CGFloat brightness;
-                CGFloat alpha;
                 [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
                 [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             }
@@ -1476,10 +1404,6 @@ int barHeightMultiplier = 4;
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:damageReductionLegendLabel]) {
-            CGFloat hue;
-            CGFloat saturation;
-            CGFloat brightness;
-            CGFloat alpha;
             [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
             [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             [legendLabel.layer setBorderWidth:0.0];
@@ -1488,10 +1412,6 @@ int barHeightMultiplier = 4;
     
     
     for(StackedBar *bar in _stackedBars) {
-        CGFloat hue;
-        CGFloat saturation;
-        CGFloat brightness;
-        CGFloat alpha;
         [bar.damageReduction.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar.damageReduction setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.9]];
         
@@ -1511,10 +1431,6 @@ int barHeightMultiplier = 4;
         for(UIView *category in bar.outcomeCategoryViews) {
             if(![category isEqual:bar.damageReduction]) {
                 [category.layer setBorderWidth:0.0];
-                CGFloat hue;
-                CGFloat saturation;
-                CGFloat brightness;
-                CGFloat alpha;
                 [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
                 [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             }
@@ -1560,10 +1476,6 @@ int barHeightMultiplier = 4;
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:investmentLegendLabel]) {
-            CGFloat hue;
-            CGFloat saturation;
-            CGFloat brightness;
-            CGFloat alpha;
             [legendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
             [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             [legendLabel.layer setBorderWidth:0.0];
@@ -1571,11 +1483,7 @@ int barHeightMultiplier = 4;
     }
     
     for(StackedBar *bar in _stackedBars) {
-        CGFloat hue;
-        CGFloat saturation;
-        CGFloat brightness;
-        CGFloat alpha;
-        [bar.investment.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        [[scoreColors objectForKey:@"publicCost"] getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar.investment setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
         
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.investment.frame.size.height/ barHeightMultiplier];
@@ -1595,10 +1503,6 @@ int barHeightMultiplier = 4;
         for(UIView *category in bar.outcomeCategoryViews) {
             if(![category isEqual:bar.investment]) {
                 [category.layer setBorderWidth:0.0];
-                CGFloat hue;
-                CGFloat saturation;
-                CGFloat brightness;
-                CGFloat alpha;
                 [category.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
                 [category setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.25]];
             }
