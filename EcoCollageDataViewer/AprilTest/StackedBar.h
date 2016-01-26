@@ -2,7 +2,7 @@
 //  StackedBar.h
 //  AprilTest
 //
-//  Created by Ugrad Research on 11/5/15.
+//  Created by Ryan Fogarty on 11/5/15.
 //  Copyright (c) 2015 Tia. All rights reserved.
 //
 
