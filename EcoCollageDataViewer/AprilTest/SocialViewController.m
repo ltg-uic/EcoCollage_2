@@ -1470,19 +1470,19 @@ int                         heightMultiplier = 5;
     
     CGRect SBG_frame;
     if(_mapWindow.frame.size.height < largeSizeOfMapWindow) { // map window is closed
-        SBG_frame = CGRectMake(0, 108, 1052, 572);
+        SBG_frame = CGRectMake(0, 123, 1052, 557);
     }
     else {
-        SBG_frame = CGRectMake(0, 278, 1052, 402);
+        SBG_frame = CGRectMake(0, 293, 1052, 387);
     }
     
     [SBG removeFromSuperview];
-    SBG = [[StackedBarGraph alloc]initWithFrame:CGRectMake(0, 108, 1052, 572) andTabController:tabControl withContainers:_stackedBarSwitch.isOn];
+    SBG = [[StackedBarGraph alloc]initWithFrame:CGRectMake(0, 123, 1052, 557) andTabController:tabControl withContainers:_stackedBarSwitch.isOn];
     [self.view addSubview:SBG];
     [SBG setContentOffset:offset];
     
     if(_mapWindow.frame.size.height == largeSizeOfMapWindow) {
-        [SBG setFrame:CGRectMake(0, 278, 1052, 402)];
+        [SBG setFrame:CGRectMake(0, 293, 1052, 387)];
     }
 
     // remove all intervention displays so they can be redrawn

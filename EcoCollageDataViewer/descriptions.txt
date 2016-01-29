@@ -1,13 +1,16 @@
-Investment: Cost to install and maintain new green infrastructure on both city and private property.
+Definitions
+__________________________________________________________
 
-Damage Reduction: The amount of damages reduced by the investment.
+Investment: Cost to install and maintain new green infrastructure on both city and private property. Maintenece costs are in Present Value (PV) over 20 years, at 3% discount rate.
+
+Damage Reduction: The amount of property damages reduced by the investment.
 
 Efficiency of Intervention: ($/Gallon) The amount of money spent per gallon of rainwater stored or infiltrated by green infrastructure installations.
 
-Capacity Used: The amount of intervention capacity used
+Capacity Used: The percentage of capacity used by interventions over their total avaiable capacity.
 
-Water Flow Path: The amount of rainwater in the streets and on property over the course of the entire storm.
+Water Flow Path: Water accumulation, defined as the depth of water accumulated in the strees on the property at any point in the storm.
 
-Groundwater Infiltration: The percentage of rainwater that is returned to the groundwater supply.
+Groundwater Infiltration: The proportion of rainwater infiltrated over the maximum possible infiltration that returns to groundwater (if bioswales everywhere).
 
 Impact on my Neighbors: The amount of rainwater that passes from my neighborhood to the next neighborhood.
