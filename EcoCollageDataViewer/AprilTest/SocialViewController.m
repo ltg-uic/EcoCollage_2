@@ -99,6 +99,7 @@ int                         heightMultiplier = 5;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     _studyNum = tabControl.studyNum;
     
+    [_stackedBarSwitch setOn:NO];
     
     stackedBars = [[NSMutableArray alloc]init];
     

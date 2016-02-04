@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "255"
-            endingLineNumber = "255"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
+            startingLineNumber = "261"
+            endingLineNumber = "261"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "259"
-            endingLineNumber = "259"
+            startingLineNumber = "264"
+            endingLineNumber = "264"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "197"
-            endingLineNumber = "197"
+            startingLineNumber = "202"
+            endingLineNumber = "202"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "198"
-            endingLineNumber = "198"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -186,11 +186,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "301"
-            endingLineNumber = "301"
+            startingLineNumber = "306"
+            endingLineNumber = "306"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -202,11 +202,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "351"
-            endingLineNumber = "351"
+            startingLineNumber = "356"
+            endingLineNumber = "356"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -266,71 +266,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "195"
-            endingLineNumber = "195"
-            landmarkName = "-initWithFrame:andTabController:withContainers:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "194"
-            endingLineNumber = "194"
-            landmarkName = "-initWithFrame:andTabController:withContainers:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "173"
-            endingLineNumber = "173"
-            landmarkName = "-initWithFrame:andTabController:withContainers:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "201"
-            endingLineNumber = "201"
-            landmarkName = "-initWithFrame:andTabController:withContainers:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "200"
@@ -346,11 +282,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "302"
-            endingLineNumber = "302"
+            startingLineNumber = "199"
+            endingLineNumber = "199"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -362,11 +298,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "352"
-            endingLineNumber = "352"
+            startingLineNumber = "178"
+            endingLineNumber = "178"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -378,11 +314,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "356"
-            endingLineNumber = "356"
+            startingLineNumber = "206"
+            endingLineNumber = "206"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -394,11 +330,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "304"
-            endingLineNumber = "304"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -410,11 +346,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "166"
-            endingLineNumber = "166"
+            startingLineNumber = "307"
+            endingLineNumber = "307"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -426,11 +362,75 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
+            startingLineNumber = "357"
+            endingLineNumber = "357"
+            landmarkName = "-initWithFrame:andTabController:withContainers:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AprilTest/StackedBarGraph.m"
+            timestampString = "476314637.279729"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "361"
+            endingLineNumber = "361"
+            landmarkName = "-initWithFrame:andTabController:withContainers:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AprilTest/StackedBarGraph.m"
+            timestampString = "476314637.279729"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "309"
+            endingLineNumber = "309"
+            landmarkName = "-initWithFrame:andTabController:withContainers:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AprilTest/StackedBarGraph.m"
+            timestampString = "476314637.279729"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "171"
+            endingLineNumber = "171"
+            landmarkName = "-initWithFrame:andTabController:withContainers:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AprilTest/StackedBarGraph.m"
+            timestampString = "476314637.279729"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "175"
+            endingLineNumber = "175"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -474,23 +474,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/SocialViewController.m"
-            timestampString = "471905766.950072"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "445"
-            endingLineNumber = "445"
-            landmarkName = "-viewWillAppear:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AprilTest/SocialViewController.m"
-            timestampString = "471905766.950072"
+            timestampString = "476314732.399223"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "446"
@@ -506,7 +490,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/SocialViewController.m"
-            timestampString = "471905766.950072"
+            timestampString = "476314732.399223"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "447"
@@ -522,11 +506,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/SocialViewController.m"
-            timestampString = "471905766.950072"
+            timestampString = "476314732.399223"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "504"
-            endingLineNumber = "504"
+            startingLineNumber = "448"
+            endingLineNumber = "448"
+            landmarkName = "-viewWillAppear:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AprilTest/SocialViewController.m"
+            timestampString = "476314732.399223"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "505"
+            endingLineNumber = "505"
             landmarkName = "-viewWillDisappear:"
             landmarkType = "5">
          </BreakpointContent>
@@ -538,11 +538,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "804"
-            endingLineNumber = "804"
+            startingLineNumber = "809"
+            endingLineNumber = "809"
             landmarkName = "-trialTapped:"
             landmarkType = "5">
          </BreakpointContent>
@@ -554,11 +554,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "128"
-            endingLineNumber = "128"
+            startingLineNumber = "133"
+            endingLineNumber = "133"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -570,11 +570,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "572"
-            endingLineNumber = "572"
+            startingLineNumber = "577"
+            endingLineNumber = "577"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -586,11 +586,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -602,11 +602,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "427"
-            endingLineNumber = "427"
+            startingLineNumber = "432"
+            endingLineNumber = "432"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -618,11 +618,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "444"
-            endingLineNumber = "444"
+            startingLineNumber = "449"
+            endingLineNumber = "449"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -634,11 +634,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "66"
-            endingLineNumber = "66"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -650,11 +650,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "67"
-            endingLineNumber = "67"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -666,11 +666,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "68"
-            endingLineNumber = "68"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
             landmarkName = "-initWithFrame:andTabController:withContainers:"
             landmarkType = "5">
          </BreakpointContent>
@@ -730,11 +730,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "992"
-            endingLineNumber = "992"
+            startingLineNumber = "997"
+            endingLineNumber = "997"
             landmarkName = "-impactTapped"
             landmarkType = "5">
          </BreakpointContent>
@@ -746,11 +746,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "986"
-            endingLineNumber = "986"
+            startingLineNumber = "991"
+            endingLineNumber = "991"
             landmarkName = "-impactTapped"
             landmarkType = "5">
          </BreakpointContent>
@@ -762,11 +762,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1449"
-            endingLineNumber = "1449"
+            startingLineNumber = "1454"
+            endingLineNumber = "1454"
             landmarkName = "-damageReducTapped"
             landmarkType = "5">
          </BreakpointContent>
@@ -778,11 +778,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1044"
-            endingLineNumber = "1044"
+            startingLineNumber = "1049"
+            endingLineNumber = "1049"
             landmarkName = "-groundwaterTapped"
             landmarkType = "5">
          </BreakpointContent>
@@ -794,11 +794,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1561"
-            endingLineNumber = "1561"
+            startingLineNumber = "1566"
+            endingLineNumber = "1566"
             landmarkName = "-investmentTapped"
             landmarkType = "5">
          </BreakpointContent>
@@ -810,11 +810,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1621"
-            endingLineNumber = "1621"
+            startingLineNumber = "1622"
+            endingLineNumber = "1622"
             landmarkName = "-resetAllCategories"
             landmarkType = "5">
          </BreakpointContent>
@@ -826,11 +826,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1658"
-            endingLineNumber = "1658"
+            startingLineNumber = "1659"
+            endingLineNumber = "1659"
             landmarkName = "-hideScores"
             landmarkType = "5">
          </BreakpointContent>
@@ -842,23 +842,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1480"
-            endingLineNumber = "1480"
-            landmarkName = "-damageReducTapped"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1485"
@@ -874,11 +858,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1479"
-            endingLineNumber = "1479"
+            startingLineNumber = "1490"
+            endingLineNumber = "1490"
             landmarkName = "-damageReducTapped"
             landmarkType = "5">
          </BreakpointContent>
@@ -890,11 +874,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1476"
-            endingLineNumber = "1476"
+            startingLineNumber = "1484"
+            endingLineNumber = "1484"
             landmarkName = "-damageReducTapped"
             landmarkType = "5">
          </BreakpointContent>
@@ -906,11 +890,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1463"
-            endingLineNumber = "1463"
+            startingLineNumber = "1481"
+            endingLineNumber = "1481"
             landmarkName = "-damageReducTapped"
             landmarkType = "5">
          </BreakpointContent>
@@ -922,11 +906,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1467"
-            endingLineNumber = "1467"
+            startingLineNumber = "1468"
+            endingLineNumber = "1468"
             landmarkName = "-damageReducTapped"
             landmarkType = "5">
          </BreakpointContent>
@@ -938,11 +922,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1393"
-            endingLineNumber = "1393"
+            startingLineNumber = "1472"
+            endingLineNumber = "1472"
+            landmarkName = "-damageReducTapped"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AprilTest/StackedBarGraph.m"
+            timestampString = "476314637.279729"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1398"
+            endingLineNumber = "1398"
             landmarkName = "-efficiencyTapped"
             landmarkType = "5">
          </BreakpointContent>
@@ -954,7 +954,23 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1404"
+            endingLineNumber = "1404"
+            landmarkName = "-efficiencyTapped"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "AprilTest/StackedBarGraph.m"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1399"
@@ -970,11 +986,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1394"
-            endingLineNumber = "1394"
+            startingLineNumber = "1386"
+            endingLineNumber = "1386"
             landmarkName = "-efficiencyTapped"
             landmarkType = "5">
          </BreakpointContent>
@@ -986,27 +1002,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
+            timestampString = "476314637.279729"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1381"
-            endingLineNumber = "1381"
-            landmarkName = "-efficiencyTapped"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "AprilTest/StackedBarGraph.m"
-            timestampString = "476313692.297993"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1387"
-            endingLineNumber = "1387"
+            startingLineNumber = "1392"
+            endingLineNumber = "1392"
             landmarkName = "-efficiencyTapped"
             landmarkType = "5">
          </BreakpointContent>
