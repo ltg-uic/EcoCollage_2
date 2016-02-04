@@ -58,10 +58,6 @@ int barHeightMultiplier = 4;
 - (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl withContainers:(int)wC{
     if(tabControl.profiles.count == 0 || tabControl.trialRuns.count == 0) return NULL;
     
-    UITapGestureRecognizer *resetCategories = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resetAllCategories)];
-    resetCategories.numberOfTapsRequired = 1;
-    [self addGestureRecognizer:resetCategories];
-    
     
     tabController = tabControl;
     self = [super initWithFrame:frame];
