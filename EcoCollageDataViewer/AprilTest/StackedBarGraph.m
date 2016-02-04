@@ -1586,10 +1586,6 @@ int barHeightMultiplier = 4;
             }
         }
     }
-    
-    for(StackedBar *sb in _stackedBars) {
-        [sb lineDown:sb.investment withContainer:sb.investmentContainer withEmpty:sb.investmentEmpty];
-    }
 
     [UIView commitAnimations];
     

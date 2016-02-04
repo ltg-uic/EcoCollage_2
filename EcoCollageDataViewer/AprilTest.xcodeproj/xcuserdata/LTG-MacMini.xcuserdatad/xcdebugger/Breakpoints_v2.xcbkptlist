@@ -831,8 +831,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1658"
             endingLineNumber = "1658"
-            landmarkName = "-hideScores"
-            landmarkType = "5">
+            landmarkName = "@implementation StackedBarGraph"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
