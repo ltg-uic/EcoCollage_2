@@ -58,6 +58,7 @@
 
 @property int shrunk;
 
+- (void)lineDown:(UIView *)score withContainer:(UIView *)container withEmpty:(UIView *)empty;
 
 - (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM withScore:(float*)totalScore trialNum:(int)trialNumber;
 

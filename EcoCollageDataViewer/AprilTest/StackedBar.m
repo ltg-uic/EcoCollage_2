@@ -838,6 +838,31 @@ int width;
     else [_score.layer setBorderWidth:1];
 }
 
+- (void)lineDown:(UIView *)score withContainer:(UIView *)container withEmpty:(UIView *)empty {
+    int containerHeight = (container.frame.size.height == 0) ? score.frame.size.height: container.frame.size.height;
+    
+    
+    for(UIView *otherScore in _outcomeCategoryViews) {
+        if(![otherScore isEqual:score] && otherScore.frame.origin.y > score.frame.origin.y)
+            [otherScore setFrame:CGRectMake(otherScore.frame.origin.x, otherScore.frame.origin.y - containerHeight, otherScore.frame.size.width, otherScore.frame.size.height)];
+    }
+    
+    for(UIView *otherContainer in _outcomeCategoryContainers) {
+        if(![otherContainer isEqual:container] && otherContainer.frame.origin.y > container.frame.origin.y)
+            [otherContainer setFrame:CGRectMake(otherContainer.frame.origin.x, otherContainer.frame.origin.y - containerHeight, otherContainer.frame.size.width, otherContainer.frame.size.height)];
+    }
+    
+    for(UIView *otherEmpty in _outcomeCategoryEmpties) {
+        if(![otherEmpty isEqual:empty] && otherEmpty.frame.origin.y > empty.frame.origin.y)
+            [otherEmpty setFrame:CGRectMake(otherEmpty.frame.origin.x, otherEmpty.frame.origin.y - containerHeight, otherEmpty.frame.size.width, otherEmpty.frame.size.height)];
+    }
+    
+    // move to the bottom
+    [score setFrame:CGRectMake(score.frame.origin.x, -score.frame.size.height, score.frame.size.width, score.frame.size.height)];
+    [container setFrame:CGRectMake(container.frame.origin.x, -containerHeight, container.frame.size.width, container.frame.size.height)];
+    [empty setFrame:CGRectMake(empty.frame.origin.x, -empty.frame.size.height, empty.frame.size.width, empty.frame.size.height)];
+}
+
 
 - (void)shrink {
     int shrinkFactor = 4;
