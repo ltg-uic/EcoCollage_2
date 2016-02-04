@@ -59,6 +59,11 @@ int barHeightMultiplier = 4;
     if(tabControl.profiles.count == 0 || tabControl.trialRuns.count == 0) return NULL;
     
     
+    UITapGestureRecognizer *resetCategories = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resetAllCategories)];
+    resetCategories.numberOfTapsRequired = 1;
+    [self addGestureRecognizer:resetCategories];
+    
+    
     tabController = tabControl;
     self = [super initWithFrame:frame];
     _legendView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, legend_width, frame.size.height)];
@@ -1585,10 +1590,6 @@ int barHeightMultiplier = 4;
                 [categoryContainer.layer setBorderWidth:0.0];
             }
         }
-    }
-    
-    for(StackedBar *sb in _stackedBars) {
-        [sb lineDown:sb.investment withContainer:sb.investmentContainer withEmpty:sb.investmentEmpty];
     }
 
     [UIView commitAnimations];
