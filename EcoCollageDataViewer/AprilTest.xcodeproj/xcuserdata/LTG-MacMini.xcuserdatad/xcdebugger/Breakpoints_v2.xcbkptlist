@@ -1023,7 +1023,11 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "845"
             endingLineNumber = "845"
+<<<<<<< HEAD
             landmarkName = "-lineDown:withContainer:withEmpty:"
+=======
+            landmarkName = "-shrink"
+>>>>>>> master
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1039,7 +1043,11 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "844"
             endingLineNumber = "844"
+<<<<<<< HEAD
             landmarkName = "-lineDown:withContainer:withEmpty:"
+=======
+            landmarkName = "-shrink"
+>>>>>>> master
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1055,7 +1063,11 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "848"
             endingLineNumber = "848"
+<<<<<<< HEAD
             landmarkName = "-lineDown:withContainer:withEmpty:"
+=======
+            landmarkName = "-shrink"
+>>>>>>> master
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
