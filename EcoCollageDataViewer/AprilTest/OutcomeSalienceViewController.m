@@ -45,7 +45,6 @@ Value  *installationCost  = NULL;
 Value  *maintenanceCost   = NULL;
 Value  *privateDamages    = NULL;
 Value  *impactNeighbors   = NULL;
-Value  *neighborsImpactMe = NULL;
 Value  *gw_infiltration   = NULL;
 Value  *floodedStreets    = NULL;
 Value  *standingWater     = NULL;
@@ -774,21 +773,6 @@ float maxPublicInstallNorm;
     
     [_loadingIndicator performSelectorInBackground:@selector(startAnimating) withObject:nil];
     NSMutableString * content = [NSMutableString alloc];
-    /*
-    for(int i = 0; i < trialRunSubViews.count; i++){
-        //FebTestWaterDisplay * temp = (FebTestWaterDisplay *) [waterDisplays objectAtIndex:i];
-        //AprilTestEfficiencyView * temp2 = (AprilTestEfficiencyView *)[efficiency objectAtIndex:i];
-        //FebTestWaterDisplay * tempHeights = (FebTestWaterDisplay *) [maxWaterDisplays objectAtIndex: i];
-        
-        FebTestWaterDisplay * temp = [[trialRunSubViews objectAtIndex:i] objectForKey:@"WaterDisplay"];
-        AprilTestEfficiencyView * temp2 = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
-        FebTestWaterDisplay * tempHeights = [[trialRunSubViews objectAtIndex:i] objectForKey:@"MWaterDisplay"];
-        
-        [temp2 updateViewForHour:hoursAfterStorm];
-        //[temp updateView:hoursAfterStorm];
-        [temp fastUpdateView:hoursAfterStorm];
-        [tempHeights updateView:48];
-    }*/
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     
@@ -798,13 +782,6 @@ float maxPublicInstallNorm;
     
     for (int i = 0; i < [trialRunSubViews count]; i++){
         AprilTestSimRun *simRun = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
-        
-        //NSLog(@"Updating for trial %d\n", simRun.trialNum);
-        
-        /*
-        //update intervention capacity
-        AprilTestEfficiencyView * temp2 = [[trialRunSubViews objectAtIndex:i] objectForKey:@"EfficiencyView"];
-        [temp2 updateViewForHour:hoursAfterStorm];*/
         
         /* Update Intervention Capacity */
         [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] updateViewForHour:hoursAfterStorm];
@@ -855,9 +832,7 @@ float maxPublicInstallNorm;
 
 #pragma mark UISlider Functions
 
-
-
-//will draw sliders on a scrollview right below the titles of concern rankings
+//will draw sliders on a scrollview right below the titles of concern rankings for Water Flow map and Intervention Capacity
 -(void) drawSliders{
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -1002,8 +977,6 @@ float maxPublicInstallNorm;
         else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
-            
-        } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             
@@ -1166,7 +1139,6 @@ float maxPublicInstallNorm;
     if (installationCost  == NULL) { installationCost = (Value*)malloc(sizeof(Value));  }
     if (maintenanceCost   == NULL) { maintenanceCost = (Value*) malloc(sizeof(Value));  }
     if (privateDamages    == NULL) { privateDamages = (Value*)malloc(sizeof(Value));    }
-    if (neighborsImpactMe == NULL) { neighborsImpactMe = (Value*)malloc(sizeof(Value)); }
     if (impactNeighbors   == NULL) { impactNeighbors = (Value*)malloc(sizeof(Value));   }
     if (gw_infiltration   == NULL) { gw_infiltration = (Value*) malloc(sizeof(Value));  }
     if (floodedStreets    == NULL) { floodedStreets = (Value*) malloc(sizeof(Value));   }
@@ -1194,9 +1166,6 @@ float maxPublicInstallNorm;
             
             impactNeighbors->highestCost   = someTrial.impactNeighbors;
             impactNeighbors->lowestCost    = someTrial.impactNeighbors;
-            
-            neighborsImpactMe->highestCost = someTrial.neighborsImpactMe;
-            neighborsImpactMe->lowestCost  = someTrial.neighborsImpactMe;
             
             gw_infiltration->highestCost   = someTrial.infiltration;
             gw_infiltration->lowestCost    = someTrial.infiltration;
@@ -1226,9 +1195,6 @@ float maxPublicInstallNorm;
         //neighbors
         if (someTrial.impactNeighbors <= impactNeighbors->lowestCost){  impactNeighbors->lowestCost = someTrial.impactNeighbors; }
         if (someTrial.impactNeighbors >= impactNeighbors->highestCost){ impactNeighbors->highestCost = someTrial.impactNeighbors; }
-        
-        if (someTrial.neighborsImpactMe <= neighborsImpactMe->lowestCost){ neighborsImpactMe->lowestCost = someTrial.neighborsImpactMe; }
-        if (someTrial.neighborsImpactMe >= neighborsImpactMe->highestCost){neighborsImpactMe->highestCost = someTrial.neighborsImpactMe; }
         
         //infiltration
         if (someTrial.infiltration <= gw_infiltration->lowestCost){ gw_infiltration->lowestCost = someTrial.infiltration; }
@@ -1283,13 +1249,6 @@ float maxPublicInstallNorm;
         impactNeighbors->lowestCost = 0.01;
     }
     
-    if (neighborsImpactMe->highestCost == 0) {
-        neighborsImpactMe->highestCost = 0.01;
-    }
-    else if (neighborsImpactMe->lowestCost == 0){
-        neighborsImpactMe->lowestCost = 0.01;
-    }
-    
     if (gw_infiltration->highestCost == 0){
         gw_infiltration->highestCost = 0.01;
     }
@@ -1341,10 +1300,6 @@ float maxPublicInstallNorm;
         if (gw_infiltration->highestCost == gw_infiltration->lowestCost){ someTrialDyn.infiltration = .5; }
         else
             someTrialDyn.infiltration = ((someTrial.infiltration - gw_infiltration->lowestCost)/ (gw_infiltration->highestCost - gw_infiltration->lowestCost));
-        
-        if (neighborsImpactMe->highestCost == neighborsImpactMe->lowestCost){ someTrialDyn.neighborsImpactMe = .5; }
-        else
-            someTrialDyn.neighborsImpactMe = ((someTrial.neighborsImpactMe - neighborsImpactMe->lowestCost)/ (neighborsImpactMe->highestCost - neighborsImpactMe->lowestCost));
         
         if (floodedStreets->highestCost == floodedStreets->lowestCost) { someTrialDyn.floodedStreets = .5; }
         else
@@ -1415,17 +1370,12 @@ float maxPublicInstallNorm;
 
 - (void) updateComponentScore: (int) trial{
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    //AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
-    //AprilTestSimRun *simRun = [[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"];
-    
     AprilTestNormalizedVariable *simRunNormal;
     
     if (_DynamicNormalization.isOn){
-        //simRunNormal = [trialRunsDynNorm objectAtIndex:trial];
         simRunNormal = [[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialDynamic"];
     }
     else{
-        //simRunNormal = [trialRunsNormalized objectAtIndex:trial];
         simRunNormal = [[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialStatic"];
     }
     
@@ -1469,7 +1419,7 @@ float maxPublicInstallNorm;
         }
         else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
-            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.neighborsImpactMe)) /2;
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.sewerLoad)) /2;
             
             [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages))]];
             
@@ -1480,12 +1430,6 @@ float maxPublicInstallNorm;
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
             [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
-            [scoreVisNames addObject: currentVar.name];
-        }
-        else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
-            
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (simRunNormal.neighborsImpactMe);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe)]];
             [scoreVisNames addObject: currentVar.name];
         }
         else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
@@ -1624,83 +1568,6 @@ float maxPublicInstallNorm;
     [trialRunSubViews replaceObjectAtIndex:trial withObject:newDict];
 }
 
-/*
-- (void)loadNextSimulationRun{
-    
-    //pull content from the server that is said to be from le trial with real vals
-    NSString * urlPlusFile = [NSString stringWithFormat:@"%@/%@", _url, @"simOutput.php"];
-    NSString *myRequestString = [[NSString alloc] initWithFormat:@"trialID=%d&studyID=%d", trialNum, _studyNum ];
-    NSData *myRequestData = [ NSData dataWithBytes: [ myRequestString UTF8String ] length: [ myRequestString length ] ];
-    NSMutableURLRequest *request = [ [ NSMutableURLRequest alloc ] initWithURL: [ NSURL URLWithString: urlPlusFile ] ];
-    [ request setHTTPMethod: @"POST" ];
-    [ request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
-    [ request setHTTPBody: myRequestData ];
-    
-    NSString *content;
-    while( !content){
-        NSURLResponse *response;
-        NSError *err;
-        NSData *returnData = [ NSURLConnection sendSynchronousRequest: request returningResponse:&response error:&err];
-        //NSLog(@"error: %@", err);
-        
-        if( [returnData bytes]) content = [NSString stringWithUTF8String:[returnData bytes]];
-        NSLog(@"responseData: %@", content);
-    }
-    
-    //pull content from the server that is said to be from le trial that is said to be normalized vals (ranging from 0 to 1)
-    NSString *urlPlusFileN = [NSString stringWithFormat:@"%@/%@", _url, @"simOutputN.php"];
-    NSString *myRequestStringN = [[NSString alloc] initWithFormat:@"trialID=%d&studyID=%d", trialNum, _studyNum ];
-    NSData *myRequestDataN = [ NSData dataWithBytes: [ myRequestStringN UTF8String ] length: [ myRequestStringN length ] ];
-    NSMutableURLRequest *requestN = [ [ NSMutableURLRequest alloc ] initWithURL: [ NSURL URLWithString: urlPlusFileN ] ];
-    [ requestN setHTTPMethod: @"POST" ];
-    [ requestN setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
-    [ requestN setHTTPBody: myRequestDataN ];
-
-    NSString *contentN;
-    while( !contentN){
-        NSURLResponse *responseN;
-        NSError *err;
-        NSData *returnDataN = [ NSURLConnection sendSynchronousRequest: requestN returningResponse:&responseN error:&err];
-        //NSLog(@"error: %@", err);
-        
-        if( [returnDataN bytes]) contentN = [NSString stringWithUTF8String:[returnDataN bytes]];
-       //NSLog(@"responseData: %@", contentN);
-    }
-    
-    
-    if(content != NULL && content.length > 100 && contentN != NULL){
-        //Adds a new trial to a list of trials (normalized, real, dynamic)
-        AprilTestSimRun *simRun = [[AprilTestSimRun alloc] init:content withTrialNum:trialNum];
-        AprilTestNormalizedVariable *simRunNormal = [[AprilTestNormalizedVariable alloc] init: contentN withTrialNum:trialNum];
-        AprilTestNormalizedVariable *simRunDyn    = [[AprilTestNormalizedVariable alloc] init: contentN withTrialNum:trialNum];
-        
-        [trialRuns addObject: simRun];                  //contains trials containing real values
-        [trialRunsNormalized addObject:simRunNormal];   //contains trials containing normalized values
-        [trialRunsDynNorm addObject:simRunDyn];         //contains normalized data that will be dynamically altered every time a new trial is fetched
-        
-        //draws the newest trial after latest normalization of data (static or dynamic)
-        [self drawTrial: trialNum];
-        trialNum++;
-        
-        //chooses between static/dynamic normalization of trial data
-        if (_DynamicNormalization.isOn)
-            [self normalizeAllandUpdateDynamically];
-        else
-            [self normalizeStatically];
-        
-        //update with the current sort chosen after a new trial is drawn
-        [self handleSort: sortChosen];
-        
-        //automatically scroll to the bottom (subject to change since its a little to rapid a transformation... maybeee) UPDATE: Scroling was smoothened
-        if (trialNum > 3){
-            scrollingTimer = [NSTimer scheduledTimerWithTimeInterval:(0.10)
-                                                              target:self selector:@selector(autoscrollTimerFired:) userInfo:nil repeats:NO];
-        }
-    }
- 
-}*/
-
-
 #pragma mark Favorite and Least Favorite Functions
 
 - (void)sendFavorite {
@@ -1788,17 +1655,6 @@ float maxPublicInstallNorm;
     NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTapped as favorite\t%d", trial]];
     [tabControl writeToLogFileString:logEntry];
     
-    
-    /*
-    // loop thru all favorite views and turn off any others
-    for (NSDictionary *trialRunInfo in trialRunSubViews) {
-        if (![[trialRunInfo objectForKey:@"FavoriteView"] isEqual: favoriteView] && [[trialRunInfo objectForKey:@"FavoriteView"]isActive])
-            [[trialRunInfo objectForKey:@"FavoriteView"] setActive:NO];
-        if ([[trialRunInfo objectForKey:@"LeastFavoriteView"]trialNum] == favoriteView.trialNum)
-            [[trialRunInfo objectForKey:@"LeastFavoriteView"]setActive:NO];
-    }
-     */
-    
     // if the least favorite is selected for this trial, unselect it
     for(NSDictionary *trialRunInfo in trialRunSubViews) {
         if([[trialRunInfo objectForKey:@"LeastFavoriteView"]trialNum] == favoriteView.trialNum) {
@@ -1867,16 +1723,6 @@ float maxPublicInstallNorm;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTapped as least favorite\t%d", trial]];
     [tabControl writeToLogFileString:logEntry];
-    
-    /*
-    // loop thru all favorite views and turn off any others
-    for (NSDictionary *trialRunInfo in trialRunSubViews) {
-        if (![[trialRunInfo objectForKey:@"LeastFavoriteView"] isEqual: leastFavoriteView] && [[trialRunInfo objectForKey:@"LeastFavoriteView"]isActive])
-            [[trialRunInfo objectForKey:@"LeastFavoriteView"] setActive:NO];
-        if ([[trialRunInfo objectForKey:@"FavoriteView"] trialNum] == leastFavoriteView.trialNum)
-            [[trialRunInfo objectForKey:@"FavoriteView"] setActive:NO];
-    }
-     */
     
     // if the least favorite is selected for this trial, unselect it
     for(NSDictionary *trialRunInfo in trialRunSubViews) {
@@ -2072,7 +1918,6 @@ float maxPublicInstallNorm;
             investmentWidth = width;
             
             if(publicCostDisplays.count <= trial){
-                //NSLog(@"Drawing water display for first time");
                 float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.publicInstallCost];
                 float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
                 
@@ -2082,7 +1927,6 @@ float maxPublicInstallNorm;
                 [publicCostDisplays addObject:cd];
                 
             } else {
-                //NSLog(@"Repositioning water display");
                 cd = [publicCostDisplays objectAtIndex:trial];
                 cd.frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
                 [_dataWindow addSubview:cd];
@@ -2120,7 +1964,7 @@ float maxPublicInstallNorm;
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 20 andyValue: (trial*175) +20 andColor:[UIColor blackColor] to:&damage];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 20 andyValue: (trial*175) +50 andColor:[UIColor blackColor] to:&damageReduced];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 80 andColor:[UIColor blackColor] to:&sewerLoad];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.sewerLoad] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 80 andColor:[UIColor blackColor] to:&sewerLoad];
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:nil];
             
@@ -2150,10 +1994,10 @@ float maxPublicInstallNorm;
 
         } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (trial)*175 + 40 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.sewerLoad] withConcernPosition:width + 50 andyValue: (trial)*175 + 40 andColor:[UIColor blackColor] to:nil];
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.neighborsImpactMe)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.sewerLoad);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.sewerLoad)]];
             [scoreVisNames addObject: currentVar.name];
  
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
@@ -2593,8 +2437,6 @@ float maxPublicInstallNorm;
             currentVarLabel.text =@"  Damage Reduction";
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             currentVarLabel.text =@"  Impact on my Neighbors";
-        } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
-            currentVarLabel.text=@"  Rainwater from Neighbors";
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             currentVarLabel.text =@"  Efficiency of Intervention";
         } else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){

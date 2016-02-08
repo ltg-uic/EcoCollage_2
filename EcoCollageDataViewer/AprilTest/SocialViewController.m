@@ -2858,7 +2858,7 @@ int                         heightMultiplier = 5;
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 20 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 20 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 20 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.sewerLoad] withConcernPosition:width + 20 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue:150 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 20 andyValue:165 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             
@@ -2867,10 +2867,6 @@ int                         heightMultiplier = 5;
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@" flowed to neighbors"] withConcernPosition:width + 30 andyValue: 75 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-        }  else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
-            
-            
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
             

@@ -18,7 +18,7 @@
 @property int privateMaintenanceCost;
 @property NSString * standingWater;
 @property float impactNeighbors;
-@property float neighborsImpactMe;
+@property float sewerLoad;
 @property float infiltration;
 @property NSString * efficiency;
 @property NSString * maxWaterHeights;

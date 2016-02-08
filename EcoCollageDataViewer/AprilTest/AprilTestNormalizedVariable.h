@@ -17,7 +17,7 @@
 @property float privateMaintenanceCost;
 @property float standingWater;
 @property float impactNeighbors;
-@property float neighborsImpactMe;
+@property float sewerLoad;
 @property float infiltration;
 @property float efficiency;
 @property float floodedStreets;
