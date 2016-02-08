@@ -1002,8 +1002,6 @@ float maxPublicInstallNorm;
             
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             
-        } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
-            
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             
         } else if( [currentVar.name compare:@"groundwaterInfiltration"] == NSOrderedSame){
@@ -1461,12 +1459,6 @@ float maxPublicInstallNorm;
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
             [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
-            [scoreVisNames addObject: currentVar.name];
-        }
-        else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
-            
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (simRunNormal.sewerLoad);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.sewerLoad)]];
             [scoreVisNames addObject: currentVar.name];
         }
         else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
@@ -2131,7 +2123,7 @@ float maxPublicInstallNorm;
 
         } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 50 andyValue: (trial)*175 + 40 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.sewerLoad] withConcernPosition:width + 50 andyValue: (trial)*175 + 40 andColor:[UIColor blackColor] to:nil];
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.sewerLoad);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.sewerLoad)]];
@@ -2574,8 +2566,6 @@ float maxPublicInstallNorm;
             currentVarLabel.text =@"  Damage Reduction";
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             currentVarLabel.text =@"  Impact on my Neighbors";
-        } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
-            currentVarLabel.text=@"  Rainwater from Neighbors";
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             currentVarLabel.text =@"  Efficiency of Intervention";
         } else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
