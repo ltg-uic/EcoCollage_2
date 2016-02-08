@@ -1370,17 +1370,12 @@ float maxPublicInstallNorm;
 
 - (void) updateComponentScore: (int) trial{
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
-    //AprilTestSimRun *simRun = [trialRuns objectAtIndex:trial];
-    //AprilTestSimRun *simRun = [[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"];
-    
     AprilTestNormalizedVariable *simRunNormal;
     
     if (_DynamicNormalization.isOn){
-        //simRunNormal = [trialRunsDynNorm objectAtIndex:trial];
         simRunNormal = [[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialDynamic"];
     }
     else{
-        //simRunNormal = [trialRunsNormalized objectAtIndex:trial];
         simRunNormal = [[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialStatic"];
     }
     
@@ -1729,16 +1724,6 @@ float maxPublicInstallNorm;
     NSString *logEntry = [tabControl generateLogEntryWith:[NSString stringWithFormat:@"\tTapped as least favorite\t%d", trial]];
     [tabControl writeToLogFileString:logEntry];
     
-    /*
-    // loop thru all favorite views and turn off any others
-    for (NSDictionary *trialRunInfo in trialRunSubViews) {
-        if (![[trialRunInfo objectForKey:@"LeastFavoriteView"] isEqual: leastFavoriteView] && [[trialRunInfo objectForKey:@"LeastFavoriteView"]isActive])
-            [[trialRunInfo objectForKey:@"LeastFavoriteView"] setActive:NO];
-        if ([[trialRunInfo objectForKey:@"FavoriteView"] trialNum] == leastFavoriteView.trialNum)
-            [[trialRunInfo objectForKey:@"FavoriteView"] setActive:NO];
-    }
-     */
-    
     // if the least favorite is selected for this trial, unselect it
     for(NSDictionary *trialRunInfo in trialRunSubViews) {
         if([[trialRunInfo objectForKey:@"FavoriteView"]trialNum] == leastFavoriteView.trialNum) {
@@ -1933,7 +1918,6 @@ float maxPublicInstallNorm;
             investmentWidth = width;
             
             if(publicCostDisplays.count <= trial){
-                //NSLog(@"Drawing water display for first time");
                 float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.publicInstallCost];
                 float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
                 
@@ -1943,7 +1927,6 @@ float maxPublicInstallNorm;
                 [publicCostDisplays addObject:cd];
                 
             } else {
-                //NSLog(@"Repositioning water display");
                 cd = [publicCostDisplays objectAtIndex:trial];
                 cd.frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
                 [_dataWindow addSubview:cd];
