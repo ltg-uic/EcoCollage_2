@@ -826,7 +826,6 @@ int width;
     [_score setTextAlignment:NSTextAlignmentCenter];
 }
 
-// YOYOYOYOYO
 
 - (void) changeText:(NSString *)text {
     _score.text = text;
