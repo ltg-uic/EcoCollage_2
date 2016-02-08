@@ -45,7 +45,6 @@ Value  *installationCost  = NULL;
 Value  *maintenanceCost   = NULL;
 Value  *privateDamages    = NULL;
 Value  *impactNeighbors   = NULL;
-Value  *neighborsImpactMe = NULL;
 Value  *gw_infiltration   = NULL;
 Value  *floodedStreets    = NULL;
 Value  *standingWater     = NULL;
@@ -1166,7 +1165,6 @@ float maxPublicInstallNorm;
     if (installationCost  == NULL) { installationCost = (Value*)malloc(sizeof(Value));  }
     if (maintenanceCost   == NULL) { maintenanceCost = (Value*) malloc(sizeof(Value));  }
     if (privateDamages    == NULL) { privateDamages = (Value*)malloc(sizeof(Value));    }
-    if (neighborsImpactMe == NULL) { neighborsImpactMe = (Value*)malloc(sizeof(Value)); }
     if (impactNeighbors   == NULL) { impactNeighbors = (Value*)malloc(sizeof(Value));   }
     if (gw_infiltration   == NULL) { gw_infiltration = (Value*) malloc(sizeof(Value));  }
     if (floodedStreets    == NULL) { floodedStreets = (Value*) malloc(sizeof(Value));   }
@@ -1194,9 +1192,6 @@ float maxPublicInstallNorm;
             
             impactNeighbors->highestCost   = someTrial.impactNeighbors;
             impactNeighbors->lowestCost    = someTrial.impactNeighbors;
-            
-            neighborsImpactMe->highestCost = someTrial.neighborsImpactMe;
-            neighborsImpactMe->lowestCost  = someTrial.neighborsImpactMe;
             
             gw_infiltration->highestCost   = someTrial.infiltration;
             gw_infiltration->lowestCost    = someTrial.infiltration;
@@ -1226,9 +1221,6 @@ float maxPublicInstallNorm;
         //neighbors
         if (someTrial.impactNeighbors <= impactNeighbors->lowestCost){  impactNeighbors->lowestCost = someTrial.impactNeighbors; }
         if (someTrial.impactNeighbors >= impactNeighbors->highestCost){ impactNeighbors->highestCost = someTrial.impactNeighbors; }
-        
-        if (someTrial.neighborsImpactMe <= neighborsImpactMe->lowestCost){ neighborsImpactMe->lowestCost = someTrial.neighborsImpactMe; }
-        if (someTrial.neighborsImpactMe >= neighborsImpactMe->highestCost){neighborsImpactMe->highestCost = someTrial.neighborsImpactMe; }
         
         //infiltration
         if (someTrial.infiltration <= gw_infiltration->lowestCost){ gw_infiltration->lowestCost = someTrial.infiltration; }
@@ -1283,13 +1275,6 @@ float maxPublicInstallNorm;
         impactNeighbors->lowestCost = 0.01;
     }
     
-    if (neighborsImpactMe->highestCost == 0) {
-        neighborsImpactMe->highestCost = 0.01;
-    }
-    else if (neighborsImpactMe->lowestCost == 0){
-        neighborsImpactMe->lowestCost = 0.01;
-    }
-    
     if (gw_infiltration->highestCost == 0){
         gw_infiltration->highestCost = 0.01;
     }
@@ -1341,10 +1326,6 @@ float maxPublicInstallNorm;
         if (gw_infiltration->highestCost == gw_infiltration->lowestCost){ someTrialDyn.infiltration = .5; }
         else
             someTrialDyn.infiltration = ((someTrial.infiltration - gw_infiltration->lowestCost)/ (gw_infiltration->highestCost - gw_infiltration->lowestCost));
-        
-        if (neighborsImpactMe->highestCost == neighborsImpactMe->lowestCost){ someTrialDyn.sewerLoad = .5; }
-        else
-            someTrialDyn.sewerLoad = ((someTrial.neighborsImpactMe - neighborsImpactMe->lowestCost)/ (neighborsImpactMe->highestCost - neighborsImpactMe->lowestCost));
         
         if (floodedStreets->highestCost == floodedStreets->lowestCost) { someTrialDyn.floodedStreets = .5; }
         else
@@ -2120,7 +2101,7 @@ float maxPublicInstallNorm;
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 20 andyValue: (trial*175) +20 andColor:[UIColor blackColor] to:&damage];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 20 andyValue: (trial*175) +50 andColor:[UIColor blackColor] to:&damageReduced];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.neighborsImpactMe] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 80 andColor:[UIColor blackColor] to:&sewerLoad];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.sewerLoad] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 80 andColor:[UIColor blackColor] to:&sewerLoad];
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:nil];
             

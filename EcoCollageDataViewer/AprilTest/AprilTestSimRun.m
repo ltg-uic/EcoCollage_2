@@ -18,7 +18,7 @@
 @synthesize privateMaintenanceCost = _privateMaintenanceCost;
 @synthesize standingWater = _standingWater;
 @synthesize impactNeighbors = _impactNeighbors;
-@synthesize neighborsImpactMe = _neighborsImpactMe;
+@synthesize sewerLoad = _sewerLoad;
 @synthesize infiltration = _infiltration;
 @synthesize efficiency = _efficiency;
 @synthesize maxWaterHeights = _maxWaterHeights;
@@ -38,7 +38,7 @@
     _privateMaintenanceCost = [[[components objectAtIndex:6] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
     _standingWater = [components objectAtIndex:7];
     _impactNeighbors = [[[components objectAtIndex:8] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] floatValue];
-    _neighborsImpactMe = [[[components objectAtIndex:9] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] floatValue];
+    _sewerLoad = [[[components objectAtIndex:9] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] floatValue];
     _infiltration = [[[components objectAtIndex:10] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] floatValue];
     _efficiency = [[components objectAtIndex:11] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     _maxWaterHeights = [[components objectAtIndex:12] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
