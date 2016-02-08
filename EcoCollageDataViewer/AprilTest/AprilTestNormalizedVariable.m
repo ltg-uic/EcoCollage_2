@@ -17,7 +17,7 @@
 @synthesize privateMaintenanceCost = _privateMaintenanceCost;
 @synthesize standingWater = _standingWater;
 @synthesize impactNeighbors = _impactNeighbors;
-@synthesize neighborsImpactMe = _neighborsImpactMe;
+@synthesize sewerLoad = _sewerLoad;
 @synthesize infiltration = _infiltration;
 @synthesize efficiency = _efficiency;
 @synthesize trialNum = _trialNum;
@@ -34,7 +34,7 @@
     _privateMaintenanceCost = [[components objectAtIndex:5]floatValue];
     _standingWater = [[components objectAtIndex:6]floatValue];
     _impactNeighbors = [[components objectAtIndex:7] floatValue];
-    _neighborsImpactMe = [[components objectAtIndex:8] floatValue];
+    _sewerLoad = [[components objectAtIndex:8] floatValue];
     _infiltration = [[components objectAtIndex:9] floatValue];
     _efficiency = [[components objectAtIndex:10] floatValue];
     _floodedStreets = [[components objectAtIndex:12] floatValue];
