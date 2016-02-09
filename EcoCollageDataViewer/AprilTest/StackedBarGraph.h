@@ -15,6 +15,7 @@
 @property NSMutableArray *stackedBars;
 @property UIView *legendView;
 @property UIScrollView *scoreBarsView;
+@property UIButton *slideDown;
 
 - (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl withContainers:(int)wC;
 

@@ -14,6 +14,7 @@
 @synthesize stackedBars = _stackedBars;
 @synthesize legendView = _legendView;
 @synthesize scoreBarsView = _scoreBarsView;
+@synthesize slideDown = _slideDown;
 
 AprilTestTabBarController *tabController;
 NSMutableArray *trialGroups;
@@ -63,7 +64,9 @@ int barHeightMultiplier = 4;
     resetCategories.numberOfTapsRequired = 1;
     [self addGestureRecognizer:resetCategories];
     
-    
+    // create slide down button. will appear when user taps on a category
+    _slideDown = [[UIButton alloc]initWithFrame:CGRectMake(scoreBarsView_width / 2, 50, 50, 20)];
+        
     tabController = tabControl;
     self = [super initWithFrame:frame];
     _legendView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, legend_width, frame.size.height)];
@@ -463,6 +466,7 @@ int barHeightMultiplier = 4;
         [trialLabels addObject:trialLabel];
         [_scoreBarsView addSubview:trialLabel];
         
+        /*
         if(i == bestTrialForMe && i != worstTrialForMe) {
             bestForMe = [[UILabel alloc]initWithFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y + trialLabel.frame.size.height + 5, trialLabel.frame.size.width, 20)];
             [bestForMe setTextAlignment:NSTextAlignmentCenter];
@@ -477,7 +481,7 @@ int barHeightMultiplier = 4;
             [worstForMe setFont:[UIFont systemFontOfSize:12.0]];
             [_scoreBarsView addSubview:worstForMe];
         }
-        
+        */
         i++;
     }
     
@@ -968,7 +972,7 @@ int barHeightMultiplier = 4;
     
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [impactLegendLabel.layer setBorderWidth:2.0];
@@ -1025,10 +1029,17 @@ int barHeightMultiplier = 4;
         }
     }
     
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.impact withContainer:sb.impactContainer withEmpty:sb.impactEmpty];
+        }
+    }
+    
     [UIView commitAnimations];
     
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1037,6 +1048,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
+    */
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tImpact on my Neighbors"];
@@ -1050,7 +1062,7 @@ int barHeightMultiplier = 4;
 
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [groundwaterLegendLabel.layer setBorderWidth:2.0];
@@ -1107,10 +1119,18 @@ int barHeightMultiplier = 4;
         }
     }
     
+    
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.groundwaterInfiltration withContainer:sb.groundwaterInfiltrationContainer withEmpty:sb.groundwaterInfiltrationEmpty];
+        }
+    }
+    
     [UIView commitAnimations];
     
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1119,7 +1139,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tGroundwater Infiltration"];
     [tabController writeToLogFileString:logEntry];
@@ -1131,7 +1151,7 @@ int barHeightMultiplier = 4;
 
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [maxFloodLegendLabel.layer setBorderWidth:2.0];
@@ -1188,9 +1208,17 @@ int barHeightMultiplier = 4;
         }
     }
     
+    
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.maxFlood withContainer:sb.maxFloodContainer withEmpty:sb.maxFloodEmpty];
+        }
+    }
+    
     [UIView commitAnimations];
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1199,7 +1227,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tMaximum Flooded Area"];
     [tabController writeToLogFileString:logEntry];
@@ -1211,7 +1239,7 @@ int barHeightMultiplier = 4;
 
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [waterFlowLegendLabel.layer setBorderWidth:2.0];
@@ -1269,9 +1297,17 @@ int barHeightMultiplier = 4;
         }
     }
     
+    
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.waterFlow withContainer:sb.waterFlowContainer withEmpty:sb.waterFlowEmpty];
+        }
+    }
+    
     [UIView commitAnimations];
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1280,7 +1316,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tWater Flow"];
     [tabController writeToLogFileString:logEntry];
@@ -1292,7 +1328,7 @@ int barHeightMultiplier = 4;
 
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [capacityLegendLabel.layer setBorderWidth:2.0];
@@ -1350,9 +1386,17 @@ int barHeightMultiplier = 4;
         }
     }
     
+    
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.capacity withContainer:sb.capacityContainer withEmpty:sb.capacityEmpty];
+        }
+    }
+    
     [UIView commitAnimations];
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1361,7 +1405,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tIntervention Capacity"];
     [tabController writeToLogFileString:logEntry];
@@ -1373,7 +1417,7 @@ int barHeightMultiplier = 4;
 
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [efficiencyLegendLabel.layer setBorderWidth:2.0];
@@ -1432,9 +1476,17 @@ int barHeightMultiplier = 4;
         }
     }
     
+    
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.efficiency withContainer:sb.efficiencyContainer withEmpty:sb.efficiencyEmpty];
+        }
+    }
+    
     [UIView commitAnimations];
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1443,7 +1495,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tEfficiency of Intervention"];
     [tabController writeToLogFileString:logEntry];
@@ -1454,7 +1506,7 @@ int barHeightMultiplier = 4;
 - (void) damageReducTapped {
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     
@@ -1514,9 +1566,17 @@ int barHeightMultiplier = 4;
         }
     }
     
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.damageReduction withContainer:sb.damageReductionContainer withEmpty:sb.damageReductionEmpty];
+        }
+    }
+
+    
     [UIView commitAnimations];
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1525,7 +1585,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tDamage Reduction"];
     [tabController writeToLogFileString:logEntry];
@@ -1536,7 +1596,7 @@ int barHeightMultiplier = 4;
 - (void) investmentTapped {
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [investmentLegendLabel.layer setBorderWidth:2.0];
@@ -1597,11 +1657,15 @@ int barHeightMultiplier = 4;
     
     
     for(StackedBar *sb in _stackedBars) {
-        [sb lineDown:sb.investment withContainer:sb.investmentContainer withEmpty:sb.investmentEmpty];
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.investment withContainer:sb.investmentContainer withEmpty:sb.investmentEmpty];
+        }
     }
 
     [UIView commitAnimations];
     
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1611,7 +1675,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-
+     */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tInvestment"];
     [tabController writeToLogFileString:logEntry];
@@ -1626,7 +1690,7 @@ int barHeightMultiplier = 4;
     
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     for(StackedBar *bar in _stackedBars) {
@@ -1644,6 +1708,8 @@ int barHeightMultiplier = 4;
             [container.layer setBorderWidth:0.0];
         }
         
+        [bar revert];
+        
         [self hideScores];
     }
     
@@ -1656,6 +1722,7 @@ int barHeightMultiplier = 4;
         [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.5]];
         [legendLabel.layer setBorderWidth:0.0];
     }
+
     
     [UIView commitAnimations];
 }
