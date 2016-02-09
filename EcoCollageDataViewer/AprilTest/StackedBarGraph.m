@@ -528,6 +528,8 @@ int barHeightMultiplier = 4;
     int startHeight = 25;
     int heightMultiplier = spaceBetweenLegendLabels + heightOfLegendLabels;
     
+    
+    /*
     UITapGestureRecognizer *resetLabels1 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
     resetLabels1.numberOfTapsRequired = 2;
     UITapGestureRecognizer *resetLabels2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
@@ -544,6 +546,7 @@ int barHeightMultiplier = 4;
     resetLabels7.numberOfTapsRequired = 2;
     UITapGestureRecognizer *resetLabels8 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
     resetLabels8.numberOfTapsRequired = 2;
+     */
     
     // labels for the legend to distinguish which color is which category
     investmentLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * investmentIndex, legend_width, heightOfLegendLabels)];
@@ -555,7 +558,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *investmentTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(investmentTapped)];
     investmentTapRecognizer.numberOfTapsRequired = 1;
     [investmentLegendLabel addGestureRecognizer:investmentTapRecognizer];
-    [investmentLegendLabel addGestureRecognizer:resetLabels1];
+   // [investmentLegendLabel addGestureRecognizer:resetLabels1];
     [legend addSubview:investmentLegendLabel];
     
     damageReductionLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * damageReductionIndex, legend_width, heightOfLegendLabels)];
@@ -567,7 +570,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *damageReducTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(damageReducTapped)];
     damageReducTapRecognizer.numberOfTapsRequired = 1;
     [damageReductionLegendLabel addGestureRecognizer:damageReducTapRecognizer];
-    [damageReductionLegendLabel addGestureRecognizer:resetLabels2];
+   // [damageReductionLegendLabel addGestureRecognizer:resetLabels2];
     [legend addSubview:damageReductionLegendLabel];
     
     efficiencyLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * efficiencyIndex, legend_width, heightOfLegendLabels)];
@@ -579,7 +582,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *efficiencyTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(efficiencyTapped)];
     efficiencyTapRecognizer.numberOfTapsRequired = 1;
     [efficiencyLegendLabel addGestureRecognizer:efficiencyTapRecognizer];
-    [efficiencyLegendLabel addGestureRecognizer:resetLabels3];
+   // [efficiencyLegendLabel addGestureRecognizer:resetLabels3];
     [legend addSubview:efficiencyLegendLabel];
     
     capacityLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * capacityIndex, legend_width, heightOfLegendLabels)];
@@ -591,7 +594,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *capacityTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(interventionCapTapped)];
     capacityTapRecognizer.numberOfTapsRequired = 1;
     [capacityLegendLabel addGestureRecognizer:capacityTapRecognizer];
-    [capacityLegendLabel addGestureRecognizer:resetLabels4];
+   // [capacityLegendLabel addGestureRecognizer:resetLabels4];
     [legend addSubview:capacityLegendLabel];
     
     waterFlowLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * waterFlowIndex, legend_width, heightOfLegendLabels)];
@@ -603,7 +606,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *waterDepthTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
     waterDepthTapRecognizer.numberOfTapsRequired = 1;
     [waterFlowLegendLabel addGestureRecognizer:waterDepthTapRecognizer];
-    [waterFlowLegendLabel addGestureRecognizer:resetLabels5];
+   // [waterFlowLegendLabel addGestureRecognizer:resetLabels5];
     [legend addSubview:waterFlowLegendLabel];
     
     maxFloodLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * maxFloodIndex, legend_width, heightOfLegendLabels)];
@@ -615,7 +618,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *maxFloodTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(maxFloodTapped)];
     maxFloodTapRecognizer.numberOfTapsRequired = 1;
     [maxFloodLegendLabel addGestureRecognizer:maxFloodTapRecognizer];
-    [maxFloodLegendLabel addGestureRecognizer:resetLabels6];
+   // [maxFloodLegendLabel addGestureRecognizer:resetLabels6];
     [legend addSubview:maxFloodLegendLabel];
     
     groundwaterLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * groundwaterInfiltrationIndex, legend_width, heightOfLegendLabels)];
@@ -627,7 +630,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *groundwaterTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(groundwaterTapped)];
     groundwaterTapRecognizer.numberOfTapsRequired = 1;
     [groundwaterLegendLabel addGestureRecognizer:groundwaterTapRecognizer];
-    [groundwaterLegendLabel addGestureRecognizer:resetLabels7];
+   // [groundwaterLegendLabel addGestureRecognizer:resetLabels7];
     [legend addSubview:groundwaterLegendLabel];
     
     impactLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * impactIndex, legend_width, heightOfLegendLabels)];
@@ -639,7 +642,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *impactTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
     impactTapRecognizer.numberOfTapsRequired = 1;
     [impactLegendLabel addGestureRecognizer:impactTapRecognizer];
-    [impactLegendLabel addGestureRecognizer:resetLabels8];
+  //  [impactLegendLabel addGestureRecognizer:resetLabels8];
     [legend addSubview:impactLegendLabel];
     
     legendLabels = [[NSMutableArray alloc]initWithObjects:impactLegendLabel, investmentLegendLabel, damageReductionLegendLabel, efficiencyLegendLabel, capacityLegendLabel, waterFlowLegendLabel, maxFloodLegendLabel, groundwaterLegendLabel, nil];
