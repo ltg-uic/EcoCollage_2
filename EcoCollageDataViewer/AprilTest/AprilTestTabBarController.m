@@ -547,8 +547,8 @@ NSMutableDictionary         *scoreColors;
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (1- simRunNormal.efficiency);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (simRunNormal.efficiency);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (simRunNormal.efficiency)]];
             //NSLog(@"%@", NSStringFromCGRect(ev.frame));
             [scoreVisNames addObject: currentVar.name];
             
