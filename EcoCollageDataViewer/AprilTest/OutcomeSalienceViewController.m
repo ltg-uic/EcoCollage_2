@@ -1455,8 +1455,8 @@ float maxPublicInstallNorm;
         }
         else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *simRunNormal.efficiency;
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
             [scoreVisNames addObject: currentVar.name];
             
             
@@ -2113,8 +2113,8 @@ float maxPublicInstallNorm;
                 [_dataWindow addSubview:efficiencyImageView];
             }
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (1-simRunNormal.efficiency)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
             //NSLog(@"%@", NSStringFromCGRect(ev.frame));
             [scoreVisNames addObject: currentVar.name];
 
