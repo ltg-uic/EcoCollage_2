@@ -54,10 +54,22 @@
 @property FavoriteView *favorite;
 @property LeastFavoriteView *leastFavorite;
 
+@property float investmentOriginalY;
+@property float damageReductionOriginalY;
+@property float impactOriginalY;
+@property float groundwaterInfiltrationOriginalY;
+@property float waterFlowOriginalY;
+@property float maxFloodOriginalY;
+@property float capacityOriginalY;
+@property float efficiencyOriginalY;
+
 @property BOOL hasContainers;
 
 @property int shrunk;
 
+- (void)revert;
+
+- (void)lineDown:(UIView *)score withContainer:(UIView *)container withEmpty:(UIView *)empty;
 
 - (id)initWithFrame:(CGRect)frame andProfile:(NSMutableArray *)profile andScores:(NSMutableArray *)scores andScaleSize:(float)scaleSize andTierSizes:(NSMutableArray *)tierSizes withContainers:(int)wC withHeightMultipler:(int)hM withScore:(float*)totalScore trialNum:(int)trialNumber;
 

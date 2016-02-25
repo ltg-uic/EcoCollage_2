@@ -14,6 +14,7 @@
 @synthesize stackedBars = _stackedBars;
 @synthesize legendView = _legendView;
 @synthesize scoreBarsView = _scoreBarsView;
+@synthesize slideDown = _slideDown;
 
 AprilTestTabBarController *tabController;
 NSMutableArray *trialGroups;
@@ -43,6 +44,10 @@ int widthOfBar = 36;
 
 int barHeightMultiplier = 4;
 
+int containers = 0;
+
+int liner = 0;
+
 #define screen_width 1052
 #define legend_width 150
 #define scoreBarsView_width 902
@@ -58,12 +63,13 @@ int barHeightMultiplier = 4;
 - (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl withContainers:(int)wC{
     if(tabControl.profiles.count == 0 || tabControl.trialRuns.count == 0) return NULL;
     
+    containers = wC;
     
     UITapGestureRecognizer *resetCategories = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resetAllCategories)];
     resetCategories.numberOfTapsRequired = 1;
     [self addGestureRecognizer:resetCategories];
-    
-    
+
+        
     tabController = tabControl;
     self = [super initWithFrame:frame];
     _legendView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, legend_width, frame.size.height)];
@@ -73,6 +79,26 @@ int barHeightMultiplier = 4;
     
     [self addSubview:_legendView];
     [self addSubview:_scoreBarsView];
+    
+    
+    // create slide down button. will appear when user taps on a category
+    _slideDown = [[UIView alloc]initWithFrame:CGRectMake(0, 20, 100, 30)];
+    _slideDown.layer.cornerRadius = 15;
+    _slideDown.layer.masksToBounds = YES;
+    [_slideDown setBackgroundColor:[UIColor whiteColor]];
+    UILabel *slideDownText = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 100, 30)];
+    [slideDownText setText:@"Slide Down"];
+    [slideDownText setTextAlignment:NSTextAlignmentCenter];
+    [_slideDown addSubview:slideDownText];
+    
+    UITapGestureRecognizer *lineItDown = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(lineDownCaller)];
+    lineItDown.numberOfTapsRequired = 1;
+    [_slideDown addGestureRecognizer:lineItDown];
+    
+    [_scoreBarsView addSubview:_slideDown];
+    
+    [_slideDown setHidden:YES];
+    
     
     _stackedBars = [[NSMutableArray alloc]init];
     
@@ -463,6 +489,7 @@ int barHeightMultiplier = 4;
         [trialLabels addObject:trialLabel];
         [_scoreBarsView addSubview:trialLabel];
         
+        /*
         if(i == bestTrialForMe && i != worstTrialForMe) {
             bestForMe = [[UILabel alloc]initWithFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y + trialLabel.frame.size.height + 5, trialLabel.frame.size.width, 20)];
             [bestForMe setTextAlignment:NSTextAlignmentCenter];
@@ -477,7 +504,7 @@ int barHeightMultiplier = 4;
             [worstForMe setFont:[UIFont systemFontOfSize:12.0]];
             [_scoreBarsView addSubview:worstForMe];
         }
-        
+        */
         i++;
     }
     
@@ -528,6 +555,8 @@ int barHeightMultiplier = 4;
     int startHeight = 25;
     int heightMultiplier = spaceBetweenLegendLabels + heightOfLegendLabels;
     
+    
+    /*
     UITapGestureRecognizer *resetLabels1 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
     resetLabels1.numberOfTapsRequired = 2;
     UITapGestureRecognizer *resetLabels2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
@@ -544,6 +573,7 @@ int barHeightMultiplier = 4;
     resetLabels7.numberOfTapsRequired = 2;
     UITapGestureRecognizer *resetLabels8 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resetAllCategories)];
     resetLabels8.numberOfTapsRequired = 2;
+     */
     
     // labels for the legend to distinguish which color is which category
     investmentLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * investmentIndex, legend_width, heightOfLegendLabels)];
@@ -555,7 +585,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *investmentTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(investmentTapped)];
     investmentTapRecognizer.numberOfTapsRequired = 1;
     [investmentLegendLabel addGestureRecognizer:investmentTapRecognizer];
-    [investmentLegendLabel addGestureRecognizer:resetLabels1];
+   // [investmentLegendLabel addGestureRecognizer:resetLabels1];
     [legend addSubview:investmentLegendLabel];
     
     damageReductionLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * damageReductionIndex, legend_width, heightOfLegendLabels)];
@@ -567,7 +597,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *damageReducTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(damageReducTapped)];
     damageReducTapRecognizer.numberOfTapsRequired = 1;
     [damageReductionLegendLabel addGestureRecognizer:damageReducTapRecognizer];
-    [damageReductionLegendLabel addGestureRecognizer:resetLabels2];
+   // [damageReductionLegendLabel addGestureRecognizer:resetLabels2];
     [legend addSubview:damageReductionLegendLabel];
     
     efficiencyLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * efficiencyIndex, legend_width, heightOfLegendLabels)];
@@ -579,7 +609,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *efficiencyTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(efficiencyTapped)];
     efficiencyTapRecognizer.numberOfTapsRequired = 1;
     [efficiencyLegendLabel addGestureRecognizer:efficiencyTapRecognizer];
-    [efficiencyLegendLabel addGestureRecognizer:resetLabels3];
+   // [efficiencyLegendLabel addGestureRecognizer:resetLabels3];
     [legend addSubview:efficiencyLegendLabel];
     
     capacityLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * capacityIndex, legend_width, heightOfLegendLabels)];
@@ -591,7 +621,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *capacityTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(interventionCapTapped)];
     capacityTapRecognizer.numberOfTapsRequired = 1;
     [capacityLegendLabel addGestureRecognizer:capacityTapRecognizer];
-    [capacityLegendLabel addGestureRecognizer:resetLabels4];
+   // [capacityLegendLabel addGestureRecognizer:resetLabels4];
     [legend addSubview:capacityLegendLabel];
     
     waterFlowLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * waterFlowIndex, legend_width, heightOfLegendLabels)];
@@ -603,7 +633,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *waterDepthTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
     waterDepthTapRecognizer.numberOfTapsRequired = 1;
     [waterFlowLegendLabel addGestureRecognizer:waterDepthTapRecognizer];
-    [waterFlowLegendLabel addGestureRecognizer:resetLabels5];
+   // [waterFlowLegendLabel addGestureRecognizer:resetLabels5];
     [legend addSubview:waterFlowLegendLabel];
     
     maxFloodLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * maxFloodIndex, legend_width, heightOfLegendLabels)];
@@ -615,7 +645,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *maxFloodTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(maxFloodTapped)];
     maxFloodTapRecognizer.numberOfTapsRequired = 1;
     [maxFloodLegendLabel addGestureRecognizer:maxFloodTapRecognizer];
-    [maxFloodLegendLabel addGestureRecognizer:resetLabels6];
+   // [maxFloodLegendLabel addGestureRecognizer:resetLabels6];
     [legend addSubview:maxFloodLegendLabel];
     
     groundwaterLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * groundwaterInfiltrationIndex, legend_width, heightOfLegendLabels)];
@@ -627,7 +657,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *groundwaterTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(groundwaterTapped)];
     groundwaterTapRecognizer.numberOfTapsRequired = 1;
     [groundwaterLegendLabel addGestureRecognizer:groundwaterTapRecognizer];
-    [groundwaterLegendLabel addGestureRecognizer:resetLabels7];
+   // [groundwaterLegendLabel addGestureRecognizer:resetLabels7];
     [legend addSubview:groundwaterLegendLabel];
     
     impactLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * impactIndex, legend_width, heightOfLegendLabels)];
@@ -639,7 +669,7 @@ int barHeightMultiplier = 4;
     UITapGestureRecognizer *impactTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(impactTapped)];
     impactTapRecognizer.numberOfTapsRequired = 1;
     [impactLegendLabel addGestureRecognizer:impactTapRecognizer];
-    [impactLegendLabel addGestureRecognizer:resetLabels8];
+  //  [impactLegendLabel addGestureRecognizer:resetLabels8];
     [legend addSubview:impactLegendLabel];
     
     legendLabels = [[NSMutableArray alloc]initWithObjects:impactLegendLabel, investmentLegendLabel, damageReductionLegendLabel, efficiencyLegendLabel, capacityLegendLabel, waterFlowLegendLabel, maxFloodLegendLabel, groundwaterLegendLabel, nil];
@@ -654,6 +684,9 @@ int barHeightMultiplier = 4;
     [self setContentSize:CGSizeMake(xAxis.frame.size.width + xAxis.frame.origin.x + 60, yAxisHeight + 125)];
     //[self setContentOffset:CGPointMake(0, self.contentSize.height - self.frame.size.height)];
  
+    [_slideDown setFrame:CGRectMake((xAxisLength - 50) / 2 - 50, 20, 100, 30)];
+    [_slideDown setCenter:CGPointMake(xAxis.center.x - 25, _slideDown.center.y)];
+    
     return self;
 }
 
@@ -961,21 +994,107 @@ int barHeightMultiplier = 4;
     }
 }
 
+- (void) lineDownCaller {
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    if(liner == 0) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.impact withContainer:sb.impactContainer withEmpty:sb.impactEmpty];
+            }
+        }
+    }
+    else if(liner == 1) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.groundwaterInfiltration withContainer:sb.groundwaterInfiltrationContainer withEmpty:sb.groundwaterInfiltrationEmpty];
+            }
+        }
+    }
+    else if(liner == 2) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.maxFlood withContainer:sb.maxFloodContainer withEmpty:sb.maxFloodEmpty];
+            }
+        }
+    }
+    else if(liner == 3) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.waterFlow withContainer:sb.waterFlowContainer withEmpty:sb.waterFlowEmpty];
+            }
+        }
+    }
+    else if(liner == 4) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.capacity withContainer:sb.capacityContainer withEmpty:sb.capacityEmpty];
+            }
+        }
+    }
+    else if(liner == 5) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.efficiency withContainer:sb.efficiencyContainer withEmpty:sb.efficiencyEmpty];
+            }
+        }
+    }
+    else if(liner == 6) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.damageReduction withContainer:sb.damageReductionContainer withEmpty:sb.damageReductionEmpty];
+            }
+        }
+    }
+    else if(liner == 7) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.investment withContainer:sb.investmentContainer withEmpty:sb.investmentEmpty];
+            }
+        }
+    }
+    
+    
+    [UIView commitAnimations];
+}
+
 - (void) impactTapped {
     
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [impactLegendLabel.layer setBorderWidth:2.0];
+    
+    liner = 0;
+    
+    CGFloat impact_hue = 0.6;
+    CGFloat impact_saturation = 0.0;
+    CGFloat impact_brightness = 0.9;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:impact_hue saturation:impact_saturation brightness:impact_brightness alpha:1.0]];
+        [_slideDown setHidden:NO];
+    }
+    
+    [impactLegendLabel setBackgroundColor:[UIColor colorWithHue:impact_hue saturation:impact_saturation brightness:impact_brightness alpha:1.0]];
     
     CGFloat hue;
     CGFloat saturation;
     CGFloat brightness;
     CGFloat alpha;
-    [impactLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [impactLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:impactLegendLabel]) {
@@ -984,14 +1103,13 @@ int barHeightMultiplier = 4;
             [legendLabel.layer setBorderWidth:0.0];
         }
     }
-     [impactLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];   
+    
     for(StackedBar *bar in _stackedBars) {
-        [bar.impact.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.impact setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        [bar.impact setBackgroundColor:[UIColor colorWithHue:impact_hue saturation:impact_saturation brightness:impact_brightness alpha:1.0]];
         
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.impact.frame.size.height/barHeightMultiplier];
         [bar changeText:text];
-        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        [bar changeTextColor:[UIColor colorWithHue:impact_hue saturation:impact_saturation brightness:impact_brightness alpha:1.0]];
         
         if(bar.hasContainers) {
             [bar.impact.layer setBorderWidth:0.0];
@@ -1021,11 +1139,18 @@ int barHeightMultiplier = 4;
             }
         }
     }
-    
+    /*
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.impact withContainer:sb.impactContainer withEmpty:sb.impactEmpty];
+        }
+    }
+    */
     [UIView commitAnimations];
     
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1034,6 +1159,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
+    */
     
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tImpact on my Neighbors"];
@@ -1047,17 +1173,28 @@ int barHeightMultiplier = 4;
 
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [groundwaterLegendLabel.layer setBorderWidth:2.0];
+    
+    liner = 1;
+
+    CGFloat groundwater_hue = 0.6;
+    CGFloat groundwater_saturation = 0.0;
+    CGFloat groundwater_brightness = 0.3;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:groundwater_hue saturation:groundwater_saturation brightness:groundwater_brightness alpha:0.85]];
+        [_slideDown setHidden:NO];
+    }
+    
+    [groundwaterLegendLabel setBackgroundColor:[UIColor colorWithHue:groundwater_hue saturation:groundwater_saturation brightness:groundwater_brightness alpha:0.85]];
     
     CGFloat hue;
     CGFloat saturation;
     CGFloat brightness;
     CGFloat alpha;
-    [groundwaterLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [groundwaterLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.85]];
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:groundwaterLegendLabel]) {
@@ -1066,14 +1203,12 @@ int barHeightMultiplier = 4;
             [legendLabel.layer setBorderWidth:0.0];
         }
     }
-    [groundwaterLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
     for(StackedBar *bar in _stackedBars) {
-        [bar.groundwaterInfiltration.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.groundwaterInfiltration setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.85]];
+        [bar.groundwaterInfiltration setBackgroundColor:[UIColor colorWithHue:groundwater_hue saturation:groundwater_saturation brightness:groundwater_brightness alpha:0.85]];
         
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.groundwaterInfiltration.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
-        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.85]];
+        [bar changeTextColor:[UIColor colorWithHue:groundwater_hue saturation:groundwater_saturation brightness:groundwater_brightness alpha:0.85]];
         
         if(bar.hasContainers) {
             [bar.groundwaterInfiltration.layer setBorderWidth:0.0];
@@ -1104,10 +1239,18 @@ int barHeightMultiplier = 4;
         }
     }
     
+    /*
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.groundwaterInfiltration withContainer:sb.groundwaterInfiltrationContainer withEmpty:sb.groundwaterInfiltrationEmpty];
+        }
+    }
+    */
     [UIView commitAnimations];
     
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1116,7 +1259,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tGroundwater Infiltration"];
     [tabController writeToLogFileString:logEntry];
@@ -1128,17 +1271,30 @@ int barHeightMultiplier = 4;
 
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [maxFloodLegendLabel.layer setBorderWidth:2.0];
+    
+    liner = 2;
+    
+    CGFloat maxFlood_hue = 0.6;
+    CGFloat maxFlood_saturation = 0.8;
+    CGFloat maxFlood_brightness = 0.3;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:maxFlood_hue saturation:maxFlood_saturation brightness:maxFlood_brightness alpha:0.8]];
+        [_slideDown setHidden:NO];
+    }
+    
+    [maxFloodLegendLabel setBackgroundColor:[UIColor colorWithHue:maxFlood_hue saturation:maxFlood_saturation brightness:maxFlood_brightness alpha:0.8]];
+    
     
     CGFloat hue;
     CGFloat saturation;
     CGFloat brightness;
     CGFloat alpha;
-    [maxFloodLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [maxFloodLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+    
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:maxFloodLegendLabel]) {
@@ -1147,14 +1303,13 @@ int barHeightMultiplier = 4;
             [legendLabel.layer setBorderWidth:0.0];
         }
     }
-    [maxFloodLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+    
     for(StackedBar *bar in _stackedBars) {
-        [[scoreColors objectForKey:@"puddleMax"] getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.maxFlood setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        [bar.maxFlood setBackgroundColor:[UIColor colorWithHue:maxFlood_hue saturation:maxFlood_saturation brightness:maxFlood_brightness alpha:0.8]];
         
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.maxFlood.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
-        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        [bar changeTextColor:[UIColor colorWithHue:maxFlood_hue saturation:maxFlood_saturation brightness:maxFlood_brightness alpha:0.8]];
         
         if(bar.hasContainers) {
             [bar.maxFlood.layer setBorderWidth:0.0];
@@ -1185,9 +1340,17 @@ int barHeightMultiplier = 4;
         }
     }
     
+    /*
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.maxFlood withContainer:sb.maxFloodContainer withEmpty:sb.maxFloodEmpty];
+        }
+    }
+    */
     [UIView commitAnimations];
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1196,7 +1359,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tMaximum Flooded Area"];
     [tabController writeToLogFileString:logEntry];
@@ -1208,17 +1371,29 @@ int barHeightMultiplier = 4;
 
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [waterFlowLegendLabel.layer setBorderWidth:2.0];
+    
+    liner = 3;
+    
+    CGFloat waterDepth_hue = 0.65;
+    CGFloat waterDepth_saturation = 0.8;
+    CGFloat waterDepth_brightness = 0.6;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:waterDepth_hue saturation:waterDepth_saturation brightness:waterDepth_brightness alpha:0.80]];
+        [_slideDown setHidden:NO];
+    }
+
+    [waterFlowLegendLabel setBackgroundColor:[UIColor colorWithHue:waterDepth_hue saturation:waterDepth_saturation brightness:waterDepth_brightness alpha:0.80]];
+    
     
     CGFloat hue;
     CGFloat saturation;
     CGFloat brightness;
     CGFloat alpha;
-    [waterFlowLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [waterFlowLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.80]];
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:waterFlowLegendLabel]) {
@@ -1228,14 +1403,12 @@ int barHeightMultiplier = 4;
         }
     }
     
-    [waterFlowLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
     for(StackedBar *bar in _stackedBars) {
-        [bar.waterFlow.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.waterFlow setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        [bar.waterFlow setBackgroundColor:[UIColor colorWithHue:waterDepth_hue saturation:waterDepth_saturation brightness:waterDepth_brightness alpha:0.8]];
         
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.waterFlow.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
-        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        [bar changeTextColor:[UIColor colorWithHue:waterDepth_hue saturation:waterDepth_saturation brightness:waterDepth_brightness alpha:0.8]];
         
         if(bar.hasContainers) {
             [bar.waterFlow.layer setBorderWidth:0.0];
@@ -1266,9 +1439,17 @@ int barHeightMultiplier = 4;
         }
     }
     
+    /*
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.waterFlow withContainer:sb.waterFlowContainer withEmpty:sb.waterFlowEmpty];
+        }
+    }
+    */
     [UIView commitAnimations];
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1277,7 +1458,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tWater Flow"];
     [tabController writeToLogFileString:logEntry];
@@ -1289,17 +1470,28 @@ int barHeightMultiplier = 4;
 
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [capacityLegendLabel.layer setBorderWidth:2.0];
+    
+    liner = 4;
+    
+    CGFloat intervention_hue = 0.55;
+    CGFloat intervention_saturation = 0.8;
+    CGFloat intervention_brightness = 0.9;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:intervention_hue saturation:intervention_saturation brightness:intervention_brightness alpha:1.0]];
+        [_slideDown setHidden:NO];
+    }
+
+    [capacityLegendLabel setBackgroundColor:[UIColor colorWithHue:intervention_hue saturation:intervention_saturation brightness:intervention_brightness alpha:1.0]];
     
     CGFloat hue;
     CGFloat saturation;
     CGFloat brightness;
     CGFloat alpha;
-    [capacityLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [capacityLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:capacityLegendLabel]) {
@@ -1309,13 +1501,11 @@ int barHeightMultiplier = 4;
         }
     }
     
-    [capacityLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
     for(StackedBar *bar in _stackedBars) {
-        [bar.capacity.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.capacity setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        [bar.capacity setBackgroundColor:[UIColor colorWithHue:intervention_hue saturation:intervention_saturation brightness:intervention_brightness alpha:1.0]];
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.capacity.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
-        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        [bar changeTextColor:[UIColor colorWithHue:intervention_hue saturation:intervention_saturation brightness:intervention_brightness alpha:1.0]];
         
         if(bar.hasContainers) {
             [bar.capacity.layer setBorderWidth:0.0];
@@ -1347,9 +1537,17 @@ int barHeightMultiplier = 4;
         }
     }
     
+    /*
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.capacity withContainer:sb.capacityContainer withEmpty:sb.capacityEmpty];
+        }
+    }
+    */
     [UIView commitAnimations];
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1358,7 +1556,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tIntervention Capacity"];
     [tabController writeToLogFileString:logEntry];
@@ -1370,17 +1568,29 @@ int barHeightMultiplier = 4;
 
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [efficiencyLegendLabel.layer setBorderWidth:2.0];
+    
+    liner = 5;
+    
+    
+    CGFloat efficiency_hue = 0.4;
+    CGFloat efficiency_saturation = 0.8;
+    CGFloat efficiency_brightness = 0.3;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:efficiency_hue saturation:efficiency_saturation brightness:efficiency_brightness alpha:0.80]];
+        [_slideDown setHidden:NO];
+    }
+
+    [efficiencyLegendLabel setBackgroundColor:[UIColor colorWithHue:efficiency_hue saturation:efficiency_saturation brightness:efficiency_brightness alpha:0.80]];
     
     CGFloat hue;
     CGFloat saturation;
     CGFloat brightness;
     CGFloat alpha;
-    [efficiencyLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [efficiencyLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.80]];
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:efficiencyLegendLabel]) {
@@ -1389,16 +1599,14 @@ int barHeightMultiplier = 4;
             [legendLabel.layer setBorderWidth:0.0];
         }
     }
-    [efficiencyLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
     
     for(StackedBar *bar in _stackedBars) {
-        [bar.efficiency.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.efficiency setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        [bar.efficiency setBackgroundColor:[UIColor colorWithHue:efficiency_hue saturation:efficiency_saturation brightness:efficiency_brightness alpha:0.8]];
         
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.efficiency.frame.size.height/ barHeightMultiplier];
         [bar.efficiency.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
         [bar changeText:text];
-        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8]];
+        [bar changeTextColor:[UIColor colorWithHue:efficiency_hue saturation:efficiency_saturation brightness:efficiency_brightness alpha:0.8]];
         
         if(bar.hasContainers) {
             [bar.efficiency.layer setBorderWidth:0.0];
@@ -1429,9 +1637,17 @@ int barHeightMultiplier = 4;
         }
     }
     
+    /*
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.efficiency withContainer:sb.efficiencyContainer withEmpty:sb.efficiencyEmpty];
+        }
+    }
+    */
     [UIView commitAnimations];
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1440,7 +1656,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tEfficiency of Intervention"];
     [tabController writeToLogFileString:logEntry];
@@ -1451,18 +1667,30 @@ int barHeightMultiplier = 4;
 - (void) damageReducTapped {
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     
     [damageReductionLegendLabel.layer setBorderWidth:2.0];
     
+    liner = 6;
+    
+    CGFloat damage_hue = 0.38;
+    CGFloat damage_saturation = 0.8;
+    CGFloat damage_brightness = 0.63;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:damage_hue saturation:damage_saturation brightness:damage_brightness alpha:1.0]];
+        [_slideDown setHidden:NO];
+    }
+    
+
+    [damageReductionLegendLabel setBackgroundColor:[UIColor colorWithHue:damage_hue saturation:damage_saturation brightness:damage_brightness alpha:1.0]];
+    
     CGFloat hue;
     CGFloat saturation;
     CGFloat brightness;
     CGFloat alpha;
-    [damageReductionLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [damageReductionLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:damageReductionLegendLabel]) {
@@ -1471,15 +1699,13 @@ int barHeightMultiplier = 4;
             [legendLabel.layer setBorderWidth:0.0];
         }
     }
-    [damageReductionLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
     
     for(StackedBar *bar in _stackedBars) {
-        [bar.damageReduction.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.damageReduction setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.9]];
+        [bar.damageReduction setBackgroundColor:[UIColor colorWithHue:damage_hue saturation:damage_saturation brightness:damage_brightness alpha:0.9]];
         
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.damageReduction.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
-        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.9]];
+        [bar changeTextColor:[UIColor colorWithHue:damage_hue saturation:damage_saturation brightness:damage_brightness alpha:0.9]];
         
         if(bar.hasContainers) {
             [bar.damageReduction.layer setBorderWidth:0.0];
@@ -1510,10 +1736,18 @@ int barHeightMultiplier = 4;
             }
         }
     }
+    /*
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.damageReduction withContainer:sb.damageReductionContainer withEmpty:sb.damageReductionEmpty];
+        }
+    }
+*/
     
     [UIView commitAnimations];
     
-    
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1522,7 +1756,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-    
+    */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tDamage Reduction"];
     [tabController writeToLogFileString:logEntry];
@@ -1533,17 +1767,30 @@ int barHeightMultiplier = 4;
 - (void) investmentTapped {
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [investmentLegendLabel.layer setBorderWidth:2.0];
+    
+    liner = 7;
+    
+    CGFloat investment_hue = 0.3;
+    CGFloat investment_saturation = 0.6;
+    CGFloat investment_brightness = 0.9;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:investment_hue saturation:investment_saturation brightness:investment_brightness alpha:1.0]];
+        [_slideDown setHidden:NO];
+    }
+    
+
+
+    [investmentLegendLabel setBackgroundColor:[UIColor colorWithHue:investment_hue saturation:investment_saturation brightness:investment_brightness alpha:1.0]];
     
     CGFloat hue;
     CGFloat saturation;
     CGFloat brightness;
     CGFloat alpha;
-    [investmentLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    [investmentLegendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
     
     for(UILabel *legendLabel in legendLabels) {
         if(![legendLabel isEqual:investmentLegendLabel]) {
@@ -1552,15 +1799,12 @@ int barHeightMultiplier = 4;
             [legendLabel.layer setBorderWidth:0.0];
         }
     }
-    [investmentLegendLabel.backgroundColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    
     for(StackedBar *bar in _stackedBars) {
-        [[scoreColors objectForKey:@"publicCost"] getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-        [bar.investment setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        [bar.investment setBackgroundColor:[UIColor colorWithHue:investment_hue saturation:investment_saturation brightness:investment_brightness alpha:1.0]];
         
         NSString *text = [NSString stringWithFormat:@"%d", (int)bar.investment.frame.size.height/ barHeightMultiplier];
         [bar changeText:text];
-        [bar changeTextColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0]];
+        [bar changeTextColor:[UIColor colorWithHue:investment_hue saturation:investment_saturation brightness:investment_brightness alpha:1.0]];
         
         if(bar.hasContainers) {
             [bar.investment.layer setBorderWidth:0.0];
@@ -1591,9 +1835,18 @@ int barHeightMultiplier = 4;
             }
         }
     }
-
+    
+    /*
+    for(StackedBar *sb in _stackedBars) {
+        if(!sb.hasContainers) {
+            [sb revert];
+            [sb lineDown:sb.investment withContainer:sb.investmentContainer withEmpty:sb.investmentEmpty];
+        }
+    }
+*/
     [UIView commitAnimations];
     
+    /*
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideScores) object:nil];
     [self performSelector:@selector(hideScores)
                withObject:nil
@@ -1603,7 +1856,7 @@ int barHeightMultiplier = 4;
     [self performSelector:@selector(resetAllCategories)
                withObject:nil
                afterDelay:5.0];
-
+     */
     
     NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tInvestment"];
     [tabController writeToLogFileString:logEntry];
@@ -1618,8 +1871,11 @@ int barHeightMultiplier = 4;
     
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    [_slideDown setBackgroundColor:[UIColor whiteColor]];
+    [_slideDown setHidden:YES];
     
     for(StackedBar *bar in _stackedBars) {
         for(UIView *category in bar.outcomeCategoryViews) {
@@ -1636,6 +1892,8 @@ int barHeightMultiplier = 4;
             [container.layer setBorderWidth:0.0];
         }
         
+        [bar revert];
+        
         [self hideScores];
     }
     
@@ -1648,6 +1906,7 @@ int barHeightMultiplier = 4;
         [legendLabel setBackgroundColor:[UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.5]];
         [legendLabel.layer setBorderWidth:0.0];
     }
+
     
     [UIView commitAnimations];
 }
