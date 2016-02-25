@@ -44,6 +44,10 @@ int widthOfBar = 36;
 
 int barHeightMultiplier = 4;
 
+int containers = 0;
+
+int liner = 0;
+
 #define screen_width 1052
 #define legend_width 150
 #define scoreBarsView_width 902
@@ -59,6 +63,7 @@ int barHeightMultiplier = 4;
 - (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl withContainers:(int)wC{
     if(tabControl.profiles.count == 0 || tabControl.trialRuns.count == 0) return NULL;
     
+    containers = wC;
     
     UITapGestureRecognizer *resetCategories = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resetAllCategories)];
     resetCategories.numberOfTapsRequired = 1;
@@ -77,8 +82,23 @@ int barHeightMultiplier = 4;
     
     
     // create slide down button. will appear when user taps on a category
-    _slideDown = [[UIView alloc]initWithFrame:CGRectMake(scoreBarsView_width / 2, 50, 50, 20)];
+    _slideDown = [[UIView alloc]initWithFrame:CGRectMake(0, 20, 100, 30)];
+    _slideDown.layer.cornerRadius = 15;
+    _slideDown.layer.masksToBounds = YES;
+    [_slideDown setBackgroundColor:[UIColor whiteColor]];
+    UILabel *slideDownText = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 100, 30)];
+    [slideDownText setText:@"Slide Down"];
+    [slideDownText setTextAlignment:NSTextAlignmentCenter];
+    [_slideDown addSubview:slideDownText];
+    
+    UITapGestureRecognizer *lineItDown = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(lineDownCaller)];
+    lineItDown.numberOfTapsRequired = 1;
+    [_slideDown addGestureRecognizer:lineItDown];
+    
     [_scoreBarsView addSubview:_slideDown];
+    
+    [_slideDown setHidden:YES];
+    
     
     _stackedBars = [[NSMutableArray alloc]init];
     
@@ -664,6 +684,9 @@ int barHeightMultiplier = 4;
     [self setContentSize:CGSizeMake(xAxis.frame.size.width + xAxis.frame.origin.x + 60, yAxisHeight + 125)];
     //[self setContentOffset:CGPointMake(0, self.contentSize.height - self.frame.size.height)];
  
+    [_slideDown setFrame:CGRectMake((xAxisLength - 50) / 2 - 50, 20, 100, 30)];
+    [_slideDown setCenter:CGPointMake(xAxis.center.x - 25, _slideDown.center.y)];
+    
     return self;
 }
 
@@ -971,6 +994,81 @@ int barHeightMultiplier = 4;
     }
 }
 
+- (void) lineDownCaller {
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    if(liner == 0) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.impact withContainer:sb.impactContainer withEmpty:sb.impactEmpty];
+            }
+        }
+    }
+    else if(liner == 1) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.groundwaterInfiltration withContainer:sb.groundwaterInfiltrationContainer withEmpty:sb.groundwaterInfiltrationEmpty];
+            }
+        }
+    }
+    else if(liner == 2) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.maxFlood withContainer:sb.maxFloodContainer withEmpty:sb.maxFloodEmpty];
+            }
+        }
+    }
+    else if(liner == 3) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.waterFlow withContainer:sb.waterFlowContainer withEmpty:sb.waterFlowEmpty];
+            }
+        }
+    }
+    else if(liner == 4) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.capacity withContainer:sb.capacityContainer withEmpty:sb.capacityEmpty];
+            }
+        }
+    }
+    else if(liner == 5) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.efficiency withContainer:sb.efficiencyContainer withEmpty:sb.efficiencyEmpty];
+            }
+        }
+    }
+    else if(liner == 6) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.damageReduction withContainer:sb.damageReductionContainer withEmpty:sb.damageReductionEmpty];
+            }
+        }
+    }
+    else if(liner == 7) {
+        for(StackedBar *sb in _stackedBars) {
+            if(!sb.hasContainers) {
+                [sb revert];
+                [sb lineDown:sb.investment withContainer:sb.investmentContainer withEmpty:sb.investmentEmpty];
+            }
+        }
+    }
+    
+    
+    [UIView commitAnimations];
+}
+
 - (void) impactTapped {
     
     [UIView beginAnimations:nil context:NULL];
@@ -980,11 +1078,16 @@ int barHeightMultiplier = 4;
     
     [impactLegendLabel.layer setBorderWidth:2.0];
     
-    
+    liner = 0;
     
     CGFloat impact_hue = 0.6;
     CGFloat impact_saturation = 0.0;
     CGFloat impact_brightness = 0.9;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:impact_hue saturation:impact_saturation brightness:impact_brightness alpha:1.0]];
+        [_slideDown setHidden:NO];
+    }
     
     [impactLegendLabel setBackgroundColor:[UIColor colorWithHue:impact_hue saturation:impact_saturation brightness:impact_brightness alpha:1.0]];
     
@@ -1036,14 +1139,14 @@ int barHeightMultiplier = 4;
             }
         }
     }
-    
+    /*
     for(StackedBar *sb in _stackedBars) {
         if(!sb.hasContainers) {
             [sb revert];
             [sb lineDown:sb.impact withContainer:sb.impactContainer withEmpty:sb.impactEmpty];
         }
     }
-    
+    */
     [UIView commitAnimations];
     
     
@@ -1074,10 +1177,17 @@ int barHeightMultiplier = 4;
     [UIView setAnimationBeginsFromCurrentState:YES];
     
     [groundwaterLegendLabel.layer setBorderWidth:2.0];
+    
+    liner = 1;
 
     CGFloat groundwater_hue = 0.6;
     CGFloat groundwater_saturation = 0.0;
     CGFloat groundwater_brightness = 0.3;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:groundwater_hue saturation:groundwater_saturation brightness:groundwater_brightness alpha:0.85]];
+        [_slideDown setHidden:NO];
+    }
     
     [groundwaterLegendLabel setBackgroundColor:[UIColor colorWithHue:groundwater_hue saturation:groundwater_saturation brightness:groundwater_brightness alpha:0.85]];
     
@@ -1129,14 +1239,14 @@ int barHeightMultiplier = 4;
         }
     }
     
-    
+    /*
     for(StackedBar *sb in _stackedBars) {
         if(!sb.hasContainers) {
             [sb revert];
             [sb lineDown:sb.groundwaterInfiltration withContainer:sb.groundwaterInfiltrationContainer withEmpty:sb.groundwaterInfiltrationEmpty];
         }
     }
-    
+    */
     [UIView commitAnimations];
     
     
@@ -1166,9 +1276,16 @@ int barHeightMultiplier = 4;
     
     [maxFloodLegendLabel.layer setBorderWidth:2.0];
     
+    liner = 2;
+    
     CGFloat maxFlood_hue = 0.6;
     CGFloat maxFlood_saturation = 0.8;
     CGFloat maxFlood_brightness = 0.3;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:maxFlood_hue saturation:maxFlood_saturation brightness:maxFlood_brightness alpha:0.8]];
+        [_slideDown setHidden:NO];
+    }
     
     [maxFloodLegendLabel setBackgroundColor:[UIColor colorWithHue:maxFlood_hue saturation:maxFlood_saturation brightness:maxFlood_brightness alpha:0.8]];
     
@@ -1223,14 +1340,14 @@ int barHeightMultiplier = 4;
         }
     }
     
-    
+    /*
     for(StackedBar *sb in _stackedBars) {
         if(!sb.hasContainers) {
             [sb revert];
             [sb lineDown:sb.maxFlood withContainer:sb.maxFloodContainer withEmpty:sb.maxFloodEmpty];
         }
     }
-    
+    */
     [UIView commitAnimations];
     
     /*
@@ -1259,9 +1376,16 @@ int barHeightMultiplier = 4;
     
     [waterFlowLegendLabel.layer setBorderWidth:2.0];
     
+    liner = 3;
+    
     CGFloat waterDepth_hue = 0.65;
     CGFloat waterDepth_saturation = 0.8;
     CGFloat waterDepth_brightness = 0.6;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:waterDepth_hue saturation:waterDepth_saturation brightness:waterDepth_brightness alpha:0.80]];
+        [_slideDown setHidden:NO];
+    }
 
     [waterFlowLegendLabel setBackgroundColor:[UIColor colorWithHue:waterDepth_hue saturation:waterDepth_saturation brightness:waterDepth_brightness alpha:0.80]];
     
@@ -1315,14 +1439,14 @@ int barHeightMultiplier = 4;
         }
     }
     
-    
+    /*
     for(StackedBar *sb in _stackedBars) {
         if(!sb.hasContainers) {
             [sb revert];
             [sb lineDown:sb.waterFlow withContainer:sb.waterFlowContainer withEmpty:sb.waterFlowEmpty];
         }
     }
-    
+    */
     [UIView commitAnimations];
     
     /*
@@ -1351,10 +1475,16 @@ int barHeightMultiplier = 4;
     
     [capacityLegendLabel.layer setBorderWidth:2.0];
     
+    liner = 4;
+    
     CGFloat intervention_hue = 0.55;
     CGFloat intervention_saturation = 0.8;
     CGFloat intervention_brightness = 0.9;
     
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:intervention_hue saturation:intervention_saturation brightness:intervention_brightness alpha:1.0]];
+        [_slideDown setHidden:NO];
+    }
 
     [capacityLegendLabel setBackgroundColor:[UIColor colorWithHue:intervention_hue saturation:intervention_saturation brightness:intervention_brightness alpha:1.0]];
     
@@ -1407,14 +1537,14 @@ int barHeightMultiplier = 4;
         }
     }
     
-    
+    /*
     for(StackedBar *sb in _stackedBars) {
         if(!sb.hasContainers) {
             [sb revert];
             [sb lineDown:sb.capacity withContainer:sb.capacityContainer withEmpty:sb.capacityEmpty];
         }
     }
-    
+    */
     [UIView commitAnimations];
     
     /*
@@ -1443,11 +1573,17 @@ int barHeightMultiplier = 4;
     
     [efficiencyLegendLabel.layer setBorderWidth:2.0];
     
+    liner = 5;
+    
     
     CGFloat efficiency_hue = 0.4;
     CGFloat efficiency_saturation = 0.8;
     CGFloat efficiency_brightness = 0.3;
     
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:efficiency_hue saturation:efficiency_saturation brightness:efficiency_brightness alpha:0.80]];
+        [_slideDown setHidden:NO];
+    }
 
     [efficiencyLegendLabel setBackgroundColor:[UIColor colorWithHue:efficiency_hue saturation:efficiency_saturation brightness:efficiency_brightness alpha:0.80]];
     
@@ -1501,14 +1637,14 @@ int barHeightMultiplier = 4;
         }
     }
     
-    
+    /*
     for(StackedBar *sb in _stackedBars) {
         if(!sb.hasContainers) {
             [sb revert];
             [sb lineDown:sb.efficiency withContainer:sb.efficiencyContainer withEmpty:sb.efficiencyEmpty];
         }
     }
-    
+    */
     [UIView commitAnimations];
     
     /*
@@ -1537,9 +1673,16 @@ int barHeightMultiplier = 4;
     
     [damageReductionLegendLabel.layer setBorderWidth:2.0];
     
+    liner = 6;
+    
     CGFloat damage_hue = 0.38;
     CGFloat damage_saturation = 0.8;
     CGFloat damage_brightness = 0.63;
+    
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:damage_hue saturation:damage_saturation brightness:damage_brightness alpha:1.0]];
+        [_slideDown setHidden:NO];
+    }
     
 
     [damageReductionLegendLabel setBackgroundColor:[UIColor colorWithHue:damage_hue saturation:damage_saturation brightness:damage_brightness alpha:1.0]];
@@ -1593,14 +1736,14 @@ int barHeightMultiplier = 4;
             }
         }
     }
-    
+    /*
     for(StackedBar *sb in _stackedBars) {
         if(!sb.hasContainers) {
             [sb revert];
             [sb lineDown:sb.damageReduction withContainer:sb.damageReductionContainer withEmpty:sb.damageReductionEmpty];
         }
     }
-
+*/
     
     [UIView commitAnimations];
     
@@ -1629,10 +1772,18 @@ int barHeightMultiplier = 4;
     
     [investmentLegendLabel.layer setBorderWidth:2.0];
     
+    liner = 7;
+    
     CGFloat investment_hue = 0.3;
     CGFloat investment_saturation = 0.6;
     CGFloat investment_brightness = 0.9;
     
+    if(!containers) {
+        [_slideDown setBackgroundColor:[UIColor colorWithHue:investment_hue saturation:investment_saturation brightness:investment_brightness alpha:1.0]];
+        [_slideDown setHidden:NO];
+    }
+    
+
 
     [investmentLegendLabel setBackgroundColor:[UIColor colorWithHue:investment_hue saturation:investment_saturation brightness:investment_brightness alpha:1.0]];
     
@@ -1685,14 +1836,14 @@ int barHeightMultiplier = 4;
         }
     }
     
-    
+    /*
     for(StackedBar *sb in _stackedBars) {
         if(!sb.hasContainers) {
             [sb revert];
             [sb lineDown:sb.investment withContainer:sb.investmentContainer withEmpty:sb.investmentEmpty];
         }
     }
-
+*/
     [UIView commitAnimations];
     
     /*
@@ -1722,6 +1873,9 @@ int barHeightMultiplier = 4;
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    [_slideDown setBackgroundColor:[UIColor whiteColor]];
+    [_slideDown setHidden:YES];
     
     for(StackedBar *bar in _stackedBars) {
         for(UIView *category in bar.outcomeCategoryViews) {
