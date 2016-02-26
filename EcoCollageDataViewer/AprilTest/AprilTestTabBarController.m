@@ -568,7 +568,7 @@ NSMutableDictionary         *scoreColors;
     }
     
     // calculate amount of budget for use in resizing each score
-    int amountOverBudget = simRun.publicInstallCost - setBudget;
+    float amountOverBudget = (simRun.publicInstallCost - setBudget)/(float)setBudget;
     
     //computing each score with log skew due to over-investment cost
     for(int k =  0; k < scoreVisVals.count; k++){
@@ -576,7 +576,7 @@ NSMutableDictionary         *scoreColors;
         float scoreWidth = [[scoreVisVals objectAtIndex: k] floatValue];
         if(amountOverBudget > 0) { // recalculate each score width
             
-            float modifier = (investmentIndex + 0.5) / (log10(amountOverBudget));
+            float modifier = (investmentIndex + 0.5) / (2 * amountOverBudget);
             if(modifier > 1) modifier = 1;
             
             scoreWidth *= modifier;

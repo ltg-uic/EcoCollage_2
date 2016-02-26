@@ -1495,8 +1495,8 @@ float maxPublicInstallNorm;
     UILabel *scorePenalty;
     UILabel * componentScore;
     // calculate amount of budget for use in resizing each score
-    int amountOverBudget = (simRun.publicInstallCost - setBudget)/setBudget;
-    float modifier = (investmentIndex + .5) / (log10(amountOverBudget));
+    float amountOverBudget = (simRun.publicInstallCost - setBudget)/(float)setBudget;
+    float modifier = (investmentIndex + .5)/ (2 * amountOverBudget);
     if(modifier > 1) modifier = 1;
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
@@ -2162,8 +2162,8 @@ float maxPublicInstallNorm;
     }
     
     // calculate amount of budget for use in resizing each score
-    int amountOverBudget = simRun.publicInstallCost - setBudget;
-    float modifier = (investmentIndex + 0.5) / (log10(amountOverBudget));
+    float amountOverBudget = (simRun.publicInstallCost - setBudget)/(float)setBudget;
+    float modifier = (investmentIndex + 0.5) / (2 * amountOverBudget);
     if(modifier > 1) modifier = 1;
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
