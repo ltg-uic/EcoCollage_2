@@ -541,6 +541,12 @@ int liner = 0;
     [legend setCenter:CGPointMake(legend_width / 2, centerOfLegendY)];
     [legend.layer setBorderWidth:1];
     [legend.layer setBorderColor:[UIColor lightGrayColor].CGColor];
+    
+    // make this gesture recognizer so that if the spaces between legend lables are tapped the view is not reset, as those are easy to accidentally tap
+    UITapGestureRecognizer *legendTapped = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(nothing)];
+    resetCategories.numberOfTapsRequired = 1;
+    [legend addGestureRecognizer:legendTapped];
+    
     [_legendView addSubview:legend];
     
     UILabel *legendLabel  = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, legend_width, 15)];
@@ -689,6 +695,8 @@ int liner = 0;
     
     return self;
 }
+
+- (void) nothing {}
 
 - (void) reloadGraph:(AprilTestTabBarController *)tabControl withContainers:(int)wC {
 
