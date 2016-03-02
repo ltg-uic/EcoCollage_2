@@ -50,6 +50,7 @@
 - (void) updatePieChartAtIndex:(int)index forProfile:(NSArray *)profile;
 - (void)reloadDataForPieChartAtIndex:(int)index;
 - (NSMutableArray*)getScoreBarValuesForProfile:(int)profileIndex forTrial:(int)trial isDynamicTrial:(int)dynamic;
+- (float)generateOverBudgetPenalty:(NSMutableArray*)scoreVisNames withInstallCost:(int)installCost;
 
 //log writing related methods
 - (NSString*) generateLogEntryWith:(NSString*)extra;

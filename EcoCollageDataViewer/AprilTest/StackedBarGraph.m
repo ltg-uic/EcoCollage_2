@@ -162,28 +162,17 @@ int liner = 0;
             NSMutableArray* scoreVisVals = [score objectAtIndex:0];
             NSMutableArray* scoreVisNames = [score objectAtIndex:1];
             
-            int setBudget = tabControl.budget;
             
-            int investmentIndex = 0;
-            for(int k = 0; k < scoreVisNames.count; k++) {
-                if([[scoreVisNames objectAtIndex:k] isEqualToString:@"publicCostI"])
-                    investmentIndex = k;
-            }
+            float mod = [tabControl generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.publicInstallCost];
             
-            // calculate amount of budget for use in resizing each score
-            float amountOverBudget = (simRun.publicInstallCost - setBudget)/(float)setBudget;
             
             //computing each score with log skew due to over-investment cost
             for(int k =  0; k < scoreVisVals.count; k++){
                 
                 float scoreWidth = [[scoreVisVals objectAtIndex: k] floatValue];
-                if(amountOverBudget > 0) { // recalculate each score width
 
-                    float modifier = (investmentIndex + 0.5) / (2 * amountOverBudget);
-                    if(modifier > 1) modifier = 1;
-                    
-                    scoreWidth *= modifier;
-                }
+                scoreWidth *= mod;
+
                 if (scoreWidth < 0) scoreWidth = 0.0;
                 [scoreVisVals replaceObjectAtIndex:k withObject:[NSNumber numberWithFloat:scoreWidth]];
             }

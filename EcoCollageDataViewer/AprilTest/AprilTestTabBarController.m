@@ -559,28 +559,16 @@ NSMutableDictionary         *scoreColors;
         }
     }
     
-    int setBudget = _budget;
+    float mod = [self generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.publicInstallCost];
     
-    int investmentIndex = 0;
-    for(int k = 0; k < scoreVisNames.count; k++) {
-        if([[scoreVisNames objectAtIndex:k] isEqualToString:@"publicCost"])
-            investmentIndex = k;
-    }
-    
-    // calculate amount of budget for use in resizing each score
-    float amountOverBudget = (simRun.publicInstallCost - setBudget)/(float)setBudget;
     
     //computing each score with log skew due to over-investment cost
     for(int k =  0; k < scoreVisVals.count; k++){
         
         float scoreWidth = [[scoreVisVals objectAtIndex: k] floatValue];
-        if(amountOverBudget > 0) { // recalculate each score width
-            
-            float modifier = (investmentIndex + 0.5) / (2 * amountOverBudget);
-            if(modifier > 1) modifier = 1;
-            
-            scoreWidth *= modifier;
-        }
+
+        scoreWidth *= mod;
+
         if (scoreWidth < 0) scoreWidth = 0.0;
         [scoreVisVals replaceObjectAtIndex:k withObject:[NSNumber numberWithFloat:scoreWidth]];
     }
@@ -589,6 +577,23 @@ NSMutableDictionary         *scoreColors;
     [scores addObject:scoreVisVals];
     [scores addObject:scoreVisNames];
     return scores;
+}
+
+- (float)generateOverBudgetPenalty:(NSMutableArray*)scoreVisNames withInstallCost:(int)installCost {
+    
+    int investmentIndex = 0;
+    for(int i = 0; i < scoreVisNames.count; i++) {
+        if([[scoreVisNames objectAtIndex:i] isEqualToString:@"publicCostI"] ||
+           [[scoreVisNames objectAtIndex:i] isEqualToString:@"publicCost"])
+            investmentIndex = i;
+    }
+    
+    float amountOverBudget = (installCost - _budget)/(float)_budget;
+    float modifier = (investmentIndex + .5)/ (2 * amountOverBudget);
+    if(modifier > 1) modifier = 1;
+    if(amountOverBudget <= 0) modifier = 1;
+    
+    return modifier;
 }
 
 - (void)updateAllFavorites:(NSArray *)dataArray {

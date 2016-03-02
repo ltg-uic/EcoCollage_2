@@ -1494,26 +1494,19 @@ float maxPublicInstallNorm;
     [[[trialRunSubViews objectAtIndex:trial] objectForKey:@"ScorePenalty"] removeFromSuperview];
     UILabel *scorePenalty;
     UILabel * componentScore;
+    
+    float mod = [tabControl generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.publicInstallCost];
+    
     // calculate amount of budget for use in resizing each score
     float amountOverBudget = (simRun.publicInstallCost - setBudget)/(float)setBudget;
-    float modifier = (investmentIndex + .5)/ (2 * amountOverBudget);
-    if(modifier > 1) modifier = 1;
+
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
-        if(amountOverBudget > 0) {// recalculate each score width
-            // scoreWidth = scoreWidth * log(posInOutcomeCategoryArray + 2) / (log(amountOverBudget)-2)
-            /*
-            double importance = log10(investmentIndex + 3);
-            double overBudgetDeduction = log10(amountOverBudget) - 2;
-            if(overBudgetDeduction == 0)overBudgetDeduction = 0.0000001;
-            scoreWidth = scoreWidth * (importance / overBudgetDeduction);
-            */
-
-            scoreWidth *= modifier;
-        }
+        scoreWidth *= mod;
         if (scoreWidth < 0) scoreWidth = 0.0;
+        
         totalScore += scoreWidth;
         componentScore = [[UILabel alloc] initWithFrame:CGRectMake(maxX, (trial)*175 + 75, floor(scoreWidth), 22)];
         componentScore.backgroundColor = [scoreColors objectForKey:[scoreVisNames objectAtIndex:i]];
@@ -1521,7 +1514,7 @@ float maxPublicInstallNorm;
         maxX+=floor(scoreWidth);
     }
     if(amountOverBudget > 0) {
-        [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", (1 - modifier) * 100] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
+        [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", (1 - mod) * 100] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
     }
     else {
         [self drawTextBasedVar: @"" withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
@@ -2161,25 +2154,16 @@ float maxPublicInstallNorm;
             investmentIndex = i;
     }
     
+    float mod = [tabControl generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.publicInstallCost];
+    
     // calculate amount of budget for use in resizing each score
     float amountOverBudget = (simRun.publicInstallCost - setBudget)/(float)setBudget;
-    float modifier = (investmentIndex + 0.5) / (2 * amountOverBudget);
-    if(modifier > 1) modifier = 1;
+
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
         
         float scoreWidth = [[scoreVisVals objectAtIndex: i] floatValue] * 100;
-        if(amountOverBudget > 0) {// recalculate each score width
-            // scoreWidth = scoreWidth * log(posInOutcomeCategoryArray + 2) / (log(amountOverBudget)-2)
-            /*
-             double importance = log10(investmentIndex + 3);
-             double overBudgetDeduction = log10(amountOverBudget) - 2;
-             if(overBudgetDeduction == 0)overBudgetDeduction = 0.0000001;
-             scoreWidth = scoreWidth * (importance / overBudgetDeduction);
-             */
-            
-            scoreWidth *= modifier;
-        }
+        scoreWidth *= mod;
 
         if (scoreWidth < 0) scoreWidth = 0.0;
         totalScore += scoreWidth;
@@ -2190,7 +2174,7 @@ float maxPublicInstallNorm;
     }
     
     if(amountOverBudget > 0) {
-        [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", (1 - modifier) * 100] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
+        [self drawTextBasedVar: [NSString stringWithFormat:@"Score penalized by %.2f%%", (1 - mod) * 100] withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
     }
     else {
         [self drawTextBasedVar: @"" withConcernPosition:investmentWidth + 25 andyValue: (trial * 175) +120 andColor:[UIColor redColor] to:&scorePenalty];
