@@ -27,6 +27,7 @@
 @synthesize myCentralManager = _myCentralManager;
 @synthesize discoveredPeripheral = _discoveredPeripheral;
 @synthesize BudgetSlider = _BudgetSlider;
+@synthesize budgetNumber = _budgetNumber;
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *profiles;
@@ -995,6 +996,15 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     
     [self changeBudgetLabel:(int)currentBudget];
 }
+
+- (IBAction)updateBudgetManually:(id)sender {
+    float value = [budgetLabel.text floatValue];
+    currentBudget = value;
+    
+    [self changeBudgetLabel:(int)currentBudget];
+    [self budgetChanged];
+}
+
 
 - (void)drawBudgetLabels {
     NSNumberFormatter *formatter = [NSNumberFormatter new];

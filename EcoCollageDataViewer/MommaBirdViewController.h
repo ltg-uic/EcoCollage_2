@@ -17,6 +17,7 @@
 @property (strong, nonatomic) IBOutlet UITextView *textView;
 @property (strong, nonatomic) IBOutlet UITextView *macMiniTextView;
 
+@property (strong, nonatomic) IBOutlet UITextField *budgetNumber;
 @property (strong, nonatomic) IBOutlet UILabel *studyNumberLabel;
 @property (strong, nonatomic) IBOutlet UILabel *trialNumberLabel;
 - (IBAction)BudgetSlider:(UISlider *)sender;
