@@ -998,10 +998,11 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 }
 
 - (IBAction)updateBudgetManually:(id)sender {
-    float value = [budgetLabel.text floatValue];
-    currentBudget = value;
     
-    [self changeBudgetLabel:(int)currentBudget];
+    int value = [_budgetNumber.text intValue];
+    currentBudget = value;
+
+    [self changeBudgetLabel: currentBudget];
     [self budgetChanged];
 }
 
@@ -1054,7 +1055,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     
     
     NSDictionary *budgetToSendToBaby = [NSDictionary dictionaryWithObject:dataArray forKey:@"data"];
-    
+
     // crashes were occuring on baby bird side, so make sure before archiving that dictionary is not nil
     if(budgetToSendToBaby != nil) {
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:budgetToSendToBaby];
@@ -1079,6 +1080,11 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:budgetToSendToBaby];
         [_session sendData:data toPeers:@[peerID] withDataMode:GKSendDataReliable error:nil];
     }
+}
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
 }
 
 @end
