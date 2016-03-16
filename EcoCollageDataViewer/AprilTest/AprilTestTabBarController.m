@@ -589,7 +589,10 @@ NSMutableDictionary         *scoreColors;
     }
     
     float amountOverBudget = (installCost - _budget)/(float)_budget;
-    float modifier = (investmentIndex + .5)/ (2 * amountOverBudget);
+    float modifier;
+    if ( (amountOverBudget * (7-investmentIndex/7)) < 1 )
+        modifier = (1 - cos((amountOverBudget * (7-investmentIndex/7))* M_PI))/2;
+        else modifier = (1 - cos(M_PI))/2;
     if(modifier > 1) modifier = 1;
     if(amountOverBudget <= 0) modifier = 1;
     
