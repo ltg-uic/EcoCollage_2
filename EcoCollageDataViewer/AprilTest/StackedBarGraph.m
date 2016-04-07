@@ -141,7 +141,7 @@ int liner = 0;
             capacityIndex = (int)primaryUser.count - (i + 1);
         if([[primaryUser objectAtIndex:i] isEqualToString:@"Water Flow Path"])
             waterFlowIndex = (int)primaryUser.count - (i + 1);
-        if([[primaryUser objectAtIndex:i] isEqualToString:@"Maximum Flooded Area"])
+        if([[primaryUser objectAtIndex:i] isEqualToString:@"Max Depth of Flooding"])
             maxFloodIndex = (int)primaryUser.count - (i + 1);
         if([[primaryUser objectAtIndex:i] isEqualToString:@"Groundwater Infiltration"])
             groundwaterInfiltrationIndex = (int)primaryUser.count - (i + 1);
@@ -517,7 +517,8 @@ int liner = 0;
     [highPriority setNumberOfLines:2];
     [_legendView addSubview:highPriority];
     
-    UILabel *lowPriority = [[UILabel alloc]initWithFrame:CGRectMake(0, yAxis.frame.origin.y + 40, legend_width, 40)];
+    //UILabel *lowPriority = [[UILabel alloc]initWithFrame:CGRectMake(0, yAxis.frame.origin.y + 40, legend_width, 40)];
+    UILabel *lowPriority = [[UILabel alloc]initWithFrame:CGRectMake(0, xAxis.frame.origin.y - 400, legend_width, 40)];
     [lowPriority setText:@"Lowest priority categories"];
     [lowPriority setFont:[UIFont systemFontOfSize:14.0]];
     [lowPriority setTextAlignment:NSTextAlignmentCenter];
@@ -632,7 +633,7 @@ int liner = 0;
     [legend addSubview:waterFlowLegendLabel];
     
     maxFloodLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * maxFloodIndex, legend_width, heightOfLegendLabels)];
-    [maxFloodLegendLabel setText:@"Maximum Flooded Area"];
+    [maxFloodLegendLabel setText:@"Max Depth of Flooding"];
     [maxFloodLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
     [maxFloodLegendLabel setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
     [maxFloodLegendLabel setTextAlignment:NSTextAlignmentCenter];
@@ -1358,7 +1359,7 @@ int liner = 0;
                afterDelay:5.0];
     */
     
-    NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tMaximum Flooded Area"];
+    NSString *logEntry = [tabController generateLogEntryWith:@"\tInspected outcome category \tMax Depth of Flooding"];
     [tabController writeToLogFileString:logEntry];
     
 }

@@ -2428,7 +2428,7 @@ float maxPublicInstallNorm;
         } else if( [currentVar.name compare:@"groundwaterInfiltration"] == NSOrderedSame){
             currentVarLabel.text = @"  Groundwater Infiltration";
         } else if( [currentVar.name compare:@"puddleMax"] == NSOrderedSame){
-            currentVarLabel.text = @"  Maximum Flooded Area";
+            currentVarLabel.text = @"  Max Depth of Flooding";
         } else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
             currentVarLabel.text = @"  Intervention Capacity";
         }

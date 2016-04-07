@@ -3,6 +3,6 @@ Damage Reduction	privateCost
 Efficiency of Intervention ($/Gallon)	efficiencyOfIntervention
 Capacity Used	capacity
 Water Flow Path	puddleTime
-Maximum Flooded Area	puddleMax
+Max Depth of Flooding	puddleMax
 Groundwater Infiltration	groundwaterInfiltration
 Impact on my Neighbors	impactingMyNeighbors

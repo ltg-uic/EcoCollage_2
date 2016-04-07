@@ -169,9 +169,9 @@ int                         heightMultiplier = 5;
                       [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
                       [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                       [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
-                      [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"Investment", @"publicCostI", @"publicCostM", @"publicCostD", @"Damage Reduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"Efficiency of Intervention ($/Gallon)", @"Water Flow Path", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", @"Capacity Used", nil] ];
+                      [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"Investment", @"publicCostI", @"publicCostM", @"publicCostD", @"Damage Reduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"Efficiency of Intervention ($/Gallon)", @"Water Flow Path", @"Max Depth of Flooding", @"Groundwater Infiltration", @"Impact on my Neighbors", @"Capacity Used", nil] ];
     
-    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Maximum Flooded Area", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
+    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Max Depth of Flooding", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
     
     scoreColors = [[NSMutableDictionary alloc] initWithObjects:
                    [NSArray arrayWithObjects:
@@ -786,7 +786,7 @@ int                         heightMultiplier = 5;
 }
 
 /*
- Method Description: Called when user taps on the "Maximum Flooded Area" portion of the pie chart or score section in Score Bar Visualization. Displays score for this section and the name of the section.
+ Method Description: Called when user taps on the "Max Depth of Flooding" portion of the pie chart or score section in Score Bar Visualization. Displays score for this section and the name of the section.
  Inputs: None
  Outputs: None
  */
@@ -809,7 +809,7 @@ int                         heightMultiplier = 5;
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
         [scoreNumber sizeToFit];
         
-        scoreName.text = @"Maximum Flooded Area";
+        scoreName.text = @"Max Depth of Flooding";
         scoreName.numberOfLines = 2;
         [scoreName sizeToFit];
         scoreName.frame = CGRectMake(scoreName.frame.origin.x, scoreName.frame.origin.y, 14 * 7, scoreName.frame.size.height);
@@ -824,7 +824,7 @@ int                         heightMultiplier = 5;
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleMax"];
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:@"\tMaximum Flooded Area score inspected"];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tMax Depth of Flooding score inspected"];
     [tabControl writeToLogFileString:logEntry];
 }
 
@@ -1891,8 +1891,8 @@ int                         heightMultiplier = 5;
         else if([[profile objectAtIndex:j] isEqualToString:@"Water Flow Path"]) {
             currentLabel.text = @"  Water Flow";
         }
-        else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
-            currentLabel.text = @"  Maximum Flooded Area";
+        else if([[profile objectAtIndex:j] isEqualToString:@"Max Depth of Flooding"]) {
+            currentLabel.text = @"  Max Depth of Flooding";
         }
         else if([[profile objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"]) {
             currentLabel.text = @"  Groundwater Infiltration";
@@ -2003,8 +2003,8 @@ int                         heightMultiplier = 5;
         else if([[profile objectAtIndex:j] isEqualToString:@"Water Flow Path"]) {
             currentLabel.text = @"  Water Flow";
         }
-        else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
-            currentLabel.text = @"  Maximum Flooded Area";
+        else if([[profile objectAtIndex:j] isEqualToString:@"Max Depth of Flooding"]) {
+            currentLabel.text = @"  Max Depth of Flooding";
         }
         else if([[profile objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"]) {
             currentLabel.text = @"  Groundwater Infiltration";
@@ -2207,8 +2207,8 @@ int                         heightMultiplier = 5;
         else if([[profileArray objectAtIndex:j] isEqualToString:@"Water Flow Path"]) {
             currentLabel.text = @"  Water Flow";
         }
-        else if([[profileArray objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
-            currentLabel.text = @"  Maximum Flooded Area";
+        else if([[profileArray objectAtIndex:j] isEqualToString:@"Max Depth of Flooding"]) {
+            currentLabel.text = @"  Max Depth of Flooding";
         }
         else if([[profileArray objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"]) {
             currentLabel.text = @"  Groundwater Infiltration";
@@ -2433,8 +2433,8 @@ int                         heightMultiplier = 5;
             else if([[profile objectAtIndex:j] isEqualToString:@"Water Flow Path"]) {
                 currentLabel.text = @"  Water Flow";
             }
-            else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
-                currentLabel.text = @"  Maximum Flooded Area";
+            else if([[profile objectAtIndex:j] isEqualToString:@"Max Depth of Flooding"]) {
+                currentLabel.text = @"  Max Depth of Flooding";
             }
             else if([[profile objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"]) {
                 currentLabel.text = @"  Groundwater Infiltration";
@@ -2630,8 +2630,8 @@ int                         heightMultiplier = 5;
             else if([[profile objectAtIndex:j] isEqualToString:@"Water Flow Path"]) {
                 currentLabel.text = @"  Water Flow";
             }
-            else if([[profile objectAtIndex:j] isEqualToString:@"Maximum Flooded Area"]) {
-                currentLabel.text = @"  Maximum Flooded Area";
+            else if([[profile objectAtIndex:j] isEqualToString:@"Max Depth of Flooding"]) {
+                currentLabel.text = @"  Max Depth of Flooding";
             }
             else if([[profile objectAtIndex:j] isEqualToString:@"Groundwater Infiltration"]) {
                 currentLabel.text = @"  Groundwater Infiltration";

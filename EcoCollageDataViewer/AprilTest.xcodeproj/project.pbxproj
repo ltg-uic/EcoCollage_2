@@ -104,9 +104,9 @@
 
 /* Begin PBXFileReference section */
 		223EE23F1BEBEE95006A7626 /* StackedBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackedBar.h; sourceTree = "<group>"; };
-		223EE2401BEBEE95006A7626 /* StackedBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StackedBar.m; sourceTree = "<group>"; };
+		223EE2401BEBEE95006A7626 /* StackedBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = StackedBar.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		223EE2421BEBFE7B006A7626 /* StackedBarGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackedBarGraph.h; sourceTree = "<group>"; };
-		223EE2431BEBFE7B006A7626 /* StackedBarGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StackedBarGraph.m; sourceTree = "<group>"; };
+		223EE2431BEBFE7B006A7626 /* StackedBarGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = StackedBarGraph.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5711E1611B190CE3005FF2F1 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		571EC6D81BF563AA00F65A3D /* Scales-24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Scales-24.png"; sourceTree = "<group>"; };
 		571EC6DA1BF5640B00F65A3D /* Scales-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Scales-32.png"; sourceTree = "<group>"; };
@@ -135,7 +135,7 @@
 		57A31DC41B696615007F6CDC /* LeastFavoriteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeastFavoriteView.h; sourceTree = "<group>"; };
 		57A31DC51B696615007F6CDC /* LeastFavoriteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeastFavoriteView.m; sourceTree = "<group>"; };
 		57EEF5521B1E452200BECE7F /* SocialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocialViewController.h; sourceTree = "<group>"; };
-		57EEF5531B1E452200BECE7F /* SocialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocialViewController.m; sourceTree = "<group>"; };
+		57EEF5531B1E452200BECE7F /* SocialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SocialViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		57FF57031B6AB03200543C93 /* favorite_active_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = favorite_active_large.png; sourceTree = "<group>"; };
 		57FF57041B6AB03200543C93 /* favorite_inactive_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = favorite_inactive_large.png; sourceTree = "<group>"; };
 		57FF57051B6AB03200543C93 /* least_favorite_active_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = least_favorite_active_large.png; sourceTree = "<group>"; };
@@ -143,7 +143,7 @@
 		841C0A1B1A16744500ED7A2E /* PeprViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PeprViewController.h; path = ../PeprViewController.h; sourceTree = "<group>"; };
 		841C0A1C1A16744500ED7A2E /* PeprViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PeprViewController.m; path = ../PeprViewController.m; sourceTree = "<group>"; };
 		841C0A1D1A16744500ED7A2E /* questions1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = questions1.txt; path = ../questions1.txt; sourceTree = "<group>"; };
-		841C0A1E1A16744500ED7A2E /* questions2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = questions2.txt; path = ../questions2.txt; sourceTree = "<group>"; };
+		841C0A1E1A16744500ED7A2E /* questions2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; name = questions2.txt; path = ../questions2.txt; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = "<none>"; };
 		841C0A221A16749000ED7A2E /* descriptions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = descriptions.txt; path = ../descriptions.txt; sourceTree = "<group>"; };
 		841C0A251A1674A000ED7A2E /* XYPieChart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYPieChart.h; sourceTree = "<group>"; };
 		841C0A261A1674A000ED7A2E /* XYPieChart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XYPieChart.m; sourceTree = "<group>"; };
@@ -166,7 +166,7 @@
 		8453FA6718F2FC8F0010D12F /* AprilTestFirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AprilTestFirstViewController.h; sourceTree = "<group>"; };
 		8453FA6818F2FC8F0010D12F /* AprilTestFirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AprilTestFirstViewController.m; sourceTree = "<group>"; };
 		8453FA6A18F2FC8F0010D12F /* OutcomeSalienceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutcomeSalienceViewController.h; sourceTree = "<group>"; };
-		8453FA6B18F2FC8F0010D12F /* OutcomeSalienceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OutcomeSalienceViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		8453FA6B18F2FC8F0010D12F /* OutcomeSalienceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = OutcomeSalienceViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		8453FA6D18F2FC8F0010D12F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		8453FA7318F2FC8F0010D12F /* AprilTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AprilTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8453FA7418F2FC8F0010D12F /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -201,7 +201,7 @@
 		848479D018F71ACE00BAD981 /* AprilTestVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AprilTestVariable.h; sourceTree = "<group>"; };
 		848479D118F71ACE00BAD981 /* AprilTestVariable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestVariable.m; sourceTree = "<group>"; };
 		848479D618F71D7600BAD981 /* AprilTestTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AprilTestTabBarController.h; sourceTree = "<group>"; };
-		848479D718F71D7600BAD981 /* AprilTestTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestTabBarController.m; sourceTree = "<group>"; };
+		848479D718F71D7600BAD981 /* AprilTestTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AprilTestTabBarController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		84BCFDB41A3B6BC200D37103 /* pquestions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pquestions.txt; sourceTree = "<group>"; };
 		84BCFDB61A3B6C4100D37103 /* pdescriptions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pdescriptions.txt; sourceTree = "<group>"; };
 		84D44884191D240400BF0589 /* gradientScale.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gradientScale.png; sourceTree = "<group>"; };
