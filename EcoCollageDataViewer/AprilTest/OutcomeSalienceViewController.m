@@ -304,6 +304,10 @@ float maxPublicInstallNorm;
                                                  name:@"updateBudget"
                                                object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateFloodingThreshold)
+                                                 name:@"updateFloodingThreshold"
+                                               object:nil];
     
     [super viewWillAppear:animated];
 }
@@ -314,6 +318,7 @@ float maxPublicInstallNorm;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawSingleTrial" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"drawMultipleTrials" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"budgetChanged" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateFloodingThreshold" object:nil];
     
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
@@ -1317,6 +1322,22 @@ float maxPublicInstallNorm;
 }
 
 #pragma mark Update Displays
+
+- (void)updateFloodingThreshold {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    float newThreshold = tabControl.floodThreshold;
+    
+    for (FebTestWaterDisplay *display in maxWaterDisplays) {
+        display.thresholdValue = newThreshold;
+        [display fastUpdateView:display.hours];
+    }
+    
+    for (FebTestWaterDisplay *display in waterDisplays) {
+        display.thresholdValue = newThreshold;
+        [display fastUpdateView:display.hours];
+    }
+}
 
 //Updates the text of a UILabel (used to update labels after new trials are fetched)
 - (NSMutableAttributedString *)myLabelAttributes:(NSString *)input{
