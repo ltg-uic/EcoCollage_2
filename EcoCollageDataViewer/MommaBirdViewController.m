@@ -1094,6 +1094,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 - (IBAction)updateFloodThreshold:(id)sender {
     float newThreshold = [_floodThresholdValue.text floatValue];
+    newThreshold *= 0.3048; // convert feet to meters
     
     NSMutableArray *dataArray = [[NSMutableArray alloc]init];
     
