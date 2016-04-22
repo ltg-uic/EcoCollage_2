@@ -9,6 +9,7 @@
 #import "MommaBirdViewController.h"
 #import "AprilTestSimRun.h"
 #import "AprilTestNormalizedVariable.h"
+#import "BabyBirdProfile.h"
 #import <Foundation/Foundation.h>
 
 @interface MommaBirdViewController () // Class extension
@@ -28,6 +29,9 @@
 @synthesize discoveredPeripheral = _discoveredPeripheral;
 @synthesize BudgetSlider = _BudgetSlider;
 @synthesize budgetNumber = _budgetNumber;
+@synthesize floodThresholdValue = _floodThresholdValue;
+@synthesize floodThresholdButton = _floodThresholdButton;
+
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *profiles;
@@ -51,6 +55,7 @@ NSData *ping;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    _floodThresholdButton.titleLabel.text = @"Update Threshold";
     
     trialNum = 0;
     
@@ -1087,4 +1092,19 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     return YES;
 }
 
+- (IBAction)updateFloodThreshold:(id)sender {
+    float newThreshold = [_floodThresholdValue.text floatValue];
+    
+    NSMutableArray *dataArray = [[NSMutableArray alloc]init];
+    
+    [dataArray addObject:@"thresholdUpdated"];
+    [dataArray addObject:[NSNumber numberWithFloat:newThreshold]];
+    
+    NSDictionary *thresholdToSendToBaby = [NSDictionary dictionaryWithObjects:dataArray forKeys:@"data"];
+    
+    if(thresholdToSendToBaby != nil) {
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:thresholdToSendToBaby];
+        [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
+    }
+}
 @end

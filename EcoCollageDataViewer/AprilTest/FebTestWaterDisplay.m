@@ -13,6 +13,7 @@
 @synthesize view = _view;
 @synthesize thresholdValue = _thresholdValue;
 @synthesize blocks = _blocks;
+@synthesize hours = _hours;
 UILabel *bg;
 
 - (id)initWithFrame:(CGRect)frame andContent: (NSString *)content;
@@ -24,6 +25,8 @@ UILabel *bg;
     for (int i = 0; i < _waterHeights.count; i++){
         [waterHeightsTemp insertObject: [[_waterHeights objectAtIndex:i] componentsSeparatedByString:@" "] atIndex: i];
     }
+    
+    _hours = 0;
     
     //NSLog(@"%@", waterHeightsTemp);
     _waterHeights = waterHeightsTemp;
@@ -45,6 +48,7 @@ UILabel *bg;
     }
     [_blocks removeAllObjects];
     
+    _hours = hoursAfterStorm;
     float hoursAfterStormCatch = hoursAfterStorm;
     float maxSaturation = 0;
     if(hoursAfterStorm == 0) hoursAfterStormCatch = (float)1/(float)60;
@@ -82,6 +86,7 @@ UILabel *bg;
 
 - (void) fastUpdateView: (int) hoursAfterStorm {
     
+    _hours = hoursAfterStorm;
     float hoursAfterStormCatch = hoursAfterStorm;
     float maxSaturation = 0;
     if(hoursAfterStorm == 0) hoursAfterStormCatch = (float)1/(float)60;

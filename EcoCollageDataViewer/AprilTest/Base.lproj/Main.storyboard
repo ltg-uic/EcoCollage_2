@@ -564,6 +564,22 @@
                                     <outlet property="delegate" destination="L39-Hx-Bzc" id="JVt-VL-gCn"/>
                                 </connections>
                             </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="Ql5-Vi-oRH">
+                                <rect key="frame" x="867" y="683" width="97" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="TGr-yE-V3c">
+                                <rect key="frame" x="892" y="645" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="updateFloodThreshold:" destination="L39-Hx-Bzc" eventType="touchUpInside" id="aw4-qE-ywK"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -572,6 +588,8 @@
                     <connections>
                         <outlet property="BudgetSlider" destination="5pe-xE-Ooh" id="ffg-Rm-g9U"/>
                         <outlet property="budgetNumber" destination="vmV-mm-9kL" id="dNe-k2-wj5"/>
+                        <outlet property="floodThresholdButton" destination="TGr-yE-V3c" id="3aL-PZ-Pr0"/>
+                        <outlet property="floodThresholdValue" destination="Ql5-Vi-oRH" id="3Rr-d6-1bI"/>
                         <outlet property="macMiniTextView" destination="MMS-DB-dNX" id="YZl-IL-n9W"/>
                         <outlet property="studyNumberLabel" destination="8CQ-hc-6k7" id="tPI-wT-Ri8"/>
                         <outlet property="textView" destination="zTP-a5-umh" id="Pok-D6-d4W"/>

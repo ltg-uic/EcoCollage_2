@@ -22,5 +22,8 @@
 @property (strong, nonatomic) IBOutlet UILabel *trialNumberLabel;
 - (IBAction)BudgetSlider:(UISlider *)sender;
 @property (strong, nonatomic) IBOutlet UISlider *BudgetSlider;
+- (IBAction)updateFloodThreshold:(id)sender;
+@property (strong, nonatomic) IBOutlet UITextField *floodThresholdValue;
+@property (strong, nonatomic) IBOutlet UIButton *floodThresholdButton;
 
 @end

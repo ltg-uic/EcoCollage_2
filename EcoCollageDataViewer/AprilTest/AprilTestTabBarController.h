@@ -39,6 +39,7 @@
 @property int   showProfile;
 @property int   budget;
 @property BOOL  SortingEnabled;
+@property float floodThreshold;
 
 @property int pieIndex;
 

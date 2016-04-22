@@ -21,6 +21,7 @@
 		5759D44F1B9F8120000C7B72 /* BabyBird.m in Sources */ = {isa = PBXBuildFile; fileRef = 5759D44E1B9F8120000C7B72 /* BabyBird.m */; };
 		5759DC5F1BA75E4D000C7B72 /* pedvpolStudy.png in Resources */ = {isa = PBXBuildFile; fileRef = 5759DC5E1BA75E4D000C7B72 /* pedvpolStudy.png */; };
 		5767434F1B7E8C98003F1227 /* social24.png in Resources */ = {isa = PBXBuildFile; fileRef = 5767434E1B7E8C98003F1227 /* social24.png */; };
+		5782C6121CCAC9BE006BE683 /* BabyBirdProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 5782C6111CCAC9BE006BE683 /* BabyBirdProfile.m */; };
 		579A157C1B1CE7D4009FBBD0 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579A15781B1CE4F4009FBBD0 /* GameKit.framework */; };
 		579AD9781C03CD4800F4750D /* pattern3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 579AD9771C03CD4800F4750D /* pattern3.jpg */; };
 		579AD97A1C0E6A9300F4750D /* diag_hatch.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 579AD9791C0E6A9300F4750D /* diag_hatch.jpg */; };
@@ -121,6 +122,8 @@
 		5759D44E1B9F8120000C7B72 /* BabyBird.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabyBird.m; sourceTree = "<group>"; };
 		5759DC5E1BA75E4D000C7B72 /* pedvpolStudy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pedvpolStudy.png; sourceTree = "<group>"; };
 		5767434E1B7E8C98003F1227 /* social24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = social24.png; sourceTree = "<group>"; };
+		5782C6101CCAC9BE006BE683 /* BabyBirdProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyBirdProfile.h; sourceTree = "<group>"; };
+		5782C6111CCAC9BE006BE683 /* BabyBirdProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabyBirdProfile.m; sourceTree = "<group>"; };
 		579A15781B1CE4F4009FBBD0 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		579A157A1B1CE591009FBBD0 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
 		579AD9771C03CD4800F4750D /* pattern3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = pattern3.jpg; sourceTree = "<group>"; };
@@ -324,6 +327,8 @@
 				846B971B18FE0B1F0008BD59 /* FebTestWaterDisplay.m */,
 				57A31DC51B696615007F6CDC /* LeastFavoriteView.m */,
 				574737071B14E52C00D5EED8 /* MommaBirdViewController.m */,
+				5782C6101CCAC9BE006BE683 /* BabyBirdProfile.h */,
+				5782C6111CCAC9BE006BE683 /* BabyBirdProfile.m */,
 				8453FA6B18F2FC8F0010D12F /* OutcomeSalienceViewController.m */,
 				841C0A1C1A16744500ED7A2E /* PeprViewController.m */,
 				57EEF5531B1E452200BECE7F /* SocialViewController.m */,
@@ -582,6 +587,7 @@
 				574737081B14E52C00D5EED8 /* MommaBirdViewController.m in Sources */,
 				848479D218F71ACE00BAD981 /* AprilTestVariable.m in Sources */,
 				846B972218FE0B1F0008BD59 /* FebTestWaterDisplay.m in Sources */,
+				5782C6121CCAC9BE006BE683 /* BabyBirdProfile.m in Sources */,
 				846B972118FE0B1F0008BD59 /* FebTestIntervention.m in Sources */,
 				846B972A18FF04B50008BD59 /* AprilTestEfficiencyView.m in Sources */,
 			);

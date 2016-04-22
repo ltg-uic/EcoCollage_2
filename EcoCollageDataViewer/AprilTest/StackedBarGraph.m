@@ -39,13 +39,9 @@ UILabel *bestForMe;
 UILabel *worstForMe;
 int bestTrialForMe;
 int worstTrialForMe;
-
 int widthOfBar = 36;
-
 int barHeightMultiplier = 4;
-
 int containers = 0;
-
 int liner = 0;
 
 #define screen_width 1052

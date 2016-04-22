@@ -438,6 +438,11 @@ int                         heightMultiplier = 5;
                                                  name:@"leastFavoritesUpdate"
                                                object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateFloodingThreshold)
+                                                 name:@"updateFloodingThreshold"
+                                               object:nil];
+    
     [self updatePicker];
     
     
@@ -494,6 +499,7 @@ int                         heightMultiplier = 5;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"slice7tapped" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"favoritesUpdated" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"leastFavoritesUpdated" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateFloodingThreshold" object:nil];
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     tabControl.reloadSocialView = 0;
@@ -3176,6 +3182,22 @@ int                         heightMultiplier = 5;
 
 #pragma mark Storm or Budget Change Functions
 
+
+- (void)updateFloodingThreshold {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+
+    float newThreshold = tabControl.floodThreshold;
+
+    for (FebTestWaterDisplay *display in maxWaterDisplays) {
+        display.thresholdValue = newThreshold;
+        [display fastUpdateView:display.hours];
+    }
+    
+    for (FebTestWaterDisplay *display in waterDisplays) {
+        display.thresholdValue = newThreshold;
+        [display fastUpdateView:display.hours];
+    }
+}
 
 //selector method that handles a change in value when budget changes (slider under titles)
 -(void)BudgetChanged{

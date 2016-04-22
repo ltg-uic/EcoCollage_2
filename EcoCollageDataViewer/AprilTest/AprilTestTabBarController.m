@@ -56,6 +56,7 @@
 @synthesize threshVal = _threshVal;
 @synthesize scores = _scores;
 @synthesize reloadSocialView = _reloadSocialView;
+@synthesize floodThreshold = _floodThreshold;
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
 NSMutableArray *viewsForWaterDisplays;
@@ -95,6 +96,7 @@ NSMutableDictionary         *scoreColors;
     [super viewDidLoad];
     
     _trialNum = 0;
+    _floodThreshold = 0.25; // default flooding threshold
     
     //manually derived list of variables that are going to be implemented in this test. Eventually, should be replaced with a access to database, such that width, etc, are all documented as such.
     
@@ -440,6 +442,10 @@ NSMutableDictionary         *scoreColors;
         _reloadSocialView = 1;
         [self updateAllLeastFavorites:dataArray];
     }
+    else if([dataArray[0] isEqualToString:@"thresholdUpdated"]) {
+        _reloadSocialView = 1;
+        [self updateThreshold:dataArray];
+    }
     else {
         NSLog(@"Received unknown data");
     }
@@ -598,6 +604,13 @@ NSMutableDictionary         *scoreColors;
     if(amountOverBudget <= 0) modifier = 1;
     
     return modifier;
+}
+
+- (void)updateThreshold:(NSArray*)dataArray {
+    float threshold = [((NSNumber*)dataArray[1]) floatValue];
+    _floodThreshold = threshold;
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateFloodingThreshold" object:self];
 }
 
 - (void)updateAllFavorites:(NSArray *)dataArray {
