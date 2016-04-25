@@ -1327,15 +1327,37 @@ float maxPublicInstallNorm;
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
     float newThreshold = tabControl.floodThreshold;
+    NSLog(@"Outcome threshold %f", newThreshold);
     
-    for (FebTestWaterDisplay *display in maxWaterDisplays) {
+    for (FebTestWaterDisplay *display in tabControl.waterDisplaysInTab) {
         display.thresholdValue = newThreshold;
         [display fastUpdateView:display.hours];
     }
     
-    for (FebTestWaterDisplay *display in waterDisplays) {
+    for (FebTestWaterDisplay *display in tabControl.maxWaterDisplaysInTab) {
         display.thresholdValue = newThreshold;
         [display fastUpdateView:display.hours];
+    }
+    
+    
+    for (int i = 0; i < [trialRunSubViews count]; i++){
+        AprilTestSimRun *simRun = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
+        
+        /* Update Intervention Capacity */
+        [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] updateViewForHour:hoursAfterStorm];
+        UIImageView *EfficiencyView = [[trialRunSubViews objectAtIndex:i] valueForKey:@"EfficiencyView"];
+        UIImage *newEfficiencyViewImage  = [[tabControl.efficiencyViewsInTab objectAtIndex:simRun.trialNum] viewforEfficiencyToImage];
+        [EfficiencyView setImage:newEfficiencyViewImage];
+        
+        /* update water display */
+        //Access the map from the tab controller and update with the newest hours on water depth
+        ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]).thresholdValue = thresh;
+        [[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum] fastUpdateView:hoursAfterStorm];
+        
+        //Update water depth image from the current trial
+        UIImageView *waterDepthView = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDepthView"];
+        UIImage *newWaterDepth = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]];
+        [waterDepthView setImage:newWaterDepth];
     }
 }
 

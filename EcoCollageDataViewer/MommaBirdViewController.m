@@ -1101,7 +1101,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     [dataArray addObject:@"thresholdUpdated"];
     [dataArray addObject:[NSNumber numberWithFloat:newThreshold]];
     
-    NSDictionary *thresholdToSendToBaby = [NSDictionary dictionaryWithObjects:dataArray forKeys:@"data"];
+    NSDictionary *thresholdToSendToBaby = [NSDictionary dictionaryWithObject:dataArray forKey:@"data"];
     
     if(thresholdToSendToBaby != nil) {
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:thresholdToSendToBaby];

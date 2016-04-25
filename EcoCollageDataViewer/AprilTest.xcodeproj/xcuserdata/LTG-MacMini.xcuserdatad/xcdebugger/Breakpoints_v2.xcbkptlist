@@ -106,11 +106,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/AprilTestTabBarController.m"
-            timestampString = "481750425.724423"
+            timestampString = "483312007.570064"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1191"
-            endingLineNumber = "1191"
+            startingLineNumber = "1192"
+            endingLineNumber = "1192"
             landmarkName = "-receiveMultipleTrials:"
             landmarkType = "5">
          </BreakpointContent>
@@ -122,11 +122,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/AprilTestTabBarController.m"
-            timestampString = "481750425.724423"
+            timestampString = "483312007.570064"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1196"
-            endingLineNumber = "1196"
+            startingLineNumber = "1197"
+            endingLineNumber = "1197"
             landmarkName = "-receiveMultipleTrials:"
             landmarkType = "5">
          </BreakpointContent>
@@ -138,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/AprilTestTabBarController.m"
-            timestampString = "481750425.724423"
+            timestampString = "483312007.570064"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1201"
-            endingLineNumber = "1201"
+            startingLineNumber = "1202"
+            endingLineNumber = "1202"
             landmarkName = "-receiveMultipleTrials:"
             landmarkType = "5">
          </BreakpointContent>
@@ -154,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/AprilTestTabBarController.m"
-            timestampString = "481750425.724423"
+            timestampString = "483312007.570064"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1204"
-            endingLineNumber = "1204"
+            startingLineNumber = "1205"
+            endingLineNumber = "1205"
             landmarkName = "-receiveMultipleTrials:"
             landmarkType = "5">
          </BreakpointContent>
@@ -170,11 +170,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/AprilTestTabBarController.m"
-            timestampString = "481750425.724423"
+            timestampString = "483312007.570064"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1209"
-            endingLineNumber = "1209"
+            startingLineNumber = "1210"
+            endingLineNumber = "1210"
             landmarkName = "-receiveMultipleTrials:"
             landmarkType = "5">
          </BreakpointContent>
@@ -618,11 +618,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/AprilTestTabBarController.m"
-            timestampString = "481750425.724423"
+            timestampString = "483312007.570064"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "671"
-            endingLineNumber = "671"
+            startingLineNumber = "672"
+            endingLineNumber = "672"
             landmarkName = "-updateFavorites:"
             landmarkType = "5">
          </BreakpointContent>
@@ -634,11 +634,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/AprilTestTabBarController.m"
-            timestampString = "481750425.724423"
+            timestampString = "483312007.570064"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "667"
-            endingLineNumber = "667"
+            startingLineNumber = "668"
+            endingLineNumber = "668"
             landmarkName = "-updateFavorites:"
             landmarkType = "5">
          </BreakpointContent>
@@ -650,11 +650,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/AprilTestTabBarController.m"
-            timestampString = "481750425.724423"
+            timestampString = "483312007.570064"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "662"
-            endingLineNumber = "662"
+            startingLineNumber = "663"
+            endingLineNumber = "663"
             landmarkName = "-updateFavorites:"
             landmarkType = "5">
          </BreakpointContent>
@@ -890,12 +890,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "AprilTest/AprilTestTabBarController.m"
-            timestampString = "481750425.724423"
+            timestampString = "483312007.570064"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "623"
-            endingLineNumber = "623"
-            landmarkName = "-addFavorite:"
+            startingLineNumber = "624"
+            endingLineNumber = "624"
+            landmarkName = "-updateAllLeastFavorites:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
