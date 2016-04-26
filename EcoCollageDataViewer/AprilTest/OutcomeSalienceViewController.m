@@ -1326,7 +1326,8 @@ float maxPublicInstallNorm;
 - (void)updateFloodingThreshold {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
     
-    float newThreshold = tabControl.floodThreshold;
+    float newThreshold = tabControl.threshVal;
+    thresh = newThreshold;
     NSLog(@"Outcome threshold %f", newThreshold);
     
     for (FebTestWaterDisplay *display in tabControl.waterDisplaysInTab) {
@@ -1358,6 +1359,17 @@ float maxPublicInstallNorm;
         UIImageView *waterDepthView = [[trialRunSubViews objectAtIndex:i] valueForKey:@"WaterDepthView"];
         UIImage *newWaterDepth = [tabControl viewToImageForWaterDisplay:[tabControl.waterDisplaysInTab objectAtIndex:simRun.trialNum]];
         [waterDepthView setImage:newWaterDepth];
+        
+        /* update water display */
+        //Access the map from the tab controller and update with the newest hours on water depth
+        ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:simRun.trialNum]).thresholdValue = thresh;
+        FebTestWaterDisplay *mwd = [tabControl.maxWaterDisplaysInTab objectAtIndex:simRun.trialNum];
+        [mwd fastUpdateView:mwd.hours];
+        
+        //Update water depth image from the current trial
+        UIImageView *maxWaterDepthView = [[trialRunSubViews objectAtIndex:i] valueForKey:@"MWaterDepthView"];
+        UIImage *newMaxWaterDepth = [tabControl viewToImageForWaterDisplay:[tabControl.maxWaterDisplaysInTab objectAtIndex:simRun.trialNum]];
+        [maxWaterDepthView setImage:newMaxWaterDepth];
     }
 }
 

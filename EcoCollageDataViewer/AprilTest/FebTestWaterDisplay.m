@@ -91,7 +91,6 @@ UILabel *bg;
     float hoursAfterStormCatch = hoursAfterStorm;
     float maxSaturation = 0;
     if(hoursAfterStorm == 0) hoursAfterStormCatch = (float)1/(float)60;
-    NSLog(@"Threshold value %f", _thresholdValue);
     
     //sets background
     if (_blocks.count == 0){

@@ -3186,7 +3186,7 @@ int                         heightMultiplier = 5;
 - (void)updateFloodingThreshold {
     AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
 
-    float newThreshold = tabControl.floodThreshold;
+    float newThreshold = tabControl.threshVal;
 
     for (FebTestWaterDisplay *display in maxWaterDisplays) {
         display.thresholdValue = newThreshold;
