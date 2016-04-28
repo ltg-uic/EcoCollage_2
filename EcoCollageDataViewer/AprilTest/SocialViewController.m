@@ -443,6 +443,12 @@ int                         heightMultiplier = 5;
                                                  name:@"updateFloodingThreshold"
                                                object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(drawNewProfileHelper)
+                                                 name:@"drawSingleTrial"
+                                               object:nil];
+    
+
     [self updatePicker];
     
     
