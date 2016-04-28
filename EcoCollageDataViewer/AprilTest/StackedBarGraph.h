@@ -16,9 +16,12 @@
 @property UIView *legendView;
 @property UIScrollView *scoreBarsView;
 @property UIView *slideDown;
+@property NSMutableArray *trialGroups;
 
 - (id)initWithFrame:(CGRect)frame andTabController:(AprilTestTabBarController *)tabControl withContainers:(int)wC;
 
 - (void) reloadGraph:(AprilTestTabBarController *)tabControl withContainers:(int)wC;
+
+- (void) trialTappedByIndex:(int)index;
 
 @end

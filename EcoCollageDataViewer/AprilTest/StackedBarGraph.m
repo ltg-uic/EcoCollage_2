@@ -15,9 +15,9 @@
 @synthesize legendView = _legendView;
 @synthesize scoreBarsView = _scoreBarsView;
 @synthesize slideDown = _slideDown;
+@synthesize trialGroups = _trialGroups;
 
 AprilTestTabBarController *tabController;
-NSMutableArray *trialGroups;
 NSMutableArray *trialLabels;
 
 NSMutableDictionary *scoreColors;
@@ -47,6 +47,7 @@ int liner = 0;
 #define screen_width 1052
 #define legend_width 150
 #define scoreBarsView_width 902
+#define screen_height 557
 
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -277,7 +278,7 @@ int liner = 0;
     
     int x_initial = 10;
     int x = x_initial;
-    int y = sumTierSizes + 100; // start at the bottom and work up
+    int y = screen_height - 100; // start at the bottom and work up
     int spaceBetweenTrials = 25;
     widthOfBar = (scoreBarsView_width - spaceBetweenTrials * tabControl.trialRuns.count) / (tabControl.trialRuns.count * tabControl.profiles.count + 2);
     int width = widthOfBar;
@@ -295,7 +296,7 @@ int liner = 0;
     [yAxis setBackgroundColor:[UIColor blackColor]];
     [_scoreBarsView addSubview:yAxis];
     
-    trialGroups = [[NSMutableArray alloc]init];
+    _trialGroups = [[NSMutableArray alloc]init];
     
     NSMutableArray *trialScores = [[NSMutableArray alloc]init];
 
@@ -421,7 +422,7 @@ int liner = 0;
             
             x += width+1;
         }
-        [trialGroups addObject: trialGroup];
+        [_trialGroups addObject: trialGroup];
         x += spaceBetweenTrials;
     }
     
@@ -450,7 +451,7 @@ int liner = 0;
     
     // create UILabel for each trial
     int i = 0;
-    for(NSMutableArray *mArray in trialGroups) {
+    for(NSMutableArray *mArray in _trialGroups) {
         if(mArray.count == 0) break;
         StackedBar *fBar = [mArray objectAtIndex:0];
         StackedBar *lBar = [mArray objectAtIndex:mArray.count - 1];
@@ -766,7 +767,7 @@ int liner = 0;
     
     // create UILabel for each trial
     int i = 0;
-    for(NSMutableArray *mArray in trialGroups) {
+    for(NSMutableArray *mArray in _trialGroups) {
         if(mArray.count == 0) break;
         StackedBar *fBar = [mArray objectAtIndex:0];
         StackedBar *lBar = [mArray objectAtIndex:mArray.count - 1];
@@ -794,12 +795,155 @@ int liner = 0;
     }
 }
 
+- (void) trialTappedByIndex:(int)index {
+    UIView *trialLabel = [trialLabels objectAtIndex:index];
+    UILabel *trialText = [trialLabel viewWithTag:101];
+    int resizeFactor = 4;
+    
+    NSMutableArray *mArray = [_trialGroups objectAtIndex:trialLabel.tag];
+    int shrunk = ((StackedBar*)[mArray objectAtIndex:0]).shrunk;
+    
+    if(trialLabel.tag == bestTrialForMe && bestForMe != NULL) {
+        if([bestForMe isHidden])
+            [self performSelector:@selector(toggleHidden:)
+                       withObject:bestForMe
+                       afterDelay:(0.0f)];
+        else
+            [self toggleHidden:bestForMe];
+    }
+    if(trialLabel.tag == worstTrialForMe && worstForMe != NULL) {
+        if([worstForMe isHidden])
+            [self performSelector:@selector(toggleHidden:)
+                       withObject:worstForMe
+                       afterDelay:(0.0f)];
+        else
+            [self toggleHidden:worstForMe];
+    }
+    
+    for(StackedBar *bar in mArray) {
+        
+        // if we are going to shrink it, hide name
+        if(bar.shrunk != 1) {
+            [bar.name setHidden:YES];
+        }
+    }
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:.0];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    
+    
+    
+    
+    int i = 0;
+    for(StackedBar *bar in mArray) {
+        
+        // if it is shrunk, we need to grow it
+        if(bar.shrunk == 1) {
+            [bar setFrame:CGRectMake(bar.frame.origin.x + (widthOfBar - widthOfBar /resizeFactor) * i, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+            
+            [bar.score setHidden:NO];
+            [bar grow];
+            bar.shrunk = 0;
+            if(bar.favorite.isActive) {
+                [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(toggleFavoriteHidden:) object:bar.favorite];
+                [self performSelector:@selector(toggleFavoriteHidden:)
+                           withObject:bar.favorite
+                           afterDelay:0.0];
+            }
+            if(bar.leastFavorite.isActive) {
+                [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(toggleLeastFavoriteHidden:) object:bar.leastFavorite];
+                [self performSelector:@selector(toggleLeastFavoriteHidden:)
+                           withObject:bar.leastFavorite
+                           afterDelay:0.0];
+            }
+        }
+        else { // otherwise, we need to shrink it
+            [bar.score setHidden:YES];
+            [bar shrink];
+            bar.shrunk = 1;
+            
+            [bar setFrame:CGRectMake(bar.frame.origin.x - (widthOfBar - widthOfBar /resizeFactor) * i, bar.frame.origin.y, bar.frame.size.width, bar.frame.size.height)];
+            
+            
+            [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(toggleFavoriteHidden:) object:bar.favorite];
+            [bar.favorite setHidden:YES];
+            
+            [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(toggleLeastFavoriteHidden:) object:bar.leastFavorite];
+            [bar.leastFavorite setHidden:YES];
+        }
+        i++;
+    }
+    
+    if(shrunk){ // if shrunken, we gotta grow it
+        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y, trialLabel.frame.size.width * resizeFactor, trialLabel.frame.size.height)];
+        [trialText setFont:[UIFont systemFontOfSize:16]];
+        [trialText setText:[NSString stringWithFormat:@"Trial %@", trialText.text]];
+        [trialText sizeToFit];
+        [trialText setCenter:CGPointMake(trialLabel.frame.size.width / 2, trialLabel.frame.size.height / 2)];
+        
+        
+        NSString *logEntry = [tabController generateLogEntryWith:[NSString stringWithFormat:@"\tGrew Trial \t%@", [trialText.text substringFromIndex:6]]];
+        [tabController writeToLogFileString:logEntry];
+    }
+    else { // otherwise we shrink it
+        [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x, trialLabel.frame.origin.y, trialLabel.frame.size.width / resizeFactor, trialLabel.frame.size.height)];
+        [trialText setFont:[UIFont systemFontOfSize:10]];
+        [trialText setText:[trialText.text substringFromIndex:6]];
+        [trialText sizeToFit];
+        [trialText setCenter:CGPointMake(trialLabel.frame.size.width / 2, trialLabel.frame.size.height / 2)];
+        
+        
+        NSString *logEntry = [tabController generateLogEntryWith:[NSString stringWithFormat:@"\tShrunk trial\t%@", trialText.text]];
+        [tabController writeToLogFileString:logEntry];
+    }
+    
+    int shiftAmount = mArray.count * (widthOfBar - widthOfBar / resizeFactor);
+    if(shrunk) {
+        for(i = (int)trialLabel.tag + 1; i < _trialGroups.count; i++) {
+            [self shiftRight:[_trialGroups objectAtIndex:i] amount:shiftAmount];
+            UILabel *trialLabel = [trialLabels objectAtIndex:i];
+            [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x + shiftAmount, trialLabel.frame.origin.y, trialLabel.frame.size.width, trialLabel.frame.size.height)];
+        }
+        if(bestTrialForMe > trialLabel.tag && bestForMe != NULL) {
+            [bestForMe setFrame:CGRectMake(bestForMe.frame.origin.x + shiftAmount, bestForMe.frame.origin.y, bestForMe.frame.size.width, bestForMe.frame.size.height)];
+        }
+        if(worstTrialForMe > trialLabel.tag && worstForMe != NULL) {
+            [worstForMe setFrame:CGRectMake(worstForMe.frame.origin.x + shiftAmount, worstForMe.frame.origin.y, worstForMe.frame.size.width, worstForMe.frame.size.height)];
+        }
+        
+    }
+    else {
+        for(i = (int)trialLabel.tag + 1; i < _trialGroups.count; i++) {
+            [self shiftLeft:[_trialGroups objectAtIndex:i] amount:shiftAmount];
+            UILabel *trialLabel = [trialLabels objectAtIndex:i];
+            [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x - shiftAmount, trialLabel.frame.origin.y, trialLabel.frame.size.width, trialLabel.frame.size.height)];
+        }
+        if(bestTrialForMe > trialLabel.tag && bestForMe != NULL) {
+            [bestForMe setFrame:CGRectMake(bestForMe.frame.origin.x - shiftAmount, bestForMe.frame.origin.y, bestForMe.frame.size.width, bestForMe.frame.size.height)];
+        }
+        if(worstTrialForMe > trialLabel.tag && worstForMe != NULL) {
+            [worstForMe setFrame:CGRectMake(worstForMe.frame.origin.x - shiftAmount, worstForMe.frame.origin.y, worstForMe.frame.size.width, worstForMe.frame.size.height)];
+        }
+    }
+    
+    
+    [UIView commitAnimations];
+    
+    [self performSelector:@selector(showName:)
+               withObject:mArray
+               afterDelay:(0.0f)];
+    
+
+}
+
 - (void) trialTapped:(UITapGestureRecognizer *)gr {
         UIView *trialLabel = (UIView*)gr.view;
     UILabel *trialText = [trialLabel viewWithTag:101];
     int resizeFactor = 4;
     
-    NSMutableArray *mArray = [trialGroups objectAtIndex:trialLabel.tag];
+    NSMutableArray *mArray = [_trialGroups objectAtIndex:trialLabel.tag];
     int shrunk = ((StackedBar*)[mArray objectAtIndex:0]).shrunk;
     
     if(trialLabel.tag == bestTrialForMe && bestForMe != NULL) {
@@ -900,8 +1044,8 @@ int liner = 0;
     
     int shiftAmount = mArray.count * (widthOfBar - widthOfBar / resizeFactor);
     if(shrunk) {
-        for(i = (int)trialLabel.tag + 1; i < trialGroups.count; i++) {
-            [self shiftRight:[trialGroups objectAtIndex:i] amount:shiftAmount];
+        for(i = (int)trialLabel.tag + 1; i < _trialGroups.count; i++) {
+            [self shiftRight:[_trialGroups objectAtIndex:i] amount:shiftAmount];
             UILabel *trialLabel = [trialLabels objectAtIndex:i];
             [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x + shiftAmount, trialLabel.frame.origin.y, trialLabel.frame.size.width, trialLabel.frame.size.height)];
         }
@@ -914,8 +1058,8 @@ int liner = 0;
         
     }
     else {
-        for(i = (int)trialLabel.tag + 1; i < trialGroups.count; i++) {
-            [self shiftLeft:[trialGroups objectAtIndex:i] amount:shiftAmount];
+        for(i = (int)trialLabel.tag + 1; i < _trialGroups.count; i++) {
+            [self shiftLeft:[_trialGroups objectAtIndex:i] amount:shiftAmount];
             UILabel *trialLabel = [trialLabels objectAtIndex:i];
             [trialLabel setFrame:CGRectMake(trialLabel.frame.origin.x - shiftAmount, trialLabel.frame.origin.y, trialLabel.frame.size.width, trialLabel.frame.size.height)];
         }

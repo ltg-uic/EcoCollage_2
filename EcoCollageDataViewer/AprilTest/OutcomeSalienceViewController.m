@@ -1328,7 +1328,6 @@ float maxPublicInstallNorm;
     
     float newThreshold = tabControl.threshVal;
     thresh = newThreshold;
-    NSLog(@"Outcome threshold %f", newThreshold);
     
     for (FebTestWaterDisplay *display in tabControl.waterDisplaysInTab) {
         display.thresholdValue = newThreshold;

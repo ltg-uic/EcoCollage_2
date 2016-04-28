@@ -605,7 +605,6 @@ NSMutableDictionary         *scoreColors;
 }
 
 - (void)updateThreshold:(NSArray*)dataArray {
-    NSLog(@"Received threshold %f", [dataArray[1] floatValue]);
     float threshold = [((NSNumber*)dataArray[1]) floatValue];
     _threshVal = threshold;
     

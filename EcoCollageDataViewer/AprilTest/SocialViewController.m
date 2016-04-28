@@ -1483,10 +1483,29 @@ int                         heightMultiplier = 5;
         SBG_frame = CGRectMake(0, 293, 1052, 387);
     }
     
+    // if SBG already exists, save which trials are shrunk
+    int shrunk_trials[tabControl.trialNum];
+    for (int i = 0; i < tabControl.trialNum; i++) {
+        shrunk_trials[i] = 0;
+    }
+    if(SBG != nil) {
+        for (int i = 0; i < SBG.trialGroups.count; i++) {
+            if(((StackedBar*)[[SBG.trialGroups objectAtIndex:i]objectAtIndex:0]).shrunk == 1)
+                shrunk_trials[i] = 1;
+        }
+    }
+    
     [SBG removeFromSuperview];
     SBG = [[StackedBarGraph alloc]initWithFrame:CGRectMake(0, 123, 1052, 557) andTabController:tabControl withContainers:_stackedBarSwitch.isOn];
     [self.view addSubview:SBG];
     [SBG setContentOffset:offset];
+    
+    for(int i = 0; i < tabControl.trialNum; i++) {
+        NSMutableArray *sb = [SBG.trialGroups objectAtIndex:i];
+        if(shrunk_trials[i] == 1) {
+            [SBG trialTappedByIndex:i];
+        }
+    }
     
     if(_mapWindow.frame.size.height == largeSizeOfMapWindow) {
         [SBG setFrame:CGRectMake(0, 293, 1052, 387)];
