@@ -466,7 +466,7 @@
     </scenes>
     <resources>
         <image name="camera-1x.png" width="31" height="25"/>
-        <image name="navbar-nullmonkey-title.png" width="154" height="25"/>
+        <image name="navbar-nullmonkey-title.png" width="30" height="30"/>
         <image name="settings-1x.png" width="31" height="31"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

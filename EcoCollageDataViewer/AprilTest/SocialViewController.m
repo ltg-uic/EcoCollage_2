@@ -85,7 +85,7 @@ float                       hours_social = 0;
 int                         hoursAfterStorm_social = 0;
 int                         trialChosen= 0;
 int                         smallSizeOfMapWindow = 50;
-int                         largeSizeOfMapWindow = 220;
+int                         largeSizeOfMapWindow = 240;
 int                         widthOfUsernamesWindowWhenOpen;
 int                         widthOfTitleVisualization = 220;
 int                         heightOfVisualization = 220;
@@ -1522,6 +1522,8 @@ int                         heightMultiplier = 5;
         [subview removeFromSuperview];
     }
     
+    [self drawInterventionMaps];
+    /*
     // load all intervention views with labels pertaining to their trial number
     for (int i = 0; i < tabControl.trialRuns.count; i++) {
         
@@ -1540,7 +1542,61 @@ int                         heightMultiplier = 5;
         interventionView.view = mapWindowLabel;
         [interventionView updateView];
     }
+     */
     
+}
+
+- (void)drawInterventionMaps {
+    AprilTestTabBarController *tabControl = (AprilTestTabBarController *)[self parentViewController];
+    
+    // load all intervention views with labels pertaining to their trial number
+    for (int i = 0; i < tabControl.trialRuns.count; i++) {
+        AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:i];
+        UIImageView *interventionImageView;
+        UIView *tempView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 115, 125)];
+        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:tempView.frame];
+        interventionView.view = tempView;
+        [interventionView updateView];
+        
+        UILabel *mapWindowLabel = [[UILabel alloc]init];
+        mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", i + 1];
+        mapWindowLabel.font = [UIFont systemFontOfSize:15.3];
+        [mapWindowLabel sizeToFit];
+        mapWindowLabel.frame = CGRectMake(200 * i, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
+        [bottomOfMapWindow addSubview:mapWindowLabel];
+        
+        interventionImageView = [[UIImageView alloc] initWithFrame:(CGRectMake(200 * i + 20, mapWindowLabel.frame.size.height + 20, 115, 125))];
+        interventionImageView.image = [interventionView viewToImage];
+        [interventionImageView setUserInteractionEnabled:YES];
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resizeImage:)];
+        tap.numberOfTapsRequired = 1;
+        [interventionImageView addGestureRecognizer:tap];
+        [bottomOfMapWindow addSubview:interventionImageView];
+        
+        [bottomOfMapWindow setContentSize:CGSizeMake(mapWindowLabel.frame.origin.x + 250, bottomOfMapWindow.frame.size.height)];
+        
+        /*
+        UILabel *mapWindowLabel = [[UILabel alloc]init];
+        mapWindowLabel.text = [NSString stringWithFormat:@"             Trial %d", i + 1];
+        mapWindowLabel.font = [UIFont systemFontOfSize:15.3];
+        [mapWindowLabel sizeToFit];
+        mapWindowLabel.frame = CGRectMake(200 * i, 2, mapWindowLabel.frame.size.width, mapWindowLabel.frame.size.height);
+        [bottomOfMapWindow addSubview:mapWindowLabel];
+        
+        [bottomOfMapWindow setContentSize:CGSizeMake(mapWindowLabel.frame.origin.x + 250, bottomOfMapWindow.frame.size.height)];
+        
+        AprilTestSimRun *simRun = [tabControl.trialRuns objectAtIndex:i];
+        
+        FebTestIntervention *interventionView = [[FebTestIntervention alloc] initWithPositionArray:simRun.map andFrame:(CGRectMake(20, mapWindowLabel.frame.size.height + 5, 115, 125))];
+        interventionView.view = mapWindowLabel;
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resizeImage:)];
+        tap.numberOfTapsRequired = 1;
+        [interventionImageView addGestureRecognizer:tap];
+        
+        [interventionView updateView];
+         */
+    }
 }
 
 

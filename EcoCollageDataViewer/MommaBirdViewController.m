@@ -1028,14 +1028,14 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     minBudgetLabel.text = @"Minimum budget: $0";
     [minBudgetLabel sizeToFit];
     minBudgetLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x - minBudgetLabel.frame.size.width - 10, _BudgetSlider.frame.origin.y, minBudgetLabel.frame.size.width, _BudgetSlider.frame.size.height);
-    [self.view addSubview:minBudgetLabel];
+    //[self.view addSubview:minBudgetLabel];
     
     // draw max budget label
     UILabel *maxBudgetLabel = [[UILabel alloc]init];
     maxBudgetLabel.text = [NSString stringWithFormat:@"Maximum budget: $%@", [formatter stringFromNumber:[NSNumber numberWithInt:maxBudget]]];
     [maxBudgetLabel sizeToFit];
     maxBudgetLabel.frame = CGRectMake(_BudgetSlider.frame.origin.x + _BudgetSlider.frame.size.width + 10, _BudgetSlider.frame.origin.y, maxBudgetLabel.frame.size.width, _BudgetSlider.frame.size.height);
-    [self.view addSubview:maxBudgetLabel];
+    //[self.view addSubview:maxBudgetLabel];
     
     _BudgetSlider.value = currentBudget;
 }
@@ -1089,12 +1089,12 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    return YES;
+    return NO;
 }
 
 - (IBAction)updateFloodThreshold:(id)sender {
     float newThreshold = [_floodThresholdValue.text floatValue];
-    //newThreshold *= 0.0254; // convert inches to meters
+    newThreshold *= 25.4; // convert inches to millimeters
     
     NSMutableArray *dataArray = [[NSMutableArray alloc]init];
     
@@ -1107,5 +1107,10 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:thresholdToSendToBaby];
         [_session sendDataToAllPeers:data withDataMode:GKSendDataReliable error:nil];
     }
+}
+- (IBAction)reconnectWithBabies:(UIButton *)sender {
+    [_session disconnectFromAllPeers];
+    [_session setAvailable:NO];
+    [_session setAvailable:YES];
 }
 @end

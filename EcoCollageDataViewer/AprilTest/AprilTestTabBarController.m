@@ -180,7 +180,7 @@ NSMutableDictionary         *scoreColors;
     [_scores addObject:scoreDict];
     
     _budget    = 150000;
-    _threshVal = 6;
+    _threshVal = 150; // 150 millimeters = 6 inches
     
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     
