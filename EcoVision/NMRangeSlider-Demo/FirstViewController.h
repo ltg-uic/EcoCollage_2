@@ -25,6 +25,7 @@
 - (IBAction)analyze:(UIButton *)sender;
 
 
+
 @property (strong, nonatomic) IBOutlet UITextField *studyNumber;
 @property (strong, nonatomic) IBOutlet UITextField *trialNumber;
 @property (strong, nonatomic) IBOutlet UITextField *IPAddress;

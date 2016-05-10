@@ -51,7 +51,7 @@ char results[5000];
     fileContents = [NSString stringWithContentsOfFile:filepath encoding:NSUTF8StringEncoding error:&error];
     
     
-    testImg = [UIImage imageNamed:@"IMG_0040.jpg"];
+    testImg = [UIImage imageNamed:@"camera-1x.png"];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -355,6 +355,7 @@ char results[5000];
     [CVWrapper setHSV_Values:hsvValues];
     
 }
+
 
 
 @end
