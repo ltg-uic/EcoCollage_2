@@ -630,6 +630,7 @@ int                         heightMultiplier = 5;
  */
 - (void)tapOnMapWindowRecognized {
     int sizeOfChange = largeSizeOfMapWindow - smallSizeOfMapWindow;
+    int shrankMaps = 0;
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:0.5];
@@ -665,9 +666,18 @@ int                         heightMultiplier = 5;
         scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y - sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height + sizeOfChange);
         
         corePlotView.frame = CGRectMake(corePlotView.frame.origin.x, corePlotView.frame.origin.y - sizeOfChange, corePlotView.frame.size.width, corePlotView.frame.size.height + sizeOfChange);
-        SBG.frame = CGRectMake(SBG.frame.origin.x, SBG.frame.origin.y - sizeOfChange, SBG.frame.size.width, SBG.frame.size.height + sizeOfChange);
+        [SBG setFrame:CGRectMake(SBG.frame.origin.x, SBG.frame.origin.y - sizeOfChange, SBG.frame.size.width, SBG.frame.size.height + sizeOfChange)];
+        shrankMaps = 1;
+        
     }
     [UIView commitAnimations];
+    if (shrankMaps) {
+//        for (StackedBar *s in SBG.stackedBars) {
+//            NSLog(@"Hey ya");
+//            [s revert];
+//        }
+        [self drawScoreStackedBarGraph];
+    }
 }
 
 #pragma mark Non-Animation Tap Recognizer Functions
@@ -1486,7 +1496,7 @@ int                         heightMultiplier = 5;
         SBG_frame = CGRectMake(0, 123, 1052, 557);
     }
     else {
-        SBG_frame = CGRectMake(0, 293, 1052, 387);
+        SBG_frame = CGRectMake(0, 123 + largeSizeOfMapWindow - smallSizeOfMapWindow, 1052, 557 + smallSizeOfMapWindow - largeSizeOfMapWindow);
     }
     
     // if SBG already exists, save which trials are shrunk
@@ -1502,7 +1512,7 @@ int                         heightMultiplier = 5;
     }
     
     [SBG removeFromSuperview];
-    SBG = [[StackedBarGraph alloc]initWithFrame:CGRectMake(0, 123, 1052, 557) andTabController:tabControl withContainers:_stackedBarSwitch.isOn];
+    SBG = [[StackedBarGraph alloc]initWithFrame:SBG_frame andTabController:tabControl withContainers:_stackedBarSwitch.isOn];
     [self.view addSubview:SBG];
     [SBG setContentOffset:offset];
     
@@ -1511,10 +1521,6 @@ int                         heightMultiplier = 5;
         if(shrunk_trials[i] == 1) {
             [SBG trialTappedByIndex:i];
         }
-    }
-    
-    if(_mapWindow.frame.size.height == largeSizeOfMapWindow) {
-        [SBG setFrame:CGRectMake(0, 293, 1052, 387)];
     }
 
     // remove all intervention displays so they can be redrawn
