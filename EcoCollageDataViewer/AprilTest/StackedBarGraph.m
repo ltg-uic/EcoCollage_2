@@ -3,7 +3,7 @@
 //  AprilTest
 //
 //  Created by Ryan Fogarty on 11/5/15.
-//  Copyright (c) 2015 Tia. All rights reserved.
+//  Copyright (c) 2015 Joey Shelley. All rights reserved.
 //
 
 #import "StackedBarGraph.h"
@@ -160,7 +160,7 @@ int liner = 0;
             NSMutableArray* scoreVisNames = [score objectAtIndex:1];
             
             
-            float mod = [tabControl generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.publicInstallCost];
+            float mod = [tabControl generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.landscapeCostTotalInstall];
             
             
             //computing each score with log skew due to over-investment cost

@@ -2,8 +2,8 @@
 //  PeprTestFirstViewController.m
 //  PeprTest
 //
-//  Created by Tia on 10/1/14.
-//  Copyright (c) 2014 Tia. All rights reserved.
+//  Created by Joey Shelley on 10/1/14.
+//  Copyright (c) 2014 Joey Shelley. All rights reserved.
 //
 
 #import "PeprViewController.h"

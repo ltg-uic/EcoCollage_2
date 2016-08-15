@@ -2,8 +2,8 @@
 //  AprilTestCostDisplay.m
 //  AprilTest
 //
-//  Created by Tia on 3/30/15.
-//  Copyright (c) 2015 Tia. All rights reserved.
+//  Created by Joey Shelley on 3/30/15.
+//  Copyright (c) 2015 Joey Shelley. All rights reserved.
 //
 
 #import "AprilTestCostDisplay.h"

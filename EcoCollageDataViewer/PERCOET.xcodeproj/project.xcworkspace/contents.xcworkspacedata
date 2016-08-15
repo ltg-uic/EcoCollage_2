@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:AprilTest.xcodeproj">
+      location = "self:/Users/Admin/Documents/EcoCollage_2/EcoCollageDataViewer/PERCOET.xcodeproj">
    </FileRef>
 </Workspace>

@@ -2,8 +2,8 @@
 //  AprilTestNormalizedVariable.m
 //  AprilTest
 //
-//  Created by Tia on 4/20/14.
-//  Copyright (c) 2014 Tia. All rights reserved.
+//  Created by Joey Shelley on 4/20/14.
+//  Copyright (c) 2014 Joey Shelley. All rights reserved.
 //
 
 #import "AprilTestNormalizedVariable.h"

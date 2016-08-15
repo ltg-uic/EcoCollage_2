@@ -3,7 +3,7 @@
 //  AprilTest
 //
 //  Created by Ryan Fogarty on 6/2/15.
-//  Copyright (c) 2015 Tia. All rights reserved.
+//  Copyright (c) 2015 Joey Shelley. All rights reserved.
 //
 
 #import "SocialViewController.h"
@@ -2921,14 +2921,14 @@ int                         heightMultiplier = 5;
         
         //laziness: this is just the investment costs
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            float investmentInstall = simRun.publicInstallCost;
-            float investmentMaintain = simRun.publicMaintenanceCost;
+            float investmentInstall = simRun.landscapeCostTotalInstall;
+            float investmentMaintain = simRun.landscapeCostTotalMaintenance;
             float investmentInstallN = simRunNormal.publicInstallCost;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             CGRect frame = CGRectMake(width + 25, 60, dynamic_cd_width, 30);
             
-            float costWidth = [self getWidthFromSlider:_BudgetSlider toValue:simRun.publicInstallCost];
+            float costWidth = [self getWidthFromSlider:_BudgetSlider toValue:simRun.landscapeCostTotalInstall];
             float maxBudgetWidth = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             
             cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
@@ -2936,7 +2936,7 @@ int                         heightMultiplier = 5;
             [[_profilesWindow viewWithTag:viewIndex + 1] addSubview: cd];
             
             //checks if over budget, if so, prints warning message
-            if (simRun.publicInstallCost > tabControl.budget){
+            if (simRun.landscapeCostTotalInstall > tabControl.budget){
                 //store update labels for further use (updating over budget when using absolute val)
                 
                 UILabel *valueLabel;
@@ -2949,16 +2949,16 @@ int                         heightMultiplier = 5;
             //just damages now
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 20 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.landscapeCostPrivatePropertyDamage]]] withConcernPosition:width + 20 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 20 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.sewerLoad] withConcernPosition:width + 20 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.normalizedLandscapeCumulativeSewers] withConcernPosition:width + 20 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue:150 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 20 andyValue:165 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.landscapeCostTotalInstall)/(simRun.landscapeCostPrivatePropertyDamage))] withConcernPosition:width + 20 andyValue:165 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.normalizedLandscapeCumulativeOutflow] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@" flowed to neighbors"] withConcernPosition:width + 30 andyValue: 75 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
@@ -3024,7 +3024,7 @@ int                         heightMultiplier = 5;
 
             AprilTestEfficiencyView *ev;
             
-            ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, 67, 130, 150) withContent: simRun.efficiency];
+            ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, 67, 130, 150) withContent: simRun.efficiencyList];
             ev.trialNum = trial;
             ev.view = [_profilesWindow viewWithTag:viewIndex + 1];
             
@@ -3056,7 +3056,7 @@ int                         heightMultiplier = 5;
              */
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: 60 andColor: [UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.costPerGallonCapturedByGI  ] withConcernPosition:width + 25 andyValue: 60 andColor: [UIColor blackColor] to:nil withIndex:viewIndex];
         }
         
         width+= currentVar.widthOfVisualization;

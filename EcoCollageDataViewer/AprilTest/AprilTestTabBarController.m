@@ -2,8 +2,8 @@
 //  AprilTestTabBarController.m
 //  AprilTest
 //
-//  Created by Tia on 4/10/14.
-//  Copyright (c) 2014 Tia. All rights reserved.
+//  Created by Joey Shelley on 4/10/14.
+//  Copyright (c) 2014 Joey Shelley. All rights reserved.
 //
 
 #import "AprilTestTabBarController.h"
@@ -76,7 +76,7 @@ NSMutableDictionary         *scoreColors;
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        // Custom iniJoey Shelleylization
     }
     return self;
 }
@@ -557,13 +557,13 @@ NSMutableDictionary         *scoreColors;
             [scoreVisNames addObject: currentVar.name];
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.costPerGallonCapturedByGI/25.19);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.costPerGallonCapturedByGI/25.19)]];
             [scoreVisNames addObject:currentVar.name];
         }
     }
     
-    float mod = [self generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.publicInstallCost];
+    float mod = [self generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.landscapeCostTotalInstall];
     
     
     //computing each score with log skew due to over-investment cost
@@ -1122,21 +1122,21 @@ NSMutableDictionary         *scoreColors;
     }
     
     //keeping track of water display views
-    FebTestWaterDisplay *waterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.standingWater];
+    FebTestWaterDisplay *waterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.waterHeightList];
     [_waterDisplaysInTab addObject:waterDisplay];
     UIView *viewForWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
     [viewsForWaterDisplays addObject:viewForWaterDisplay];
     waterDisplay.view = viewForWaterDisplay;
     
     //keeping track of max water display views
-    FebTestWaterDisplay *maxWaterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.maxWaterHeights];
+    FebTestWaterDisplay *maxWaterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.maxWaterHeightList];
     UIView *viewForMaxWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
     [viewsForMaxWaterDisplays addObject:viewForMaxWaterDisplay];
     maxWaterDisplay.view = [viewsForMaxWaterDisplays objectAtIndex:_trialNum];
     [_maxWaterDisplaysInTab addObject:maxWaterDisplay];
     
     //keeping track of intervention capacity views
-    AprilTestEfficiencyView *ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(0, 0, 130, 150) withContent: simRun.efficiency];
+    AprilTestEfficiencyView *ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(0, 0, 130, 150) withContent: simRun.efficiencyList];
     [_efficiencyViewsInTab addObject:ev];
     UIView *viewforEfficiency = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 130, 150)];
     [viewsForEfficiencyViews addObject:viewforEfficiency];
@@ -1195,20 +1195,20 @@ NSMutableDictionary         *scoreColors;
         [_trialRunsDynNorm addObject:simRunDyn];
         
         
-        FebTestWaterDisplay *waterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.standingWater];
+        FebTestWaterDisplay *waterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.waterHeightList];
         [_waterDisplaysInTab addObject:waterDisplay];
         UIView *viewForWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
         [viewsForWaterDisplays addObject:viewForWaterDisplay];
         waterDisplay.view = viewForWaterDisplay;
         
-        FebTestWaterDisplay *maxWaterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.maxWaterHeights];
+        FebTestWaterDisplay *maxWaterDisplay = [[FebTestWaterDisplay alloc] initWithFrame:CGRectMake(0, 0, 115, 125) andContent:simRun.maxWaterHeightList];
         UIView *viewForMaxWaterDisplay = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 115, 125)];
         [viewsForMaxWaterDisplays addObject:viewForMaxWaterDisplay];
         maxWaterDisplay.view = [viewsForMaxWaterDisplays objectAtIndex:_trialNum];
         [_maxWaterDisplaysInTab addObject:maxWaterDisplay];
         
         //keeping track of intervention capacity views
-        AprilTestEfficiencyView *ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(0, 0, 130, 150) withContent: simRun.efficiency];
+        AprilTestEfficiencyView *ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(0, 0, 130, 150) withContent: simRun.efficiencyList];
         [_efficiencyViewsInTab addObject:ev];
         UIView *viewforEfficiency = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 130, 150)];
         [viewsForEfficiencyViews addObject:viewforEfficiency];

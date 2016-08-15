@@ -2,9 +2,9 @@
 //  AprilTestSecondViewController.m
 //  AprilTest
 //
-//  Created by Tia on 4/7/14.
+//  Created by Joey Shelley on 4/7/14.
 //  Modified by Salvador Ariza
-//  Copyright (c) 2014 Tia. All rights reserved.
+//  Copyright (c) 2014 Joey Shelley. All rights reserved.
 //
 
 #import "OutcomeSalienceViewController.h"
@@ -687,9 +687,9 @@ float maxPublicInstallNorm;
         //AprilTestSimRun *simRun = [trialRuns objectAtIndex:i];
         AprilTestSimRun *simRun= [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialRun"];
         
-        if (simRun.publicInstallCost > setBudget){
+        if (simRun.landscapeCostTotalInstall > setBudget){
             UILabel *valueLabel;
-            [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget by $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.publicInstallCost-setBudget)]] ] withConcernPosition:width+25 andyValue:i *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
+            [self drawTextBasedVar:[NSString stringWithFormat: @"Over budget by $%@", [formatter stringFromNumber: [NSNumber numberWithInt: (int) (simRun.landscapeCostTotalInstall-setBudget)]] ] withConcernPosition:width+25 andyValue:i *175 + 80 andColor:[UIColor redColor] to:&valueLabel];
             
             [OverBudgetLabels addObject:valueLabel];
         }
@@ -1126,10 +1126,10 @@ float maxPublicInstallNorm;
         if (setBudget == 0){ setBudget = .01; }
         
         //public cost
-        someTrialNorm.publicInstallCost     = ((float)someTrial.publicInstallCost/(setBudget));
+        someTrialNorm.publicInstallCost     = ((float)someTrial.landscapeCostTotalInstall/(setBudget));
         
         //NSLog(@"%f", someTrialNorm.publicInstallCost);
-        someTrialNorm.publicMaintenanceCost = ((float)someTrial.publicMaintenanceCost/(setBudget));
+        someTrialNorm.publicMaintenanceCost = ((float)someTrial.landscapeCostTotalMaintenance/(setBudget));
     }
     
 }
@@ -1160,17 +1160,17 @@ float maxPublicInstallNorm;
         AprilTestNormalizedVariable *someTrialNorm = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"];
         
         if (i == 0){
-            installationCost->highestCost  =  someTrial.publicInstallCost;
-            installationCost->lowestCost   =  someTrial.publicInstallCost;
+            installationCost->highestCost  =  someTrial.landscapeCostTotalInstall;
+            installationCost->lowestCost   =  someTrial.landscapeCostTotalInstall;
             
-            maintenanceCost->highestCost   =  someTrial.publicMaintenanceCost;
-            maintenanceCost->lowestCost    =  someTrial.publicMaintenanceCost;
+            maintenanceCost->highestCost   =  someTrial.landscapeCostTotalMaintenance;
+            maintenanceCost->lowestCost    =  someTrial.landscapeCostTotalMaintenance;
             
-            privateDamages->highestCost    = someTrial.privateDamages;
-            privateDamages->lowestCost     = someTrial.privateDamages;
+            privateDamages->highestCost    = someTrial.landscapeCostPrivatePropertyDamage;
+            privateDamages->lowestCost     = someTrial.landscapeCostPrivatePropertyDamage;
             
-            impactNeighbors->highestCost   = someTrial.impactNeighbors;
-            impactNeighbors->lowestCost    = someTrial.impactNeighbors;
+            impactNeighbors->highestCost   = someTrial.normalizedLandscapeCumulativeOutflow;
+            impactNeighbors->lowestCost    = someTrial.normalizedLandscapeCumulativeOutflow;
             
             gw_infiltration->highestCost   = someTrial.infiltration;
             gw_infiltration->lowestCost    = someTrial.infiltration;
@@ -1186,20 +1186,20 @@ float maxPublicInstallNorm;
         }
         
         //public cost
-        if (someTrial.publicMaintenanceCost <= maintenanceCost->lowestCost) { maintenanceCost->lowestCost = someTrial.publicMaintenanceCost; }
-        if (someTrial.publicMaintenanceCost >= maintenanceCost->highestCost){ maintenanceCost->highestCost = someTrial.publicMaintenanceCost; }
+        if (someTrial.landscapeCostTotalMaintenance <= maintenanceCost->lowestCost) { maintenanceCost->lowestCost = someTrial.landscapeCostTotalMaintenance; }
+        if (someTrial.landscapeCostTotalMaintenance >= maintenanceCost->highestCost){ maintenanceCost->highestCost = someTrial.landscapeCostTotalMaintenance; }
         
-        if (someTrial.publicInstallCost <= installationCost->lowestCost){ installationCost->lowestCost = someTrial.publicInstallCost; }
-        if (someTrial.publicInstallCost >= installationCost->highestCost) { installationCost->highestCost = someTrial.publicInstallCost; }
+        if (someTrial.landscapeCostTotalInstall <= installationCost->lowestCost){ installationCost->lowestCost = someTrial.landscapeCostTotalInstall; }
+        if (someTrial.landscapeCostTotalInstall >= installationCost->highestCost) { installationCost->highestCost = someTrial.landscapeCostTotalInstall; }
         
         
         //private cost
-        if (someTrial.privateDamages <= privateDamages->lowestCost){  privateDamages->lowestCost = someTrial.privateDamages; }
-        if (someTrial.privateDamages >= privateDamages->highestCost){ privateDamages->highestCost = someTrial.privateDamages; }
+        if (someTrial.landscapeCostPrivatePropertyDamage <= privateDamages->lowestCost){  privateDamages->lowestCost = someTrial.landscapeCostPrivatePropertyDamage; }
+        if (someTrial.landscapeCostPrivatePropertyDamage >= privateDamages->highestCost){ privateDamages->highestCost = someTrial.landscapeCostPrivatePropertyDamage; }
         
         //neighbors
-        if (someTrial.impactNeighbors <= impactNeighbors->lowestCost){  impactNeighbors->lowestCost = someTrial.impactNeighbors; }
-        if (someTrial.impactNeighbors >= impactNeighbors->highestCost){ impactNeighbors->highestCost = someTrial.impactNeighbors; }
+        if (someTrial.normalizedLandscapeCumulativeOutflow <= impactNeighbors->lowestCost){  impactNeighbors->lowestCost = someTrial.normalizedLandscapeCumulativeOutflow; }
+        if (someTrial.normalizedLandscapeCumulativeOutflow >= impactNeighbors->highestCost){ impactNeighbors->highestCost = someTrial.normalizedLandscapeCumulativeOutflow; }
         
         //infiltration
         if (someTrial.infiltration <= gw_infiltration->lowestCost){ gw_infiltration->lowestCost = someTrial.infiltration; }
@@ -1294,13 +1294,13 @@ float maxPublicInstallNorm;
         AprilTestNormalizedVariable *someTrialNorm = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"];
         AprilTestNormalizedVariable *someTrialDyn  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialDynamic"];
         
-        someTrialDyn.publicInstallCost     = (float)someTrial.publicInstallCost/installationCost->highestCost;
-        someTrialDyn.publicMaintenanceCost = (float)someTrial.publicMaintenanceCost/maintenanceCost->highestCost;
-        someTrialDyn.privateDamages        = (float)someTrial.privateDamages/privateDamages->highestCost;
+        someTrialDyn.publicInstallCost     = (float)someTrial.landscapeCostTotalInstall/installationCost->highestCost;
+        someTrialDyn.publicMaintenanceCost = (float)someTrial.landscapeCostTotalMaintenance/maintenanceCost->highestCost;
+        someTrialDyn.privateDamages        = (float)someTrial.landscapeCostPrivatePropertyDamage/privateDamages->highestCost;
         
         if (impactNeighbors->highestCost == impactNeighbors->lowestCost){ someTrialDyn.impactNeighbors = .5; }
         else
-            someTrialDyn.impactNeighbors = ((someTrial.impactNeighbors - impactNeighbors->lowestCost)/ (impactNeighbors->highestCost - impactNeighbors->lowestCost));
+            someTrialDyn.impactNeighbors = ((someTrial.normalizedLandscapeCumulativeOutflow - impactNeighbors->lowestCost)/ (impactNeighbors->highestCost - impactNeighbors->lowestCost));
         
         if (gw_infiltration->highestCost == gw_infiltration->lowestCost){ someTrialDyn.infiltration = .5; }
         else
@@ -1409,8 +1409,8 @@ float maxPublicInstallNorm;
         normVar = (_DynamicNormalization.isOn) ? ([[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialDynamic"]) : ([[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"]);
         
         frame   = CGRectMake(25, i*175 + 40, dynamic_cd_width, 30);
-        float costWidth = [self getWidthFromSlider:BudgetSlider toValue:var.publicInstallCost];
-        [newCD updateWithCost:var.publicInstallCost normScore: normVar.publicInstallCost costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
+        float costWidth = [self getWidthFromSlider:BudgetSlider toValue:var.landscapeCostTotalInstall];
+        [newCD updateWithCost:var.landscapeCostTotalInstall normScore: normVar.publicInstallCost costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
     }
     
 }
@@ -1517,8 +1517,8 @@ float maxPublicInstallNorm;
         }
         else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.costPerGallonCapturedByGI/25.19);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.costPerGallonCapturedByGI/25.19)]];
             [scoreVisNames addObject:currentVar.name];
         }
         
@@ -1549,10 +1549,10 @@ float maxPublicInstallNorm;
     UILabel *scorePenalty;
     UILabel * componentScore;
     
-    float mod = [tabControl generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.publicInstallCost];
+    float mod = [tabControl generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.landscapeCostTotalInstall];
     
     // calculate amount of budget for use in resizing each score
-    float amountOverBudget = (simRun.publicInstallCost - setBudget)/(float)setBudget;
+    float amountOverBudget = (simRun.landscapeCostTotalInstall - setBudget)/(float)setBudget;
 
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
@@ -1956,8 +1956,8 @@ float maxPublicInstallNorm;
         
         //laziness: this is just the investment costs
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            float investmentInstall = simRun.publicInstallCost;
-            float investmentMaintain = simRun.publicMaintenanceCost;
+            float investmentInstall = simRun.landscapeCostTotalInstall;
+            float investmentMaintain = simRun.landscapeCostTotalMaintenance;
             float investmentInstallN = simRunNormal.publicInstallCost;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             CGRect frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
@@ -1965,7 +1965,7 @@ float maxPublicInstallNorm;
             investmentWidth = width;
             
             if(publicCostDisplays.count <= trial){
-                float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.publicInstallCost];
+                float costWidth = [self getWidthFromSlider:BudgetSlider toValue:simRun.landscapeCostTotalInstall];
                 float maxBudgetWidth = [self getWidthFromSlider:BudgetSlider toValue:setBudget];
                 
                 
@@ -1981,7 +1981,7 @@ float maxPublicInstallNorm;
             
             
             //checks if over budget, if so, prints warning message
-            if ((simRun.publicInstallCost > setBudget) && (!_DynamicNormalization.isOn)){
+            if ((simRun.landscapeCostTotalInstall > setBudget) && (!_DynamicNormalization.isOn)){
                 //store update labels for further use (updating over budget when using absolute val)
                 
                 UILabel *valueLabel;
@@ -2009,16 +2009,16 @@ float maxPublicInstallNorm;
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 20 andyValue: (trial*175) +20 andColor:[UIColor blackColor] to:&damage];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.landscapeCostPrivatePropertyDamage]]] withConcernPosition:width + 20 andyValue: (trial*175) +20 andColor:[UIColor blackColor] to:&damage];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 20 andyValue: (trial*175) +50 andColor:[UIColor blackColor] to:&damageReduced];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.sewerLoad] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 80 andColor:[UIColor blackColor] to:&sewerLoad];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.normalizedLandscapeCumulativeSewers] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 80 andColor:[UIColor blackColor] to:&sewerLoad];
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:nil];
             
-            if(simRun.privateDamages != 0){
-                [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
+            if(simRun.landscapeCostPrivatePropertyDamage != 0){
+                [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.landscapeCostTotalInstall)/(simRun.landscapeCostPrivatePropertyDamage))] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
             }else {
-                [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/maxDamagesReduced)] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
+                [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.landscapeCostTotalInstall)/maxDamagesReduced)] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
             }
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages));
@@ -2032,7 +2032,7 @@ float maxPublicInstallNorm;
             
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 40 andColor:[UIColor blackColor] to:&impactNeighbor];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.normalizedLandscapeCumulativeOutflow] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 40 andColor:[UIColor blackColor] to:&impactNeighbor];
             [self drawTextBasedVar: [NSString stringWithFormat:@" flowed to neighbors"] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 55 andColor:[UIColor blackColor] to:nil];
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
@@ -2041,7 +2041,7 @@ float maxPublicInstallNorm;
 
         } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.sewerLoad] withConcernPosition:width + 50 andyValue: (trial)*175 + 40 andColor:[UIColor blackColor] to:nil];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.normalizedLandscapeCumulativeSewers] withConcernPosition:width + 50 andyValue: (trial)*175 + 40 andColor:[UIColor blackColor] to:nil];
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.sewerLoad);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.sewerLoad)]];
@@ -2168,10 +2168,10 @@ float maxPublicInstallNorm;
 
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: (trial * 175) + 40 andColor: [UIColor blackColor] to:&efficiencyOfIntervention];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.costPerGallonCapturedByGI  ] withConcernPosition:width + 25 andyValue: (trial * 175) + 40 andColor: [UIColor blackColor] to:&efficiencyOfIntervention];
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.dollarsGallons/25.19)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.costPerGallonCapturedByGI/25.19);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.costPerGallonCapturedByGI/25.19)]];
             [scoreVisNames addObject:currentVar.name];
         }
         
@@ -2208,10 +2208,10 @@ float maxPublicInstallNorm;
             investmentIndex = i;
     }
     
-    float mod = [tabControl generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.publicInstallCost];
+    float mod = [tabControl generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.landscapeCostTotalInstall];
     
     // calculate amount of budget for use in resizing each score
-    float amountOverBudget = (simRun.publicInstallCost - setBudget)/(float)setBudget;
+    float amountOverBudget = (simRun.landscapeCostTotalInstall - setBudget)/(float)setBudget;
 
     //computing and drawing the final component score
     for(int i =  0; i < scoreVisVals.count; i++){
@@ -2618,9 +2618,9 @@ float maxPublicInstallNorm;
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
         
-                if (first.publicInstallCost < second.publicInstallCost)
+                if (first.landscapeCostTotalInstall < second.landscapeCostTotalInstall)
                     return NSOrderedAscending;
-                else if (second.publicInstallCost < first.publicInstallCost)
+                else if (second.landscapeCostTotalInstall < first.landscapeCostTotalInstall)
                     return NSOrderedDescending;
                 return NSOrderedSame;
                 
@@ -2632,9 +2632,9 @@ float maxPublicInstallNorm;
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
 
-                if (first.privateDamages < second.privateDamages)
+                if (first.landscapeCostPrivatePropertyDamage < second.landscapeCostPrivatePropertyDamage)
                     return NSOrderedAscending;
-                else if (second.privateDamages < first.privateDamages)
+                else if (second.landscapeCostPrivatePropertyDamage < first.landscapeCostPrivatePropertyDamage)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             
@@ -2647,9 +2647,9 @@ float maxPublicInstallNorm;
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
 
-                if (first.impactNeighbors < second.impactNeighbors)
+                if (first.normalizedLandscapeCumulativeOutflow < second.normalizedLandscapeCumulativeOutflow)
                     return NSOrderedAscending;
-                else if (second.impactNeighbors < first.impactNeighbors)
+                else if (second.normalizedLandscapeCumulativeOutflow < first.normalizedLandscapeCumulativeOutflow)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             
@@ -2714,9 +2714,9 @@ float maxPublicInstallNorm;
             AprilTestSimRun *second = (AprilTestSimRun*)[obj2 valueForKey:@"TrialRun"];
             
             
-                if (first.dollarsGallons < second.dollarsGallons)
+                if (first.costPerGallonCapturedByGI < second.costPerGallonCapturedByGI)
                     return NSOrderedAscending;
-                else if (second.dollarsGallons < first.dollarsGallons)
+                else if (second.costPerGallonCapturedByGI < first.costPerGallonCapturedByGI)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             

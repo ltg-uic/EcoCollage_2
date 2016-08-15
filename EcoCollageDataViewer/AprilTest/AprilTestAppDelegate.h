@@ -2,8 +2,8 @@
 //  AprilTestAppDelegate.h
 //  AprilTest
 //
-//  Created by Tia on 4/7/14.
-//  Copyright (c) 2014 Tia. All rights reserved.
+//  Created by Joey on 4/7/14.
+//  Copyright (c) 2014 Joey. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
