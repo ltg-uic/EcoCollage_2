@@ -2923,7 +2923,7 @@ int                         heightMultiplier = 5;
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
             float investmentInstall = simRun.landscapeCostTotalInstall;
             float investmentMaintain = simRun.landscapeCostTotalMaintenance;
-            float investmentInstallN = simRunNormal.publicInstallCost;
+            float investmentInstallN = simRunNormal.normalizedPublicInstallCost;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             CGRect frame = CGRectMake(width + 25, 60, dynamic_cd_width, 30);
@@ -2950,7 +2950,7 @@ int                         heightMultiplier = 5;
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.landscapeCostPrivatePropertyDamage]]] withConcernPosition:width + 20 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 20 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.normalizedLandscapeCostPrivatePropertyDamages)]]] withConcernPosition:width + 20 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.normalizedLandscapeCumulativeSewers] withConcernPosition:width + 20 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue:150 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.landscapeCostTotalInstall)/(simRun.landscapeCostPrivatePropertyDamage))] withConcernPosition:width + 20 andyValue:165 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];

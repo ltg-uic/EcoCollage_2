@@ -9,35 +9,35 @@
 #import "AprilTestNormalizedVariable.h"
 
 @implementation AprilTestNormalizedVariable
-@synthesize publicInstallCost = _publicInstallCost;
-@synthesize publicDamages = _publicDamages;
-@synthesize publicMaintenanceCost = _publicMaintenanceCost;
-@synthesize privateInstallCost = _privateInstallCost;
-@synthesize privateDamages = _privateDamages;
-@synthesize privateMaintenanceCost = _privateMaintenanceCost;
-@synthesize standingWater = _standingWater;
-@synthesize impactNeighbors = _impactNeighbors;
-@synthesize sewerLoad = _sewerLoad;
-@synthesize infiltration = _infiltration;
-@synthesize efficiency = _efficiency;
+@synthesize normalizedPublicInstallCost = _normalizedPublicInstallCost;
+@synthesize normalizedLandscapePublicPropertyDamages = _normalizedLandscapePublicPropertyDamages;
+@synthesize normalizedPublicMaintenanceCost = _normalizedPublicMaintenanceCost;
+@synthesize normalizedPrivateInstallCost = _normalizedPrivateInstallCost;
+@synthesize normalizedLandscapeCostPrivatePropertyDamages = _normalizedLandscapeCostPrivatePropertyDamages;
+@synthesize normalizedPrivateMaintenanceCost = _normalizedPrivateMaintenanceCost;
+@synthesize normalizedGreatestDepthStandingWater = _normalizedGreatestDepthStandingWater;
+@synthesize normalizedLandscapeCumulativeOutflow = _normalizedLandscapeCumulativeOutflow;
+@synthesize normalizedLandscapeCumulativeSewers = _normalizedLandscapeCumulativeSewers;
+@synthesize normalizedProportionCumulativeGICaptured = _normalizedProportionCumulativeGICaptured;
+@synthesize landscapeCumulativeGICapacityUsed = _landscapeCumulativeGICapacityUsed;
 @synthesize trialNum = _trialNum;
 
 -(id) init: (NSString *) pageResults withTrialNum:(int)trialNum {
     NSArray * components = [pageResults componentsSeparatedByString:@"\n\n"];
     
     //NSLog(@"%@", components);
-    _publicInstallCost = [[components objectAtIndex :0] floatValue];
-    _privateInstallCost = [[components objectAtIndex:1] floatValue];
-    _publicDamages = [[components objectAtIndex:2] floatValue];
-    _privateDamages = [[components objectAtIndex:3] floatValue];
-    _publicMaintenanceCost = [[components objectAtIndex:4] floatValue];
-    _privateMaintenanceCost = [[components objectAtIndex:5]floatValue];
-    _standingWater = [[components objectAtIndex:6]floatValue];
-    _impactNeighbors = [[components objectAtIndex:7] floatValue];
-    _sewerLoad = [[components objectAtIndex:8] floatValue];
-    _infiltration = [[components objectAtIndex:9] floatValue];
-    _efficiency = [[components objectAtIndex:10] floatValue];
-    _floodedStreets = [[components objectAtIndex:12] floatValue];
+    _normalizedPublicInstallCost = [[components objectAtIndex :0] floatValue];
+    _normalizedPrivateInstallCost = [[components objectAtIndex:1] floatValue];
+    _normalizedLandscapePublicPropertyDamages = [[components objectAtIndex:2] floatValue];
+    _normalizedLandscapeCostPrivatePropertyDamages = [[components objectAtIndex:3] floatValue];
+    _normalizedPublicMaintenanceCost = [[components objectAtIndex:4] floatValue];
+    _normalizedPrivateMaintenanceCost = [[components objectAtIndex:5]floatValue];
+    _normalizedGreatestDepthStandingWater = [[components objectAtIndex:6]floatValue];
+    _normalizedLandscapeCumulativeOutflow = [[components objectAtIndex:7] floatValue];
+    _normalizedLandscapeCumulativeSewers = [[components objectAtIndex:8] floatValue];
+    _normalizedProportionCumulativeGICaptured = [[components objectAtIndex:9] floatValue];
+    _landscapeCumulativeGICapacityUsed = [[components objectAtIndex:10] floatValue];
+    _normalizedLandscapeCumulativeStreetFlooding = [[components objectAtIndex:12] floatValue];
     _trialNum = trialNum;
     
     //NSLog(@"%f", _infiltration);

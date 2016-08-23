@@ -500,8 +500,8 @@ NSMutableDictionary         *scoreColors;
         
         //laziness: this is just the investment costs
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            float investmentInstallN = simRunNormal.publicInstallCost;
-            float investmentMaintainN = simRunNormal.publicMaintenanceCost;
+            float investmentInstallN = simRunNormal.normalizedPublicInstallCost;
+            float investmentMaintainN = simRunNormal.normalizedPublicMaintenanceCost;
             
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - investmentInstallN));
             //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
@@ -516,43 +516,43 @@ NSMutableDictionary         *scoreColors;
             //just damages now
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCostPrivatePropertyDamages);
             
             //add values for the score visualization
             
-            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages))]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCostPrivatePropertyDamages))]];
             //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
             //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
             [scoreVisNames addObject: @"privateCostD"];
             
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
-            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.normalizedLandscapeCumulativeOutflow);
+            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.normalizedLandscapeCumulativeOutflow)]];
             [scoreVisNames addObject: currentVar.name];
             
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
             
-            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.normalizedProportionCumulativeGICaptured );
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.normalizedProportionCumulativeGICaptured )]];
             [scoreVisNames addObject: currentVar.name];
         } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
             
             
-            scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.standingWater);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking)/priorityTotal * (1- simRunNormal.standingWater)]];
+            scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.normalizedGreatestDepthStandingWater);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking)/priorityTotal * (1- simRunNormal.normalizedGreatestDepthStandingWater)]];
             [scoreVisNames addObject: currentVar.name];
             
         } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCumulativeStreetFlooding);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.normalizedLandscapeCumulativeStreetFlooding)]];
             [scoreVisNames addObject: currentVar.name];
         } else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (simRunNormal.efficiency);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (simRunNormal.efficiency)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  (simRunNormal.landscapeCumulativeGICapacityUsed);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  (simRunNormal.landscapeCumulativeGICapacityUsed)]];
             //NSLog(@"%@", NSStringFromCGRect(ev.frame));
             [scoreVisNames addObject: currentVar.name];
             

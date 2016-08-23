@@ -1126,10 +1126,10 @@ float maxPublicInstallNorm;
         if (setBudget == 0){ setBudget = .01; }
         
         //public cost
-        someTrialNorm.publicInstallCost     = ((float)someTrial.landscapeCostTotalInstall/(setBudget));
+        someTrialNorm.normalizedPublicInstallCost     = ((float)someTrial.landscapeCostTotalInstall/(setBudget));
         
         //NSLog(@"%f", someTrialNorm.publicInstallCost);
-        someTrialNorm.publicMaintenanceCost = ((float)someTrial.landscapeCostTotalMaintenance/(setBudget));
+        someTrialNorm.normalizedPublicMaintenanceCost = ((float)someTrial.landscapeCostTotalMaintenance/(setBudget));
     }
     
 }
@@ -1175,14 +1175,14 @@ float maxPublicInstallNorm;
             gw_infiltration->highestCost   = someTrial.infiltration;
             gw_infiltration->lowestCost    = someTrial.infiltration;
             
-            floodedStreets->highestCost    = someTrialNorm.floodedStreets;
-            floodedStreets->lowestCost     = someTrialNorm.floodedStreets;
+            floodedStreets->highestCost    = someTrialNorm.normalizedLandscapeCumulativeStreetFlooding;
+            floodedStreets->lowestCost     = someTrialNorm.normalizedLandscapeCumulativeStreetFlooding;
             
-            standingWater->highestCost     = someTrialNorm.standingWater;
-            standingWater->lowestCost      = someTrialNorm.standingWater;
+            standingWater->highestCost     = someTrialNorm.normalizedGreatestDepthStandingWater;
+            standingWater->lowestCost      = someTrialNorm.normalizedGreatestDepthStandingWater;
             
-            efficiency_val->highestCost    = someTrialNorm.efficiency;
-            efficiency_val->lowestCost     = someTrialNorm.efficiency;
+            efficiency_val->highestCost    = someTrialNorm.landscapeCumulativeGICapacityUsed;
+            efficiency_val->lowestCost     = someTrialNorm.landscapeCumulativeGICapacityUsed;
         }
         
         //public cost
@@ -1206,16 +1206,16 @@ float maxPublicInstallNorm;
         if (someTrial.infiltration >= gw_infiltration->highestCost){ gw_infiltration->highestCost = someTrial.infiltration; }
         
         //flooded streets
-        if (someTrialNorm.floodedStreets <= floodedStreets->lowestCost){ floodedStreets->lowestCost = someTrialNorm.floodedStreets; }
-        if (someTrialNorm.floodedStreets >= floodedStreets->highestCost){ floodedStreets->highestCost = someTrialNorm.floodedStreets; }
+        if (someTrialNorm.normalizedLandscapeCumulativeStreetFlooding <= floodedStreets->lowestCost){ floodedStreets->lowestCost = someTrialNorm.normalizedLandscapeCumulativeStreetFlooding; }
+        if (someTrialNorm.normalizedLandscapeCumulativeStreetFlooding >= floodedStreets->highestCost){ floodedStreets->highestCost = someTrialNorm.normalizedLandscapeCumulativeStreetFlooding; }
         
         //standing water
-        if (someTrialNorm.standingWater <= standingWater->lowestCost) { standingWater->lowestCost = someTrialNorm.standingWater; }
-        if (someTrialNorm.standingWater >= standingWater->highestCost){ standingWater->highestCost = someTrialNorm.standingWater;}
+        if (someTrialNorm.normalizedGreatestDepthStandingWater <= standingWater->lowestCost) { standingWater->lowestCost = someTrialNorm.normalizedGreatestDepthStandingWater; }
+        if (someTrialNorm.normalizedGreatestDepthStandingWater >= standingWater->highestCost){ standingWater->highestCost = someTrialNorm.normalizedGreatestDepthStandingWater;}
         
         //efficiency
-        if (someTrialNorm.efficiency <= efficiency_val->lowestCost){ efficiency_val->lowestCost = someTrialNorm.efficiency; }
-        if (someTrialNorm.efficiency >= efficiency_val->highestCost){ efficiency_val->highestCost = someTrialNorm.efficiency; }
+        if (someTrialNorm.landscapeCumulativeGICapacityUsed <= efficiency_val->lowestCost){ efficiency_val->lowestCost = someTrialNorm.landscapeCumulativeGICapacityUsed; }
+        if (someTrialNorm.landscapeCumulativeGICapacityUsed >= efficiency_val->highestCost){ efficiency_val->highestCost = someTrialNorm.landscapeCumulativeGICapacityUsed; }
         
     }
 
@@ -1298,25 +1298,25 @@ float maxPublicInstallNorm;
         someTrialDyn.publicMaintenanceCost = (float)someTrial.landscapeCostTotalMaintenance/maintenanceCost->highestCost;
         someTrialDyn.privateDamages        = (float)someTrial.landscapeCostPrivatePropertyDamage/privateDamages->highestCost;
         
-        if (impactNeighbors->highestCost == impactNeighbors->lowestCost){ someTrialDyn.impactNeighbors = .5; }
+        if (impactNeighbors->highestCost == impactNeighbors->lowestCost){ someTrialDyn.normalizedLandscapeCumulativeOutflow = .5; }
         else
-            someTrialDyn.impactNeighbors = ((someTrial.normalizedLandscapeCumulativeOutflow - impactNeighbors->lowestCost)/ (impactNeighbors->highestCost - impactNeighbors->lowestCost));
+            someTrialDyn.normalizedLandscapeCumulativeOutflow = ((someTrial.normalizedLandscapeCumulativeOutflow - impactNeighbors->lowestCost)/ (impactNeighbors->highestCost - impactNeighbors->lowestCost));
         
-        if (gw_infiltration->highestCost == gw_infiltration->lowestCost){ someTrialDyn.infiltration = .5; }
+        if (gw_infiltration->highestCost == gw_infiltration->lowestCost){ someTrialDyn.normalizedProportionCumulativeGICaptured = .5; }
         else
-            someTrialDyn.infiltration = ((someTrial.infiltration - gw_infiltration->lowestCost)/ (gw_infiltration->highestCost - gw_infiltration->lowestCost));
+            someTrialDyn.normalizedProportionCumulativeGICaptured = ((someTrial.infiltration - gw_infiltration->lowestCost)/ (gw_infiltration->highestCost - gw_infiltration->lowestCost));
         
-        if (floodedStreets->highestCost == floodedStreets->lowestCost) { someTrialDyn.floodedStreets = .5; }
+        if (floodedStreets->highestCost == floodedStreets->lowestCost) { someTrialDyn.normalizedLandscapeCumulativeStreetFlooding = .5; }
         else
-            someTrialDyn.floodedStreets = ((someTrialNorm.floodedStreets - floodedStreets->lowestCost) / (floodedStreets->highestCost - floodedStreets->lowestCost));
+            someTrialDyn.normalizedLandscapeCumulativeStreetFlooding = ((someTrialNorm.normalizedLandscapeCumulativeStreetFlooding - floodedStreets->lowestCost) / (floodedStreets->highestCost - floodedStreets->lowestCost));
         
-        if (standingWater->highestCost == standingWater->lowestCost) { someTrialDyn.standingWater = .5; }
+        if (standingWater->highestCost == standingWater->lowestCost) { someTrialDyn.normalizedGreatestDepthStandingWater = .5; }
         else
-            someTrialDyn.standingWater = ((someTrialNorm.standingWater - standingWater->lowestCost) / (standingWater->highestCost - standingWater->lowestCost));
+            someTrialDyn.normalizedGreatestDepthStandingWater = ((someTrialNorm.normalizedGreatestDepthStandingWater - standingWater->lowestCost) / (standingWater->highestCost - standingWater->lowestCost));
         
-        if (efficiency_val->highestCost == efficiency_val->lowestCost) { someTrialDyn.efficiency = .5; }
+        if (efficiency_val->highestCost == efficiency_val->lowestCost) { someTrialDyn.landscapeCumulativeGICapacityUsed = .5; }
         else
-            someTrialDyn.efficiency = ((someTrialNorm.efficiency - efficiency_val->lowestCost) / (efficiency_val->highestCost - efficiency_val->lowestCost));
+            someTrialDyn.landscapeCumulativeGICapacityUsed = ((someTrialNorm.landscapeCumulativeGICapacityUsed - efficiency_val->lowestCost) / (efficiency_val->highestCost - efficiency_val->lowestCost));
         
     }
 }
@@ -1410,7 +1410,7 @@ float maxPublicInstallNorm;
         
         frame   = CGRectMake(25, i*175 + 40, dynamic_cd_width, 30);
         float costWidth = [self getWidthFromSlider:BudgetSlider toValue:var.landscapeCostTotalInstall];
-        [newCD updateWithCost:var.landscapeCostTotalInstall normScore: normVar.publicInstallCost costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
+        [newCD updateWithCost:var.landscapeCostTotalInstall normScore: normVar.normalizedPublicInstallCost costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
     }
     
 }
@@ -1458,7 +1458,7 @@ float maxPublicInstallNorm;
         AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([tabControl.trialRuns objectAtIndex:trial]);
         
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            float investmentInstallN = simRunNormal.publicInstallCost;
+            float investmentInstallN = simRunNormal.normalizedPublicInstallCost;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             
             scoreTotal += ((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN));
@@ -1473,44 +1473,44 @@ float maxPublicInstallNorm;
         }
         else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
-            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.sewerLoad)) /2;
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCostPrivatePropertyDamages) + currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.normalizedLandscapeCumulativeSewers)) /2;
             
-            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages))]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCostPrivatePropertyDamages))]];
             
             [scoreVisNames addObject: @"privateCostD"];
             
         }
         else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
-            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.normalizedLandscapeCumulativeOutflow);
+            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.normalizedLandscapeCumulativeOutflow)]];
             [scoreVisNames addObject: currentVar.name];
         }
         else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
-            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.normalizedProportionCumulativeGICaptured );
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.normalizedProportionCumulativeGICaptured )]];
             [scoreVisNames addObject: currentVar.name];
         }
         else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCumulativeStreetFlooding);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.normalizedLandscapeCumulativeStreetFlooding)]];
             [scoreVisNames addObject: currentVar.name];
             
         }
         else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.standingWater)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedGreatestDepthStandingWater);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.normalizedGreatestDepthStandingWater)]];
             //NSLog(@"standing water: %f", currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater));
             [scoreVisNames addObject: currentVar.name];
             
         }
         else if ([currentVar.name compare: @"capacity"] == NSOrderedSame){
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal *simRunNormal.efficiency;
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *simRunNormal.landscapeCumulativeGICapacityUsed;
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.landscapeCumulativeGICapacityUsed]];
             [scoreVisNames addObject: currentVar.name];
             
             
@@ -1958,7 +1958,7 @@ float maxPublicInstallNorm;
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
             float investmentInstall = simRun.landscapeCostTotalInstall;
             float investmentMaintain = simRun.landscapeCostTotalMaintenance;
-            float investmentInstallN = simRunNormal.publicInstallCost;
+            float investmentInstallN = simRunNormal.normalizedPublicInstallCost;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             CGRect frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
             
@@ -2010,7 +2010,7 @@ float maxPublicInstallNorm;
             
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.landscapeCostPrivatePropertyDamage]]] withConcernPosition:width + 20 andyValue: (trial*175) +20 andColor:[UIColor blackColor] to:&damage];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 20 andyValue: (trial*175) +50 andColor:[UIColor blackColor] to:&damageReduced];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.normalizedLandscapeCostPrivatePropertyDamages)]]] withConcernPosition:width + 20 andyValue: (trial*175) +50 andColor:[UIColor blackColor] to:&damageReduced];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.normalizedLandscapeCumulativeSewers] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 80 andColor:[UIColor blackColor] to:&sewerLoad];
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 110 andColor:[UIColor blackColor] to:nil];
@@ -2021,11 +2021,11 @@ float maxPublicInstallNorm;
                 [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.landscapeCostTotalInstall)/maxDamagesReduced)] withConcernPosition:width + 20 andyValue: (trial ) * 175 + 125 andColor:[UIColor blackColor] to:&stormsToMakeUpCost];
             }
             
-            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages));
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCostPrivatePropertyDamages));
             
             //add values for the score visualization
             
-            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages) )]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCostPrivatePropertyDamages) )]];
             //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
             //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
             [scoreVisNames addObject: @"privateCostD"];
@@ -2035,16 +2035,16 @@ float maxPublicInstallNorm;
             [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.normalizedLandscapeCumulativeOutflow] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 40 andColor:[UIColor blackColor] to:&impactNeighbor];
             [self drawTextBasedVar: [NSString stringWithFormat:@" flowed to neighbors"] withConcernPosition:width + 30 andyValue: (trial ) * 175 + 55 andColor:[UIColor blackColor] to:nil];
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors);
-            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.impactNeighbors)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.normalizedLandscapeCumulativeOutflow);
+            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1-simRunNormal.normalizedLandscapeCumulativeOutflow)]];
             [scoreVisNames addObject: currentVar.name];
 
         } else if ([currentVar.name compare: @"neighborImpactingMe"] == NSOrderedSame){
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%%", 100*simRun.normalizedLandscapeCumulativeSewers] withConcernPosition:width + 50 andyValue: (trial)*175 + 40 andColor:[UIColor blackColor] to:nil];
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.sewerLoad);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.sewerLoad)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.normalizedLandscapeCumulativeSewers);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.normalizedLandscapeCumulativeSewers)]];
             [scoreVisNames addObject: currentVar.name];
  
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
@@ -2052,8 +2052,8 @@ float maxPublicInstallNorm;
             [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of possible", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue: (trial)* 175 + 40 andColor:[UIColor blackColor] to:&gw_infiltration];
             [self drawTextBasedVar: [NSString stringWithFormat:@" groundwater infiltration"] withConcernPosition:width + 30 andyValue: (trial)* 175 + 55  andColor:[UIColor blackColor] to:nil];
             
-            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.normalizedProportionCumulativeGICaptured );
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.normalizedProportionCumulativeGICaptured )]];
             //NSLog(@"Groundwater Infiltration: %d", currentVar.currentConcernRanking);
             [scoreVisNames addObject: currentVar.name];
 
@@ -2086,8 +2086,8 @@ float maxPublicInstallNorm;
              [wd fastUpdateView: StormPlaybackWater.value];*/
             
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCumulativeStreetFlooding);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.normalizedLandscapeCumulativeStreetFlooding)]];
             //NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.floodedStreets, [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]);
             [scoreVisNames addObject: currentVar.name];
 
@@ -2122,8 +2122,8 @@ float maxPublicInstallNorm;
              mwd.thresholdValue = thresh;
              [mwd updateView:48];*/
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater)]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedGreatestDepthStandingWater);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedGreatestDepthStandingWater)]];
             [scoreVisNames addObject: currentVar.name];
             //NSLog(@"%d, %f, %@", currentVar.currentConcernRanking, simRunNormal.standingWater , [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.standingWater)]);
 
@@ -2160,8 +2160,8 @@ float maxPublicInstallNorm;
                 [_dataWindow addSubview:efficiencyImageView];
             }
             
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency;
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.efficiency]];
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal *  simRunNormal.landscapeCumulativeGICapacityUsed;
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal *  simRunNormal.landscapeCumulativeGICapacityUsed]];
             //NSLog(@"%@", NSStringFromCGRect(ev.frame));
             [scoreVisNames addObject: currentVar.name];
 
@@ -2665,9 +2665,9 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
 
-                if (first.efficiency < second.efficiency)
+                if (first.landscapeCumulativeGICapacityUsed < second.landscapeCumulativeGICapacityUsed)
                     return NSOrderedAscending;
-                else if (second.efficiency < first.efficiency)
+                else if (second.landscapeCumulativeGICapacityUsed < first.landscapeCumulativeGICapacityUsed)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             
@@ -2682,9 +2682,9 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
             
-                if (first.floodedStreets < second.floodedStreets)
+                if (first.normalizedLandscapeCumulativeStreetFlooding < second.normalizedLandscapeCumulativeStreetFlooding)
                     return NSOrderedAscending;
-                else if (second.floodedStreets < first.floodedStreets)
+                else if (second.normalizedLandscapeCumulativeStreetFlooding < first.normalizedLandscapeCumulativeStreetFlooding)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             
@@ -2699,9 +2699,9 @@ float maxPublicInstallNorm;
             AprilTestNormalizedVariable *second = (AprilTestNormalizedVariable*)[obj2 valueForKey: key];
             
 
-                if (first.standingWater < second.standingWater)
+                if (first.normalizedGreatestDepthStandingWater < second.normalizedGreatestDepthStandingWater)
                     return NSOrderedAscending;
-                else if (second.standingWater < first.standingWater)
+                else if (second.normalizedGreatestDepthStandingWater < first.normalizedGreatestDepthStandingWater)
                     return NSOrderedDescending;
                 return NSOrderedSame;
             
