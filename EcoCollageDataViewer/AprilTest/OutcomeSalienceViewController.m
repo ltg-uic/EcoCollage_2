@@ -212,7 +212,7 @@ float maxPublicInstallNorm;
                      [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
                      [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                      [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
-                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
+                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"greatestDepthWater", @"totalAreaFlooded", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
     tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
     tapGestureRecognizer.numberOfTapsRequired = 1;
@@ -886,7 +886,7 @@ float maxPublicInstallNorm;
             [_SliderWindow addSubview:investmentBudget];
             
         }
-        else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+        else if ([currentVar.name compare:@"greatestDepthWater"] == NSOrderedSame){
             CGRect frame = CGRectMake(width, 16, currentVar.widthOfVisualization, 40);
             StormPlaybackWater = [[UISlider alloc] initWithFrame:frame];
             [StormPlaybackWater addTarget:self
@@ -987,7 +987,7 @@ float maxPublicInstallNorm;
             
         } else if( [currentVar.name compare:@"groundwaterInfiltration"] == NSOrderedSame){
             
-        } else if( [currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+        } else if( [currentVar.name compare:@"totalAreaFlooded"] == NSOrderedSame){
             
             
         }
@@ -1492,14 +1492,14 @@ float maxPublicInstallNorm;
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.normalizedProportionCumulativeGICaptured )]];
             [scoreVisNames addObject: currentVar.name];
         }
-        else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+        else if([currentVar.name compare:@"totalAreaFlooded"] == NSOrderedSame){
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCumulativeStreetFlooding);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.normalizedLandscapeCumulativeStreetFlooding)]];
             [scoreVisNames addObject: currentVar.name];
             
         }
-        else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+        else if([currentVar.name compare:@"greatestDepthWater"] == NSOrderedSame){
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedGreatestDepthStandingWater);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.normalizedGreatestDepthStandingWater)]];
@@ -2057,7 +2057,7 @@ float maxPublicInstallNorm;
             //NSLog(@"Groundwater Infiltration: %d", currentVar.currentConcernRanking);
             [scoreVisNames addObject: currentVar.name];
 
-        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+        } else if([currentVar.name compare:@"totalAreaFlooded"] == NSOrderedSame){
             
             AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
             ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh;
@@ -2092,7 +2092,7 @@ float maxPublicInstallNorm;
             [scoreVisNames addObject: currentVar.name];
 
             
-        } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+        } else if([currentVar.name compare:@"greatestDepthWater"] == NSOrderedSame){
             
             AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
             
@@ -2477,11 +2477,11 @@ float maxPublicInstallNorm;
             currentVarLabel.text =@"  Impact on my Neighbors";
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
             currentVarLabel.text =@"  Efficiency of Intervention";
-        } else if ([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+        } else if ([currentVar.name compare:@"greatestDepthWater"] == NSOrderedSame){
             currentVarLabel.text = @"  Water Flow";
         } else if( [currentVar.name compare:@"groundwaterInfiltration"] == NSOrderedSame){
             currentVarLabel.text = @"  Groundwater Infiltration";
-        } else if( [currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+        } else if( [currentVar.name compare:@"totalAreaFlooded"] == NSOrderedSame){
             currentVarLabel.text = @"  Max Depth of Flooding";
         } else if( [currentVar.name compare:@"capacity"] == NSOrderedSame){
             currentVarLabel.text = @"  Intervention Capacity";
@@ -2838,10 +2838,10 @@ float maxPublicInstallNorm;
         SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"capacity"];
     }
     else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Water Flow"]){
-        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"puddleTime"];
+        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"greatestDepthWater"];
     }
     else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Max Flooded Area"]){
-        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"puddleMax"];
+        SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"totalAreaFlooded"];
     }
     else if ([[arrStatus objectAtIndex:row] isEqualToString:@"Groundwater Infiltration"]){
         SortPickerTextField.backgroundColor = [scoreColors objectForKey:@"groundwaterInfiltration"];
@@ -2904,10 +2904,10 @@ float maxPublicInstallNorm;
         tView.backgroundColor = [scoreColors objectForKey:@"capacity"];
     }
     else if ([tView.text isEqualToString:@"Water Flow"]){
-        tView.backgroundColor = [scoreColors objectForKey:@"puddleTime"];
+        tView.backgroundColor = [scoreColors objectForKey:@"greatestDepthWater"];
     }
     else if ([tView.text isEqualToString:@"Max Flooded Area"]){
-        tView.backgroundColor = [scoreColors objectForKey:@"puddleMax"];
+        tView.backgroundColor = [scoreColors objectForKey:@"totalAreaFlooded"];
     }
     else if ([tView.text isEqualToString:@"Groundwater Infiltration"]){
         tView.backgroundColor = [scoreColors objectForKey:@"groundwaterInfiltration"];

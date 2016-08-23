@@ -98,17 +98,17 @@ NSMutableDictionary         *scoreColors;
     
     //manually derived list of variables that are going to be implemented in this test. Eventually, should be replaced with a access to database, such that width, etc, are all documented as such.
     
-    //_currentConcernRanking = [[NSMutableArray alloc] initWithObjects: [[AprilTestVariable alloc] initWith: @"publicCost" withDisplayName:@"Public Costs" withNumVar: 1 withWidth: 220 withRank:3], [[AprilTestVariable alloc] initWith: @"privateCost" withDisplayName:@"Private Costs" withNumVar: 3 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith: @"efficiencyOfIntervention" withDisplayName:@"Efficiency of Intervention ($/Gallon)" withNumVar: 1 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleTime" withDisplayName:@"Water Depth over Storm" withNumVar: 1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"impactingMyNeighbors" withDisplayName:@"Impact on my Neighbors" withNumVar: 1 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith:@"groundwaterInfiltration" withDisplayName:@"Groundwater Infiltration" withNumVar: 1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleMax" withDisplayName:@"Maximum Water Extent" withNumVar: 1 withWidth:220 withRank:1], nil];
+    //_currentConcernRanking = [[NSMutableArray alloc] initWithObjects: [[AprilTestVariable alloc] initWith: @"publicCost" withDisplayName:@"Public Costs" withNumVar: 1 withWidth: 220 withRank:3], [[AprilTestVariable alloc] initWith: @"privateCost" withDisplayName:@"Private Costs" withNumVar: 3 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith: @"efficiencyOfIntervention" withDisplayName:@"Efficiency of Intervention ($/Gallon)" withNumVar: 1 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith:@"greatestDepthWater" withDisplayName:@"Water Depth over Storm" withNumVar: 1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"impactingMyNeighbors" withDisplayName:@"Impact on my Neighbors" withNumVar: 1 withWidth: 220 withRank:1], [[AprilTestVariable alloc] initWith:@"groundwaterInfiltration" withDisplayName:@"Groundwater Infiltration" withNumVar: 1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"totalAreaFlooded" withDisplayName:@"Maximum Water Extent" withNumVar: 1 withWidth:220 withRank:1], nil];
     
     //    Public Costs	publicCost
     //    Private Costs	privateCost
     //    Efficiency of Intervention ($/Gallon)	efficiencyOfIntervention
-    //    Water Depth over Storm	puddleTime
-    //    Maximum Water Extent	puddleMax
+    //    Water Depth over Storm	greatestDepthWater
+    //    Maximum Water Extent	streetFlooding
     //    Groundwater Infiltration	groundwaterInfiltration
     //    Impact on my Neighbors	impactingMyNeighbors
 
-    _currentConcernRanking = [[NSMutableArray alloc] initWithObjects: [[AprilTestVariable alloc] initWith:@"publicCost" withDisplayName:@"Investment" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"privateCost" withDisplayName:@"Damage Reduction" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"efficiencyOfIntervention" withDisplayName:@"Efficiency of Intervention ($/Gallon)" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"capacity" withDisplayName:@"Capacity Used" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleTime" withDisplayName:@"Water Flow Path" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"puddleMax" withDisplayName:@"Max Depth of Flooding" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"groundwaterInfiltration" withDisplayName:@"Groundwater Infiltration" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"impactingMyNeighbors" withDisplayName:@"Impact on my Neighbors" withNumVar:1 withWidth:220 withRank:1], nil];
+    _currentConcernRanking = [[NSMutableArray alloc] initWithObjects: [[AprilTestVariable alloc] initWith:@"publicCost" withDisplayName:@"Investment" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"privateCost" withDisplayName:@"Damage Reduction" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"efficiencyOfIntervention" withDisplayName:@"Efficiency of Intervention ($/Gallon)" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"capacity" withDisplayName:@"Capacity Used" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"greatestDepthWater" withDisplayName:@"Water Flow Path" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"totalAreaFlooded" withDisplayName:@"Max Depth of Flooding" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"groundwaterInfiltration" withDisplayName:@"Groundwater Infiltration" withNumVar:1 withWidth:220 withRank:1], [[AprilTestVariable alloc] initWith:@"impactingMyNeighbors" withDisplayName:@"Impact on my Neighbors" withNumVar:1 withWidth:220 withRank:1], nil];
     
     concernColors = [[NSMutableDictionary alloc] initWithObjects:
                      [NSArray arrayWithObjects:
@@ -127,7 +127,7 @@ NSMutableDictionary         *scoreColors;
                       [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
                       [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"Investment", @"publicCostI", @"publicCostM", @"publicCostD", @"Damage Reduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"Efficiency of Intervention ($/Gallon)", @"Water Flow Path", @"Max Depth of Flooding", @"Groundwater Infiltration", @"Impact on my Neighbors", @"Capacity Used", nil] ];
     
-    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Max Depth of Flooding", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
+    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"greatestDepthWater", @"totalAreaFlooded", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Max Depth of Flooding", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
     
     scoreColors = [[NSMutableDictionary alloc] initWithObjects:
                    [NSArray arrayWithObjects:
@@ -144,7 +144,7 @@ NSMutableDictionary         *scoreColors;
                     [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
-                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
+                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"greatestDepthWater", @"totalAreaFlooded", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
 
     
     // Do any additional setup after loading the view.
@@ -507,10 +507,9 @@ NSMutableDictionary         *scoreColors;
             //scoreTotal += ((currentVar.currentConcernRanking/2.0)/priorityTotal * (1 - investmentMaintainN));
             //scoreTotal += ((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors));
             
-            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN))]];
-            //[scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking/3.0)/priorityTotal * (1 - simRun.impactNeighbors))]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * ((1 - investmentInstallN) + (1-investmentMaintainN))/2)]];
+            
             [scoreVisNames addObject: @"publicCost"];
-            //[scoreVisNames addObject: @"publicCostD"];
             
             
             //just damages now
@@ -520,7 +519,7 @@ NSMutableDictionary         *scoreColors;
             
             //add values for the score visualization
             
-            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCostPrivatePropertyDamages))]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - (simRunNormal.normalizedLandscapeCostPrivatePropertyDamages + simRunNormal.normalizedLandscapeCumulativeSewers + simRunNormal.normalizedGreatestDepthStandingWater)/3))]];
             //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
             //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
             [scoreVisNames addObject: @"privateCostD"];
@@ -537,14 +536,14 @@ NSMutableDictionary         *scoreColors;
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.normalizedProportionCumulativeGICaptured );
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.normalizedProportionCumulativeGICaptured )]];
             [scoreVisNames addObject: currentVar.name];
-        } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+        } else if([currentVar.name compare:@"greatestDepthWater"] == NSOrderedSame){
             
             
             scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.normalizedGreatestDepthStandingWater);
             [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking)/priorityTotal * (1- simRunNormal.normalizedGreatestDepthStandingWater)]];
             [scoreVisNames addObject: currentVar.name];
             
-        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+        } else if([currentVar.name compare:@"totalAreaFlooded"] == NSOrderedSame){
             
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCumulativeStreetFlooding);
             [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.normalizedLandscapeCumulativeStreetFlooding)]];
