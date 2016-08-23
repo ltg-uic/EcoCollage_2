@@ -2,8 +2,8 @@
 //  AprilTestIntroViewController.h
 //  AprilTest
 //
-//  Created by Tia on 4/21/15.
-//  Copyright (c) 2015 Tia. All rights reserved.
+//  Created by Joey Shelley on 4/21/15.
+//  Copyright (c) 2015 Joey Shelley. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

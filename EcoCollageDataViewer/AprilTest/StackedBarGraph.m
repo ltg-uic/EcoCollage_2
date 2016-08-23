@@ -3,7 +3,7 @@
 //  AprilTest
 //
 //  Created by Ryan Fogarty on 11/5/15.
-//  Copyright (c) 2015 Tia. All rights reserved.
+//  Copyright (c) 2015 Joey Shelley. All rights reserved.
 //
 
 #import "StackedBarGraph.h"
@@ -114,7 +114,7 @@ int liner = 0;
                     [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
-                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
+                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"greatestDepthWater", @"totalAreaFlooded", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
     int investmentIndex = -1;
     int damageReductionIndex = -1;
@@ -160,7 +160,7 @@ int liner = 0;
             NSMutableArray* scoreVisNames = [score objectAtIndex:1];
             
             
-            float mod = [tabControl generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.publicInstallCost];
+            float mod = [tabControl generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.landscapeCostTotalInstall];
             
             
             //computing each score with log skew due to over-investment cost
@@ -231,10 +231,10 @@ int liner = 0;
                 else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"groundwaterInfiltration"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxGroundwaterInfiltration)) {
                     maxGroundwaterInfiltration = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
                 }
-                else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"puddleTime"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxWaterFlow)) {
+                else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"greatestDepthWater"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxWaterFlow)) {
                     maxWaterFlow = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
                 }
-                else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"puddleMax"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxMaxFlood)) {
+                else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"totalAreaFlooded"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxMaxFlood)) {
                     maxMaxFlood = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
                 }
                 else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"capacity"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxCapacity)) {
@@ -620,7 +620,7 @@ int liner = 0;
     waterFlowLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * waterFlowIndex, legend_width, heightOfLegendLabels)];
     [waterFlowLegendLabel setText:@"Water Flow"];
     [waterFlowLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [waterFlowLegendLabel setBackgroundColor:[scoreColors objectForKey:@"puddleTime"]];
+    [waterFlowLegendLabel setBackgroundColor:[scoreColors objectForKey:@"greatestDepthWater"]];
     [waterFlowLegendLabel setTextAlignment:NSTextAlignmentCenter];
     [waterFlowLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *waterDepthTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
@@ -632,7 +632,7 @@ int liner = 0;
     maxFloodLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * maxFloodIndex, legend_width, heightOfLegendLabels)];
     [maxFloodLegendLabel setText:@"Max Depth of Flooding"];
     [maxFloodLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [maxFloodLegendLabel setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
+    [maxFloodLegendLabel setBackgroundColor:[scoreColors objectForKey:@"totalAreaFlooded"]];
     [maxFloodLegendLabel setTextAlignment:NSTextAlignmentCenter];
     [maxFloodLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *maxFloodTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(maxFloodTapped)];

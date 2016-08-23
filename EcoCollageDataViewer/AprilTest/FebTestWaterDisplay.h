@@ -2,8 +2,8 @@
 //  FebTestWaterDisplay.h
 //  FebTest
 //
-//  Created by Tia on 2/18/14.
-//  Copyright (c) 2014 Tia. All rights reserved.
+//  Created by Joey Shelley on 2/18/14.
+//  Copyright (c) 2014 Joey Shelley. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

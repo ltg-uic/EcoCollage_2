@@ -3,7 +3,7 @@
 //  AprilTest
 //
 //  Created by Ryan Fogarty on 11/5/15.
-//  Copyright (c) 2015 Tia. All rights reserved.
+//  Copyright (c) 2015 Joey Shelley. All rights reserved.
 //
 
 #import "StackedBar.h"
@@ -111,7 +111,7 @@ int width;
     [_name sizeToFit];
     [_name setTextAlignment:NSTextAlignmentCenter];
  
-    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Max Depth of Flooding", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
+    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"greatestDepthWater", @"totalAreaFlooded", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Max Depth of Flooding", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
     
     scoreColors = [[NSMutableDictionary alloc] initWithObjects:
                    [NSArray arrayWithObjects:
@@ -128,7 +128,7 @@ int width;
                     [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
-                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
+                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"greatestDepthWater", @"totalAreaFlooded", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
     scoreColorsDesaturated = [[NSMutableDictionary alloc] initWithObjects:
                    [NSArray arrayWithObjects:
@@ -145,7 +145,7 @@ int width;
                     [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.25],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.25],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.25],
-                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.25], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
+                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.25], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"greatestDepthWater", @"totalAreaFlooded", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
 
     NSMutableArray* scoreVisVals = [scores objectAtIndex:0];
@@ -362,7 +362,7 @@ int width;
                 else
                     currHeight -= heightOfThisCategory;
             }
-        } else if([visName isEqualToString:@"puddleTime"]) {
+        } else if([visName isEqualToString:@"greatestDepthWater"]) {
             if(withContainers) {
                 if(scaledToScreen) {
                     [_waterFlowContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
@@ -374,8 +374,8 @@ int width;
                 }
             }
             [_waterFlow setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
-            [_waterFlow setBackgroundColor:[scoreColors objectForKey:@"puddleTime"]];
-            [_waterFlowContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"puddleTime"]];
+            [_waterFlow setBackgroundColor:[scoreColors objectForKey:@"greatestDepthWater"]];
+            [_waterFlowContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"greatestDepthWater"]];
             _waterFlowOriginalY = _waterFlow.frame.origin.y;
             if(withContainers) {
                 if(scaledToScreen)
@@ -389,7 +389,7 @@ int width;
                 else
                     currHeight -= heightOfThisCategory;
             }
-        } else if([visName isEqualToString:@"puddleMax"]) {
+        } else if([visName isEqualToString:@"totalAreaFlooded"]) {
             if(withContainers) {
                 if(scaledToScreen) {
                     [_maxFloodContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
@@ -401,8 +401,8 @@ int width;
                 }
             }
             [_maxFlood setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
-            [_maxFlood setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
-            [_maxFloodContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"puddleMax"]];
+            [_maxFlood setBackgroundColor:[scoreColors objectForKey:@"totalAreaFlooded"]];
+            [_maxFloodContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"totalAreaFlooded"]];
             _maxFloodOriginalY = _maxFlood.frame.origin.y;
             if(withContainers) {
                 if(scaledToScreen)
@@ -715,7 +715,7 @@ int width;
                 else
                     currHeight -= heightOfThisCategory;
             }
-        } else if([visName isEqualToString:@"puddleTime"]) {
+        } else if([visName isEqualToString:@"greatestDepthWater"]) {
             if(withContainers) {
                 if(scaledToScreen) {
                     [_waterFlowContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
@@ -727,8 +727,8 @@ int width;
                 }
             }
             [_waterFlow setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
-            [_waterFlow setBackgroundColor:[scoreColors objectForKey:@"puddleTime"]];
-            [_waterFlowContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"puddleTime"]];
+            [_waterFlow setBackgroundColor:[scoreColors objectForKey:@"greatestDepthWater"]];
+            [_waterFlowContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"greatestDepthWater"]];
             
             if(withContainers) {
                 if(scaledToScreen)
@@ -742,7 +742,7 @@ int width;
                 else
                     currHeight -= heightOfThisCategory;
             }
-        } else if([visName isEqualToString:@"puddleMax"]) {
+        } else if([visName isEqualToString:@"totalAreaFlooded"]) {
             if(withContainers) {
                 if(scaledToScreen) {
                     [_maxFloodContainer setFrame:CGRectMake(0, currHeight - scaleSize * (containerSize * heightMultiplier), width, scaleSize * containerSize * heightMultiplier + 1)];
@@ -754,8 +754,8 @@ int width;
                 }
             }
             [_maxFlood setFrame:CGRectMake(0, currHeight - heightOfThisCategory, width, heightOfThisCategory)];
-            [_maxFlood setBackgroundColor:[scoreColors objectForKey:@"puddleMax"]];
-            [_maxFloodContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"puddleMax"]];
+            [_maxFlood setBackgroundColor:[scoreColors objectForKey:@"totalAreaFlooded"]];
+            [_maxFloodContainer setBackgroundColor:[scoreColorsDesaturated objectForKey:@"totalAreaFlooded"]];
             
             if(withContainers) {
                 if(scaledToScreen)

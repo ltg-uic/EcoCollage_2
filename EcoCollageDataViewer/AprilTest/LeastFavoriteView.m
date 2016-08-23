@@ -3,7 +3,7 @@
 //  AprilTest
 //
 //  Created by Ryan Fogarty on 7/29/15.
-//  Copyright (c) 2015 Tia. All rights reserved.
+//  Copyright (c) 2015 Joey Shelley. All rights reserved.
 //
 //  least_favorite_active.png and least_favorite_inactive.png images made by http://www.flaticon.com/authors/freepik from www.flaticon.com
 

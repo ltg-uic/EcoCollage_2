@@ -3,7 +3,7 @@
 //  AprilTest
 //
 //  Created by Ryan Fogarty on 6/2/15.
-//  Copyright (c) 2015 Tia. All rights reserved.
+//  Copyright (c) 2015 Joey Shelley. All rights reserved.
 //
 
 #import "SocialViewController.h"
@@ -171,7 +171,7 @@ int                         heightMultiplier = 5;
                       [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
                       [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"Investment", @"publicCostI", @"publicCostM", @"publicCostD", @"Damage Reduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"Efficiency of Intervention ($/Gallon)", @"Water Flow Path", @"Max Depth of Flooding", @"Groundwater Infiltration", @"Impact on my Neighbors", @"Capacity Used", nil] ];
     
-    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Max Depth of Flooding", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
+    concernNames = [[NSMutableDictionary alloc] initWithObjects:[[NSArray alloc] initWithObjects: @"publicCost", @"privateCost", @"efficiencyOfIntervention", @"capacity", @"greatestDepthWater", @"totalAreaFlooded", @"groundwaterInfiltration", @"impactingMyNeighbors", nil] forKeys:[[NSArray alloc] initWithObjects:@"Investment", @"Damage Reduction", @"Efficiency of Intervention ($/Gallon)", @"Capacity Used", @"Water Flow Path", @"Max Depth of Flooding", @"Groundwater Infiltration", @"Impact on my Neighbors", nil]];
     
     scoreColors = [[NSMutableDictionary alloc] initWithObjects:
                    [NSArray arrayWithObjects:
@@ -188,7 +188,7 @@ int                         heightMultiplier = 5;
                     [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
-                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"puddleTime", @"puddleMax", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
+                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"greatestDepthWater", @"totalAreaFlooded", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
     
     sliceColors =[NSArray arrayWithObjects:
@@ -630,6 +630,7 @@ int                         heightMultiplier = 5;
  */
 - (void)tapOnMapWindowRecognized {
     int sizeOfChange = largeSizeOfMapWindow - smallSizeOfMapWindow;
+    int shrankMaps = 0;
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:0.5];
@@ -665,9 +666,18 @@ int                         heightMultiplier = 5;
         scoreBarView.frame = CGRectMake(scoreBarView.frame.origin.x, scoreBarView.frame.origin.y - sizeOfChange, scoreBarView.frame.size.width, scoreBarView.frame.size.height + sizeOfChange);
         
         corePlotView.frame = CGRectMake(corePlotView.frame.origin.x, corePlotView.frame.origin.y - sizeOfChange, corePlotView.frame.size.width, corePlotView.frame.size.height + sizeOfChange);
-        SBG.frame = CGRectMake(SBG.frame.origin.x, SBG.frame.origin.y - sizeOfChange, SBG.frame.size.width, SBG.frame.size.height + sizeOfChange);
+        [SBG setFrame:CGRectMake(SBG.frame.origin.x, SBG.frame.origin.y - sizeOfChange, SBG.frame.size.width, SBG.frame.size.height + sizeOfChange)];
+        shrankMaps = 1;
+        
     }
     [UIView commitAnimations];
+    if (shrankMaps) {
+//        for (StackedBar *s in SBG.stackedBars) {
+//            NSLog(@"Hey ya");
+//            [s revert];
+//        }
+        [self drawScoreStackedBarGraph];
+    }
 }
 
 #pragma mark Non-Animation Tap Recognizer Functions
@@ -816,7 +826,7 @@ int                         heightMultiplier = 5;
     for (int i = 0; i < [scoreBars count]; i++) {
         scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
         scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
-        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleMax"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"totalAreaFlooded"];
         
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
         [scoreNumber sizeToFit];
@@ -834,7 +844,7 @@ int                         heightMultiplier = 5;
         scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
     }
     
-    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleMax"];
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"totalAreaFlooded"];
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     NSString *logEntry = [tabControl generateLogEntryWith:@"\tMax Depth of Flooding score inspected"];
     [tabControl writeToLogFileString:logEntry];
@@ -859,7 +869,7 @@ int                         heightMultiplier = 5;
     for (int i = 0; i < [scoreBars count]; i++) {
         scoreNumber = [[scoreBars objectAtIndex:i] objectForKey:@"scoreNumber"];
         scoreName = [[scoreBars objectAtIndex:i] objectForKey:@"scoreName"];
-        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"puddleTime"];
+        labelForScore = [[scoreBars objectAtIndex:i] objectForKey:@"greatestDepthWater"];
         
         scoreNumber.text = [NSString stringWithFormat:@"%d", (int)(labelForScore.frame.size.width/2.56)];
         [scoreNumber sizeToFit];
@@ -877,7 +887,7 @@ int                         heightMultiplier = 5;
         scoreName.frame = CGRectMake(scoreName.frame.origin.x, labelForScore.frame.origin.y + labelForScore.frame.size.height +1, scoreName.frame.size.width, scoreName.frame.size.height);
     }
     
-    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"puddleTime"];
+    lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"greatestDepthWater"];
     
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
     NSString *logEntry = [tabControl generateLogEntryWith:@"\tWater Flow score inspected"];
@@ -1387,14 +1397,14 @@ int                         heightMultiplier = 5;
                     scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.infiltration );
                     [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.infiltration )]];
                     [scoreVisNames addObject: currentVar.name];
-                } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+                } else if([currentVar.name compare:@"greatestDepthWater"] == NSOrderedSame){
                     
                     
                     scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.standingWater);
                     [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking + 1)/priorityTotal * (1- simRunNormal.standingWater)]];
                     [scoreVisNames addObject: currentVar.name];
                     
-                } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+                } else if([currentVar.name compare:@"totalAreaFlooded"] == NSOrderedSame){
                     
                     scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.floodedStreets);
                     [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1- simRunNormal.floodedStreets)]];
@@ -1486,7 +1496,7 @@ int                         heightMultiplier = 5;
         SBG_frame = CGRectMake(0, 123, 1052, 557);
     }
     else {
-        SBG_frame = CGRectMake(0, 293, 1052, 387);
+        SBG_frame = CGRectMake(0, 123 + largeSizeOfMapWindow - smallSizeOfMapWindow, 1052, 557 + smallSizeOfMapWindow - largeSizeOfMapWindow);
     }
     
     // if SBG already exists, save which trials are shrunk
@@ -1502,7 +1512,7 @@ int                         heightMultiplier = 5;
     }
     
     [SBG removeFromSuperview];
-    SBG = [[StackedBarGraph alloc]initWithFrame:CGRectMake(0, 123, 1052, 557) andTabController:tabControl withContainers:_stackedBarSwitch.isOn];
+    SBG = [[StackedBarGraph alloc]initWithFrame:SBG_frame andTabController:tabControl withContainers:_stackedBarSwitch.isOn];
     [self.view addSubview:SBG];
     [SBG setContentOffset:offset];
     
@@ -1511,10 +1521,6 @@ int                         heightMultiplier = 5;
         if(shrunk_trials[i] == 1) {
             [SBG trialTappedByIndex:i];
         }
-    }
-    
-    if(_mapWindow.frame.size.height == largeSizeOfMapWindow) {
-        [SBG setFrame:CGRectMake(0, 293, 1052, 387)];
     }
 
     // remove all intervention displays so they can be redrawn
@@ -1677,7 +1683,7 @@ int                         heightMultiplier = 5;
         [investment addGestureRecognizer:investmentRecognizer];
         
         
-        NSMutableDictionary *scoreBar = [[NSMutableDictionary alloc]initWithObjects:[NSArray arrayWithObjects:newScoreBarView, fullValueBorder, fullValue, profileName, trialNumber, impact, groundwater, maxFlood, waterDepth, interventionCap, efficiency, damageReduc, investment, scoreName, scoreNumber, nil] forKeys:[NSArray arrayWithObjects:@"scoreBar", @"valueBorder", @"value", @"profileName", @"trialNumber", @"impactingMyNeighbors", @"groundwaterInfiltration", @"puddleMax", @"puddleTime", @"capacity", @"efficiencyOfIntervention", @"privateCostD", @"publicCost", @"scoreName", @"scoreNumber", nil]];
+        NSMutableDictionary *scoreBar = [[NSMutableDictionary alloc]initWithObjects:[NSArray arrayWithObjects:newScoreBarView, fullValueBorder, fullValue, profileName, trialNumber, impact, groundwater, maxFlood, waterDepth, interventionCap, efficiency, damageReduc, investment, scoreName, scoreNumber, nil] forKeys:[NSArray arrayWithObjects:@"scoreBar", @"valueBorder", @"value", @"profileName", @"trialNumber", @"impactingMyNeighbors", @"groundwaterInfiltration", @"totalAreaFlooded", @"greatestDepthWater", @"capacity", @"efficiencyOfIntervention", @"privateCostD", @"publicCost", @"scoreName", @"scoreNumber", nil]];
         
         [scoreBars addObject:scoreBar];
         
@@ -2915,14 +2921,14 @@ int                         heightMultiplier = 5;
         
         //laziness: this is just the investment costs
         if([currentVar.name compare: @"publicCost"] == NSOrderedSame){
-            float investmentInstall = simRun.publicInstallCost;
-            float investmentMaintain = simRun.publicMaintenanceCost;
-            float investmentInstallN = simRunNormal.publicInstallCost;
+            float investmentInstall = simRun.landscapeCostTotalInstall;
+            float investmentMaintain = simRun.landscapeCostTotalMaintenance;
+            float investmentInstallN = simRunNormal.normalizedPublicInstallCost;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             CGRect frame = CGRectMake(width + 25, 60, dynamic_cd_width, 30);
             
-            float costWidth = [self getWidthFromSlider:_BudgetSlider toValue:simRun.publicInstallCost];
+            float costWidth = [self getWidthFromSlider:_BudgetSlider toValue:simRun.landscapeCostTotalInstall];
             float maxBudgetWidth = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             
             cd = [[AprilTestCostDisplay alloc] initWithCost:investmentInstall normScore:investmentInstallN costWidth:costWidth maxBudgetWidth:maxBudgetWidth andFrame:frame];
@@ -2930,7 +2936,7 @@ int                         heightMultiplier = 5;
             [[_profilesWindow viewWithTag:viewIndex + 1] addSubview: cd];
             
             //checks if over budget, if so, prints warning message
-            if (simRun.publicInstallCost > tabControl.budget){
+            if (simRun.landscapeCostTotalInstall > tabControl.budget){
                 //store update labels for further use (updating over budget when using absolute val)
                 
                 UILabel *valueLabel;
@@ -2943,23 +2949,23 @@ int                         heightMultiplier = 5;
             //just damages now
         } else if ([currentVar.name compare: @"privateCost"] == NSOrderedSame){
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.privateDamages]]] withConcernPosition:width + 20 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.privateDamages)]]] withConcernPosition:width + 20 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.sewerLoad] withConcernPosition:width + 20 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Rain Damage: $%@", [formatter stringFromNumber: [NSNumber numberWithInt:simRun.landscapeCostPrivatePropertyDamage]]] withConcernPosition:width + 20 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Damaged Reduced by: %@%%", [formatter stringFromNumber: [NSNumber numberWithInt: 100 -(int)(100*simRunNormal.normalizedLandscapeCostPrivatePropertyDamages)]]] withConcernPosition:width + 20 andyValue: 90 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"Sewer Load: %.2f%%", 100*simRun.normalizedLandscapeCumulativeSewers] withConcernPosition:width + 20 andyValue:120 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@"Storms like this one to"] withConcernPosition:width + 20 andyValue:150 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-            [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.publicInstallCost)/(simRun.privateDamages))] withConcernPosition:width + 20 andyValue:165 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"recoup investment cost: %d", (int)((simRun.landscapeCostTotalInstall)/(simRun.landscapeCostPrivatePropertyDamage))] withConcernPosition:width + 20 andyValue:165 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
             
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.impactNeighbors] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of rainwater", 100*simRun.normalizedLandscapeCumulativeOutflow] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@" flowed to neighbors"] withConcernPosition:width + 30 andyValue: 75 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
             
             [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of possible", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@" groundwater infiltration"] withConcernPosition:width + 30 andyValue:75  andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
-        } else if([currentVar.name compare:@"puddleTime"] == NSOrderedSame){
+        } else if([currentVar.name compare:@"greatestDepthWater"] == NSOrderedSame){
             ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh_social;
             [[tabControl.waterDisplaysInTab objectAtIndex:trial] fastUpdateView:hoursAfterStorm_social];
             
@@ -2985,7 +2991,7 @@ int                         heightMultiplier = 5;
             [[_profilesWindow viewWithTag:viewIndex + 1]addSubview:waterDisplayView];
             
             [imageViewsToRemove addObject:waterDisplayView];
-        } else if([currentVar.name compare:@"puddleMax"] == NSOrderedSame){
+        } else if([currentVar.name compare:@"totalAreaFlooded"] == NSOrderedSame){
             
             ((FebTestWaterDisplay*)[tabControl.maxWaterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh_social;
             [[tabControl.maxWaterDisplaysInTab objectAtIndex:trial] updateView:48];
@@ -3018,7 +3024,7 @@ int                         heightMultiplier = 5;
 
             AprilTestEfficiencyView *ev;
             
-            ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, 67, 130, 150) withContent: simRun.efficiency];
+            ev = [[AprilTestEfficiencyView alloc] initWithFrame:CGRectMake(width, 67, 130, 150) withContent: simRun.efficiencyList];
             ev.trialNum = trial;
             ev.view = [_profilesWindow viewWithTag:viewIndex + 1];
             
@@ -3050,7 +3056,7 @@ int                         heightMultiplier = 5;
              */
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.dollarsGallons  ] withConcernPosition:width + 25 andyValue: 60 andColor: [UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"$/Gallon Spent: $%.2f", simRun.costPerGallonCapturedByGI  ] withConcernPosition:width + 25 andyValue: 60 andColor: [UIColor blackColor] to:nil withIndex:viewIndex];
         }
         
         width+= currentVar.widthOfVisualization;

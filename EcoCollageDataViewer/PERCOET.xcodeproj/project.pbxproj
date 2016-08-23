@@ -155,14 +155,14 @@
 		842D4CC31B0271A7002B351B /* DuPage_May.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DuPage_May.png; sourceTree = "<group>"; };
 		843B9CD91AE6B70000FF2C8B /* AprilTestIntroViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AprilTestIntroViewController.h; sourceTree = "<group>"; };
 		843B9CDA1AE6B70000FF2C8B /* AprilTestIntroViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AprilTestIntroViewController.m; sourceTree = "<group>"; };
-		8453FA4F18F2FC8F0010D12F /* AprilTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AprilTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8453FA4F18F2FC8F0010D12F /* PERCOET.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PERCOET.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8453FA5218F2FC8F0010D12F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8453FA5418F2FC8F0010D12F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		8453FA5618F2FC8F0010D12F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		8453FA5A18F2FC8F0010D12F /* AprilTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AprilTest-Info.plist"; sourceTree = "<group>"; };
+		8453FA5A18F2FC8F0010D12F /* PERCOET-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PERCOET-Info.plist"; sourceTree = "<group>"; };
 		8453FA5C18F2FC8F0010D12F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8453FA5E18F2FC8F0010D12F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		8453FA6018F2FC8F0010D12F /* AprilTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AprilTest-Prefix.pch"; sourceTree = "<group>"; };
+		8453FA6018F2FC8F0010D12F /* PERCOET-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PERCOET-Prefix.pch"; sourceTree = "<group>"; };
 		8453FA6118F2FC8F0010D12F /* AprilTestAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AprilTestAppDelegate.h; sourceTree = "<group>"; };
 		8453FA6218F2FC8F0010D12F /* AprilTestAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AprilTestAppDelegate.m; sourceTree = "<group>"; };
 		8453FA6518F2FC8F0010D12F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -171,9 +171,9 @@
 		8453FA6A18F2FC8F0010D12F /* OutcomeSalienceViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutcomeSalienceViewController.h; sourceTree = "<group>"; };
 		8453FA6B18F2FC8F0010D12F /* OutcomeSalienceViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = OutcomeSalienceViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		8453FA6D18F2FC8F0010D12F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		8453FA7318F2FC8F0010D12F /* AprilTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AprilTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8453FA7318F2FC8F0010D12F /* PERCOET.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PERCOET.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8453FA7418F2FC8F0010D12F /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		8453FA7C18F2FC8F0010D12F /* AprilTestTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AprilTestTests-Info.plist"; sourceTree = "<group>"; };
+		8453FA7C18F2FC8F0010D12F /* PERCOETTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PERCOETTests-Info.plist"; sourceTree = "<group>"; };
 		8453FA7E18F2FC8F0010D12F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8453FA8018F2FC8F0010D12F /* AprilTestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AprilTestTests.m; sourceTree = "<group>"; };
 		8453FA8B18F2FECC0010D12F /* builder-1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "builder-1x.png"; sourceTree = "<group>"; };
@@ -267,8 +267,8 @@
 		8453FA5018F2FC8F0010D12F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8453FA4F18F2FC8F0010D12F /* AprilTest.app */,
-				8453FA7318F2FC8F0010D12F /* AprilTestTests.xctest */,
+				8453FA4F18F2FC8F0010D12F /* PERCOET.app */,
+				8453FA7318F2FC8F0010D12F /* PERCOET.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -392,10 +392,10 @@
 				848479BF18F3208300BAD981 /* survey-2x.png */,
 				8453FA8B18F2FECC0010D12F /* builder-1x.png */,
 				8453FA8C18F2FECC0010D12F /* builder-2x.png */,
-				8453FA5A18F2FC8F0010D12F /* AprilTest-Info.plist */,
+				8453FA5A18F2FC8F0010D12F /* PERCOET-Info.plist */,
 				8453FA5B18F2FC8F0010D12F /* InfoPlist.strings */,
 				8453FA5E18F2FC8F0010D12F /* main.m */,
-				8453FA6018F2FC8F0010D12F /* AprilTest-Prefix.pch */,
+				8453FA6018F2FC8F0010D12F /* PERCOET-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -412,7 +412,7 @@
 		8453FA7B18F2FC8F0010D12F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				8453FA7C18F2FC8F0010D12F /* AprilTestTests-Info.plist */,
+				8453FA7C18F2FC8F0010D12F /* PERCOETTests-Info.plist */,
 				8453FA7D18F2FC8F0010D12F /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -421,9 +421,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8453FA4E18F2FC8F0010D12F /* AprilTest */ = {
+		8453FA4E18F2FC8F0010D12F /* PERCOET */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8453FA8418F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "AprilTest" */;
+			buildConfigurationList = 8453FA8418F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "PERCOET" */;
 			buildPhases = (
 				8453FA4B18F2FC8F0010D12F /* Sources */,
 				8453FA4C18F2FC8F0010D12F /* Frameworks */,
@@ -433,14 +433,14 @@
 			);
 			dependencies = (
 			);
-			name = AprilTest;
+			name = PERCOET;
 			productName = AprilTest;
-			productReference = 8453FA4F18F2FC8F0010D12F /* AprilTest.app */;
+			productReference = 8453FA4F18F2FC8F0010D12F /* PERCOET.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8453FA7218F2FC8F0010D12F /* AprilTestTests */ = {
+		8453FA7218F2FC8F0010D12F /* PERCOETTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8453FA8718F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "AprilTestTests" */;
+			buildConfigurationList = 8453FA8718F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "PERCOETTests" */;
 			buildPhases = (
 				8453FA6F18F2FC8F0010D12F /* Sources */,
 				8453FA7018F2FC8F0010D12F /* Frameworks */,
@@ -451,9 +451,9 @@
 			dependencies = (
 				8453FA7918F2FC8F0010D12F /* PBXTargetDependency */,
 			);
-			name = AprilTestTests;
+			name = PERCOETTests;
 			productName = AprilTestTests;
-			productReference = 8453FA7318F2FC8F0010D12F /* AprilTestTests.xctest */;
+			productReference = 8453FA7318F2FC8F0010D12F /* PERCOET.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -462,9 +462,9 @@
 		8453FA4718F2FC8F0010D12F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				CLASSPREFIX = AprilTest;
-				LastUpgradeCheck = 0510;
-				ORGANIZATIONNAME = Tia;
+				CLASSPREFIX = PERCOET;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Learning Technologies Group";
 				TargetAttributes = {
 					8453FA4E18F2FC8F0010D12F = {
 						DevelopmentTeam = F554V774C5;
@@ -474,7 +474,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8453FA4A18F2FC8F0010D12F /* Build configuration list for PBXProject "AprilTest" */;
+			buildConfigurationList = 8453FA4A18F2FC8F0010D12F /* Build configuration list for PBXProject "PERCOET" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -487,8 +487,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8453FA4E18F2FC8F0010D12F /* AprilTest */,
-				8453FA7218F2FC8F0010D12F /* AprilTestTests */,
+				8453FA4E18F2FC8F0010D12F /* PERCOET */,
+				8453FA7218F2FC8F0010D12F /* PERCOETTests */,
 			);
 		};
 /* End PBXProject section */
@@ -606,7 +606,7 @@
 /* Begin PBXTargetDependency section */
 		8453FA7918F2FC8F0010D12F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8453FA4E18F2FC8F0010D12F /* AprilTest */;
+			target = 8453FA4E18F2FC8F0010D12F /* PERCOET */;
 			targetProxy = 8453FA7818F2FC8F0010D12F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -657,6 +657,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -719,10 +720,11 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "AprilTest/AprilTest-Prefix.pch";
+				GCC_PREFIX_HEADER = "AprilTest/PERCOET-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				INFOPLIST_FILE = "AprilTest/AprilTest-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "AprilTest/PERCOET-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "edu.uic.evl.ltg.ecocollage.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = PERCOET;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -736,10 +738,11 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "AprilTest/AprilTest-Prefix.pch";
+				GCC_PREFIX_HEADER = "AprilTest/PERCOET-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
-				INFOPLIST_FILE = "AprilTest/AprilTest-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "AprilTest/PERCOET-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "edu.uic.evl.ltg.ecocollage.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = PERCOET;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -755,14 +758,15 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "AprilTest/AprilTest-Prefix.pch";
+				GCC_PREFIX_HEADER = "AprilTest/PERCOET-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "AprilTestTests/AprilTestTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AprilTest.app/AprilTest";
+				INFOPLIST_FILE = "AprilTestTests/PERCOETTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "ecocollage.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = PERCOET;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PERCOET.app/PERCOET";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -777,10 +781,11 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "AprilTest/AprilTest-Prefix.pch";
-				INFOPLIST_FILE = "AprilTestTests/AprilTestTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AprilTest.app/AprilTest";
+				GCC_PREFIX_HEADER = "AprilTest/PERCOET-Prefix.pch";
+				INFOPLIST_FILE = "AprilTestTests/PERCOETTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "ecocollage.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = PERCOET;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PERCOET.app/PERCOET";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
@@ -788,7 +793,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8453FA4A18F2FC8F0010D12F /* Build configuration list for PBXProject "AprilTest" */ = {
+		8453FA4A18F2FC8F0010D12F /* Build configuration list for PBXProject "PERCOET" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8453FA8218F2FC8F0010D12F /* Debug */,
@@ -797,7 +802,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8453FA8418F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "AprilTest" */ = {
+		8453FA8418F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "PERCOET" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8453FA8518F2FC8F0010D12F /* Debug */,
@@ -806,7 +811,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8453FA8718F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "AprilTestTests" */ = {
+		8453FA8718F2FC8F0010D12F /* Build configuration list for PBXNativeTarget "PERCOETTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8453FA8818F2FC8F0010D12F /* Debug */,
