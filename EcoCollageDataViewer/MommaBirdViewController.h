@@ -26,5 +26,6 @@
 @property (strong, nonatomic) IBOutlet UITextField *floodThresholdValue;
 @property (strong, nonatomic) IBOutlet UIButton *floodThresholdButton;
 - (IBAction)reconnectWithBabies:(UIButton *)sender;
+- (IBAction)addNewMap:(id)sender;
 
 @end

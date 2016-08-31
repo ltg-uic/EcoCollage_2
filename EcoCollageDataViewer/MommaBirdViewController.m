@@ -107,6 +107,8 @@ NSData *ping;
     
     [NSTimer scheduledTimerWithTimeInterval:20.0f
                                      target:self selector:@selector(pingPeers) userInfo:nil repeats:YES];
+    
+    
 
 }
 
@@ -123,6 +125,18 @@ NSData *ping;
     [super viewWillDisappear:animated];
 }
 
+#pragma mark - Segue
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([[segue identifier] isEqualToString:@"toEcoVision"])
+    {
+        
+    }
+}
+
+- (IBAction)addNewMap:(id)sender {
+    [self performSegueWithIdentifier:@"toEcoVision" sender:self];
+}
 
 
 #pragma mark - Memory management
@@ -1113,4 +1127,6 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     [_session setAvailable:NO];
     [_session setAvailable:YES];
 }
+
+
 @end

@@ -1294,9 +1294,9 @@ float maxPublicInstallNorm;
         AprilTestNormalizedVariable *someTrialNorm = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"];
         AprilTestNormalizedVariable *someTrialDyn  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialDynamic"];
         
-        someTrialDyn.publicInstallCost     = (float)someTrial.landscapeCostTotalInstall/installationCost->highestCost;
-        someTrialDyn.publicMaintenanceCost = (float)someTrial.landscapeCostTotalMaintenance/maintenanceCost->highestCost;
-        someTrialDyn.privateDamages        = (float)someTrial.landscapeCostPrivatePropertyDamage/privateDamages->highestCost;
+        someTrialDyn.normalizedPublicInstallCost     = (float)someTrial.landscapeCostTotalInstall/installationCost->highestCost;
+        someTrialDyn.normalizedPublicMaintenanceCost = (float)someTrial.landscapeCostTotalMaintenance/maintenanceCost->highestCost;
+        someTrialDyn.normalizedLandscapeCostPrivatePropertyDamages        = (float)someTrial.landscapeCostPrivatePropertyDamage/privateDamages->highestCost;
         
         if (impactNeighbors->highestCost == impactNeighbors->lowestCost){ someTrialDyn.normalizedLandscapeCumulativeOutflow = .5; }
         else
