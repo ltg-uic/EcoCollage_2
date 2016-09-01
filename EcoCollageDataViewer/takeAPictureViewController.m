@@ -7,7 +7,7 @@
 //
 
 #import "takeAPictureViewController.h"
-//#import "analysisViewController.h" MERGING
+#import "analysisViewController.h" 
 #import "loginViewController.h"
 #import "CVWrapper.h"
 
@@ -46,7 +46,7 @@ char results[5000]; // changed to do testing
     
     [self setHSVValues];
     [analyzeScreen setEnabled:FALSE];
-    testImg = [UIImage imageNamed:@"IMG_0030.jpg"];
+    testImg = [UIImage imageNamed:@"IMG_0040.JPG"];
     
     picker = [[UIImagePickerController alloc] init];
     warpedGlobal = currentImage_TAP;
@@ -73,14 +73,14 @@ char results[5000]; // changed to do testing
  */
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"toAnalyze"])
+    if ([[segue identifier] isEqualToString:@"toTileDetection"])
     {
         // Set some properties of the next view controller ( for send data )
         //takeAPictureViewController *takeAPictureViewController = [segue destinationViewController];
         //analysisViewController *analysisViewController = [segue destinationViewController];
         //UIImage * test = [CVWrapper getCurrentImage]; // Doesn't work
         
-        /*
+        
         [self analyze];
         currentImage_TAP = warpedGlobal;
         analysisViewController *analysisViewController = [segue destinationViewController];
@@ -88,10 +88,10 @@ char results[5000]; // changed to do testing
         analysisViewController.groupNumber = self.groupNumber;
         analysisViewController.IPAddress = self.IPAddress;
         analysisViewController.userImage_A = userImage_TAP;
-         */
+         
     }
     /*
-    if ([[segue identifier] isEqualToString:@"toLogin"])
+    if ([[segue identifier] isEqualToString:@"toMommaBird"])
     {
         currentImage_TAP = warpedGlobal;
         loginViewController * login = [segue destinationViewController];
@@ -104,17 +104,11 @@ char results[5000]; // changed to do testing
     
 }
 
-/*
- * This is the method we call when we want to segue to the Take a Picture Scene
- */
--(void)buttonizeButtonTap:(id)sender{
-    [self performSegueWithIdentifier:@"toAnalyze" sender:sender];
-}
 
 #pragma mark - IBActions
 
-- (IBAction)toAnalyze:(id)sender {
-    [self buttonizeButtonTap:self];
+- (IBAction)toTileDetection:(id)sender {
+    [self performSegueWithIdentifier:@"toTileDetection" sender:sender];
 }
 
 - (IBAction)toMommaBird:(id)sender {
@@ -124,24 +118,25 @@ char results[5000]; // changed to do testing
 
 - (IBAction)takePhoto:(id)sender {
     //******To Camera App********//
-    
+    /*
     picker.delegate = self;
     picker.allowsEditing = NO;
     picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     [self presentViewController:picker animated:YES completion:NULL];
-   
+   */
     //*******To Test Image*******//
     
     // Bypass Camera and go straight to the method that updates the scrollView
-    /*
-    userImage_TAP = [UIImage imageNamed:@"IMG_0030.jpg"];
+    
+    userImage_TAP = [UIImage imageNamed:@"IMG_0040.JPG"];
     [CVWrapper setCurrentImage:userImage_TAP];
     //[self updateScrollView:userImage_TAP];
     [self processMap];
     [analyzeScreen setEnabled:TRUE];
-    */
-
+    
 }
+
+
 
 #pragma mark - Picture
 /*
@@ -169,25 +164,6 @@ char results[5000]; // changed to do testing
     
     [picker dismissViewControllerAnimated:YES completion:NULL];
 }
-
-- (IBAction)beginProcessing:(id)sender {
-    //[CVWrapper setCurrentImage:userImage_TAP];
-    
-    // Process then Analyze the picture
-    [self processMap];
-    //[self analyze]; - withoutcoords
-    [analyzeScreen setEnabled:TRUE];
-}
-
-- ( void ) beginProcessingMap{
-    [CVWrapper setCurrentImage:userImage_TAP];
-    
-    // Process then Analyze the picture
-    [self processMap];
-    //[self analyze];
-    [analyzeScreen setEnabled:TRUE];
-}
-
 
 /*
  * Required to be a delegate for UIImagePickerController. This method gets called if the user cancels taking the picture.
@@ -262,7 +238,7 @@ char results[5000]; // changed to do testing
     if(![[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
         [[NSFileManager defaultManager] createFileAtPath:fileName contents:nil attributes:nil];
         
-        int hsvDefault[] = {10, 80, 50, 200, 50, 255, 80, 175, 140, 255, 100, 255, 90, 110, 40, 100, 120, 225, 0, 15, 30, 220, 50, 210, 15, 90, 35, 200, 35, 130};
+        int hsvDefault[] = {10, 80, 50, 200, 50, 255,  115 ,120 ,97 ,226, 112 ,240, 90, 110, 40, 100, 120, 225, 0, 15, 30, 220, 50, 210, 15, 90, 35, 200, 35, 130};
         [CVWrapper setHSV_Values:hsvDefault];
         
         

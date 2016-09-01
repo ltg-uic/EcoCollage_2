@@ -24,7 +24,7 @@
 
 
 - (IBAction)takePhoto:(id)sender;
-- (IBAction)toAnalyze:(id)sender;
+- (IBAction)toTileDetection:(id)sender;
 - (IBAction)toLogin:(id)sender;
 - (IBAction)beginProcessing:(id)sender;
 
