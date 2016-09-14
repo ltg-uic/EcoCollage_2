@@ -114,7 +114,7 @@ int liner = 0;
                     [UIColor colorWithHue:.6 saturation:.8 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.3 alpha: 0.5],
                     [UIColor colorWithHue:.6 saturation:.0 brightness:.9 alpha: 0.5],
-                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"publicCost", @"publicCostI", @"publicCostM", @"publicCostD", @"privateCost", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"greatestDepthWater", @"totalAreaFlooded", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
+                    [UIColor colorWithHue:.55 saturation:.8 brightness:.9 alpha: 0.5], nil]  forKeys: [[NSArray alloc] initWithObjects: @"installCost", @"publicCostI", @"publicCostM", @"publicCostD", @"damageReduction", @"privateCostI", @"privateCostM", @"privateCostD",  @"efficiencyOfIntervention", @"animatedWaterViewer", @"totalAreaFlooded", @"groundwaterInfiltration", @"impactingMyNeighbors", @"capacity", nil] ];
     
     int investmentIndex = -1;
     int damageReductionIndex = -1;
@@ -198,7 +198,7 @@ int liner = 0;
     // find max value for each tier
     for(int i = 0; i < tabControl.trialRuns.count; i++) {
         for(int j = 0; j < tabControl.profiles.count; j++) {
-            NSMutableArray *score = [allScores objectAtIndex:i * j + j];
+            //NSMutableArray *score = [allScores objectAtIndex:i * j + j];
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
             NSMutableArray* scoreVisVals = [scores objectAtIndex:0];
             for(int k = 0; k < scoreVisVals.count; k++) {
@@ -209,64 +209,11 @@ int liner = 0;
     }
     
     
-    /*
-    // find the max value for each outcome category
-    // this will determine the "height" for that category
-    for(int i = 0; i < tabControl.trialRuns.count; i++) {
-        for(int j = 0; j < tabControl.profiles.count; j++) {
-            NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
-            NSMutableArray* scoreVisVals = [scores objectAtIndex:0];
-            NSMutableArray* scoreVisNames = [scores objectAtIndex:1];
-            
-            for(int k = 0; k < scoreVisNames.count; k++) {
-                if([[scoreVisNames objectAtIndex:k] isEqualToString:@"publicCost"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxInvestment)) {
-                    maxInvestment = [[scoreVisVals objectAtIndex:k]floatValue] * 100;
-                }
-                else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"privateCostD"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxDamageReduction)) {
-                    maxDamageReduction = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
-                }
-                else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"impactingMyNeighbors"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxImpact)) {
-                    maxImpact = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
-                }
-                else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"groundwaterInfiltration"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxGroundwaterInfiltration)) {
-                    maxGroundwaterInfiltration = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
-                }
-                else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"greatestDepthWater"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxWaterFlow)) {
-                    maxWaterFlow = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
-                }
-                else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"totalAreaFlooded"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxMaxFlood)) {
-                    maxMaxFlood = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
-                }
-                else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"capacity"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxCapacity)) {
-                    maxCapacity = [[scoreVisVals objectAtIndex:k] floatValue] * 100 ;
-                }
-                else if([[scoreVisNames objectAtIndex:k] isEqualToString:@"efficiencyOfIntervention"] && ([[scoreVisVals objectAtIndex:k] floatValue] * 100 > maxEfficiency)) {
-                    maxEfficiency = [[scoreVisVals objectAtIndex:k] floatValue] * 100;
-                }
-            }
-        }
-    }
-
-    
-    // must be added in this specific order
-    [maxScores addObject:[NSNumber numberWithInt:maxInvestment]];
-    [maxScores addObject:[NSNumber numberWithInt:maxDamageReduction]];
-    [maxScores addObject:[NSNumber numberWithInt:maxEfficiency]];
-    [maxScores addObject:[NSNumber numberWithInt:maxCapacity]];
-    [maxScores addObject:[NSNumber numberWithInt:maxWaterFlow]];
-    [maxScores addObject:[NSNumber numberWithInt:maxMaxFlood]];
-    [maxScores addObject:[NSNumber numberWithInt:maxGroundwaterInfiltration]];
-    [maxScores addObject:[NSNumber numberWithInt:maxImpact]];
-     */
     
     for(int i = 0; i < 8; i++) {
         [tierSizes addObject:[NSNumber numberWithInt:tierArr[i]]];
     }
     
-    /*
-    int sumMaxScores = maxInvestment + maxDamageReduction + maxEfficiency + maxCapacity + maxWaterFlow + maxMaxFlood + maxGroundwaterInfiltration + maxImpact;
-    sumMaxScores *= barHeightMultiplier;
-     */
     
     int sumTierSizes = 0;
     for(int i = 0; i < 8; i++) {
@@ -280,12 +227,12 @@ int liner = 0;
     int x = x_initial;
     int y = screen_height - 100; // start at the bottom and work up
     int spaceBetweenTrials = 25;
-    widthOfBar = (scoreBarsView_width - spaceBetweenTrials * tabControl.trialRuns.count) / (tabControl.trialRuns.count * tabControl.profiles.count + 2);
+    widthOfBar = (int)((scoreBarsView_width - spaceBetweenTrials * tabControl.trialRuns.count) / (tabControl.trialRuns.count * tabControl.profiles.count + 2)) ;
     int width = widthOfBar;
     
     
     // draw lines for x and y axis
-    int xAxisLength = (width + 1) * tabControl.profiles.count * tabControl.trialRuns.count + spaceBetweenTrials * (tabControl.trialRuns.count - 1) + 50;
+    int xAxisLength = (int)((width + 1) * tabControl.profiles.count * tabControl.trialRuns.count + spaceBetweenTrials * (tabControl.trialRuns.count - 1) + 50);
     xAxis = [[UIView alloc]initWithFrame:CGRectMake(x_initial, y, xAxisLength, 1)];
     [xAxis setBackgroundColor:[UIColor blackColor]];
     [_scoreBarsView addSubview:xAxis];
@@ -307,7 +254,7 @@ int liner = 0;
         
         for(int j = 0; j < tabControl.profiles.count; j++) {
             NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
-            NSMutableArray *score = [allScores objectAtIndex:i * j + j];
+          //  NSMutableArray *score = [allScores objectAtIndex:i * j + j];
             
             float *totalScore = malloc(sizeof(float));
             *totalScore = 0.0;
@@ -572,7 +519,7 @@ int liner = 0;
     investmentLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * investmentIndex, legend_width, heightOfLegendLabels)];
     [investmentLegendLabel setText:@"Investment"];
     [investmentLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [investmentLegendLabel setBackgroundColor:[scoreColors objectForKey:@"publicCost"]];
+    [investmentLegendLabel setBackgroundColor:[scoreColors objectForKey:@"installCost"]];
     [investmentLegendLabel setTextAlignment:NSTextAlignmentCenter];
     [investmentLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *investmentTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(investmentTapped)];
@@ -584,7 +531,7 @@ int liner = 0;
     damageReductionLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * damageReductionIndex, legend_width, heightOfLegendLabels)];
     [damageReductionLegendLabel setText:@"Damage Reduction"];
     [damageReductionLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [damageReductionLegendLabel setBackgroundColor:[scoreColors objectForKey:@"privateCost"]];
+    [damageReductionLegendLabel setBackgroundColor:[scoreColors objectForKey:@"damageReduction"]];
     [damageReductionLegendLabel setTextAlignment:NSTextAlignmentCenter];
     [damageReductionLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *damageReducTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(damageReducTapped)];
@@ -620,7 +567,7 @@ int liner = 0;
     waterFlowLegendLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, startHeight + heightMultiplier * waterFlowIndex, legend_width, heightOfLegendLabels)];
     [waterFlowLegendLabel setText:@"Water Flow"];
     [waterFlowLegendLabel setFont:[UIFont systemFontOfSize:12.0]];
-    [waterFlowLegendLabel setBackgroundColor:[scoreColors objectForKey:@"greatestDepthWater"]];
+    [waterFlowLegendLabel setBackgroundColor:[scoreColors objectForKey:@"animatedWaterViewer"]];
     [waterFlowLegendLabel setTextAlignment:NSTextAlignmentCenter];
     [waterFlowLegendLabel setUserInteractionEnabled:YES];
     UITapGestureRecognizer *waterDepthTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(waterDepthTapped)];
@@ -722,11 +669,11 @@ int liner = 0;
     int x = x_initial;
     int y = sumTierSizes + 100; // start at the bottom and work up
     int spaceBetweenTrials = 25;
-    widthOfBar = (scoreBarsView_width - spaceBetweenTrials * tabControl.trialRuns.count) / (tabControl.trialRuns.count * tabControl.profiles.count + 2);
+    widthOfBar = (int)((scoreBarsView_width - spaceBetweenTrials * tabControl.trialRuns.count) / (tabControl.trialRuns.count * tabControl.profiles.count + 2));
     int width = widthOfBar;
     
     // draw lines for x and y axis
-    int xAxisLength = (width * tabControl.profiles.count + spaceBetweenTrials) * tabControl.trialRuns.count + 100;
+    int xAxisLength = (int)((width * tabControl.profiles.count + spaceBetweenTrials) * tabControl.trialRuns.count + 100);
     xAxis = [[UIView alloc]initWithFrame:CGRectMake(x_initial, y, xAxisLength, 1)];
     [xAxis setBackgroundColor:[UIColor blackColor]];
     [self addSubview:xAxis];
@@ -740,10 +687,10 @@ int liner = 0;
     //trialGroups = [[NSMutableArray alloc]init];
     
     for(int i = 0; i < tabControl.trialRuns.count; i++) {
-        NSMutableArray *trialGroup = [[NSMutableArray alloc]init];
+      //  NSMutableArray *trialGroup = [[NSMutableArray alloc]init];
         
         for(int j = 0; j < tabControl.profiles.count; j++) {
-            NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
+        //    NSMutableArray* scores = [tabControl getScoreBarValuesForProfile:j forTrial:i isDynamicTrial:0];
             
             StackedBar *bar = [_stackedBars objectAtIndex:i * j + j];
             //[bar reloadBar:[tabControl.profiles objectAtIndex:j] andScores:scores andScaleSize:1 andTierSizes:tierSizes withContainers:wC withHeightMultipler:barHeightMultiplier];
@@ -899,7 +846,7 @@ int liner = 0;
         [tabController writeToLogFileString:logEntry];
     }
     
-    int shiftAmount = mArray.count * (widthOfBar - widthOfBar / resizeFactor);
+    int shiftAmount = (int) (mArray.count * (widthOfBar - widthOfBar / resizeFactor));
     if(shrunk) {
         for(i = (int)trialLabel.tag + 1; i < _trialGroups.count; i++) {
             [self shiftRight:[_trialGroups objectAtIndex:i] amount:shiftAmount];
@@ -1042,7 +989,7 @@ int liner = 0;
         [tabController writeToLogFileString:logEntry];
     }
     
-    int shiftAmount = mArray.count * (widthOfBar - widthOfBar / resizeFactor);
+    int shiftAmount = (int)( mArray.count * (widthOfBar - widthOfBar / resizeFactor));
     if(shrunk) {
         for(i = (int)trialLabel.tag + 1; i < _trialGroups.count; i++) {
             [self shiftRight:[_trialGroups objectAtIndex:i] amount:shiftAmount];

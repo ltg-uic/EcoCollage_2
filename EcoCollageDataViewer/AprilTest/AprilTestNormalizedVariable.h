@@ -11,6 +11,7 @@
 @interface AprilTestNormalizedVariable : NSObject
 @property float normalizedPublicInstallCost;
 @property float normalizedPrivateInstallCost;
+@property float normalizedLandscapeCostInstallPlusMaintenance;
 @property float normalizedLandscapePublicPropertyDamages;
 @property float normalizedLandscapeCostPrivatePropertyDamages;
 @property float normalizedPublicMaintenanceCost;
@@ -20,7 +21,7 @@
 @property float normalizedLandscapeCumulativeSewers;
 @property float normalizedProportionCumulativeGICaptured;
 @property float landscapeCumulativeGICapacityUsed;
-@property float normalizedLandscapeCumulativeStreetFlooding;
+@property float normalizedLandscapeCumulativeFloodingOverall;
 @property int trialNum;
 
 -(id) init: (NSString *) pageResults withTrialNum: (int) trialNum;

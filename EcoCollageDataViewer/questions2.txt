@@ -1,8 +1,8 @@
-Investment	publicCost
-Damage Reduction	privateCost
+Investment	installCost
+Damage Reduction	damageReduction
 Efficiency of Intervention ($/Gallon)	efficiencyOfIntervention
 Capacity Used	capacity
-Water Flow Path	greatestDepthWater
-Max Depth of Flooding	streetFlooding
+Water Flow Path	animatedWaterViewer
+Max Depth of Flooding	totalAreaFlooded
 Groundwater Infiltration	groundwaterInfiltration
 Impact on my Neighbors	impactingMyNeighbors

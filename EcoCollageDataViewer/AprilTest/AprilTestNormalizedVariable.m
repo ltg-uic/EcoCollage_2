@@ -11,6 +11,7 @@
 @implementation AprilTestNormalizedVariable
 @synthesize normalizedPublicInstallCost = _normalizedPublicInstallCost;
 @synthesize normalizedLandscapePublicPropertyDamages = _normalizedLandscapePublicPropertyDamages;
+@synthesize normalizedLandscapeCostInstallPlusMaintenance = _normalizedLandscapeCostInstallPlusMaintenance;
 @synthesize normalizedPublicMaintenanceCost = _normalizedPublicMaintenanceCost;
 @synthesize normalizedPrivateInstallCost = _normalizedPrivateInstallCost;
 @synthesize normalizedLandscapeCostPrivatePropertyDamages = _normalizedLandscapeCostPrivatePropertyDamages;
@@ -37,7 +38,8 @@
     _normalizedLandscapeCumulativeSewers = [[components objectAtIndex:8] floatValue];
     _normalizedProportionCumulativeGICaptured = [[components objectAtIndex:9] floatValue];
     _landscapeCumulativeGICapacityUsed = [[components objectAtIndex:10] floatValue];
-    _normalizedLandscapeCumulativeStreetFlooding = [[components objectAtIndex:12] floatValue];
+    _normalizedLandscapeCumulativeFloodingOverall = [[components objectAtIndex:12] floatValue];
+    _normalizedLandscapeCostInstallPlusMaintenance == [[components objectAtIndex:13] floatValue];
     _trialNum = trialNum;
     
     //NSLog(@"%f", _infiltration);

@@ -14,6 +14,7 @@
 @synthesize landscapeCostInstallPrivateGI = _landscapeCostInstallPrivateGI;
 @synthesize landscapeCostPublicPropertyDamage = _landscapeCostPublicPropertyDamage;
 @synthesize landscapeCostPrivatePropertyDamage = _landscapeCostPrivatePropertyDamage;
+@synthesize landscapeCostInstallPlusMaintenance = _landscapeCostInstallPlusMaintenance;
 @synthesize landscapeCostTotalMaintenance = _landscapeCostTotalMaintenance;
 @synthesize landscapeCostPrivateMaintenance = _landscapeCostPrivateMaintenance;
 @synthesize waterHeightList = _waterHeightList;
@@ -43,6 +44,7 @@
     _efficiencyList = [[components objectAtIndex:11] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     _maxWaterHeightList = [[components objectAtIndex:12] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     _costPerGallonCapturedByGI = [[[components objectAtIndex:13] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] floatValue];
+    _landscapeCostInstallPlusMaintenance = [[[components objectAtIndex:14] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
     _trialNum = trialNum;
     
     //NSLog(@"%f", _infiltration);

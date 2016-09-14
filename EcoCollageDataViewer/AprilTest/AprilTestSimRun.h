@@ -11,6 +11,7 @@
 @interface AprilTestSimRun : NSObject
 @property NSString * map;
 @property int landscapeCostTotalInstall;
+@property int landscapeCostInstallPlusMaintenance;
 @property int landscapeCostInstallPrivateGI;
 @property int landscapeCostPublicPropertyDamage;
 @property int landscapeCostPrivatePropertyDamage;
