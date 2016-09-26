@@ -12,14 +12,16 @@
 @synthesize map = _map;
 @synthesize landscapeCostTotalInstall = _landscapeCostTotalInstall;
 @synthesize landscapeCostInstallPlusMaintenance = _landscapeCostInstallPlusMaintenance;
-
-@synthesize landscapeCostPublicPropertyDamage = _landscapeCostPublicPropertyDamage;
-
 //@synthesize landscapeCostInstallPrivateGI = _landscapeCostInstallPrivateGI;
-//@synthesize landscapeCostPrivatePropertyDamage = _landscapeCostPrivatePropertyDamage;
+
+//currently not in use: only calculating property damage
+//@synthesize landscapeCostPublicPropertyDamage = _landscapeCostPublicPropertyDamage;
+
+
+@synthesize landscapeCostPrivatePropertyDamage = _landscapeCostPrivatePropertyDamage;
 
 @synthesize landscapeCostTotalMaintenance = _landscapeCostTotalMaintenance;
-@synthesize landscapeCostPrivateMaintenance = _landscapeCostPrivateMaintenance;
+//@synthesize landscapeCostPrivateMaintenance = _landscapeCostPrivateMaintenance;
 @synthesize waterHeightList = _waterHeightList;
 @synthesize normalizedLandscapeCumulativeOutflow = _normalizedLandscapeCumulativeOutflow;
 @synthesize normalizedLandscapeCumulativeSewers = _normalizedLandscapeCumulativeSewers;
@@ -35,11 +37,11 @@
     [[[components objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
     _map = [components objectAtIndex:0];
     _landscapeCostTotalInstall = [[[components objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
-    _landscapeCostInstallPrivateGI = [[[components objectAtIndex:2] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
-    _landscapeCostPublicPropertyDamage = [[[components objectAtIndex:3] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
+//   _landscapeCostInstallPrivateGI = [[[components objectAtIndex:2] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
+//    _landscapeCostPublicPropertyDamage = [[[components objectAtIndex:3] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
     _landscapeCostPrivatePropertyDamage = [[[components objectAtIndex:4] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
     _landscapeCostTotalMaintenance = [[[components objectAtIndex:5] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
-    _landscapeCostPrivateMaintenance = [[[components objectAtIndex:6] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
+//    _landscapeCostPrivateMaintenance = [[[components objectAtIndex:6] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] intValue];
     _waterHeightList = [components objectAtIndex:7];
     _normalizedLandscapeCumulativeOutflow = [[[components objectAtIndex:8] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] floatValue];
     _normalizedLandscapeCumulativeSewers = [[[components objectAtIndex:9] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] floatValue];
