@@ -103,6 +103,7 @@
     else {
         MommaBirdViewController *momma_data = [segue destinationViewController];
         momma_data.url = _url;
+        momma_data.IPAddress = _server.text; // Needed for EcoVision
         momma_data.studyNum = _studyNum;
     }
 }

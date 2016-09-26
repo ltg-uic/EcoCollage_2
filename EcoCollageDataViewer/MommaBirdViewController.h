@@ -13,6 +13,7 @@
 @interface MommaBirdViewController : UIViewController <GKSessionDelegate, CBCentralManagerDelegate, CBPeripheralDelegate, UITextViewDelegate>
 @property NSMutableArray *currentConcernRanking;
 @property NSString *url;
+@property NSString *IPAddress;
 @property int studyNum;
 @property (strong, nonatomic) IBOutlet UITextView *textView;
 @property (strong, nonatomic) IBOutlet UITextView *macMiniTextView;

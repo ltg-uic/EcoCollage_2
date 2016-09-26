@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="L39-Hx-Bzc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="q8p-ax-VWt">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -622,11 +622,12 @@
                         <outlet property="textView" destination="zTP-a5-umh" id="Pok-D6-d4W"/>
                         <outlet property="trialNumberLabel" destination="6fs-78-PFL" id="NI1-9N-oJ3"/>
                         <segue destination="Ukp-41-Nrc" kind="modal" identifier="toEcoVision" id="zDU-Ki-IIV"/>
+                        <segue destination="NRr-KG-YeU" kind="modal" identifier="toTips" id="C9h-ji-KJF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Pq-du-g9d" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2228" y="1500"/>
+            <point key="canvasLocation" x="-2414" y="1592"/>
         </scene>
         <!--April Test Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
@@ -1209,10 +1210,6 @@
                                 </attributedString>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="ZgS-f9-Qqn">
-                                <rect key="frame" x="645" y="38" width="22" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="WXQ-Vm-Mey">
                                 <rect key="frame" x="0.0" y="20" width="234" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1248,11 +1245,19 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="ZgS-f9-Qqn">
+                                <rect key="frame" x="645" y="36" width="22" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="toTips:" destination="Ukp-41-Nrc" eventType="touchUpInside" id="OtM-Lh-VeL"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems/>
+                    <navigationItem key="navigationItem" id="D76-C4-YId"/>
                     <nil key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
@@ -1264,6 +1269,7 @@
                         <outlet property="view" destination="Q8N-gN-QP5" id="ak4-3w-c4Z"/>
                         <segue destination="L39-Hx-Bzc" kind="modal" identifier="toMommaBird" id="qOn-PD-Zj0"/>
                         <segue destination="sYG-jP-h5e" kind="modal" identifier="toTileDetection" id="gqw-UL-N5G"/>
+                        <segue destination="NRr-KG-YeU" kind="modal" identifier="toTips" id="Xfj-0r-xie"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eJs-hv-EEu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1711,6 +1717,11 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="RTQ-FO-JIB">
                                         <rect key="frame" x="314" y="0.0" width="22" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <connections>
+                                            <segue destination="bws-Ks-I7Z" kind="popover" popoverAnchorView="RTQ-FO-JIB" id="ZcD-3o-g3r">
+                                                <popoverArrowDirection key="popoverArrowDirection" left="YES"/>
+                                            </segue>
+                                        </connections>
                                     </button>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Lightest Color" textAlignment="center" id="HCm-LO-pZs">
                                         <rect key="frame" x="28" y="105" width="116" height="33"/>
@@ -1994,6 +2005,11 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="FFv-7o-L57">
                                         <rect key="frame" x="314" y="0.0" width="22" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <connections>
+                                            <segue destination="tvi-8A-1B1" kind="popover" popoverAnchorView="FFv-7o-L57" id="Lit-xX-CZ8">
+                                                <popoverArrowDirection key="popoverArrowDirection" left="YES"/>
+                                            </segue>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
@@ -2059,24 +2075,27 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="TopLeft" scrollEnabled="NO" indicatorStyle="black" editable="NO" textAlignment="natural" id="lqK-Rg-ljE">
-                                <rect key="frame" x="20" y="20" width="240" height="200"/>
+                                <rect key="frame" x="20" y="20" width="240" height="283.5"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <string key="text">To detect all the Rain Barrels, we need to recognize their colors. Touch the Rain Barrels tokens in the photograph to add their colors to our detector. Stop when the threshold image shows that all Rain Barrels are being detected, but no non-Rain Barrels are being detected. [brackets indicate text to be changed by tab]
-</string>
+                                <string key="text">This app uses computer vision to recognize green infrastructure tiles. If the lighting conditions change, the app might lose its ability to recognize tiles.
+
+The app looks for a range of colors - so first touch the lightest colored swale to add that to the palette, and then touch the darkest colored swale.
+
+You can confirm what range of colors is being “seen” as a rain barrel by toggling the threshold under the image.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <value key="contentSizeForViewInPopover" type="size" width="300" height="200"/>
+                    <value key="contentSizeForViewInPopover" type="size" width="300" height="500"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina3.5"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kDx-hO-ReV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-241" y="4443"/>
+            <point key="canvasLocation" x="1105" y="5842"/>
         </scene>
         <!--SwalePopUp-->
         <scene sceneID="AW3-hc-xUR">
@@ -2087,23 +2106,27 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="TopLeft" scrollEnabled="NO" indicatorStyle="black" editable="NO" textAlignment="natural" id="5Vq-TN-gBE">
-                                <rect key="frame" x="20" y="20" width="240" height="150"/>
+                                <rect key="frame" x="20" y="20" width="240" height="283.5"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <string key="text">To detect all the Swale, we need to recognize their colors. Touch the Swale tokens in the photograph to add their colors to our detector. Stop when the threshold image shows that all Swale are being detected, but no non-Swale are being detected. </string>
+                                <string key="text">This app uses computer vision to recognize green infrastructure tiles. If the lighting conditions change, the app might lose its ability to recognize tiles.
+
+The app looks for a range of colors - so first touch the lightest colored swale to add that to the palette, and then touch the darkest colored swale.
+
+You can confirm what range of colors is being “seen” as a swale by toggling the threshold under the image.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <value key="contentSizeForViewInPopover" type="size" width="300" height="200"/>
+                    <value key="contentSizeForViewInPopover" type="size" width="300" height="500"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina3.5"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dms-RH-Bjt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1407" y="4485"/>
+            <point key="canvasLocation" x="-2260" y="5878"/>
         </scene>
         <!--Permeable Paver-->
         <scene sceneID="oHY-dD-joJ">
@@ -2282,10 +2305,6 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="vSW-Uh-PUT">
-                                        <rect key="frame" x="314" y="0.0" width="22" height="22"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </button>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Color range used to detect permeable pavers" textAlignment="center" id="ERd-w3-yKJ">
                                         <rect key="frame" x="28" y="-8" width="280" height="54.5"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -2293,6 +2312,15 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="vSW-Uh-PUT">
+                                        <rect key="frame" x="314" y="0.0" width="22" height="22"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <connections>
+                                            <segue destination="fzg-k6-u3b" kind="popover" popoverAnchorView="vSW-Uh-PUT" id="2cq-OX-O7O">
+                                                <popoverArrowDirection key="popoverArrowDirection" left="YES"/>
+                                            </segue>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration">
@@ -2358,24 +2386,27 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="TopLeft" scrollEnabled="NO" indicatorStyle="black" editable="NO" textAlignment="natural" id="7p0-Qj-B5Z">
-                                <rect key="frame" x="20" y="20" width="240" height="200"/>
+                                <rect key="frame" x="20" y="20" width="240" height="283.5"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <string key="text">To detect all the Permeable Pavers, we need to recognize their colors. Touch the Permeable Pavers tokens in the photograph to add their colors to our detector. Stop when the threshold image shows that all Permeable Pavers are being detected, but no non-Permeable Pavers are being detected. 
-</string>
+                                <string key="text">This app uses computer vision to recognize green infrastructure tiles. If the lighting conditions change, the app might lose its ability to recognize tiles.
+
+The app looks for a range of colors - so first touch the lightest colored swale to add that to the palette, and then touch the darkest colored swale.
+
+You can confirm what range of colors is being “seen” as a permeable paver by toggling the threshold under the image.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <value key="contentSizeForViewInPopover" type="size" width="300" height="200"/>
+                    <value key="contentSizeForViewInPopover" type="size" width="300" height="500"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina3.5"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SbI-1q-jWF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-813" y="4479"/>
+            <point key="canvasLocation" x="-1531" y="5902"/>
         </scene>
         <!--GreenRoofPopUp-->
         <scene sceneID="B35-e1-Xpr">
@@ -2386,23 +2417,27 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="TopLeft" scrollEnabled="NO" indicatorStyle="black" editable="NO" textAlignment="natural" id="AlI-zt-UHB">
-                                <rect key="frame" x="20" y="20" width="240" height="166.5"/>
+                                <rect key="frame" x="20" y="20" width="240" height="283.5"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <string key="text">To detect all the Green Roofs, we need to recognize their colors. Touch the Green Roofs, tokens in the photograph to add their colors to our detector. Stop when the threshold image shows that all Green Roofs, are being detected, but no non-Green Roofs, are being detected. </string>
+                                <string key="text">This app uses computer vision to recognize green infrastructure tiles. If the lighting conditions change, the app might lose its ability to recognize tiles.
+
+The app looks for a range of colors - so first touch the lightest colored swale to add that to the palette, and then touch the darkest colored swale.
+
+You can confirm what range of colors is being “seen” as a green roof by toggling the threshold under the image.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <value key="contentSizeForViewInPopover" type="size" width="300" height="200"/>
+                    <value key="contentSizeForViewInPopover" type="size" width="300" height="500"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina3.5"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ksk-aq-u08" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="339" y="4443"/>
+            <point key="canvasLocation" x="-124" y="5887"/>
         </scene>
         <!--Item-->
         <scene sceneID="aMr-pf-Zz6">
@@ -2819,6 +2854,11 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="MWt-1k-RGc">
                                         <rect key="frame" x="314" y="0.0" width="22" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <connections>
+                                            <segue destination="XFw-ma-Zi3" kind="popover" popoverAnchorView="MWt-1k-RGc" id="z4X-I2-0q8">
+                                                <popoverArrowDirection key="popoverArrowDirection" left="YES"/>
+                                            </segue>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
@@ -3582,11 +3622,191 @@ When you are satisfied with the tile detection, tap on save profile below </stri
             </objects>
             <point key="canvasLocation" x="971" y="6213"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="sO1-Ca-MhU">
+            <objects>
+                <viewController id="NRr-KG-YeU" customClass="ViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8UH-5R-BqS">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2Ib-qT-Sk0">
+                                <rect key="frame" x="141" y="51" width="313" height="51"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="Take a Picture">
+                                        <attributes>
+                                            <color key="NSColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="37" name="Avenir-Light"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Make sure the whole map is in the picture, showing the four green corner-marking squares." textAlignment="natural" id="uHd-MU-LF1">
+                                <rect key="frame" x="116" y="227" width="607" height="31.5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Make sure you are in a well-lit room" textAlignment="natural" id="yBb-wk-cfY">
+                                <rect key="frame" x="116" y="175" width="465" height="36"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <view contentMode="scaleToFill" id="860-YI-WHs">
+                                <rect key="frame" x="0.0" y="344" width="1119" height="369"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bad Example" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dng-hc-EG2">
+                                        <rect key="frame" x="21" y="13" width="127" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="IMG_0058.jpg" highlighted="YES" id="hOu-yY-yPf">
+                                        <rect key="frame" x="391" y="43" width="275" height="203"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" id="8s0-Dw-tYL">
+                                        <rect key="frame" x="21" y="290" width="275" height="64"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <string key="text">This picture won’t work because part of the map is missing ( the bottom row) and there is more than the grid is shown.
+</string>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" id="wd6-cH-bTD">
+                                        <rect key="frame" x="391" y="299" width="604" height="55"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <string key="text">This picture worked because all corners were in view, there were no interfering green or blue objects near the map, and the lighting was constant across the map.</string>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Good_Example.jpg" highlighted="YES" id="WF5-Qv-hDq">
+                                        <rect key="frame" x="720" y="43" width="275" height="203"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Good Example" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ggr-mv-1L5">
+                                        <rect key="frame" x="391" y="13" width="127" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" id="AaL-7b-IPV">
+                                        <rect key="frame" x="329" y="0.0" width="19" height="369"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </view>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Original Picture taken from camera" textAlignment="center" id="GkQ-aA-hVi">
+                                        <rect key="frame" x="391" y="254" width="275" height="28"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Processed picture" textAlignment="center" id="Osn-HI-rli">
+                                        <rect key="frame" x="720" y="254" width="275" height="33"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Processed picture" textAlignment="center" id="uHK-cZ-ypZ">
+                                        <rect key="frame" x="21" y="251" width="275" height="33"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Bad_Example.jpg" highlighted="YES" id="w5e-zA-xXJ">
+                                        <rect key="frame" x="21" y="40" width="275" height="203"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3cm-FP-g2m">
+                                <rect key="frame" x="341" y="527" width="0.0" height="0.0"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To review these reminders on the next screen, please click on the information icon at the top." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6ou-f2-HmR">
+                                <rect key="frame" x="20" y="733" width="903" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="rZF-f0-YXg">
+                                <rect key="frame" x="923" y="733" width="81" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Next"/>
+                                <connections>
+                                    <action selector="toTAP:" destination="NRr-KG-YeU" eventType="touchUpInside" id="3hm-Ud-OOe"/>
+                                </connections>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Frame the picture from overhead" textAlignment="natural" id="4D1-xn-a40">
+                                <rect key="frame" x="116" y="201" width="465" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Take the picture from overhead" textAlignment="natural" id="5qg-6B-S69">
+                                <rect key="frame" x="116" y="281" width="465" height="36"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Remove any green or blue objects near the map." textAlignment="natural" id="8Q9-SY-ZTI">
+                                <rect key="frame" x="116" y="255" width="465" height="36"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" id="rt4-o4-BHH">
+                                <rect key="frame" x="58" y="131" width="946" height="49.5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <string key="text">You need to take a picture of the green infrastructure map to run the simulation. You will be able to take a picture on the next screen. To ensure a good quality picture:</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="DmL-br-ROE"/>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <segue destination="Ukp-41-Nrc" kind="modal" identifier="toTAP" id="L4u-Dd-7Ge"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rhO-W1-01g" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-3518" y="2742"/>
+        </scene>
     </scenes>
     <resources>
+        <image name="Bad_Example.jpg" width="2048" height="1536"/>
         <image name="DuPage_May.png" width="575" height="625"/>
+        <image name="Good_Example.jpg" width="2048" height="1536"/>
         <image name="GreenCorner_Icon.png" width="533" height="533"/>
         <image name="GreenRoof_Icon" width="1693" height="1233"/>
+        <image name="IMG_0058.jpg" width="2592" height="1936"/>
         <image name="RainBarrel_Icon" width="1693" height="1233"/>
         <image name="Scales Filled-32.png" width="32" height="32"/>
         <image name="Swale_Icon" width="1693" height="1233"/>
@@ -3601,9 +3821,10 @@ When you are satisfied with the tile detection, tap on save profile below </stri
         <image name="swale.png" width="143" height="135"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ZPG-d7-jn4"/>
         <segue reference="fpZ-1m-XTp"/>
-        <segue reference="V0d-OP-xwh"/>
-        <segue reference="qOn-PD-Zj0"/>
+        <segue reference="gqw-UL-N5G"/>
+        <segue reference="zDU-Ki-IIV"/>
+        <segue reference="VdV-ZD-d98"/>
+        <segue reference="C9h-ji-KJF"/>
     </inferredMetricsTieBreakers>
 </document>

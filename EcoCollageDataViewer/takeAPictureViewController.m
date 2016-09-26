@@ -7,6 +7,7 @@
 //
 
 #import "takeAPictureViewController.h"
+#import "ViewController.h"
 #import "analysisViewController.h" 
 #import "loginViewController.h"
 #import "CVWrapper.h"
@@ -46,7 +47,7 @@ char results[5000]; // changed to do testing
     
     [self setHSVValues];
     [analyzeScreen setEnabled:FALSE];
-    testImg = [UIImage imageNamed:@"IMG_0040.JPG"];
+    testImg = [UIImage imageNamed:@"IMG_0054.JPG"];
     
     picker = [[UIImagePickerController alloc] init];
     warpedGlobal = currentImage_TAP;
@@ -102,6 +103,16 @@ char results[5000]; // changed to do testing
     }
      */
     
+    if ([[segue identifier] isEqualToString:@"toTips"])
+    {
+        ViewController * tips = [segue destinationViewController];
+        currentImage_TAP = warpedGlobal;
+        tips.currentImage_T = currentImage_TAP;
+        tips.groupNumber = self.groupNumber;
+        tips.IPAddress = self.IPAddress;
+        tips.userImage_T = userImage_TAP;
+    }
+    
 }
 
 
@@ -113,6 +124,10 @@ char results[5000]; // changed to do testing
 
 - (IBAction)toMommaBird:(id)sender {
     [self performSegueWithIdentifier:@"toMommaBird" sender:sender];
+}
+
+- (IBAction)toTips:(id)sender {
+    [self performSegueWithIdentifier:@"toTips" sender:sender];
 }
 
 
@@ -128,7 +143,7 @@ char results[5000]; // changed to do testing
     
     // Bypass Camera and go straight to the method that updates the scrollView
     
-    userImage_TAP = [UIImage imageNamed:@"IMG_0040.JPG"];
+    userImage_TAP = [UIImage imageNamed:@"IMG_0030.jpg"];
     [CVWrapper setCurrentImage:userImage_TAP];
     //[self updateScrollView:userImage_TAP];
     [self processMap];

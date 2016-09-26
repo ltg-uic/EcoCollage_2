@@ -8,6 +8,7 @@
 
 #import "MommaBirdViewController.h"
 #import "AprilTestSimRun.h"
+#import "takeAPictureViewController.h"
 #import "AprilTestNormalizedVariable.h"
 #import "BabyBirdProfile.h"
 #import <Foundation/Foundation.h>
@@ -45,7 +46,7 @@ int currentBudget;
 NSMutableArray *favorites;
 NSMutableArray *leastFavorites;
 NSData *ping;
-
+bool firstTime = true;
 
 #define SEPARATOR_FOR_TRIAL_DATA        @"$(TRIAL_DATA)$"
 
@@ -128,14 +129,25 @@ NSData *ping;
 #pragma mark - Segue
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:@"toEcoVision"])
+    if ([[segue identifier] isEqualToString:@"toEcoVision"] || [[segue identifier] isEqualToString:@"toTips"])
     {
-        
+        takeAPictureViewController *takeAPictureViewController = [segue destinationViewController];
+        //takeAPictureViewController.warpedGlobal = currentImage_A;
+        takeAPictureViewController.groupNumber= [NSString stringWithFormat:@"%i",_studyNum];
+        takeAPictureViewController.IPAddress = _IPAddress;
     }
 }
 
 - (IBAction)addNewMap:(id)sender {
-    [self performSegueWithIdentifier:@"toEcoVision" sender:self];
+    if( firstTime){
+        [self performSegueWithIdentifier:@"toTips" sender:self];
+        
+        firstTime = false;
+    }
+    else{
+        [self performSegueWithIdentifier:@"toEcoVision" sender:self];
+    }
+    
 }
 
 
