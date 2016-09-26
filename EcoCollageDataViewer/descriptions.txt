@@ -13,4 +13,4 @@ Water Flow Path: Water accumulation, defined as the depth of water accumulated i
 
 Groundwater Infiltration: The proportion of rainwater infiltrated over the maximum possible infiltration that returns to groundwater (if bioswales everywhere).
 
-Impact on my Neighbors: The amount of rainwater that passes from my neighborhood to the next neighborhood.
+Impact on Downstream Neighborhood: The amount of rainwater that passes from my neighborhood to the next neighborhood.

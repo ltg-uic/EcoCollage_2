@@ -5,4 +5,4 @@ Capacity Used	capacity
 Water Flow Path	animatedWaterViewer
 Max Depth of Flooding	totalAreaFlooded
 Groundwater Infiltration	groundwaterInfiltration
-Impact on my Neighbors	impactingMyNeighbors
+Impact on Downstream Neighborhood	impactingMyNeighbors

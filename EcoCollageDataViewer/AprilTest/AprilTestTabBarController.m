@@ -501,7 +501,7 @@ NSMutableDictionary         *scoreColors;
 
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCostInstallPlusMaintenance));
             
-            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * 1-simRunNormal.normalizedLandscapeCostInstallPlusMaintenance]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat:((currentVar.currentConcernRanking)/priorityTotal * 1-simRunNormal.normalizedLandscapeCostInstallPlusMaintenance)]];
             
             [scoreVisNames addObject: @"installCost"];
             
@@ -509,13 +509,13 @@ NSMutableDictionary         *scoreColors;
             //just damages now
         } else if ([currentVar.name compare: @"damageReduction"] == NSOrderedSame){
             
+            //potentially could include the sewer load with damage reduction, but for now, not included
+            
             scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCostPrivatePropertyDamages);
             
             //add values for the score visualization
             
-            [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking/priorityTotal * (1 - (simRunNormal.normalizedLandscapeCostPrivatePropertyDamages + simRunNormal.normalizedLandscapeCumulativeSewers + simRunNormal.normalizedGreatestDepthStandingWater)/3))]];
-            //scoreTotal +=currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages);
-            //[scoreVisVals addObject: [NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.privateDamages)]];
+            [scoreVisVals addObject:[NSNumber numberWithFloat: currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCostPrivatePropertyDamages)]];
             [scoreVisNames addObject: @"damageReduction"];
             
         } else if ([currentVar.name compare: @"impactingMyNeighbors"] == NSOrderedSame){
@@ -527,13 +527,13 @@ NSMutableDictionary         *scoreColors;
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
             
-            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.normalizedProportionCumulativeGICaptured );
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.normalizedProportionCumulativeGICaptured )]];
+            scoreTotal += (currentVar.currentConcernRanking/priorityTotal) * (simRunNormal.normalizedProportionCumulativeNetGIInfiltration );
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * ( simRunNormal.normalizedProportionCumulativeNetGIInfiltration )]];
             [scoreVisNames addObject: currentVar.name];
         } else if([currentVar.name compare:@"animatedWaterViewer"] == NSOrderedSame){
             
-            
-            scoreTotal += (currentVar.currentConcernRanking + 1)/priorityTotal * (1 - simRunNormal.normalizedGreatestDepthStandingWater);
+    
+            scoreTotal += (currentVar.currentConcernRanking)/priorityTotal * (1 - simRunNormal.normalizedGreatestDepthStandingWater);
             [scoreVisVals addObject:[NSNumber numberWithFloat:(currentVar.currentConcernRanking)/priorityTotal * (1- simRunNormal.normalizedGreatestDepthStandingWater)]];
             [scoreVisNames addObject: currentVar.name];
             
@@ -550,16 +550,20 @@ NSMutableDictionary         *scoreColors;
             [scoreVisNames addObject: currentVar.name];
             
         } else if ([currentVar.name compare: @"efficiencyOfIntervention"] == NSOrderedSame){
-            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.costPerGallonCapturedByGI/25.19);
-            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.costPerGallonCapturedByGI/25.19)]];
+            //23.73 is a constant introduced by the green roofs; factored over green roofs
+            scoreTotal += currentVar.currentConcernRanking/priorityTotal * (1 - simRun.costPerGallonCapturedByGI/23.73);
+            [scoreVisVals addObject:[NSNumber numberWithFloat:currentVar.currentConcernRanking/priorityTotal * (1 - simRun.costPerGallonCapturedByGI/23.73)]];
             [scoreVisNames addObject:currentVar.name];
         }
     }
     
+    //calls method below to generate the over budget penalty using a cosine based function that is modified by the investmentIndex
+    //after method, mod is a value between 0 and 1
     float mod = [self generateOverBudgetPenalty:scoreVisNames withInstallCost:simRun.landscapeCostInstallPlusMaintenance];
     
     
-    //computing each score with log skew due to over-investment cost
+    //each outcome category score is multiplied by the computed modifier for being over budget
+    //penalty is applied to all categories because if investment is v. important, performance shouldn't be rewarded
     for(int k =  0; k < scoreVisVals.count; k++){
         
         float scoreWidth = [[scoreVisVals objectAtIndex: k] floatValue];
@@ -576,10 +580,12 @@ NSMutableDictionary         *scoreColors;
     return scores;
 }
 
+//generates penalty for being over budget using a cosine based function that is modified by the investmentIndex
+
 - (float)generateOverBudgetPenalty:(NSMutableArray*)scoreVisNames withInstallCost:(int)installCost {
     
     int investmentIndex = 0;
-    //finds where in the Concern Profile cost is; e.g., how important it is. once found, exits loop.
+    //finds where in the Concern Profile cost is; e.g., how important it is. once found, exits loop. Most important = 0, least important = 7
     for(int i = 0; i < scoreVisNames.count; i++) {
         if([[scoreVisNames objectAtIndex:i] isEqualToString:@"installCost"]){
             investmentIndex = i;
@@ -589,6 +595,8 @@ NSMutableDictionary         *scoreColors;
     
     float amountOverBudget = (installCost - _budget)/(float)_budget;
     float modifier;
+    //if amount over budget is greater than $1 and the cost is NOT the least important outcome category, than calculate the penalty
+    //modifier is between 0 and 1
     if ( amountOverBudget > 1 && investmentIndex < 7)
         modifier = (1 - cos((amountOverBudget * (7-investmentIndex)/7)* M_PI))/2;
     else modifier = 1;

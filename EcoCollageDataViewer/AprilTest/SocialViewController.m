@@ -759,7 +759,7 @@ int                         heightMultiplier = 5;
     
     lastLabelTapped = [[scoreBars objectAtIndex:0] objectForKey:@"impactingMyNeighbors"];
     AprilTestTabBarController *tabControl = (AprilTestTabBarController*)[self parentViewController];
-    NSString *logEntry = [tabControl generateLogEntryWith:@"\tImpact on Neighbors score inspected"];
+    NSString *logEntry = [tabControl generateLogEntryWith:@"\tImpact on Downstream Neighborhood score inspected"];
     [tabControl writeToLogFileString:logEntry];
 }
 
@@ -2963,7 +2963,7 @@ int                         heightMultiplier = 5;
         } else if ([currentVar.name compare: @"groundwaterInfiltration"] == NSOrderedSame){
             
             
-            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of possible", 100*simRun.infiltration] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
+            [self drawTextBasedVar: [NSString stringWithFormat:@"%.2f%% of possible", 100*simRun.proportionCumulativeNetGIInfiltration] withConcernPosition:width + 30 andyValue:60 andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
             [self drawTextBasedVar: [NSString stringWithFormat:@" groundwater infiltration"] withConcernPosition:width + 30 andyValue:75  andColor:[UIColor blackColor] to:nil withIndex:viewIndex];
         } else if([currentVar.name compare:@"animatedWaterViewer"] == NSOrderedSame){
             ((FebTestWaterDisplay*)[tabControl.waterDisplaysInTab objectAtIndex:trial]).thresholdValue = thresh_social;

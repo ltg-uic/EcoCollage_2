@@ -19,7 +19,7 @@
 @synthesize normalizedGreatestDepthStandingWater = _normalizedGreatestDepthStandingWater;
 @synthesize normalizedLandscapeCumulativeOutflow = _normalizedLandscapeCumulativeOutflow;
 @synthesize normalizedLandscapeCumulativeSewers = _normalizedLandscapeCumulativeSewers;
-@synthesize normalizedProportionCumulativeGICaptured = _normalizedProportionCumulativeGICaptured;
+@synthesize normalizedProportionCumulativeNetGIInfiltration = _normalizedProportionCumulativeNetGIInfiltration;
 @synthesize landscapeCumulativeGICapacityUsed = _landscapeCumulativeGICapacityUsed;
 @synthesize trialNum = _trialNum;
 
@@ -36,7 +36,7 @@
     _normalizedGreatestDepthStandingWater = [[components objectAtIndex:6]floatValue];
     _normalizedLandscapeCumulativeOutflow = [[components objectAtIndex:7] floatValue];
     _normalizedLandscapeCumulativeSewers = [[components objectAtIndex:8] floatValue];
-    _normalizedProportionCumulativeGICaptured = [[components objectAtIndex:9] floatValue];
+    _normalizedProportionCumulativeNetGIInfiltration = [[components objectAtIndex:9] floatValue];
     _landscapeCumulativeGICapacityUsed = [[components objectAtIndex:10] floatValue];
     _normalizedLandscapeCumulativeFloodingOverall = [[components objectAtIndex:12] floatValue];
     _normalizedLandscapeCostInstallPlusMaintenance == [[components objectAtIndex:13] floatValue];

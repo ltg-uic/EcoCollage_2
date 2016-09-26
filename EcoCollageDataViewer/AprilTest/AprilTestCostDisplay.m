@@ -113,7 +113,7 @@
     [formatter setGroupingSeparator:@","];
     
     _valueLabel = [[UILabel alloc] init];
-    _valueLabel.text = [NSString stringWithFormat:@"Installation Cost $%@", [formatter stringFromNumber: [NSNumber numberWithInt:cost] ]];
+    _valueLabel.text = [NSString stringWithFormat:@"Installation + Maintenance $%@", [formatter stringFromNumber: [NSNumber numberWithInt:cost] ]];
     _valueLabel.frame =CGRectMake(0, 0, 0, 0);
     [_valueLabel sizeToFit ];
     _valueLabel.font = [UIFont systemFontOfSize:14.0];
@@ -154,7 +154,7 @@
     [formatter setGroupingSeparator:@","];
     
     _valueLabel = [[UILabel alloc] init];
-    _valueLabel.text = [NSString stringWithFormat:@"Installation Cost $%@", [formatter stringFromNumber: [NSNumber numberWithInt:cost] ]];
+    _valueLabel.text = [NSString stringWithFormat:@"Installation + Maintenance $%@", [formatter stringFromNumber: [NSNumber numberWithInt:cost] ]];
     _valueLabel.frame =CGRectMake(0, 0, 0, 0);
     [_valueLabel sizeToFit ];
     _valueLabel.font = [UIFont systemFontOfSize:14.0];
