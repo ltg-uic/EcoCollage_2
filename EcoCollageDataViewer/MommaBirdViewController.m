@@ -376,7 +376,7 @@ bool firstTime = true;
 }
 
 - (void)updateFavoriteTrials:(NSArray *)dataArray {
-    BOOL profileHasAFavorite = NO;
+    //BOOL profileHasAFavorite = NO;
     
     NSLog(@"Received favorite information for %@", dataArray[1]);
     
@@ -456,7 +456,7 @@ bool firstTime = true;
 }
 
 - (void)updateLeastFavoriteTrials:(NSArray*)dataArray {
-    BOOL profileHasALeastFavorite = NO;
+    //BOOL profileHasALeastFavorite = NO;
     
     NSLog(@"Received least favorite information for %@", dataArray[1]);
     
@@ -551,14 +551,14 @@ bool firstTime = true;
 
 
 - (void)sendTrialsForRequest:(NSArray *)dataArray toPeer:(NSString*)peerID{
-    NSLog(@"Received request from Baby for trials %d - %d", [[dataArray objectAtIndex:1] integerValue], trialNum);
+    NSLog(@"Received request from Baby for trials %d - %d", [[dataArray objectAtIndex:1] intValue], trialNum);
     
-    if ([[dataArray objectAtIndex:1] integerValue] == 0) {
+    if ([[dataArray objectAtIndex:1] intValue] == 0) {
         [self sendAllTrialsToSpecificBaby:peerID];
         return;
     }
     
-    for (int i = [[dataArray objectAtIndex:1]integerValue]; i < trialNum; i++) {
+    for (int i = [[dataArray objectAtIndex:1] intValue]; i < trialNum; i++) {
         NSLog(@"Sent baby trial %d", i);
         [self sendSingleTrialToSpecificBaby:[trialRuns objectAtIndex:i] normalizedData:[trialRunsNormalized objectAtIndex:i] peerID:peerID];
     }
