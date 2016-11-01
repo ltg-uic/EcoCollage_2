@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "3013647EA56EF95AC77FBA19ADBC848B578B1E51",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "3013647EA56EF95AC77FBA19ADBC848B578B1E51" : 0,
+    "3DADE73986301CE36CC71E21F54CDCC59A4FD0FA" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "C635A85C-1145-47A8-BA6A-9E6933D5E477",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "3013647EA56EF95AC77FBA19ADBC848B578B1E51" : "EcoCollage_2\/",
+    "3DADE73986301CE36CC71E21F54CDCC59A4FD0FA" : "EcoVision_2\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "PERCOET",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "EcoCollageDataViewer\/PERCOET.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/ltg-uic\/EcoCollage_2.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "3013647EA56EF95AC77FBA19ADBC848B578B1E51"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/auza2\/EcoVision_2.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "3DADE73986301CE36CC71E21F54CDCC59A4FD0FA"
+    }
+  ]
+}
