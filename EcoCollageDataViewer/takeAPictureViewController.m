@@ -138,7 +138,7 @@ char results[5000]; // changed to do testing
     picker.allowsEditing = NO;
     picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     [self presentViewController:picker animated:YES completion:NULL];
-   */
+     */
     //*******To Test Image*******//
     
     // Bypass Camera and go straight to the method that updates the scrollView
@@ -148,6 +148,7 @@ char results[5000]; // changed to do testing
     //[self updateScrollView:userImage_TAP];
     [self processMap];
     [analyzeScreen setEnabled:TRUE];
+    
     
 }
 

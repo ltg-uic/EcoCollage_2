@@ -197,6 +197,8 @@ UIImage* greenRoofIcon2 = nil;
         analysisViewController *analysisViewController = [segue destinationViewController];
         analysisViewController.currentImage_A = _currentImage_GR;
         analysisViewController.userImage_A = _originalImage_GR;
+        analysisViewController.groupNumber = self.groupNumber;
+        analysisViewController.IPAddress = self.IPAddress;
     }
 }
 -(void)buttonizeButtonTap:(id)sender{

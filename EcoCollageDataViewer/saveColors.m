@@ -393,6 +393,8 @@ NSString * nameOfEntry;
         analysisViewController.currentImage_A = _currentImage_SC;
         analysisViewController.userImage_A = _originalImage_SC;
         analysisViewController.clickedSegment_A = clickedSegment_SC;
+        analysisViewController.groupNumber = self.groupNumber;
+        analysisViewController.IPAddress = self.IPAddress;
     }
 }
 

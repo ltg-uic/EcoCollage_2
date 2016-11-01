@@ -196,6 +196,8 @@ UIImage* permeablePaverIcon2 = nil;
         analysisViewController.currentImage_A = _currentImage_PP;
         analysisViewController.userImage_A = _originalImage_PP;
         analysisViewController.clickedSegment_A = clickedSegment_PP;
+        analysisViewController.groupNumber = self.groupNumber;
+        analysisViewController.IPAddress = self.IPAddress;
     }
 }
 -(void)buttonizeButtonTap:(id)sender{

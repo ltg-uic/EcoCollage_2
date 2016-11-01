@@ -109,6 +109,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *LS_GC;
 @property (weak, nonatomic) IBOutlet UILabel *LB_GC;
 
+@property NSString * groupNumber;
+@property NSString * IPAddress;
+
 
 
 @end

@@ -52,6 +52,9 @@
 -(void) updateBrightAndDark;
 - ( void) updateFirstTwoSamples;
 
+@property NSString * groupNumber;
+@property NSString * IPAddress;
+
 @end
 
 /*

@@ -358,6 +358,9 @@ NSArray* trialNumbers;
         swale.currentImage_S = plainImage2;
         swale.originalImage_S = _userImage_A;
         swale.seguedFromTileDetection = true;
+        swale.groupNumber = self.groupNumber;
+        swale.IPAddress = self.IPAddress;
+        
         
         PermeablePaver * permeablepaver = navController.viewControllers[1];
         permeablepaver.clickedSegment_PP = clickedSegment_A;
@@ -365,18 +368,27 @@ NSArray* trialNumbers;
         permeablepaver.originalImage_PP = _userImage_A;
         permeablepaver.seguedFromTileDetection = true;
         permeablepaver.title = @"Permeable Paver";
+        permeablepaver.groupNumber = self.groupNumber;
+        permeablepaver.IPAddress = self.IPAddress;
+        
         
         GreenRoof *greenRoof = navController.viewControllers[2];
         greenRoof.clickedSegment_GR = clickedSegment_A;
         greenRoof.currentImage_GR  = plainImage2;
         greenRoof.originalImage_GR  = _userImage_A;
         greenRoof.seguedFromTileDetection = true;
+        greenRoof.groupNumber = self.groupNumber;
+        greenRoof.IPAddress = self.IPAddress;
+        
         
         RainBarrel *rainBarrel = navController.viewControllers[3];
         rainBarrel.clickedSegment_RB = clickedSegment_A;
         rainBarrel.currentImage_RB = plainImage2;
         rainBarrel.originalImage_RB = _userImage_A;
         rainBarrel.seguedFromTileDetection = true;
+        rainBarrel.groupNumber = self.groupNumber;
+        rainBarrel.IPAddress = self.IPAddress;
+        
         
         GreenCorners * greenCorners =navController.viewControllers[4];
         greenCorners.title = @"Green Corners";
@@ -384,6 +396,8 @@ NSArray* trialNumbers;
         greenCorners.originalImage = _userImage_A;
         greenCorners.processedImage = plainImage2;
         greenCorners.seguedFromTileDetection = true;
+        greenCorners.groupNumber = self.groupNumber;
+        greenCorners.IPAddress = self.IPAddress;
         
         saveColors *saveColors = navController.viewControllers[5];
         saveColors.clickedSegment_SC = clickedSegment_A;
@@ -391,6 +405,9 @@ NSArray* trialNumbers;
         saveColors.originalImage_SC = _userImage_A;
         saveColors.currentImage_SC = plainImage2;
         saveColors.title = @"Save Profile";
+        saveColors.groupNumber = self.groupNumber;
+        saveColors.IPAddress = self.IPAddress;
+        
         
      }
     
@@ -548,14 +565,14 @@ NSArray* trialNumbers;
 #pragma -mark Sending Data
 - (IBAction)send:(id)sender {
     // Make sure IP address is able to connect and get the NSArray of the trial numbers of that Group Number / Study ID
-    //[self getTrialNumbers];
+    [self getTrialNumbers];
     
-    /*
+    
     if(!trialNumbers){ //unaable to send
         [self failedToSend];
         return;
     }
-     */
+    
     
     NSString* suggestedTrailNumber = @"";
     if( [[trialNumbers objectAtIndex:0]isEqualToString:@""]){ // This is the first trial of this Group Number /  Study ID
@@ -614,6 +631,8 @@ NSArray* trialNumbers;
 }
 
 -(void)sendData{
+    
+    
     NSLog(@"%@",IPAddress);
     NSURL *server;
     server = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",@"http://" ,IPAddress]];

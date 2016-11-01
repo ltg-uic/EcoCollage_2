@@ -3682,14 +3682,6 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" id="wd6-cH-bTD">
-                                        <rect key="frame" x="391" y="299" width="604" height="55"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <string key="text">This picture worked because all corners were in view, there were no interfering green or blue objects near the map, and the lighting was constant across the map.</string>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                    </textView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Good_Example.jpg" highlighted="YES" id="WF5-Qv-hDq">
                                         <rect key="frame" x="720" y="43" width="275" height="203"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -3731,6 +3723,14 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                         <rect key="frame" x="21" y="40" width="275" height="203"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" id="wd6-cH-bTD">
+                                        <rect key="frame" x="391" y="299" width="604" height="55"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <string key="text">This picture worked because all corners were in view, there were no interfering green or blue objects near the map, and the lighting was constant across the map.</string>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
@@ -3821,10 +3821,10 @@ When you are satisfied with the tile detection, tap on save profile below </stri
         <image name="swale.png" width="143" height="135"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="fpZ-1m-XTp"/>
         <segue reference="gqw-UL-N5G"/>
-        <segue reference="zDU-Ki-IIV"/>
-        <segue reference="VdV-ZD-d98"/>
+        <segue reference="L4u-Dd-7Ge"/>
         <segue reference="C9h-ji-KJF"/>
+        <segue reference="VdV-ZD-d98"/>
+        <segue reference="fpZ-1m-XTp"/>
     </inferredMetricsTieBreakers>
 </document>

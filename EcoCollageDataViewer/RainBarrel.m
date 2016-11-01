@@ -214,6 +214,8 @@ UIImage* rainBarrelIcon2 = nil;
         analysisViewController.currentImage_A = _currentImage_RB;
         analysisViewController.userImage_A = _originalImage_RB;
         analysisViewController.clickedSegment_A = clickedSegment_RB;
+        analysisViewController.groupNumber = self.groupNumber;
+        analysisViewController.IPAddress = self.IPAddress;
     }
 }
 -(void)buttonizeButtonTap:(id)sender{

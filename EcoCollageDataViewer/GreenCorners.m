@@ -184,6 +184,8 @@ savedLocations* savedLocationsFromFile_GC;
         analysisViewController.currentImage_A = _processedImage;
         analysisViewController.userImage_A = originalImage;
         analysisViewController.clickedSegment_A = clickedSegment_GC;
+        analysisViewController.groupNumber = self.groupNumber;
+        analysisViewController.IPAddress = self.IPAddress;
     }
 }
 -(void)buttonizeButtonTap:(id)sender{

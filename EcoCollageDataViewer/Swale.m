@@ -219,6 +219,8 @@ UIImage* swaleIcon2 = nil;
         analysisViewController.currentImage_A = _currentImage_S;
         analysisViewController.userImage_A = _originalImage_S;
         analysisViewController.clickedSegment_A = clickedSegment_S;
+        analysisViewController.groupNumber = self.groupNumber;
+        analysisViewController.IPAddress = self.IPAddress;
     }
 }
 -(void)buttonizeButtonTap:(id)sender{
