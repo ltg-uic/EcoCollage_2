@@ -60,6 +60,7 @@ bool firstTime = true;
     
     trialNum = 0;
     
+    /*
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     
     
@@ -110,6 +111,61 @@ bool firstTime = true;
                                      target:self selector:@selector(pingPeers) userInfo:nil repeats:YES];
     
     
+     */
+
+}
+
+- (void) viewDidAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+    
+    
+    
+    // Register for notifications
+    [defaultCenter addObserver:self
+                      selector:@selector(setupGKSession)
+                          name:UIApplicationWillEnterForegroundNotification
+                        object:nil];
+    
+    
+    [defaultCenter addObserver:self
+                      selector:@selector(teardownGKSession)
+                          name:UIApplicationDidEnterBackgroundNotification
+                        object:nil];
+    
+    [self setupGKSession];
+    
+    profiles = [[NSMutableArray alloc]init];
+    dataFromMacMini = [[NSMutableArray alloc]init];
+    trialRuns = [[NSMutableArray alloc]init];
+    trialRunsNormalized = [[NSMutableArray alloc]init];
+    favorites = [[NSMutableArray alloc]init];
+    leastFavorites = [[NSMutableArray alloc]init];
+    
+    self.studyNumberLabel.text = [NSString stringWithFormat:@"Study Number: %d", _studyNum];
+    self.trialNumberLabel.text = [NSString stringWithFormat:@"Next Trial Number: %d", trialNum];
+    
+    // setup core bluetooth connection to mac mini
+    self.data = [[NSMutableData alloc]init];
+    //self.myCentralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
+    
+    _BudgetSlider.minimumValue = 0;
+    _BudgetSlider.maximumValue = maxBudget;
+    _BudgetSlider.continuous = YES;
+    currentBudget = 150000;
+    
+    [_BudgetSlider addTarget:self action:@selector(budgetChanged) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
+    
+    budgetLabel = [[UILabel alloc]init];
+    [self drawBudgetLabels];
+    
+    NSDictionary *pingDict = [NSDictionary dictionaryWithObject:@"ping" forKey:@"ping"];
+    ping = [NSKeyedArchiver archivedDataWithRootObject:pingDict];
+    
+    
+    [NSTimer scheduledTimerWithTimeInterval:20.0f
+                                     target:self selector:@selector(pingPeers) userInfo:nil repeats:YES];
 
 }
 

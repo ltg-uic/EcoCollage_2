@@ -9,7 +9,7 @@
 #import "takeAPictureViewController.h"
 #import "ViewController.h"
 #import "analysisViewController.h" 
-#import "loginViewController.h"
+#import "MommaBirdViewController.h"
 #import "CVWrapper.h"
 
 @interface takeAPictureViewController ()
@@ -54,6 +54,7 @@ char results[5000]; // changed to do testing
 }
 
 - (void) viewDidAppear:(BOOL)animated{
+
     if( currentImage_TAP != nil){
         [self updateScrollView:currentImage_TAP];
         [analyzeScreen setEnabled:TRUE];
@@ -91,17 +92,15 @@ char results[5000]; // changed to do testing
         analysisViewController.userImage_A = userImage_TAP;
          
     }
-    /*
+    
     if ([[segue identifier] isEqualToString:@"toMommaBird"])
     {
-        currentImage_TAP = warpedGlobal;
-        loginViewController * login = [segue destinationViewController];
-        login.grpNumber = self.groupNumber;
-        login.IPAddress = self.IPAddress;
-        login.currentImage_L = currentImage_TAP;
-        login.originalImage_L = userImage_TAP;
+        //currentImage_TAP = warpedGlobal;
+        MommaBirdViewController * mommaBird = [segue destinationViewController];
+        mommaBird.studyNum = self.groupNumber.integerValue;
+        mommaBird.url = [NSString stringWithFormat:@"http://%@", self.IPAddress];
     }
-     */
+    
     
     if ([[segue identifier] isEqualToString:@"toTips"])
     {
@@ -133,22 +132,22 @@ char results[5000]; // changed to do testing
 
 - (IBAction)takePhoto:(id)sender {
     //******To Camera App********//
-    /*
+    
     picker.delegate = self;
     picker.allowsEditing = NO;
     picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     [self presentViewController:picker animated:YES completion:NULL];
-     */
+     
     //*******To Test Image*******//
     
     // Bypass Camera and go straight to the method that updates the scrollView
-    
+    /*
     userImage_TAP = [UIImage imageNamed:@"IMG_0030.jpg"];
     [CVWrapper setCurrentImage:userImage_TAP];
     //[self updateScrollView:userImage_TAP];
     [self processMap];
     [analyzeScreen setEnabled:TRUE];
-    
+    */
     
 }
 
@@ -177,7 +176,7 @@ char results[5000]; // changed to do testing
         [self processMap];
         [analyzeScreen setEnabled:TRUE];
     }
-    
+    currentImage_TAP = warpedGlobal;
     [picker dismissViewControllerAnimated:YES completion:NULL];
 }
 
