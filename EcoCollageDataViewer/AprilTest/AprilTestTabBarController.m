@@ -946,13 +946,14 @@ NSMutableDictionary         *scoreColors;
     
     NSMutableArray *newSlices = [[NSMutableArray alloc]init];
     for (int i = 0; i < 8; i++) {
-        [newSlices addObject:[NSNumber numberWithInt:1]];
+        [newSlices addObject:[NSNumber numberWithInt:i]];
     }
     
-    for (int j = 0; j < 8; j++) {
-        int indexS = (int)[profile indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
-        [newSlices replaceObjectAtIndex:j withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:indexS]]];
-    }
+//    for (int j = 0; j < 8; j++) {
+//        int indexS = (int)[profile indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
+//        NSLog(@"%d", indexS);
+//        [newSlices replaceObjectAtIndex:j withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:indexS]]];
+//    }
     
     _pieIndex = [_slices count];
     [_slices addObject:newSlices];
@@ -986,10 +987,10 @@ NSMutableDictionary         *scoreColors;
     XYPieChart *pie1 = [_pieCharts objectAtIndex:index];
     XYPieChart *pie2 = [_pieChartsForScoreBarView objectAtIndex:index];
     
-    for (int j = 0; j < 8; j++) {
-        int indexS = (int)[profile indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
-        [[_slices objectAtIndex:index] replaceObjectAtIndex:j withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:indexS]]];
-    }
+//    for (int j = 0; j < 8; j++) {
+//        int indexS = (int)[profile indexOfObject:[slicesInfo objectAtIndex:j]] - 2;
+//        [[_slices objectAtIndex:index] replaceObjectAtIndex:j withObject:[sliceNumbers objectForKey:[NSNumber numberWithInt:indexS]]];
+//    }
     
     _pieIndex = index;
     
