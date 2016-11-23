@@ -8,7 +8,7 @@
 
 #import "MommaBirdViewController.h"
 #import "AprilTestSimRun.h"
-#import "takeAPictureViewController.h"
+#import "TakeAPictureViewController.h"
 #import "AprilTestNormalizedVariable.h"
 #import "BabyBirdProfile.h"
 #import <Foundation/Foundation.h>
@@ -32,10 +32,11 @@
 @synthesize budgetNumber = _budgetNumber;
 @synthesize floodThresholdValue = _floodThresholdValue;
 @synthesize floodThresholdButton = _floodThresholdButton;
+@synthesize profiles = _profiles;
 
 
 static NSTimeInterval const kConnectionTimeout = 30.0;
-NSMutableArray *profiles;
+
 NSMutableArray * trialRuns;             // array of strings, not yet analyzed as trial data, to be passed to babies
 NSMutableArray * trialRunsNormalized;   // same as above, but this contains normalized raw data
 NSMutableArray *dataFromMacMini;
@@ -60,7 +61,7 @@ bool firstTime = true;
     
     trialNum = 0;
     
-    /*
+    
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     
     
@@ -79,7 +80,7 @@ bool firstTime = true;
     
     [self setupGKSession];
     
-    profiles = [[NSMutableArray alloc]init];
+    _profiles = [[NSMutableArray alloc]init];
     dataFromMacMini = [[NSMutableArray alloc]init];
     trialRuns = [[NSMutableArray alloc]init];
     trialRunsNormalized = [[NSMutableArray alloc]init];
@@ -111,61 +112,16 @@ bool firstTime = true;
                                      target:self selector:@selector(pingPeers) userInfo:nil repeats:YES];
     
     
-     */
+     
 
 }
 
 - (void) viewDidAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    NSLog(@"Session check: %@", _session);
+    NSLog(@"%@", _profiles);
+    [self updateTextView];
     
-    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
-    
-    
-    
-    // Register for notifications
-    [defaultCenter addObserver:self
-                      selector:@selector(setupGKSession)
-                          name:UIApplicationWillEnterForegroundNotification
-                        object:nil];
-    
-    
-    [defaultCenter addObserver:self
-                      selector:@selector(teardownGKSession)
-                          name:UIApplicationDidEnterBackgroundNotification
-                        object:nil];
-    
-    [self setupGKSession];
-    
-    profiles = [[NSMutableArray alloc]init];
-    dataFromMacMini = [[NSMutableArray alloc]init];
-    trialRuns = [[NSMutableArray alloc]init];
-    trialRunsNormalized = [[NSMutableArray alloc]init];
-    favorites = [[NSMutableArray alloc]init];
-    leastFavorites = [[NSMutableArray alloc]init];
-    
-    self.studyNumberLabel.text = [NSString stringWithFormat:@"Study Number: %d", _studyNum];
-    self.trialNumberLabel.text = [NSString stringWithFormat:@"Next Trial Number: %d", trialNum];
-    
-    // setup core bluetooth connection to mac mini
-    self.data = [[NSMutableData alloc]init];
-    //self.myCentralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
-    
-    _BudgetSlider.minimumValue = 0;
-    _BudgetSlider.maximumValue = maxBudget;
-    _BudgetSlider.continuous = YES;
-    currentBudget = 150000;
-    
-    [_BudgetSlider addTarget:self action:@selector(budgetChanged) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
-    
-    budgetLabel = [[UILabel alloc]init];
-    [self drawBudgetLabels];
-    
-    NSDictionary *pingDict = [NSDictionary dictionaryWithObject:@"ping" forKey:@"ping"];
-    ping = [NSKeyedArchiver archivedDataWithRootObject:pingDict];
-    
-    
-    [NSTimer scheduledTimerWithTimeInterval:20.0f
-                                     target:self selector:@selector(pingPeers) userInfo:nil repeats:YES];
 
 }
 
@@ -178,7 +134,9 @@ bool firstTime = true;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    
+    [self reconnectWithBabies];
+    NSLog(@"Session check: %@", _session);
+    NSLog(@"%@", _profiles);
     [super viewWillDisappear:animated];
 }
 
@@ -187,10 +145,11 @@ bool firstTime = true;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:@"toEcoVision"] || [[segue identifier] isEqualToString:@"toTips"])
     {
-        takeAPictureViewController *takeAPictureViewController = [segue destinationViewController];
+        TakeAPictureViewController *takeAPictureViewController = [segue destinationViewController];
         //takeAPictureViewController.warpedGlobal = currentImage_A;
         takeAPictureViewController.groupNumber= [NSString stringWithFormat:@"%i",_studyNum];
         takeAPictureViewController.IPAddress = _IPAddress;
+        takeAPictureViewController.profiles = _profiles;
     }
 }
 
@@ -267,7 +226,7 @@ bool firstTime = true;
             
             [self sendBudgetToSpecificBaby:peerID];
             // when a baby is connected, send it all of the profiles loaded
-            if ([profiles count] != 0) {
+            if ([_profiles count] != 0) {
                 [self sendAllProfilesToNewBaby:peerID];
             }
             
@@ -568,10 +527,10 @@ bool firstTime = true;
 
 - (void)removeProfile:(NSArray *)dataArray {
     // check if profile sent from baby is an update on an already existing one and if so update it
-    for (int i = 0; i < profiles.count; i++) {
+    for (int i = 0; i < _profiles.count; i++) {
         // if device names match, change username
-        if([profiles[i][1] isEqualToString:dataArray[1]]) {
-            [profiles removeObjectAtIndex:i];
+        if([_profiles[i][1] isEqualToString:dataArray[1]]) {
+            [_profiles removeObjectAtIndex:i];
         }
     }
     
@@ -581,10 +540,10 @@ bool firstTime = true;
 
 - (void)handleUsernameUpdates:(NSArray *)dataArray {
     // check if profile sent from baby is an update on an already existing one and if so update it
-    for (int i = 0; i < profiles.count; i++) {
+    for (int i = 0; i < _profiles.count; i++) {
         // if device names match, change username
-        if([profiles[i][1] isEqualToString:dataArray[1]]) {
-            profiles[i][2] = dataArray[2];
+        if([_profiles[i][1] isEqualToString:dataArray[1]]) {
+            _profiles[i][2] = dataArray[2];
         }
     }
     
@@ -628,13 +587,13 @@ bool firstTime = true;
 */
 // when a new baby is connected, that baby receives all the user profiles to get it up to date
 - (void) sendAllProfilesToNewBaby:(NSString *)peerID {
-    if (profiles == nil) {
+    if (_profiles == nil) {
         return;
     }
     NSMutableArray *profilesForNewBaby = [[NSMutableArray alloc]init];
     [profilesForNewBaby addObject:@"allProfilesToNewBaby"];
     
-    for (NSArray *individualProfile in profiles) {
+    for (NSArray *individualProfile in _profiles) {
         [profilesForNewBaby addObject:individualProfile];
     }
     
@@ -660,16 +619,16 @@ bool firstTime = true;
     BOOL didChange = 0;
     
     // check if profile sent from baby is an update on an already existing one and if so update it
-    for (int i = 0; i < profiles.count; i++) {
-        if([profiles[i][1] isEqualToString:dataArray[1]]) {
-            if (![profiles[i] isEqual:dataArray ]) didChange = 1;
-            profiles[i] = dataArray;
+    for (int i = 0; i < _profiles.count; i++) {
+        if([_profiles[i][1] isEqualToString:dataArray[1]]) {
+            if (![_profiles[i] isEqual:dataArray ]) didChange = 1;
+            _profiles[i] = dataArray;
             oldProfile = 1;
         }
     }
     // otherwise, the profile is new and should be added to the mutableArray 'profiles'
     if (!oldProfile) {
-        [profiles addObject:dataArray];
+        [_profiles addObject:dataArray];
         didChange = 1;
     }
     
@@ -687,7 +646,7 @@ bool firstTime = true;
     
     
     // loop through all the user profiles stored in mutableArray 'profiles'
-    for (NSArray *profile in profiles) {
+    for (NSArray *profile in _profiles) {
         NSMutableArray *tempProfile = [[NSMutableArray alloc]init];
         for (int i = 1; i < profile.count; i++) {
             [tempProfile addObject:[profile objectAtIndex:i]];
@@ -1196,5 +1155,10 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     [_session setAvailable:YES];
 }
 
+- (IBAction)reconnectWithBabies {
+    [_session disconnectFromAllPeers];
+    [_session setAvailable:NO];
+    [_session setAvailable:YES];
+}
 
 @end

@@ -82,7 +82,7 @@ UIImage* permeablePaverIcon2 = nil;
     PermeablePaverSamples = [NSMutableArray array];
     sampleImages_PP = [NSMutableArray array];
     
-    [self changeColorSetToIndex:clickedSegment_PP]; // changes the 6 vals
+    [self changeColorSetToIndex:(int)clickedSegment_PP]; // changes the 6 vals
     [self updateBrightAndDark]; // gets lightest and darkest
     
     [sampleImages_PP addObject:sample1];
@@ -250,7 +250,7 @@ UIImage* permeablePaverIcon2 = nil;
         
         
         permeablePaverCoordinatesCalibrated = [CVWrapper getPermeablePaverCoordinates];
-        NSLog(@"There are %i permeable pavers detected" , permeablePaverCoordinatesCalibrated.count);
+        NSLog(@"There are %lu permeable pavers detected" , (unsigned long)permeablePaverCoordinatesCalibrated.count);
         [self drawIconsInArray:permeablePaverCoordinatesCalibrated image:permeablePaverIcon2];
         
         UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
@@ -367,7 +367,7 @@ UIImage* permeablePaverIcon2 = nil;
         if( [color isEqual:view.backgroundColor]){
             [PermeablePaverSamples removeObject:color];
             printf("Removed a color\n");
-            printf("Permeable Pavers has %i things", PermeablePaverSamples.count);
+            printf("Permeable Pavers has %lu things", (unsigned long)PermeablePaverSamples.count);
             removed = true;
             break;
         }
@@ -400,7 +400,7 @@ UIImage* permeablePaverIcon2 = nil;
 }
 
 - (void) showSamples{
-    NSLog(@"In ShowSamples: Samples has %i",PermeablePaverSamples.count );
+    NSLog(@"In ShowSamples: Samples has %lu",(unsigned long)PermeablePaverSamples.count );
     for( UIColor * color in PermeablePaverSamples){
         for (UIImageView * view in sampleImages_PP) {
             if( [view.backgroundColor isEqual:UIColor.whiteColor]){
@@ -521,7 +521,7 @@ UIImage* permeablePaverIcon2 = nil;
     int i;
     for(i = 0; i < 30; i++) {
         // loss of precision is fine since all numbers stored in arr will have only zeroes after the decimal
-        hsvValues[i] = [[arr objectAtIndex:i]integerValue];
+        hsvValues[i] = (int)[[arr objectAtIndex:i] integerValue];
     }
     
     [CVWrapper setHSV_Values:hsvValues];
@@ -612,14 +612,14 @@ UIImage* permeablePaverIcon2 = nil;
     // Icon == CaseNum
     NSMutableArray * newSetting  = [savedLocationsFromFile_PP getHSVForSavedLocationAtIndex:index Icon:3];
     
-    lowHue_PP = [[newSetting objectAtIndex:0] integerValue];
-    highHue_PP = [[newSetting objectAtIndex:1] integerValue];
+    lowHue_PP = (int)[[newSetting objectAtIndex:0] integerValue];
+    highHue_PP = (int)[[newSetting objectAtIndex:1] integerValue];
     
-    lowSaturation_PP = [[newSetting objectAtIndex:2] integerValue];
-    highSaturation_PP = [[newSetting objectAtIndex:3] integerValue];
+    lowSaturation_PP = (int)[[newSetting objectAtIndex:2] integerValue];
+    highSaturation_PP = (int)[[newSetting objectAtIndex:3] integerValue];
     
-    lowVal_PP = [[newSetting objectAtIndex:4] integerValue];
-    highVal_PP = [[newSetting objectAtIndex:5] integerValue];
+    lowVal_PP = (int)[[newSetting objectAtIndex:4] integerValue];
+    highVal_PP = (int)[[newSetting objectAtIndex:5] integerValue];
     
     [self changeHSVVals];
     

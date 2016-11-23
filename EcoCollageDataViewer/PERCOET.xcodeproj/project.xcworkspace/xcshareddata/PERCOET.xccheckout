@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>C635A85C-1145-47A8-BA6A-9E6933D5E477</string>
+	<key>IDESourceControlProjectName</key>
+	<string>PERCOET</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>3013647EA56EF95AC77FBA19ADBC848B578B1E51</key>
+		<string>https://github.com/ltg-uic/EcoCollage_2.git</string>
+		<key>3DADE73986301CE36CC71E21F54CDCC59A4FD0FA</key>
+		<string>https://github.com/auza2/EcoVision_2.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>EcoCollageDataViewer/PERCOET.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3013647EA56EF95AC77FBA19ADBC848B578B1E51</key>
+		<string>../../..</string>
+		<key>3DADE73986301CE36CC71E21F54CDCC59A4FD0FA</key>
+		<string>../../../../EcoVision_2</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/ltg-uic/EcoCollage_2.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>3013647EA56EF95AC77FBA19ADBC848B578B1E51</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3013647EA56EF95AC77FBA19ADBC848B578B1E51</string>
+			<key>IDESourceControlWCCName</key>
+			<string>EcoCollage_2</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3DADE73986301CE36CC71E21F54CDCC59A4FD0FA</string>
+			<key>IDESourceControlWCCName</key>
+			<string>EcoVision_2</string>
+		</dict>
+	</array>
+</dict>
+</plist>

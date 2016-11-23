@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface takeAPictureViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIScrollViewDelegate>
+@interface TakeAPictureViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, weak) IBOutlet UIImageView* imageView; // why
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -16,6 +16,8 @@
 @property (nonatomic,strong) UIImage * currentImage_TAP;
 @property (nonatomic,strong) UIImage * warpedGlobal;
 @property (nonatomic,strong) UIImage * userImage_TAP;
+
+@property NSMutableArray *profiles;
 
 
 @property NSString * groupNumber;

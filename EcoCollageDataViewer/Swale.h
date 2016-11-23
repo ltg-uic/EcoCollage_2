@@ -33,9 +33,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *dropDown;
 //@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
-- (IBAction)removeAll:(id)sender;
-- ( IBAction) dropDownButton:(id)sender;
-- (IBAction)backButton:(id)sender;
 
 @property (nonatomic,strong) NSMutableArray *SwaleSamples;
 @property (nonatomic,strong) NSString *savedColorPalette_S;
@@ -44,13 +41,16 @@
 @property long int clickedSegment_S;
 @property Boolean seguedFromTileDetection;
 
+- (IBAction)removeAll:(id)sender;
+- ( IBAction) dropDownButton:(id)sender;
+- (IBAction)backButton:(id)sender;
 - (void) handleSingleTapFrom: (UITapGestureRecognizer *)recognizer;
 - (NSString*) getColorPaletteLabel;
 - (NSMutableArray*) getHighLowVals;
 - (void) changeFromFile;
 - (void) changeColorSetToIndex: (int)index;
 -(void) updateBrightAndDark;
-- ( void) updateFirstTwoSamples;
+//- ( void) updateFirstTwoSamples;
 
 @property NSString * groupNumber;
 @property NSString * IPAddress;

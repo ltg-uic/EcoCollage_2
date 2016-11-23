@@ -6,20 +6,21 @@
 //  Copyright © 2016 Jamie Auza. All rights reserved.
 //
 
-#import "takeAPictureViewController.h"
+#import "TakeAPictureViewController.h"
 #import "ViewController.h"
 #import "analysisViewController.h" 
 #import "MommaBirdViewController.h"
 #import "CVWrapper.h"
 
-@interface takeAPictureViewController ()
+@interface TakeAPictureViewController ()
 
 @end
 
-@implementation takeAPictureViewController
+@implementation TakeAPictureViewController
 @synthesize scrollView;
 @synthesize currentImage_TAP;
 @synthesize analyzeScreen;
+@synthesize profiles = _profiles;
 
 UIImage *threshedGlobal = nil;
 @synthesize userImage_TAP;
@@ -99,6 +100,7 @@ char results[5000]; // changed to do testing
         MommaBirdViewController * mommaBird = [segue destinationViewController];
         mommaBird.studyNum = self.groupNumber.integerValue;
         mommaBird.url = [NSString stringWithFormat:@"http://%@", self.IPAddress];
+        mommaBird.profiles =_profiles;
     }
     
     
@@ -123,6 +125,8 @@ char results[5000]; // changed to do testing
 
 - (IBAction)toMommaBird:(id)sender {
     [self performSegueWithIdentifier:@"toMommaBird" sender:sender];
+    
+    
 }
 
 - (IBAction)toTips:(id)sender {

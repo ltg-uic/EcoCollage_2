@@ -1126,10 +1126,9 @@ float maxPublicInstallNorm;
         if (setBudget == 0){ setBudget = .01; }
         
         //public cost
-        someTrialNorm.normalizedPublicInstallCost     = ((float)someTrial.landscapeCostTotalInstall/(setBudget));
+        someTrialNorm.normalizedLandscapeCostInstallPlusMaintenance = ((float)someTrial.landscapeCostInstallPlusMaintenance/(setBudget));
         
-        //NSLog(@"%f", someTrialNorm.publicInstallCost);
-        someTrialNorm.normalizedPublicMaintenanceCost = ((float)someTrial.landscapeCostTotalMaintenance/(setBudget));
+
     }
     
 }
@@ -1294,8 +1293,7 @@ float maxPublicInstallNorm;
         AprilTestNormalizedVariable *someTrialNorm = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialStatic"];
         AprilTestNormalizedVariable *someTrialDyn  = [[trialRunSubViews objectAtIndex:i] valueForKey:@"TrialDynamic"];
         
-        someTrialDyn.normalizedPublicInstallCost     = (float)someTrial.landscapeCostTotalInstall/installationCost->highestCost;
-        someTrialDyn.normalizedPublicMaintenanceCost = (float)someTrial.landscapeCostTotalMaintenance/maintenanceCost->highestCost;
+        someTrialDyn.normalizedLandscapeCostInstallPlusMaintenance     = (float)someTrial.landscapeCostInstallPlusMaintenance/installationCost->highestCost;
         someTrialDyn.normalizedLandscapeCostPrivatePropertyDamages        = (float)someTrial.landscapeCostPrivatePropertyDamage/privateDamages->highestCost;
         
         if (impactNeighbors->highestCost == impactNeighbors->lowestCost){ someTrialDyn.normalizedLandscapeCumulativeOutflow = .5; }
@@ -1458,7 +1456,7 @@ float maxPublicInstallNorm;
         AprilTestSimRun *simRun = (trial < trialRunSubViews.count) ? ([[trialRunSubViews objectAtIndex:trial] valueForKey:@"TrialRun"])  : ([tabControl.trialRuns objectAtIndex:trial]);
         
         if([currentVar.name compare: @"installCost"] == NSOrderedSame){
-            float investmentInstallN = simRunNormal.normalizedPublicInstallCost;
+            float investmentInstallN = simRunNormal.normalizedLandscapeCostInstallPlusMaintenance;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             
             scoreTotal += ((currentVar.currentConcernRanking)/priorityTotal * (1 - investmentInstallN));
@@ -1958,7 +1956,7 @@ float maxPublicInstallNorm;
         if([currentVar.name compare: @"installCost"] == NSOrderedSame){
             float investmentInstall = simRun.landscapeCostTotalInstall;
             float investmentMaintain = simRun.landscapeCostTotalMaintenance;
-            float investmentInstallN = simRunNormal.normalizedPublicInstallCost;
+            float investmentInstallN = simRunNormal.normalizedLandscapeCostInstallPlusMaintenance;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             CGRect frame = CGRectMake(width + 25, trial*175 + 40, dynamic_cd_width, 30);
             

@@ -15,6 +15,7 @@
 @property (nonatomic,strong) UIImage * warpedGlobal;
 @property NSString * groupNumber;
 @property NSString *IPAddress;
+@property NSMutableArray *profiles;
 
 - (IBAction)toTAP:(id)sender;
 

@@ -22,7 +22,7 @@
 @property(nonatomic, strong) NSMutableArray *currentConcernRanking;
 @property (strong, nonatomic) IBOutlet UITextView *descriptionView;
 @property (strong, nonatomic) IBOutlet UITextField *usernameText;
-- (IBAction)profileSharingSwitch:(UISwitch *)sender;
+//- (IBAction)profileSharingSwitch:(UISwitch *)sender;
 @property (strong, nonatomic) IBOutlet UISwitch *profileIsLocked;
 
 

@@ -32,19 +32,19 @@
 		57A31DC21B6960AC007F6CDC /* least_favorite_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A31DBE1B6960AC007F6CDC /* least_favorite_active.png */; };
 		57A31DC31B6960AC007F6CDC /* least_favorite_inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A31DBF1B6960AC007F6CDC /* least_favorite_inactive.png */; };
 		57A31DC61B696615007F6CDC /* LeastFavoriteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A31DC51B696615007F6CDC /* LeastFavoriteView.m */; };
+		57C673921DE4E29600D93AF8 /* dropDownTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 57C673911DE4E29600D93AF8 /* dropDownTest.m */; };
+		57C673951DE4E2B200D93AF8 /* loginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 57C673941DE4E2B100D93AF8 /* loginViewController.m */; };
 		57EEF5541B1E452200BECE7F /* SocialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 57EEF5531B1E452200BECE7F /* SocialViewController.m */; };
 		57FF57071B6AB03200543C93 /* favorite_active_large.png in Resources */ = {isa = PBXBuildFile; fileRef = 57FF57031B6AB03200543C93 /* favorite_active_large.png */; };
 		57FF57081B6AB03200543C93 /* favorite_inactive_large.png in Resources */ = {isa = PBXBuildFile; fileRef = 57FF57041B6AB03200543C93 /* favorite_inactive_large.png */; };
 		57FF57091B6AB03200543C93 /* least_favorite_active_large.png in Resources */ = {isa = PBXBuildFile; fileRef = 57FF57051B6AB03200543C93 /* least_favorite_active_large.png */; };
 		57FF570A1B6AB03200543C93 /* least_favorite_inactive_large.png in Resources */ = {isa = PBXBuildFile; fileRef = 57FF57061B6AB03200543C93 /* least_favorite_inactive_large.png */; };
-		7D2548661D7677840003DC65 /* dropDownTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D2548651D7677840003DC65 /* dropDownTest.m */; };
-		7D25486A1D76786D0003DC65 /* loginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D2548681D76786D0003DC65 /* loginViewController.m */; };
 		7D2548731D76795C0003DC65 /* CVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7D25486E1D76795C0003DC65 /* CVWrapper.mm */; };
 		7D2548741D76795C0003DC65 /* stitching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D25486F1D76795C0003DC65 /* stitching.cpp */; };
 		7D2548751D76795C0003DC65 /* UIImage+OpenCV.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7D2548721D76795C0003DC65 /* UIImage+OpenCV.mm */; };
 		7D2548821D767E160003DC65 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D2548811D767E160003DC65 /* opencv2.framework */; };
 		7D2548851D767EC50003DC65 /* Coordinate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D2548841D767EC50003DC65 /* Coordinate.m */; };
-		7D25488A1D7685010003DC65 /* takeAPictureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D2548891D7685010003DC65 /* takeAPictureViewController.m */; };
+		7D25488A1D7685010003DC65 /* TakeAPictureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D2548891D7685010003DC65 /* TakeAPictureViewController.m */; };
 		7D42EBAC1D996F7E00F82B68 /* IMG_0030.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7D42EBAB1D996F7E00F82B68 /* IMG_0030.jpg */; };
 		7DA1C78C1D774A67007C4A85 /* analysisViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA1C78B1D774A67007C4A85 /* analysisViewController.m */; };
 		7DA1C78F1D774A96007C4A85 /* savedLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA1C78E1D774A96007C4A85 /* savedLocations.m */; };
@@ -167,16 +167,16 @@
 		57A31DBF1B6960AC007F6CDC /* least_favorite_inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = least_favorite_inactive.png; sourceTree = "<group>"; };
 		57A31DC41B696615007F6CDC /* LeastFavoriteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeastFavoriteView.h; sourceTree = "<group>"; };
 		57A31DC51B696615007F6CDC /* LeastFavoriteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeastFavoriteView.m; sourceTree = "<group>"; };
+		57C673901DE4E29600D93AF8 /* dropDownTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dropDownTest.h; sourceTree = "<group>"; };
+		57C673911DE4E29600D93AF8 /* dropDownTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = dropDownTest.m; sourceTree = "<group>"; };
+		57C673931DE4E2B100D93AF8 /* loginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loginViewController.h; sourceTree = "<group>"; };
+		57C673941DE4E2B100D93AF8 /* loginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = loginViewController.m; sourceTree = "<group>"; };
 		57EEF5521B1E452200BECE7F /* SocialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocialViewController.h; sourceTree = "<group>"; };
 		57EEF5531B1E452200BECE7F /* SocialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SocialViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		57FF57031B6AB03200543C93 /* favorite_active_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = favorite_active_large.png; sourceTree = "<group>"; };
 		57FF57041B6AB03200543C93 /* favorite_inactive_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = favorite_inactive_large.png; sourceTree = "<group>"; };
 		57FF57051B6AB03200543C93 /* least_favorite_active_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = least_favorite_active_large.png; sourceTree = "<group>"; };
 		57FF57061B6AB03200543C93 /* least_favorite_inactive_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = least_favorite_inactive_large.png; sourceTree = "<group>"; };
-		7D2548641D7677840003DC65 /* dropDownTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dropDownTest.h; path = ../../EcoVision_2/Trial_1/dropDownTest.h; sourceTree = "<group>"; };
-		7D2548651D7677840003DC65 /* dropDownTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = dropDownTest.m; path = ../../EcoVision_2/Trial_1/dropDownTest.m; sourceTree = "<group>"; };
-		7D2548671D76786D0003DC65 /* loginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = loginViewController.h; path = ../../EcoVision_2/Trial_1/loginViewController.h; sourceTree = "<group>"; };
-		7D2548681D76786D0003DC65 /* loginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = loginViewController.m; path = ../../EcoVision_2/Trial_1/loginViewController.m; sourceTree = "<group>"; };
 		7D25486D1D76795C0003DC65 /* CVWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CVWrapper.h; path = ../../EcoVision_2/Trial_1/CVWrapper.h; sourceTree = "<group>"; };
 		7D25486E1D76795C0003DC65 /* CVWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CVWrapper.mm; path = ../../EcoVision_2/Trial_1/CVWrapper.mm; sourceTree = "<group>"; };
 		7D25486F1D76795C0003DC65 /* stitching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stitching.cpp; path = ../../EcoVision_2/Trial_1/stitching.cpp; sourceTree = "<group>"; };
@@ -186,8 +186,8 @@
 		7D2548811D767E160003DC65 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		7D2548831D767EC50003DC65 /* Coordinate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinate.h; sourceTree = "<group>"; };
 		7D2548841D767EC50003DC65 /* Coordinate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Coordinate.m; sourceTree = "<group>"; };
-		7D2548881D7685010003DC65 /* takeAPictureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = takeAPictureViewController.h; sourceTree = "<group>"; };
-		7D2548891D7685010003DC65 /* takeAPictureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = takeAPictureViewController.m; sourceTree = "<group>"; };
+		7D2548881D7685010003DC65 /* TakeAPictureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TakeAPictureViewController.h; sourceTree = "<group>"; };
+		7D2548891D7685010003DC65 /* TakeAPictureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TakeAPictureViewController.m; sourceTree = "<group>"; };
 		7D42EBAB1D996F7E00F82B68 /* IMG_0030.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = IMG_0030.jpg; sourceTree = "<group>"; };
 		7DA1C78A1D774A67007C4A85 /* analysisViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = analysisViewController.h; sourceTree = "<group>"; };
 		7DA1C78B1D774A67007C4A85 /* analysisViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = analysisViewController.m; sourceTree = "<group>"; };
@@ -330,14 +330,14 @@
 				7DA1C7951D774B1C007C4A85 /* Green Infrastructures */,
 				7DB16B051D81EBF0000DA125 /* ViewController.h */,
 				7DB16B061D81EBF0000DA125 /* ViewController.m */,
-				7D2548671D76786D0003DC65 /* loginViewController.h */,
-				7D2548681D76786D0003DC65 /* loginViewController.m */,
-				7D2548881D7685010003DC65 /* takeAPictureViewController.h */,
-				7D2548891D7685010003DC65 /* takeAPictureViewController.m */,
+				57C673931DE4E2B100D93AF8 /* loginViewController.h */,
+				57C673941DE4E2B100D93AF8 /* loginViewController.m */,
+				7D2548881D7685010003DC65 /* TakeAPictureViewController.h */,
+				7D2548891D7685010003DC65 /* TakeAPictureViewController.m */,
 				7DA1C78A1D774A67007C4A85 /* analysisViewController.h */,
 				7DA1C78B1D774A67007C4A85 /* analysisViewController.m */,
-				7D2548641D7677840003DC65 /* dropDownTest.h */,
-				7D2548651D7677840003DC65 /* dropDownTest.m */,
+				57C673901DE4E29600D93AF8 /* dropDownTest.h */,
+				57C673911DE4E29600D93AF8 /* dropDownTest.m */,
 				7D2548831D767EC50003DC65 /* Coordinate.h */,
 				7D2548841D767EC50003DC65 /* Coordinate.m */,
 				7DA1C7921D774B02007C4A85 /* HSVLocation.h */,
@@ -743,7 +743,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				7DB16B071D81EBF0000DA125 /* ViewController.m in Sources */,
+				57C673921DE4E29600D93AF8 /* dropDownTest.m in Sources */,
 				843B9CDB1AE6B70000FF2C8B /* AprilTestIntroViewController.m in Sources */,
+				57C673951DE4E2B200D93AF8 /* loginViewController.m in Sources */,
 				848479CB18F32AAA00BAD981 /* AprilTestCPBViewController.m in Sources */,
 				7D2548731D76795C0003DC65 /* CVWrapper.mm in Sources */,
 				8453FA6918F2FC8F0010D12F /* AprilTestFirstViewController.m in Sources */,
@@ -752,8 +754,6 @@
 				57A31DB71B695FA6007F6CDC /* FavoriteView.m in Sources */,
 				57A31DC61B696615007F6CDC /* LeastFavoriteView.m in Sources */,
 				7DA1C7A61D774B65007C4A85 /* saveColors.m in Sources */,
-				7D2548661D7677840003DC65 /* dropDownTest.m in Sources */,
-				7D25486A1D76786D0003DC65 /* loginViewController.m in Sources */,
 				841C0A271A1674A000ED7A2E /* XYPieChart.m in Sources */,
 				7DA1C7A71D774B65007C4A85 /* Swale.m in Sources */,
 				223EE2411BEBEE95006A7626 /* StackedBar.m in Sources */,
@@ -772,7 +772,7 @@
 				846B972D1904ABC20008BD59 /* AprilTestNormalizedVariable.m in Sources */,
 				5759D44F1B9F8120000C7B72 /* BabyBird.m in Sources */,
 				223EE2441BEBFE7B006A7626 /* StackedBarGraph.m in Sources */,
-				7D25488A1D7685010003DC65 /* takeAPictureViewController.m in Sources */,
+				7D25488A1D7685010003DC65 /* TakeAPictureViewController.m in Sources */,
 				7DA1C7A51D774B65007C4A85 /* RainBarrel.m in Sources */,
 				574737081B14E52C00D5EED8 /* MommaBirdViewController.m in Sources */,
 				7D2548741D76795C0003DC65 /* stitching.cpp in Sources */,
@@ -922,6 +922,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AprilTest/PERCOET-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(PROJECT_DIR)/**",
+				);
 				INFOPLIST_FILE = "AprilTest/PERCOET-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.uic.evl.ltg.ecocollage.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = PERCOET;
@@ -945,7 +952,15 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AprilTest/PERCOET-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(PROJECT_DIR)/**",
+				);
 				INFOPLIST_FILE = "AprilTest/PERCOET-Info.plist";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.uic.evl.ltg.ecocollage.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = PERCOET;
 				PROVISIONING_PROFILE = "";

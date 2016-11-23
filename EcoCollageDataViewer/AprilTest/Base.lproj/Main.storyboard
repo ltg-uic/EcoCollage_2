@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="q8p-ax-VWt">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14E46" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="q8p-ax-VWt">
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
     </dependencies>
     <scenes>
         <!--Concern Profile Builder-->
@@ -1051,7 +1050,7 @@
                                 <rect key="frame" x="44" y="537" width="233" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <state key="normal" title="REad from Saved HSV Files"/>
+                                <state key="normal" title="Read from Saved HSV Files"/>
                                 <connections>
                                     <action selector="readTest:" destination="a59-jY-oF8" eventType="touchUpInside" id="2KL-0h-sAR"/>
                                 </connections>
@@ -1186,7 +1185,7 @@
         <!--TakeAPicture-->
         <scene sceneID="ftp-Dw-hCZ">
             <objects>
-                <viewController title="TakeAPicture" extendedLayoutIncludesOpaqueBars="YES" modalTransitionStyle="crossDissolve" hidesBottomBarWhenPushed="YES" id="Ukp-41-Nrc" customClass="takeAPictureViewController" sceneMemberID="viewController">
+                <viewController title="TakeAPicture" extendedLayoutIncludesOpaqueBars="YES" modalTransitionStyle="crossDissolve" hidesBottomBarWhenPushed="YES" id="Ukp-41-Nrc" customClass="TakeAPictureViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Q8N-gN-QP5">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1285,7 +1284,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="CrQ-Mh-blU">
-                                <rect key="frame" x="25" y="-3" width="233" height="66.5"/>
+                                <rect key="frame" x="25" y="-3" width="233" height="67"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <attributedString key="attributedText">
                                     <fragment content="Tile Detection">
@@ -1300,7 +1299,7 @@
                                 <color key="shadowColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="0.0" colorSpace="calibratedRGB"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="delete an icon," textAlignment="natural" id="1F8-mI-P8Q">
-                                <rect key="frame" x="81" y="73" width="112" height="34.5"/>
+                                <rect key="frame" x="81" y="73" width="112" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
@@ -1385,7 +1384,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="swale.png" id="4AN-QX-D71">
-                                <rect key="frame" x="844" y="159.5" width="53" height="53.5"/>
+                                <rect key="frame" x="844" y="160" width="53" height="54"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenroof.png" id="IiR-8r-PS5">
@@ -1404,35 +1403,35 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="To " textAlignment="natural" id="LbX-38-4U0">
-                                <rect key="frame" x="60" y="73.5" width="30" height="33"/>
+                                <rect key="frame" x="60" y="74" width="30" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text=" double tap it." textAlignment="natural" id="ezE-vw-dXh">
-                                <rect key="frame" x="183" y="73.5" width="208" height="33"/>
+                                <rect key="frame" x="183" y="74" width="208" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="add an icon," textAlignment="natural" id="5dW-tb-3dK">
-                                <rect key="frame" x="81" y="102" width="112" height="34.5"/>
+                                <rect key="frame" x="81" y="102" width="112" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="To " textAlignment="natural" id="7Wg-lF-Grz">
-                                <rect key="frame" x="60" y="102.5" width="30" height="33"/>
+                                <rect key="frame" x="60" y="103" width="30" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="tap the + button next to the green infrastructure type you want to add, and tap on the location on the map." textAlignment="natural" id="oht-Zi-x0e">
-                                <rect key="frame" x="165" y="102" width="795" height="49.5"/>
+                                <rect key="frame" x="165" y="102" width="795" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -1676,11 +1675,11 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" id="8Be-3Y-2B5">
-                                <rect key="frame" x="46" y="311.5" width="336" height="73.5"/>
+                                <rect key="frame" x="46" y="312" width="336" height="74"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" staticText="YES"/>
+                                    <accessibilityTraits key="traits" none="YES" staticText="YES"/>
                                 </accessibility>
                                 <string key="text">Touch one of the swales to add its color to the tile detection palette. Try to add the lightest and darkest swale colors to the palette. If you want to remove a color from the palette, double tap it. </string>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -1708,7 +1707,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </imageView>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Color range used to detect rain barrels" textAlignment="center" id="DWT-N6-3Q2">
-                                        <rect key="frame" x="28" y="0.0" width="280" height="54.5"/>
+                                        <rect key="frame" x="28" y="0.0" width="280" height="55"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
@@ -1733,7 +1732,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 </subviews>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" staticText="YES"/>
+                                    <accessibilityTraits key="traits" none="YES" staticText="YES"/>
                                 </accessibility>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Selected Profile: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="vcw-5O-jgz">
@@ -1762,7 +1761,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Use this screen to make sure that all rain barrels on the map are being properly detected. " textAlignment="center" id="6PI-N9-o28">
-                                <rect key="frame" x="441" y="102" width="537" height="47.5"/>
+                                <rect key="frame" x="441" y="102" width="537" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
@@ -1799,6 +1798,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
             <objects>
                 <tabBarController title="Green Infrastructure" automaticallyAdjustsScrollViewInsets="NO" modalTransitionStyle="crossDissolve" id="C99-fn-xJ3" sceneMemberID="viewController">
                     <toolbarItems/>
+                    <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="LhF-yW-VZF">
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -1957,11 +1957,11 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" id="j1D-k7-71E">
-                                <rect key="frame" x="46" y="311.5" width="336" height="73.5"/>
+                                <rect key="frame" x="46" y="312" width="336" height="74"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" staticText="YES"/>
+                                    <accessibilityTraits key="traits" none="YES" staticText="YES"/>
                                 </accessibility>
                                 <string key="text">Touch one of the swales to add its color to the tile detection palette. Try to add the lightest and darkest swale colors to the palette. If you want to remove a color from the palette, double tap it. </string>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -1989,7 +1989,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </imageView>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Color range used to detect swales" textAlignment="center" id="TAK-u0-epP">
-                                        <rect key="frame" x="28" y="0.0" width="280" height="35.5"/>
+                                        <rect key="frame" x="28" y="0.0" width="280" height="36"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
@@ -2014,7 +2014,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 </subviews>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" staticText="YES"/>
+                                    <accessibilityTraits key="traits" none="YES" staticText="YES"/>
                                 </accessibility>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Selected Profile: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="t5G-3W-H6M">
@@ -2075,7 +2075,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="TopLeft" scrollEnabled="NO" indicatorStyle="black" editable="NO" textAlignment="natural" id="lqK-Rg-ljE">
-                                <rect key="frame" x="20" y="20" width="240" height="283.5"/>
+                                <rect key="frame" x="20" y="20" width="240" height="284"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <string key="text">This app uses computer vision to recognize green infrastructure tiles. If the lighting conditions change, the app might lose its ability to recognize tiles.
@@ -2106,7 +2106,7 @@ You can confirm what range of colors is being “seen” as a rain barrel by tog
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="TopLeft" scrollEnabled="NO" indicatorStyle="black" editable="NO" textAlignment="natural" id="5Vq-TN-gBE">
-                                <rect key="frame" x="20" y="20" width="240" height="283.5"/>
+                                <rect key="frame" x="20" y="20" width="240" height="284"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <string key="text">This app uses computer vision to recognize green infrastructure tiles. If the lighting conditions change, the app might lose its ability to recognize tiles.
@@ -2267,11 +2267,11 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" id="pTT-kr-Yvl">
-                                <rect key="frame" x="46" y="311.5" width="336" height="73.5"/>
+                                <rect key="frame" x="46" y="312" width="336" height="74"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" staticText="YES"/>
+                                    <accessibilityTraits key="traits" none="YES" staticText="YES"/>
                                 </accessibility>
                                 <string key="text">Touch one of the swales to add its color to the tile detection palette. Try to add the lightest and darkest swale colors to the palette. If you want to remove a color from the palette, double tap it. </string>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -2306,7 +2306,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Color range used to detect permeable pavers" textAlignment="center" id="ERd-w3-yKJ">
-                                        <rect key="frame" x="28" y="-8" width="280" height="54.5"/>
+                                        <rect key="frame" x="28" y="-8" width="280" height="55"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
@@ -2324,7 +2324,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 </subviews>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" staticText="YES"/>
+                                    <accessibilityTraits key="traits" none="YES" staticText="YES"/>
                                 </accessibility>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Selected Profile: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="o3D-Sh-XXO">
@@ -2345,7 +2345,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Use this screen to make sure that all permeable pavers on the map are being properly detected. " textAlignment="center" id="tHv-gz-rDe">
-                                <rect key="frame" x="441" y="100" width="537" height="47.5"/>
+                                <rect key="frame" x="441" y="100" width="537" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
@@ -2386,7 +2386,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="TopLeft" scrollEnabled="NO" indicatorStyle="black" editable="NO" textAlignment="natural" id="7p0-Qj-B5Z">
-                                <rect key="frame" x="20" y="20" width="240" height="283.5"/>
+                                <rect key="frame" x="20" y="20" width="240" height="284"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <string key="text">This app uses computer vision to recognize green infrastructure tiles. If the lighting conditions change, the app might lose its ability to recognize tiles.
@@ -2417,7 +2417,7 @@ You can confirm what range of colors is being “seen” as a permeable paver by
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="TopLeft" scrollEnabled="NO" indicatorStyle="black" editable="NO" textAlignment="natural" id="AlI-zt-UHB">
-                                <rect key="frame" x="20" y="20" width="240" height="283.5"/>
+                                <rect key="frame" x="20" y="20" width="240" height="284"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <string key="text">This app uses computer vision to recognize green infrastructure tiles. If the lighting conditions change, the app might lose its ability to recognize tiles.
@@ -2483,11 +2483,11 @@ You can confirm what range of colors is being “seen” as a green roof by togg
                                 </connections>
                             </button>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="gUu-3N-Nec">
-                                <rect key="frame" x="441" y="145.5" width="537" height="410"/>
+                                <rect key="frame" x="441" y="146" width="537" height="410"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </scrollView>
                             <view contentMode="scaleToFill" id="yka-dL-nks">
-                                <rect key="frame" x="46" y="379.5" width="336" height="179"/>
+                                <rect key="frame" x="46" y="380" width="336" height="179"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="Apl-L7-Kg7">
@@ -2524,7 +2524,7 @@ You can confirm what range of colors is being “seen” as a green roof by togg
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="VSd-mE-Tzb">
-                                <rect key="frame" x="137" y="570.5" width="131" height="30"/>
+                                <rect key="frame" x="137" y="571" width="131" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Remove All"/>
                                 <connections>
@@ -2534,7 +2534,7 @@ You can confirm what range of colors is being “seen” as a green roof by togg
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="center" id="QZh-9J-Uv4">
-                                <rect key="frame" x="266" y="663.5" width="471" height="47"/>
+                                <rect key="frame" x="266" y="664" width="471" height="47"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <string key="text">To calibrate the other tile types, tap on the tile type below.
@@ -2543,18 +2543,18 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" id="8S9-1k-RZU">
-                                <rect key="frame" x="46" y="311" width="336" height="73.5"/>
+                                <rect key="frame" x="46" y="311" width="336" height="74"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" staticText="YES"/>
+                                    <accessibilityTraits key="traits" none="YES" staticText="YES"/>
                                 </accessibility>
                                 <string key="text">Touch one of the swales to add its color to the tile detection palette. Try to add the lightest and darkest swale colors to the palette. If you want to remove a color from the palette, double tap it. </string>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <view contentMode="scaleToFill" id="7aw-6J-ksr">
-                                <rect key="frame" x="46" y="174.5" width="336" height="138"/>
+                                <rect key="frame" x="46" y="175" width="336" height="138"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Darkest Color" textAlignment="center" id="MRb-Nb-cGw">
@@ -2581,7 +2581,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </button>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Color range used to detect permeable pavers" textAlignment="center" id="qhS-54-1jO">
-                                        <rect key="frame" x="28" y="-8" width="280" height="54.5"/>
+                                        <rect key="frame" x="28" y="-8" width="280" height="55"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
@@ -2595,18 +2595,18 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 </subviews>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" staticText="YES"/>
+                                    <accessibilityTraits key="traits" none="YES" staticText="YES"/>
                                 </accessibility>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Selected Profile: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="XhT-vs-bf3">
-                                <rect key="frame" x="46" y="148.5" width="116" height="21"/>
+                                <rect key="frame" x="46" y="149" width="116" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="OaE-Nb-a5s">
-                                <rect key="frame" x="177" y="142.5" width="205" height="30"/>
+                                <rect key="frame" x="177" y="143" width="205" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <state key="normal" title="Button"/>
@@ -2618,7 +2618,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Use this screen to make sure that all permeable pavers on the map are being properly detected. " textAlignment="center" id="614-t4-G8A">
-                                <rect key="frame" x="441" y="99" width="537" height="47.5"/>
+                                <rect key="frame" x="441" y="99" width="537" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
@@ -2806,11 +2806,11 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" id="4ky-FZ-rGQ">
-                                <rect key="frame" x="46" y="311.5" width="336" height="73.5"/>
+                                <rect key="frame" x="46" y="312" width="336" height="74"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" staticText="YES"/>
+                                    <accessibilityTraits key="traits" none="YES" staticText="YES"/>
                                 </accessibility>
                                 <string key="text">Touch one of the swales to add its color to the tile detection palette. Try to add the lightest and darkest swale colors to the palette. If you want to remove a color from the palette, double tap it. </string>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -2838,7 +2838,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </imageView>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Color range used to detect green roofs" textAlignment="center" id="UoZ-lx-EtK">
-                                        <rect key="frame" x="28" y="0.0" width="280" height="54.5"/>
+                                        <rect key="frame" x="28" y="0.0" width="280" height="55"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
@@ -2863,7 +2863,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 </subviews>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                                 <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" staticText="YES"/>
+                                    <accessibilityTraits key="traits" none="YES" staticText="YES"/>
                                 </accessibility>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Selected Profile: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KfJ-j2-QyR">
@@ -2884,7 +2884,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Use this screen to make sure that all green roofs on the map are being properly detected. " textAlignment="center" id="3ug-BE-Mtg">
-                                <rect key="frame" x="441" y="103" width="537" height="47.5"/>
+                                <rect key="frame" x="441" y="103" width="537" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
@@ -3645,7 +3645,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Make sure the whole map is in the picture, showing the four green corner-marking squares." textAlignment="natural" id="uHd-MU-LF1">
-                                <rect key="frame" x="116" y="227" width="607" height="31.5"/>
+                                <rect key="frame" x="116" y="227" width="607" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -3778,7 +3778,7 @@ When you are satisfied with the tile detection, tap on save profile below </stri
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" id="rt4-o4-BHH">
-                                <rect key="frame" x="58" y="131" width="946" height="49.5"/>
+                                <rect key="frame" x="58" y="131" width="946" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <string key="text">You need to take a picture of the green infrastructure map to run the simulation. You will be able to take a picture on the next screen. To ensure a good quality picture:</string>
@@ -3820,6 +3820,11 @@ When you are satisfied with the tile detection, tap on save profile below </stri
         <image name="survey-1x.png" width="30" height="30"/>
         <image name="swale.png" width="143" height="135"/>
     </resources>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination"/>
+    </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="gqw-UL-N5G"/>
         <segue reference="L4u-Dd-7Ge"/>

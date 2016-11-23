@@ -10,7 +10,7 @@
 #import <GameKit/GameKit.h>
 #import "StackedBarGraph.h"
 
-@interface SocialViewController : UIViewController <UIScrollViewDelegate>
+@interface SocialViewController : UIViewController <UIScrollViewDelegate, UITextFieldDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
 @property int studyNum;
 @property (strong, nonatomic) IBOutlet UIScrollView *profilesWindow;
 @property (strong, nonatomic) IBOutlet UIScrollView *usernamesWindow;

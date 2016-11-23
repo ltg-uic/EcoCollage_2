@@ -8,10 +8,9 @@
 
 #import "Coordinate.h"
 
-@implementation Coordinate{
-    NSInteger x;
-    NSInteger y;
-}
+@implementation Coordinate
+@synthesize x;
+@synthesize y;
 
 -(id)initWithXCoord:(NSInteger)X YCoord:(NSInteger)Y{
     self = [super init];
@@ -22,8 +21,7 @@
     return self;
 }
 
-@synthesize x;
-@synthesize y;
+
 
 - (NSInteger) getX{
     return x;

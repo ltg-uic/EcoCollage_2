@@ -7,14 +7,14 @@
 //
 
 #import "ViewController.h"
-#import "takeAPictureViewController.h"
+#import "TakeAPictureViewController.h"
 
 @interface ViewController ()
 
 @end
 
 @implementation ViewController
-
+@synthesize profiles = _profiles;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -30,12 +30,13 @@
 
     if ([[segue identifier] isEqualToString:@"toTAP"])
     {
-        takeAPictureViewController *takeAPictureViewController = [segue destinationViewController];
+        TakeAPictureViewController *takeAPictureViewController = [segue destinationViewController];
         takeAPictureViewController.warpedGlobal = _currentImage_T;
         takeAPictureViewController.groupNumber= _groupNumber;
         takeAPictureViewController.IPAddress = _IPAddress;
         takeAPictureViewController.currentImage_TAP = _currentImage_T;
         takeAPictureViewController.userImage_TAP = _userImage_T;
+        takeAPictureViewController.profiles = _profiles;
     }
     
 }

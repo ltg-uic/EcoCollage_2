@@ -51,7 +51,7 @@
 - (void) changeFromFile;
 - (void) changeColorSetToIndex: (int)index;
 - (void) updateBrightAndDark;
-- (void) updateFirstTwoSamples;
+//- (void) updateFirstTwoSamples;
 
 @property NSString * groupNumber;
 @property NSString * IPAddress;

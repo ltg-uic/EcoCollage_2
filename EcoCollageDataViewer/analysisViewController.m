@@ -7,7 +7,7 @@
 //
 
 #import "analysisViewController.h"
-#import "takeAPictureViewController.h"
+#import "TakeAPictureViewController.h"
 #import "savedLocations.h"
 #import "Swale.h"
 #import "GreenRoof.h"
@@ -412,7 +412,7 @@ NSArray* trialNumbers;
      }
     
     if( [[segue identifier] isEqualToString:@"toBack"]){
-        takeAPictureViewController *takeAPictureViewController = [segue destinationViewController];
+        TakeAPictureViewController *takeAPictureViewController = [segue destinationViewController];
         takeAPictureViewController.warpedGlobal = currentImage_A;
         takeAPictureViewController.groupNumber= _groupNumber;
         takeAPictureViewController.IPAddress = IPAddress;

@@ -2923,7 +2923,7 @@ int                         heightMultiplier = 5;
         if([currentVar.name compare: @"installCost"] == NSOrderedSame){
             float investmentInstall = simRun.landscapeCostTotalInstall;
             float investmentMaintain = simRun.landscapeCostTotalMaintenance;
-            float investmentInstallN = simRunNormal.normalizedPublicInstallCost;
+            float investmentInstallN = simRunNormal.normalizedLandscapeCostInstallPlusMaintenance;
             //float investmentMaintainN = simRunNormal.publicMaintenanceCost;
             dynamic_cd_width = [self getWidthFromSlider:_BudgetSlider toValue:tabControl.budget];
             CGRect frame = CGRectMake(width + 25, 60, dynamic_cd_width, 30);

@@ -396,7 +396,7 @@ NSArray * importQuestions;
             [questionLabel setGestureRecognizers:[NSArray arrayWithObject: drag]];
             [_surveyView addSubview:questionLabel];
             [surveyItems addObject:questionLabel];
-            [self.slices addObject: [NSNumber numberWithInt:(importQuestions.count-i)]];
+            [self.slices addObject: [NSNumber numberWithInt:(int)(importQuestions.count-i)]];
             [labelNames setObject:[self.slices objectAtIndex:i] forKey:questionLabel.text];
         }
     }
@@ -497,8 +497,8 @@ NSArray * importQuestions;
     for(int i=0; i < likerts.count; i++){
         UIColor * visibleBackground = [[likerts objectAtIndex:i] backgroundColor];
         visibleBackground = [visibleBackground colorWithAlphaComponent:0.5];
-        int sliceIndex = [_sliceColors indexOfObject: visibleBackground ];
-        [_slices replaceObjectAtIndex:sliceIndex withObject:[NSNumber numberWithInt:(importQuestions.count-i)]];
+        int sliceIndex = (int)[_sliceColors indexOfObject: visibleBackground ];
+        [_slices replaceObjectAtIndex:sliceIndex withObject:[NSNumber numberWithInt:(int)(importQuestions.count-i)]];
         NSString *varName = [[segConToVar allKeysForObject:[likerts objectAtIndex:i]] objectAtIndex:0];
         for(int j=0; j< _currentConcernRanking.count; j++){
             AprilTestVariable *var = [_currentConcernRanking objectAtIndex:j];
@@ -638,8 +638,8 @@ NSArray * importQuestions;
             else return NSOrderedSame;
         }] mutableCopy];
         for(int i=0; i < surveyItems.count; i++){
-            int sliceIndex = [_sliceColors indexOfObject: [(UILabel *)[surveyItems objectAtIndex:i] backgroundColor] ];
-            [_slices replaceObjectAtIndex:sliceIndex withObject:[NSNumber numberWithInt:(importQuestions.count-i)]];
+            int sliceIndex = (int)[_sliceColors indexOfObject: [(UILabel *)[surveyItems objectAtIndex:i] backgroundColor] ];
+            [_slices replaceObjectAtIndex:sliceIndex withObject:[NSNumber numberWithInt:(int)(importQuestions.count-i)]];
             for(int j=0; j < _currentConcernRanking.count; j++){
                 AprilTestVariable *var = [_currentConcernRanking objectAtIndex:j];
                 //NSLog(@"%@, %@", [[surveyItems objectAtIndex:i] text], var.displayName);

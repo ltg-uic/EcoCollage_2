@@ -10,7 +10,7 @@
 
 @interface Coordinate : NSObject
 
-- (void)initialize;
+//- (void)initialize;
 
 - (instancetype)initWithXCoord:(NSInteger)X YCoord:(NSInteger)Y;
 

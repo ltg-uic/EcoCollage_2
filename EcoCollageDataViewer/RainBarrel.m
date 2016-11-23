@@ -83,7 +83,7 @@ UIImage* rainBarrelIcon2 = nil;
     RainBarrelSamples = [NSMutableArray array];
     sampleImages_RB = [NSMutableArray array];
     
-    [self changeColorSetToIndex:clickedSegment_RB]; // changes the 6 vals
+    [self changeColorSetToIndex:(int) clickedSegment_RB]; // changes the 6 vals
     [self updateBrightAndDark]; // gets lightest and darkest
     
     [sampleImages_RB addObject:sample1];
@@ -268,7 +268,7 @@ UIImage* rainBarrelIcon2 = nil;
         
         
         rainBarrelCoordinatesCalibrated = [CVWrapper getRainBarrelCoordinates];
-        NSLog(@"There are %i permeable pavers detected" , rainBarrelCoordinatesCalibrated.count);
+        NSLog(@"There are %lu permeable pavers detected" , (unsigned long)rainBarrelCoordinatesCalibrated.count);
         [self drawIconsInArray:rainBarrelCoordinatesCalibrated image:rainBarrelIcon2];
         
         UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
@@ -370,7 +370,7 @@ UIImage* rainBarrelIcon2 = nil;
         if( [color isEqual:view.backgroundColor]){
             [RainBarrelSamples removeObject:color];
             printf("Removed a color\n");
-            printf("Permeable Pavers has %i things", RainBarrelSamples.count);
+            printf("Permeable Pavers has %lu things", (unsigned long)RainBarrelSamples.count);
             removed = true;
             break;
         }
@@ -403,7 +403,7 @@ UIImage* rainBarrelIcon2 = nil;
 }
 
 - (void) showSamples{
-    NSLog(@"In ShowSamples: Samples has %i",RainBarrelSamples.count );
+    NSLog(@"In ShowSamples: Samples has %lu",(unsigned long)RainBarrelSamples.count );
     for( UIColor * color in RainBarrelSamples){
         for (UIImageView * view in sampleImages_RB) {
             if( [view.backgroundColor isEqual:UIColor.whiteColor]){
@@ -524,7 +524,7 @@ UIImage* rainBarrelIcon2 = nil;
     int i;
     for(i = 0; i < 30; i++) {
         // loss of precision is fine since all numbers stored in arr will have only zeroes after the decimal
-        hsvValues[i] = [[arr objectAtIndex:i]integerValue];
+        hsvValues[i] = (int)[[arr objectAtIndex:i]integerValue];
     }
     
     [CVWrapper setHSV_Values:hsvValues];
@@ -611,14 +611,14 @@ UIImage* rainBarrelIcon2 = nil;
     */
     NSMutableArray * newSetting  = [savedLocationsFromFile_RB getHSVForSavedLocationAtIndex:index Icon:1];
     
-    lowHue_RB = [[newSetting objectAtIndex:0] integerValue];
-    highHue_RB = [[newSetting objectAtIndex:1] integerValue];
+    lowHue_RB = (int)[[newSetting objectAtIndex:0] integerValue];
+    highHue_RB = (int)[[newSetting objectAtIndex:1] integerValue];
     
-    lowSaturation_RB = [[newSetting objectAtIndex:2] integerValue];
-    highSaturation_RB = [[newSetting objectAtIndex:3] integerValue];
+    lowSaturation_RB = (int)[[newSetting objectAtIndex:2] integerValue];
+    highSaturation_RB = (int)[[newSetting objectAtIndex:3] integerValue];
     
-    lowVal_RB = [[newSetting objectAtIndex:4] integerValue];
-    highVal_RB = [[newSetting objectAtIndex:5] integerValue];
+    lowVal_RB = (int)[[newSetting objectAtIndex:4] integerValue];
+    highVal_RB = (int)[[newSetting objectAtIndex:5] integerValue];
     
     NSLog(@"lowHue_RB is %i", lowHue_RB);
     
