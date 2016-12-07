@@ -633,6 +633,7 @@
 				TargetAttributes = {
 					8453FA4E18F2FC8F0010D12F = {
 						DevelopmentTeam = F554V774C5;
+						ProvisioningStyle = Manual;
 					};
 					8453FA7218F2FC8F0010D12F = {
 						TestTargetID = 8453FA4E18F2FC8F0010D12F;
@@ -914,6 +915,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = F554V774C5;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -930,9 +932,10 @@
 					"$(PROJECT_DIR)/**",
 				);
 				INFOPLIST_FILE = "AprilTest/PERCOET-Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = "edu.uic.evl.ltg.ecocollage.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.uic.evl.ltg.PERCOET;
 				PRODUCT_NAME = PERCOET;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "b80accb1-0f63-49f5-8db1-409081ab3a44";
+				PROVISIONING_PROFILE_SPECIFIER = "LTG Applications";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -944,6 +947,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = F554V774C5;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -961,9 +965,10 @@
 				);
 				INFOPLIST_FILE = "AprilTest/PERCOET-Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "edu.uic.evl.ltg.ecocollage.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.uic.evl.ltg.PERCOET;
 				PRODUCT_NAME = PERCOET;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "b80accb1-0f63-49f5-8db1-409081ab3a44";
+				PROVISIONING_PROFILE_SPECIFIER = "LTG Applications";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

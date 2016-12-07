@@ -41,12 +41,12 @@
     _normalizedLandscapeCostPrivatePropertyDamages = [[components objectAtIndex:1] floatValue];
 //    _normalizedPublicMaintenanceCost = [[components objectAtIndex:4] floatValue];
 //    _normalizedPrivateMaintenanceCost = [[components objectAtIndex:5]floatValue];
-    _normalizedGreatestDepthStandingWater = [[components objectAtIndex:2]floatValue];
-    _normalizedLandscapeCumulativeOutflow = [[components objectAtIndex:3] floatValue];
-    _normalizedLandscapeCumulativeSewers = [[components objectAtIndex:4] floatValue];
-    _normalizedProportionCumulativeNetGIInfiltration = [[components objectAtIndex:5] floatValue];
-    _landscapeCumulativeGICapacityUsed = [[components objectAtIndex:6] floatValue];
-    _normalizedLandscapeCumulativeFloodingOverall = [[components objectAtIndex:8] floatValue];
+    _normalizedGreatestDepthStandingWater = [[components objectAtIndex:6]floatValue];
+    _normalizedLandscapeCumulativeOutflow = [[components objectAtIndex:7] floatValue];
+    _normalizedLandscapeCumulativeSewers = [[components objectAtIndex:8] floatValue];
+    _normalizedProportionCumulativeNetGIInfiltration = [[components objectAtIndex:9] floatValue];
+    _landscapeCumulativeGICapacityUsed = [[components objectAtIndex:10] floatValue];
+    _normalizedLandscapeCumulativeFloodingOverall = [[components objectAtIndex:12] floatValue];
     //not set by the simulation; value is initialized in the 
     _normalizedLandscapeCostInstallPlusMaintenance = 0;
     _trialNum = trialNum;

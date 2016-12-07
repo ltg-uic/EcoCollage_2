@@ -1591,7 +1591,7 @@ float maxPublicInstallNorm;
                                    @"EfficiencyView"      : [oldDict objectForKey:@"EfficiencyView"],
                                    @"Damage"              : [oldDict objectForKey:@"Damage"],
                                    @"DamageReduced"       : [oldDict objectForKey:@"DamageReduced"],
-                                   @"SewerLoad"           : [oldDict objectForKey:@"SewerLoad"],
+                                   //@"SewerLoad"           : [oldDict objectForKey:@"SewerLoad"],
                                    @"WaterInfiltration"   : [oldDict objectForKey:@"WaterInfiltration"],
                                    @"Efficiency_Interv"   : [oldDict objectForKey:@"Efficiency_Interv"],
                                    @"ImpactNeighbor"      : [oldDict objectForKey:@"ImpactNeighbor"],
@@ -2316,7 +2316,7 @@ float maxPublicInstallNorm;
     }
     
     
-    //NSLog(@"Trial: %d\nScore: %@ / 100\n\n", simRun.trialNum, [NSNumber numberWithInt: totalScore]);
+    NSLog(@"TrialNum: %@, TrialRun: %@, TrialStatic: %@, TrialDynamic: %@, TrialTxBox: %@, PerformanceScore: %@, Maintenance: %@, ScorePenalty: %@, InterventionImageView: %@, WaterDepthView: %@, Max Water Depth View: %@, EfficiencyView: %@, Damage: %@, Damage Reduced: %@, Sewer Load: %@, Water Infiltration: %@, Efficiency of Intevention: %@, Impact Neighbors: %@, Cost Display: %@, Favorite Label: %@, Favorite View: %@, Least Favorite View: %@, Storms for Cost:%@",[NSNumber numberWithInt:simRun.trialNum], [tabControl.trialRuns objectAtIndex:simRun.trialNum], [tabControl.trialRunsNormalized objectAtIndex:simRun.trialNum],[tabControl.trialRunsDynNorm objectAtIndex:simRun.trialNum],tx,[NSNumber numberWithInt: totalScore], maintenance,scorePenalty, interventionImageView, waterDepthView, MaxWaterDepthView, efficiencyImageView, damage,  damageReduced, sewerLoad, gw_infiltration, efficiencyOfIntervention, impactNeighbor, cd, favoriteLabel, favoriteView,leastFavoriteView, stormsToMakeUpCost);
     
     NSDictionary *trialRunInfo = @{@"TrialNum"            : [NSNumber numberWithInt:simRun.trialNum],
                                    @"TrialRun"            : [tabControl.trialRuns objectAtIndex:simRun.trialNum],
@@ -2324,9 +2324,6 @@ float maxPublicInstallNorm;
                                    @"TrialDynamic"        : [tabControl.trialRunsDynNorm objectAtIndex:simRun.trialNum],
                                    @"TrialTxTBox"         : tx,
                                    @"PerformanceScore"    : [NSNumber numberWithInt: totalScore],
-                                   //@"WaterDisplay"      : wd,
-                                   //@"MWaterDisplay"     : mwd,
-                                   //@"EfficiencyView"      : ev,
                                    @"Maintenance"         : maintenance,
                                    @"ScorePenalty"        : scorePenalty,
                                    @"InterventionImgView" : interventionImageView,
@@ -2335,7 +2332,7 @@ float maxPublicInstallNorm;
                                    @"EfficiencyView"      : efficiencyImageView,
                                    @"Damage"              : damage,
                                    @"DamageReduced"       : damageReduced,
-                                   @"SewerLoad"           : sewerLoad,
+                                   //@"SewerLoad"           : sewerLoad,
                                    @"WaterInfiltration"   : gw_infiltration,
                                    @"Efficiency_Interv"   : efficiencyOfIntervention,
                                    @"ImpactNeighbor"      : impactNeighbor,

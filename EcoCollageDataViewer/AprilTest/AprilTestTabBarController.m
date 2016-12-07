@@ -496,7 +496,6 @@ NSMutableDictionary         *scoreColors;
         
         AprilTestVariable * currentVar =[sortedArray objectAtIndex:j];
         
-        //laziness: this is just the investment costs
         if([currentVar.name compare: @"installCost"] == NSOrderedSame){
 
             scoreTotal += (currentVar.currentConcernRanking/priorityTotal * (1 - simRunNormal.normalizedLandscapeCostInstallPlusMaintenance));
@@ -506,7 +505,6 @@ NSMutableDictionary         *scoreColors;
             [scoreVisNames addObject: @"installCost"];
             
             
-            //just damages now
         } else if ([currentVar.name compare: @"damageReduction"] == NSOrderedSame){
             
             //potentially could include the sewer load with damage reduction, but for now, not included
