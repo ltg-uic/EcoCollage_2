@@ -62,9 +62,32 @@ bool firstTime = true;
     trialNum = 0;
     
     
+
+    
+    self.studyNumberLabel.text = [NSString stringWithFormat:@"Study Number: %d", _studyNum];
+    self.trialNumberLabel.text = [NSString stringWithFormat:@"Next Trial Number: %d", trialNum];
+    
+    
+    _BudgetSlider.minimumValue = 0;
+    _BudgetSlider.maximumValue = maxBudget;
+    _BudgetSlider.continuous = YES;
+    currentBudget = 150000;
+    
+    [_BudgetSlider addTarget:self action:@selector(budgetChanged) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
+    
+    budgetLabel = [[UILabel alloc]init];
+    [self drawBudgetLabels];
+    
+    
+    
+    
+     
+
+}
+
+- (void) viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
-    
-    
     
     // Register for notifications
     [defaultCenter addObserver:self
@@ -87,41 +110,18 @@ bool firstTime = true;
     favorites = [[NSMutableArray alloc]init];
     leastFavorites = [[NSMutableArray alloc]init];
     
-    self.studyNumberLabel.text = [NSString stringWithFormat:@"Study Number: %d", _studyNum];
-    self.trialNumberLabel.text = [NSString stringWithFormat:@"Next Trial Number: %d", trialNum];
-    
     // setup core bluetooth connection to mac mini
     self.data = [[NSMutableData alloc]init];
-    //self.myCentralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
-    
-    _BudgetSlider.minimumValue = 0;
-    _BudgetSlider.maximumValue = maxBudget;
-    _BudgetSlider.continuous = YES;
-    currentBudget = 150000;
-    
-    [_BudgetSlider addTarget:self action:@selector(budgetChanged) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
-    
-    budgetLabel = [[UILabel alloc]init];
-    [self drawBudgetLabels];
     
     NSDictionary *pingDict = [NSDictionary dictionaryWithObject:@"ping" forKey:@"ping"];
     ping = [NSKeyedArchiver archivedDataWithRootObject:pingDict];
     
     
-    [NSTimer scheduledTimerWithTimeInterval:20.0f
+    [NSTimer scheduledTimerWithTimeInterval:10.0f
                                      target:self selector:@selector(pingPeers) userInfo:nil repeats:YES];
     
-    
-     
-
-}
-
-- (void) viewDidAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
     NSLog(@"Session check: %@", _session);
     NSLog(@"%@", _profiles);
-    [self updateTextView];
-    
 
 }
 
@@ -134,9 +134,7 @@ bool firstTime = true;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    [self reconnectWithBabies];
-    NSLog(@"Session check: %@", _session);
-    NSLog(@"%@", _profiles);
+    [self teardownGKSession];
     [super viewWillDisappear:animated];
 }
 
@@ -1153,12 +1151,8 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
     [_session disconnectFromAllPeers];
     [_session setAvailable:NO];
     [_session setAvailable:YES];
+    NSLog(@"Reconnect Requested");
 }
 
-- (IBAction)reconnectWithBabies {
-    [_session disconnectFromAllPeers];
-    [_session setAvailable:NO];
-    [_session setAvailable:YES];
-}
 
 @end
